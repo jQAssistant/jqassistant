@@ -68,7 +68,7 @@ public class AnalyzeMojo extends AbstractRuleMojo {
             .report();
 
         PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
-        ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
+        ReportContext reportContext = new ReportContextImpl(report.build(), pluginRepository.getClassLoader(), store, outputDirectory);
         AnalyzerPluginRepository analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
         Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(report, reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));

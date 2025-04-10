@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.report.api.configuration;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
@@ -10,6 +9,11 @@ import io.smallrye.config.WithDefault;
 
 @ConfigMapping(prefix = "jqassistant.analyze.report")
 public interface Report {
+
+    String BUILD = "build";
+
+    @Description("The customizable build information to be displayed in reports.")
+    Build build();
 
     String DIRECTORY = "directory";
 

@@ -5,7 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
@@ -54,7 +58,9 @@ public class JsonSchemaGenerator {
                     return annotation.value();
                 }
                 if (method.getType() != null) {
-                    Description innerAnnotation = method.getType().getErasedType().getAnnotation(Description.class);
+                    Description innerAnnotation = method.getType()
+                        .getErasedType()
+                        .getAnnotation(Description.class);
                     if (innerAnnotation != null) {
                         return innerAnnotation.value();
                     }
@@ -112,7 +118,8 @@ public class JsonSchemaGenerator {
         if (resolvedType != null) {
             if (resolvedType.getErasedType()
                 .equals(URI.class) || resolvedType.getErasedType()
-                .equals(File.class)) {
+                .equals(File.class) || resolvedType.getErasedType()
+                .equals(ZonedDateTime.class)) {
                 return List.of(target.getContext()
                     .resolve(String.class));
             }
@@ -132,7 +139,7 @@ public class JsonSchemaGenerator {
 
     /**
      * Handles the schema definitions for maps with different value types (targetType).
-     * Assumes that maps are always of the form <String, targetType>, and cases deviating
+     * Assumes that maps are always of the form &lt;String, targetType&gt; and cases deviating
      * from this structure are not handled.
      *
      * <p>The schema definition for the map properties is manually set as a type "object".

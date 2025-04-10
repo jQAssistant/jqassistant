@@ -233,6 +233,22 @@ jqassistant:
     # The report configuration
     report:
 
+      # Customizable build information to be displayed in reports.
+      build:
+        # The build name, defaults to current project name or directory.
+        #
+        # -Djqassistant.analyze.report.build.name
+        name:
+        # The build timestamp (ISO 8601 date time format with offset, e.g. 2025-04-09T16:31:33+00:00), defaults to current time.
+        #
+        # -Djqassistant.analyze.report.build.timestamp
+        timestamp:
+        # Additional build properties, e.g. branch name, etc.
+        #
+        # -Djqassistant.analyze.report.build.properties
+        properties:
+          # key: value
+
       # The properties to configure report plugins. The supported properties are plugin specific.
       #
       # -Djqassistant.analyze.report.properties

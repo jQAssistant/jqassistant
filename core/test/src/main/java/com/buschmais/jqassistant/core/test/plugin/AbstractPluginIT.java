@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
@@ -15,6 +16,7 @@ import com.buschmais.jqassistant.core.analysis.api.configuration.Baseline;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.configuration.Build;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
@@ -60,6 +62,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
@@ -140,6 +143,8 @@ public abstract class AbstractPluginIT {
 
     private ConfigurationBuilder createConfigurationBuilder() {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("ITConfigSource", 110);
+        configurationBuilder.with(Build.class, Build.NAME, "IT")
+            .with(Build.class, Build.TIMESTAMP, ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()));
         configurationBuilder.with(Report.class, Report.PROPERTIES, getReportProperties());
         return configurationBuilder;
     }
@@ -192,7 +197,9 @@ public abstract class AbstractPluginIT {
     }
 
     private void initializeReportPlugin(Configuration configuration) {
-        ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, OUTPUT_DIRECTORY);
+        ReportContext reportContext = new ReportContextImpl(configuration.analyze()
+            .report()
+            .build(), pluginRepository.getClassLoader(), store, OUTPUT_DIRECTORY);
         Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository()
             .getReportPlugins(configuration.analyze()
                 .report(), reportContext);

@@ -3,10 +3,12 @@ package com.buschmais.jqassistant.core.report;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.configuration.Build;
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
@@ -34,6 +36,22 @@ public final class XmlReportTestHelper {
     public static final String C2 = "c2";
     public static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder()
         .build();
+    public static final Build BUILD = new Build() {
+        @Override
+        public String name() {
+            return "TestBuild";
+        }
+
+        @Override
+        public ZonedDateTime timestamp() {
+            return ZonedDateTime.now();
+        }
+
+        @Override
+        public Map<String, String> properties() {
+            return Map.of("BRANCH", "develop");
+        }
+    };
 
     /**
      * Creates a test report.
@@ -198,7 +216,7 @@ public final class XmlReportTestHelper {
     private static ReportContext getReportContext() {
         File reportDirectory = new File("target/test");
         reportDirectory.mkdirs();
-        return new ReportContextImpl(XmlReportTestHelper.class.getClassLoader(), mock(Store.class), reportDirectory);
+        return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), reportDirectory);
     }
 
     private static Row createRow(ExecutableRule<?> rule) {

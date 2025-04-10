@@ -5,6 +5,8 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
 import io.smallrye.config.ConfigMapping;
@@ -25,6 +27,7 @@ import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
 
 import static io.smallrye.config.ConfigMappingInterface.getConfigurationInterface;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyMap;
 
@@ -98,6 +101,7 @@ public class ConfigurationSerializer<C> {
             RepresentString representString = new RepresentString();
             representers.put(URI.class, representString);
             representers.put(File.class, representString);
+            representers.put(ZonedDateTime.class, new RepresentTemporalAccessor());
         }
 
         @Override
@@ -148,6 +152,16 @@ public class ConfigurationSerializer<C> {
             @Override
             public Node representData(Object data) {
                 return ConfigRepresenter.this.representData(data.toString());
+            }
+        }
+
+        /**
+         * Use the string representation of the provided data.
+         */
+        private class RepresentTemporalAccessor implements Represent {
+            @Override
+            public Node representData(Object data) {
+                return ConfigRepresenter.this.representData(ISO_OFFSET_DATE_TIME.format((TemporalAccessor) data));
             }
         }
     }

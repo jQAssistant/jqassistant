@@ -5,6 +5,7 @@ import java.io.File;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.configuration.Build;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
@@ -25,6 +26,9 @@ public abstract class AbstractReportPluginTest {
     @Mock
     protected Store store;
 
+    @Mock
+    protected Build build;
+
     protected ReportContext reportContext;
 
     protected AbstractReportPluginTest(ReportPlugin plugin) {
@@ -35,18 +39,18 @@ public abstract class AbstractReportPluginTest {
     public final void setUp() throws ReportException {
         plugin.initialize();
         File outputDirectory = new File("target/test");
-        reportContext = new ReportContextImpl(AbstractReportPluginTest.class.getClassLoader(), store, outputDirectory);
+        reportContext = new ReportContextImpl(build, AbstractReportPluginTest.class.getClassLoader(), store, outputDirectory);
     }
 
     protected final void apply(Constraint constraint, Result.Status status) throws ReportException {
         plugin.beginConstraint(constraint);
-        plugin.setResult(this.<ExecutableRule> getResult(constraint, status));
+        plugin.setResult(this.<ExecutableRule>getResult(constraint, status));
         plugin.endConstraint();
     }
 
     protected final void apply(Concept concept, Result.Status status) throws ReportException {
         plugin.beginConcept(concept);
-        plugin.setResult(this.<ExecutableRule> getResult(concept, status));
+        plugin.setResult(this.<ExecutableRule>getResult(concept, status));
         plugin.endConcept();
     }
 
@@ -54,11 +58,11 @@ public abstract class AbstractReportPluginTest {
      * Return the {@link Result} for the given rule.
      *
      * @param rule
-     *            The rule.
+     *     The rule.
      * @param status
-     *            The status.
+     *     The status.
      * @param <T>
-     *            The rule type.
+     *     The rule type.
      * @return The result.
      */
     protected abstract <T extends ExecutableRule<?>> Result<T> getResult(T rule, Result.Status status);

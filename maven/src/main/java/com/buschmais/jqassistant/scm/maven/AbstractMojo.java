@@ -1,9 +1,11 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Supplier;
 
+import com.buschmais.jqassistant.core.report.api.BuildConfigBuilder;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.shared.aether.AetherArtifactProvider;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
@@ -260,10 +262,17 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @return The {@link MavenConfiguration}.
      */
     private MavenConfiguration getConfiguration() {
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder("MojoConfigSource", 110);
+        ConfigSource buildConfigSource = BuildConfigBuilder.getConfigSource(session.getTopLevelProject()
+            .getName(), session.getStartTime()
+            .toInstant()
+            .atZone(ZoneId.systemDefault()));
+        ConfigurationBuilder mojoConfigurationBuilder = new ConfigurationBuilder("MojoConfigSource", 110);
+        // activate connector (depending on goal)
         if (isConnectorRequired()) {
-            configurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, true);
+            mojoConfigurationBuilder.with(Embedded.class, Embedded.CONNECTOR_ENABLED, true);
         }
+        ConfigSource mojoConfigSource = mojoConfigurationBuilder.build();
+
         MavenProjectConfigSource projectConfigSource = new MavenProjectConfigSource(currentProject);
         SettingsConfigSource settingsConfigSource = new SettingsConfigSource(session.getSettings());
         MavenPropertiesConfigSource projectPropertiesConfigSource = new MavenPropertiesConfigSource(currentProject.getProperties(), "Maven Project Properties");
@@ -273,7 +282,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         ConfigSource yamlConfiguration = getYamlPluginConfiguration();
         ConfigSource propertiesConfiguration = getPropertiesPluginConfiguration();
 
-        ConfigSource[] configSources = new ConfigSource[] { configurationBuilder.build(), projectConfigSource, settingsConfigSource,
+        ConfigSource[] configSources = new ConfigSource[] { buildConfigSource, mojoConfigSource, projectConfigSource, settingsConfigSource,
             projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, yamlConfiguration, propertiesConfiguration };
         File userHome = new File(System.getProperty("user.home"));
         File executionRootDirectory = new File(session.getExecutionRootDirectory());
