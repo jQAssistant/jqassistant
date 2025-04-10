@@ -12,10 +12,6 @@ public class CollectRulesVisitor extends AbstractRuleVisitor<Boolean> {
     private Map<Constraint, Severity> constraints = new TreeMap<>(RULE_COMPARATOR);
     private Set<Group> groups = new TreeSet<>(RULE_COMPARATOR);
 
-    private Set<String> missingConcepts = new TreeSet<>();
-    private Set<String> missingConstraints = new TreeSet<>();
-    private Set<String> missingGroups = new TreeSet<>();
-
     @Override
     public Boolean visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Boolean> requiredConceptResults,
         Map<Concept, Boolean> providingConceptResults) {
@@ -46,15 +42,4 @@ public class CollectRulesVisitor extends AbstractRuleVisitor<Boolean> {
         return groups;
     }
 
-    public Set<String> getMissingConcepts() {
-        return missingConcepts;
-    }
-
-    public Set<String> getMissingConstraints() {
-        return missingConstraints;
-    }
-
-    public Set<String> getMissingGroups() {
-        return missingGroups;
-    }
 }

@@ -5,7 +5,6 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
@@ -16,7 +15,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class AvailableRulesMojo extends AbstractRuleMojo {
 
     @Override
-    public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+    protected void beforeProject(MojoExecutionContext mojoExecutionContext) {
+        // nothing to do here
+    }
+
+    @Override
+    public void afterProject(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
         getLog().info("Available rules for '" + mojoExecutionContext.getRootModule()
             .getName() + "'.");
         RuleSet ruleSet = readRules(mojoExecutionContext);
