@@ -15,12 +15,14 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Description("Generates a HTML reports based on analysis results.")
 public class ReportTask extends AbstractTask {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportTask.class);

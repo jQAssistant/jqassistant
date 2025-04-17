@@ -7,7 +7,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
- * Lists all effective rules.
+ * Prints the current configuration on the console.
  */
 @Mojo(name = "effective-configuration", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class EffectiveConfigurationMojo extends AbstractRuleMojo {

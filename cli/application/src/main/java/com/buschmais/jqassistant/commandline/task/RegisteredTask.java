@@ -2,9 +2,12 @@ package com.buschmais.jqassistant.commandline.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import com.google.common.base.CaseFormat;
 
@@ -136,12 +139,21 @@ public enum RegisteredTask {
         return tasks;
     }
 
-    public static List<String> getTaskNames() {
-        List<String> taskNames = new ArrayList<>();
+    public static SortedMap<String, String> getTaskNamesAndDescriptions() {
+        SortedMap<String, String> taskNameAndDescription = new TreeMap<>();
         for (RegisteredTask registeredTask : values()) {
-            taskNames.add(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, registeredTask.name()));
+            String description;
+            Description descriptionAnnotation = registeredTask.getTask()
+                .getClass()
+                .getAnnotation(Description.class);
+            if (descriptionAnnotation == null) {
+                description = "The following task is missing a description:" + registeredTask.name();
+            } else {
+                description = descriptionAnnotation.value();
+            }
+            taskNameAndDescription.put(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, registeredTask.name()), description);
         }
-        return taskNames;
+        return taskNameAndDescription;
     }
 
 }
