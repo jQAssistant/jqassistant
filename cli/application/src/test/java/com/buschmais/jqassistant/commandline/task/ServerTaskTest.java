@@ -6,7 +6,6 @@ import java.io.InputStream;
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
-import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
@@ -32,9 +31,6 @@ class ServerTaskTest {
 
     @Mock
     private PluginRepository pluginRepository;
-
-    @Mock
-    private ArtifactProvider artifactProvider;
 
     @Mock
     private EmbeddedGraphStore store;

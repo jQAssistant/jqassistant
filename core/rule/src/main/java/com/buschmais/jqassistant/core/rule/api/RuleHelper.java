@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.rule.api;
 
-import java.util.Set;
-
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
@@ -36,14 +34,16 @@ public class RuleHelper {
     }
 
     /**
-     * @param ruleSet The {@link RuleSet}
-     * @param ruleSelection The {@link RuleSelection}
-     * @throws RuleException If there's a problem.
+     * @param ruleSet
+     *     The {@link RuleSet}
+     * @param ruleSelection
+     *     The {@link RuleSelection}
+     * @throws RuleException
+     *     If there's a problem.
      */
     public void printRuleSet(RuleSet ruleSet, RuleSelection ruleSelection, Rule configuration) throws RuleException {
         CollectRulesVisitor visitor = getAllRules(ruleSet, ruleSelection, configuration);
         printValidRules(visitor);
-        printMissingRules(visitor);
     }
 
     /**
@@ -88,35 +88,5 @@ public class RuleHelper {
         RuleSetExecutor<Boolean> executor = new RuleSetExecutor<>(visitor, configuration);
         executor.execute(ruleSet, ruleSelection);
         return visitor;
-    }
-
-    /**
-     * Prints all missing rule ids.
-     *
-     * @param visitor
-     *     The visitor.
-     */
-    private void printMissingRules(CollectRulesVisitor visitor) {
-        Set<String> missingConcepts = visitor.getMissingConcepts();
-        if (!missingConcepts.isEmpty()) {
-            log.info("Missing concepts [{}]", missingConcepts.size());
-            for (String missingConcept : missingConcepts) {
-                log.warn(LOG_LINE_PREFIX + "{}", missingConcept);
-            }
-        }
-        Set<String> missingConstraints = visitor.getMissingConstraints();
-        if (!missingConstraints.isEmpty()) {
-            log.info("Missing constraints [{}]", missingConstraints.size());
-            for (String missingConstraint : missingConstraints) {
-                log.warn(LOG_LINE_PREFIX + "{}", missingConstraint);
-            }
-        }
-        Set<String> missingGroups = visitor.getMissingGroups();
-        if (!missingGroups.isEmpty()) {
-            log.info("Missing groups [{}]", missingGroups.size());
-            for (String missingGroup : missingGroups) {
-                log.warn(LOG_LINE_PREFIX + "{}", missingGroup);
-            }
-        }
     }
 }

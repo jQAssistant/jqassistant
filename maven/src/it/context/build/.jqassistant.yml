@@ -1,0 +1,8 @@
+jqassistant:
+  analyze:
+    report:
+      build:
+        name: "Custom Build"
+        properties:
+          Branch: "develop"
+

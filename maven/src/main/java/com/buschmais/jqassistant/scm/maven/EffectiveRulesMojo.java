@@ -7,11 +7,8 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Lists all effective rules.
@@ -19,10 +16,13 @@ import org.slf4j.LoggerFactory;
 @Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class EffectiveRulesMojo extends AbstractRuleMojo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EffectiveRulesMojo.class);
+    @Override
+    protected void beforeProject(MojoExecutionContext mojoExecutionContext) {
+        // nothing to do here
+    }
 
     @Override
-    public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+    public void afterProject(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
         getLog().info("Effective rules for '" + mojoExecutionContext.getRootModule()
             .getName() + "'.");
         Analyze analyze = mojoExecutionContext.getConfiguration()

@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
@@ -18,6 +19,7 @@ import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.ReportContextImpl;
+import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
@@ -51,24 +53,46 @@ public class AnalyzeMojo extends AbstractRuleMojo {
     private MavenProjectHelper mavenProjectHelper;
 
     @Override
-    public void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+    protected void beforeProject(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
+        List<MavenProject> projectModules = mojoExecutionContext.getProjects()
+            .get(rootModule);
+        if (projectModules.size() > 1) {
+            validate(mojoExecutionContext);
+        }
+    }
+
+    private void validate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
+        RuleSet ruleSet = readRules(mojoExecutionContext);
+        Analyze analyze = mojoExecutionContext.getConfiguration()
+            .analyze();
+        RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
+        RuleHelper ruleHelper = new RuleHelper();
+        try {
+            ruleHelper.getAllRules(ruleSet, ruleSelection, analyze.rule());
+        } catch (RuleException e) {
+            throw new MojoExecutionException("Invalid rule configuration.", e);
+        }
+    }
+
+    @Override
+    public void afterProject(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
         withStore(store -> analyze(store, mojoExecutionContext), mojoExecutionContext);
     }
 
     private void analyze(Store store, MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
         MavenProject rootModule = mojoExecutionContext.getRootModule();
-        RuleSet ruleSet = readRules(mojoExecutionContext);
         MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
+        RuleSet ruleSet = readRules(mojoExecutionContext);
         Analyze analyze = configuration.analyze();
         RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
         File outputDirectory = mojoExecutionContext.getOutputDirectory();
 
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
-        Report report = configuration.analyze()
-            .report();
+        Report report = analyze.report();
 
         PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
-        ReportContext reportContext = new ReportContextImpl(pluginRepository.getClassLoader(), store, outputDirectory);
+        ReportContext reportContext = new ReportContextImpl(report.build(), pluginRepository.getClassLoader(), store, outputDirectory);
         AnalyzerPluginRepository analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
         Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(report, reportContext);
         InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));

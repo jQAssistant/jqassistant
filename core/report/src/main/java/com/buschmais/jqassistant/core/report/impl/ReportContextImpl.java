@@ -18,13 +18,11 @@ import java.util.zip.ZipOutputStream;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.configuration.Build;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.store.api.Store;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +31,12 @@ import static lombok.AccessLevel.PRIVATE;
 /**
  * Implementation of the {@link ReportContext}.
  */
+@RequiredArgsConstructor
 public class ReportContextImpl implements ReportContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportContextImpl.class);
+
+    private final Build build;
 
     private final ClassLoader classLoader;
 
@@ -55,23 +56,13 @@ public class ReportContextImpl implements ReportContext {
      * @param outputDirectory
      *     The output directory.
      */
-    public ReportContextImpl(ClassLoader classLoader, Store store, File outputDirectory) {
-        this(classLoader, store, outputDirectory, new File(outputDirectory, REPORT_DIRECTORY));
+    public ReportContextImpl(Build build, ClassLoader classLoader, Store store, File outputDirectory) {
+        this(build, classLoader, store, outputDirectory, new File(outputDirectory, REPORT_DIRECTORY));
     }
 
-    /**
-     * Constructor.
-     *
-     * @param store
-     *     The {@link Store};
-     * @param outputDirectory
-     *     The output directory.
-     */
-    public ReportContextImpl(ClassLoader classLoader, Store store, File outputDirectory, File reportDirectory) {
-        this.classLoader = classLoader;
-        this.store = store;
-        this.outputDirectory = outputDirectory;
-        this.reportDirectory = reportDirectory;
+    @Override
+    public Build getBuild() {
+        return build;
     }
 
     @Override
