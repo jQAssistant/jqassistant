@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.commandline.Main;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -14,7 +15,8 @@ import org.apache.commons.cli.Options;
 /**
  * @author Oliver B. Fischer, Freiheitsgrade Consulting
  */
-@Description("Lists all available options.")
+@Slf4j
+@Description("Lists all available tasks.")
 public class HelpTask extends AbstractTask {
 
     @Override
@@ -26,8 +28,8 @@ public class HelpTask extends AbstractTask {
         final HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(120);
         formatter.printHelp(Main.class.getCanonicalName() + " <task> [options]", options);
-        System.out.println( "\n"+ "---- Available Tasks: ----"  + "\n \n"+ gatherTaskNamesAndDescriptions());
-        System.out.println("\n"+ "Example: " + Main.class.getCanonicalName() + " scan -f java:classpath::target/classes java:classpath::target/test-classes");
+        log.info("\n---- Available Tasks: ----\n \n{}", gatherTaskNamesAndDescriptions());
+        log.info("\nExample: {} scan -f java:classpath::target/classes java:classpath::target/test-classes", Main.class.getCanonicalName());
     }
 
     /**

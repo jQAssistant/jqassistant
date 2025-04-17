@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.commandline.task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Task;
@@ -139,17 +139,19 @@ public enum RegisteredTask {
         return tasks;
     }
 
-    public static Map<String, String> getTaskNamesAndDescriptions() {
-        Map<String, String> taskNameAndDescription = new HashMap<>();
+    public static SortedMap<String, String> getTaskNamesAndDescriptions() {
+        SortedMap<String, String> taskNameAndDescription = new TreeMap<>();
         for (RegisteredTask registeredTask : values()) {
             String description;
-            if(registeredTask.getTask().getClass().getAnnotation(Description.class) == null){
-                description = "The follwing task is missing a decription:" + registeredTask.name();
-            }else {
-                description = registeredTask.getTask().getClass().getAnnotation(Description.class).value();
+            Description descriptionAnnotation = registeredTask.getTask()
+                .getClass()
+                .getAnnotation(Description.class);
+            if (descriptionAnnotation == null) {
+                description = "The following task is missing a description:" + registeredTask.name();
+            } else {
+                description = descriptionAnnotation.value();
             }
-            taskNameAndDescription.put(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN,
-                registeredTask.name()), description);
+            taskNameAndDescription.put(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, registeredTask.name()), description);
         }
         return taskNameAndDescription;
     }
