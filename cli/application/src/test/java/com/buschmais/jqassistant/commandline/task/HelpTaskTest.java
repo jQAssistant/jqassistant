@@ -1,13 +1,12 @@
 package com.buschmais.jqassistant.commandline.task;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.Main;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.StdErr;
+import org.junitpioneer.jupiter.StdIo;
 
 /**
  * Verifies functionality of the main class.
@@ -18,18 +17,12 @@ class HelpTaskTest {
     private final Main main = new Main();
 
     @Test
-    void testHelpOutput() throws CliExecutionException {
-        PrintStream original = System.err;
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            System.setErr(new PrintStream(outputStream));
-            main.run(new String[] { "help" });
-            String logOutput = outputStream.toString();
-            Assertions.assertTrue(logOutput.contains("---- Available Tasks: ----"));
-            Assertions.assertTrue(logOutput.contains("help': Lists all available tasks."));
-
-        } finally {
-            System.setErr(original);
-        }
+    @StdIo("jqassistant help")
+    void skipByCommandLineOption(StdErr stdErr) throws CliExecutionException {
+        main.run(new String[] { "help" });
+        Assertions.assertTrue(stdErr.capturedString()
+            .contains("---- Available Tasks: ----"));
+        Assertions.assertTrue(stdErr.capturedString()
+            .contains("help': Lists all available tasks."));
     }
 }

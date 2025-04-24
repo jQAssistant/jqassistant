@@ -28,8 +28,8 @@ public class HelpTask extends AbstractTask {
         final HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(120);
         formatter.printHelp(Main.class.getCanonicalName() + " <task> [options]", options);
-        log.info("\n---- Available Tasks: ----\n \n{}", gatherTaskNamesAndDescriptions());
-        log.info("\nExample: {} scan -f java:classpath::target/classes java:classpath::target/test-classes", Main.class.getCanonicalName());
+        log.info("\n  \n---- Available Tasks: ----\n \n{}", gatherTaskNamesAndDescriptions());
+        log.info("\n  \nExample: {} scan -f java:classpath::target/classes java:classpath::target/test-classes", Main.class.getCanonicalName());
     }
 
     /**
@@ -39,9 +39,12 @@ public class HelpTask extends AbstractTask {
      */
     private String gatherTaskNamesAndDescriptions() {
         final StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, String> task  : RegisteredTask.getTaskNamesAndDescriptions().entrySet()) {
-            builder.append("\n").append(task.getKey())
-                .append("': ").append(task.getValue());
+        for (Map.Entry<String, String> task : RegisteredTask.getTaskNamesAndDescriptions()
+            .entrySet()) {
+            builder.append("\n")
+                .append(task.getKey())
+                .append("': ")
+                .append(task.getValue());
         }
         return builder.toString()
             .trim();
