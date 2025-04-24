@@ -152,8 +152,10 @@ class MavenProjectScannerPluginTest {
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
         List<ArtifactDescriptor> createsArtifacts = new LinkedList<>();
         when(projectDescriptor.getCreatesArtifacts()).thenReturn(createsArtifacts);
+        String projectDir = new File("/project").getAbsolutePath()
+            .replace('\\', '/');
         doReturn(projectDescriptor).when(fileResolver)
-            .match("/project", MavenProjectDirectoryDescriptor.class, scannerContext);
+            .match(projectDir, MavenProjectDirectoryDescriptor.class, scannerContext);
 
         Scanner scanner = mock(Scanner.class);
         doReturn(scanConfiguration).when(scanner)
@@ -244,7 +246,7 @@ class MavenProjectScannerPluginTest {
 
         verify(scanner).scan(any(File.class), eq("target/classes"), eq(CLASSPATH));
         verify(scanner).scan(any(File.class), eq("target/test-classes"), eq(CLASSPATH));
-        verify(fileResolver).match("/project", MavenProjectDirectoryDescriptor.class, scannerContext);
+        verify(fileResolver).match(projectDir, MavenProjectDirectoryDescriptor.class, scannerContext);
         verify(projectDescriptor).setFullQualifiedName("group:artifact:1.0.0");
         verify(projectDescriptor).setName("project");
         verify(projectDescriptor).setGroupId("group");

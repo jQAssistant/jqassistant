@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.commandline.task;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
+@Description("Resets the store.")
 public class ResetTask extends AbstractStoreTask {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResetTask.class);

@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationSerializer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+@Description("Prints the current configuration on the console.")
 @Slf4j
 public class EffectiveConfigurationTask extends AbstractTask {
 
