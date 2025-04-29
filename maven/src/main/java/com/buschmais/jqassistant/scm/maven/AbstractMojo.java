@@ -68,7 +68,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Parameter
     private Properties properties;
 
-    @Parameter(property = "skip", defaultValue = "false")
+    @Parameter(property = "jqassistant.skip", defaultValue = "false")
     private boolean skip;
 
     /**
