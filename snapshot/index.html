@@ -3741,8 +3741,9 @@ Maven properties (e.g. <code>project.basedir</code>) or user properties defined 
                                   skip: true
                             ]]&gt;&lt;/yaml&gt;
                             &lt;properties&gt;
-                              &lt;jqassistant.skip&gt;true&lt;/jqassistant.skip&gt;
+                              &lt;jqassistant.skip&gt;false&lt;/jqassistant.skip&gt;
                             &lt;/properties&gt;
+                            &lt;skip&gt;false&lt;/skip&gt;
                             --&gt;</span>
                         <span class="tag">&lt;/configuration&gt;</span>
                     <span class="tag">&lt;/execution&gt;</span>
@@ -3814,6 +3815,19 @@ Maven properties (e.g. <code>project.basedir</code>) or user properties defined 
 </li>
 <li>
 <p>can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">skip</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>skip the execution (without loading the full configuration)</p>
+</li>
+<li>
+<p>default: <code>false</code></p>
 </li>
 </ul>
 </div>
@@ -12450,7 +12464,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-04-24 16:09:01 UTC
+Last updated 2025-05-02 09:35:22 UTC
 </div>
 </div>
 </body>
