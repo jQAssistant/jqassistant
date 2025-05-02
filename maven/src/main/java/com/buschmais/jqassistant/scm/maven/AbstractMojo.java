@@ -68,6 +68,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Parameter
     private Properties properties;
 
+    @Parameter(property = "jqassistant.skip", defaultValue = "false")
+    private boolean skip;
+
     /**
      * The Maven Session.
      */
@@ -117,6 +120,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         }
         // Synchronize on this class as multiple instances of the plugin may exist in parallel builds
         synchronized (AbstractMojo.class) {
+            if(skip) {
+                getLog().info("Skipping execution.");
+                return;
+            }
             MavenConfiguration configuration = getConfiguration();
             if (configuration.skip()) {
                 getLog().info("Skipping execution.");
