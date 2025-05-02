@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.report.api.BuildConfigBuilder;
+import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.shared.aether.AetherArtifactProvider;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
@@ -68,7 +69,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Parameter
     private Properties properties;
 
-    @Parameter(property = "jqassistant.skip", defaultValue = "false")
+    /**
+     * Skip the execution.
+     */
+    // property uses the same key as skip property in jQAssistant configuration
+    @Parameter(property = Configuration.PREFIX + "." + Configuration.SKIP, defaultValue = "false")
     private boolean skip;
 
     /**
@@ -120,13 +125,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         }
         // Synchronize on this class as multiple instances of the plugin may exist in parallel builds
         synchronized (AbstractMojo.class) {
-            if(skip) {
-                getLog().info("Skipping execution.");
+            if (skip) {
+                // This is a shortcut to avoid loading the configuration if skip is given as part of the POM or system property.
+                getLog().info("Skipping execution (required by plugin configuration");
                 return;
             }
             MavenConfiguration configuration = getConfiguration();
             if (configuration.skip()) {
-                getLog().info("Skipping execution.");
+                getLog().info("Skipping execution (required by jQAssistant configuration)");
             } else {
                 AetherArtifactProvider artifactResolver = new AetherArtifactProvider(repositorySystem, repositorySystemSession, repositories);
                 PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(configuration, artifactResolver);
@@ -293,8 +299,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, yamlConfiguration, propertiesConfiguration };
         File userHome = new File(System.getProperty("user.home"));
         File executionRootDirectory = new File(session.getExecutionRootDirectory());
-        ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(
-                MavenConfiguration.class, configurationLocations)
+        ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(MavenConfiguration.class, configurationLocations)
             .withUserHome(userHome)
             .withDirectory(executionRootDirectory, CONFIGURATION_ORDINAL_EXECUTION_ROOT)
             .withEnvVariables()
