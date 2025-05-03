@@ -89,11 +89,16 @@
                 <jdk>[17,)</jdk>
             </activation>
             <dependencies>
+                <!-- APOC libs required by Neo4j to be available in classpath -->
                 <dependency>
-                    <!-- Required by Neo4j to be available in classpath -->
                     <groupId>org.neo4j.procedure</groupId>
                     <artifactId>apoc-core</artifactId>
-                    <classifier>core</classifier>
+                    <version>${neo4j_5x.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.neo4j.procedure</groupId>
+                    <artifactId>apoc-common</artifactId>
                     <version>${neo4j_5x.version}</version>
                     <scope>test</scope>
                 </dependency>
