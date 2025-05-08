@@ -1,0 +1,442 @@
+{
+  "$defs" : {
+    "com.buschmais.jqassistant.core.rule.api.model.-severity" : {
+      "type" : "string",
+      "enum" : [ "BLOCKER", "CRITICAL", "MAJOR", "MINOR", "INFO" ]
+    },
+    "com.buschmais.jqassistant.core.shared.aether.configuration.-plugin" : {
+      "type" : "object",
+      "properties" : {
+        "artifact-id" : {
+          "type" : "string",
+          "description" : "The artifactId of the plugin."
+        },
+        "classifier" : {
+          "type" : "string",
+          "description" : "The classifier of the plugin (optional)."
+        },
+        "exclusions" : {
+          "description" : "The exclusions of the plugin.",
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "artifact-id" : {
+                "type" : "string",
+                "description" : "The artifactId of the exclusion."
+              },
+              "classifier" : {
+                "type" : "string",
+                "description" : "The classifier of the exclusion (optional)."
+              },
+              "group-id" : {
+                "type" : "string",
+                "description" : "The groupId of the exclusion."
+              },
+              "type" : {
+                "type" : "string",
+                "description" : "The type (extension) of the exclusion.",
+                "default" : "jar"
+              }
+            },
+            "additionalProperties" : false,
+            "description" : "The exclusions of the plugin."
+          }
+        },
+        "group-id" : {
+          "type" : "string",
+          "description" : "The groupId of the plugin."
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "The type (extension) of the plugin.",
+          "default" : "jar"
+        },
+        "version" : {
+          "type" : "string",
+          "description" : "The version of the plugin."
+        }
+      },
+      "additionalProperties" : false
+    },
+    "com.buschmais.jqassistant.scm.maven.configuration.-maven-configuration" : {
+      "type" : "object",
+      "properties" : {
+        "analyze" : {
+          "type" : "object",
+          "properties" : {
+            "baseline" : {
+              "type" : "object",
+              "properties" : {
+                "enabled" : {
+                  "type" : "boolean",
+                  "default" : "false"
+                },
+                "file" : {
+                  "type" : "string",
+                  "description" : "The name of the file for reading and writing the baseline."
+                },
+                "include-concepts" : {
+                  "description" : "The concepts to be included.",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "description" : "The concepts to be included."
+                  }
+                },
+                "include-constraints" : {
+                  "description" : "The constraints to be included.",
+                  "default" : "*",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "description" : "The constraints to be included.",
+                    "default" : "*"
+                  }
+                }
+              },
+              "additionalProperties" : false,
+              "description" : "The baseline configuration."
+            },
+            "concepts" : {
+              "description" : "The concepts to be applied.",
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "description" : "The concepts to be applied."
+              }
+            },
+            "constraints" : {
+              "description" : "The constraints to be validated.",
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "description" : "The constraints to be validated."
+              }
+            },
+            "exclude-constraints" : {
+              "description" : "The constraints to be excluded.",
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "description" : "The constraints to be excluded."
+              }
+            },
+            "execute-applied-concepts" : {
+              "type" : "boolean",
+              "description" : "Execute concepts even if they have already been applied before.",
+              "default" : "false"
+            },
+            "groups" : {
+              "description" : "The groups to be executed.",
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "description" : "The groups to be executed."
+              }
+            },
+            "report" : {
+              "type" : "object",
+              "properties" : {
+                "build" : {
+                  "type" : "object",
+                  "properties" : {
+                    "name" : {
+                      "type" : "string",
+                      "description" : "The name of the build."
+                    },
+                    "properties" : {
+                      "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_",
+                      "description" : "The build properties."
+                    },
+                    "timestamp" : {
+                      "type" : "string",
+                      "description" : "The build timestamp."
+                    }
+                  },
+                  "additionalProperties" : false,
+                  "description" : "The customizable build information to be displayed in reports."
+                },
+                "continue-on-failure" : {
+                  "type" : "boolean",
+                  "description" : "Determines if jQAssistant shall continue the build if failures have been detected.",
+                  "default" : "false"
+                },
+                "create-archive" : {
+                  "type" : "boolean",
+                  "description" : "Create an archive containing all generated reports.",
+                  "default" : "false"
+                },
+                "directory" : {
+                  "type" : "string",
+                  "description" : "The directory for generated reports."
+                },
+                "fail-on-severity" : {
+                  "type" : "string",
+                  "description" : "Determines the severity level to report failures for rules with equal or higher severities.",
+                  "default" : "MAJOR"
+                },
+                "properties" : {
+                  "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_",
+                  "description" : "The properties to configure report plugins. The supported properties are plugin specific."
+                },
+                "warn-on-severity" : {
+                  "type" : "string",
+                  "description" : "Determines the severity level to report warnings for rules with equal or higher severities.",
+                  "default" : "MINOR"
+                }
+              },
+              "additionalProperties" : false,
+              "description" : "The report configuration."
+            },
+            "rule" : {
+              "type" : "object",
+              "properties" : {
+                "default-concept-severity" : {
+                  "$ref" : "#/$defs/com.buschmais.jqassistant.core.rule.api.model.-severity",
+                  "description" : "The default severity of concepts without an explicit severity."
+                },
+                "default-constraint-severity" : {
+                  "$ref" : "#/$defs/com.buschmais.jqassistant.core.rule.api.model.-severity",
+                  "description" : "The default severity of constraints without an explicit severity."
+                },
+                "default-group-severity" : {
+                  "$ref" : "#/$defs/com.buschmais.jqassistant.core.rule.api.model.-severity",
+                  "description" : "The default severity of groups without an explicit severity."
+                },
+                "directory" : {
+                  "type" : "string",
+                  "description" : "The name of the directory containing project rules."
+                },
+                "required-concepts-are-optional-by-default" : {
+                  "type" : "boolean",
+                  "description" : "Specifies if a rule is executed even if one of the required concepts cannot be applied.",
+                  "default" : "true"
+                }
+              },
+              "additionalProperties" : false,
+              "description" : "The rule configuration."
+            },
+            "rule-parameters" : {
+              "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_",
+              "description" : "The parameters to be passed to rules."
+            },
+            "warn-on-execution-time-seconds" : {
+              "type" : "integer",
+              "description" : "The execution time [seconds] for rules (concepts/constraints) to show a warning. Can be used as a hint for optimization.",
+              "default" : "5"
+            }
+          },
+          "additionalProperties" : false
+        },
+        "default-plugins" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/$defs/com.buschmais.jqassistant.core.shared.aether.configuration.-plugin",
+            "description" : "The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version."
+          }
+        },
+        "maven" : {
+          "type" : "object",
+          "properties" : {
+            "module" : {
+              "type" : "object",
+              "properties" : {
+                "skip" : {
+                  "type" : "boolean",
+                  "description" : "Skip execution of jQAssistant goals for a module.",
+                  "default" : "false"
+                }
+              },
+              "additionalProperties" : false
+            },
+            "reuse-store" : {
+              "type" : "boolean",
+              "description" : "Re-use store instances across all modules of the Maven reactor. Can be set to false for mitigating problems in specific setups, the jQAssistant Maven plugin will display an according hint when this is required.",
+              "default" : "true"
+            },
+            "use-execution-root-as-project-root" : {
+              "type" : "boolean",
+              "description" : "Force the module where 'mvn' is being executed to be used as root module. The database will be created in this module and contain all information of the reactor. Rules will be read from the rules of this module.",
+              "default" : "true"
+            }
+          },
+          "additionalProperties" : false,
+          "description" : "The Maven configuration."
+        },
+        "plugins" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/$defs/com.buschmais.jqassistant.core.shared.aether.configuration.-plugin",
+            "description" : "The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version."
+          }
+        },
+        "scan" : {
+          "type" : "object",
+          "properties" : {
+            "continue-on-error" : {
+              "type" : "boolean",
+              "description" : "Specifies if a scan shall be continued if an error is encountered.",
+              "default" : "false"
+            },
+            "include" : {
+              "type" : "object",
+              "properties" : {
+                "files" : {
+                  "description" : "The files to include.",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "description" : "The files to include."
+                  }
+                },
+                "urls" : {
+                  "description" : "The URLs to include.",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "description" : "The URLs to include."
+                  }
+                }
+              },
+              "additionalProperties" : false,
+              "description" : "The items to include for scanning."
+            },
+            "properties" : {
+              "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_",
+              "description" : "The properties to configure scanner plugins. The supported properties are plugin specific."
+            },
+            "reset" : {
+              "type" : "boolean",
+              "description" : "Indicates whether to initially reset the store (i.e. clear all nodes and relationships) before scanning."
+            }
+          },
+          "additionalProperties" : false
+        },
+        "server" : {
+          "type" : "object",
+          "properties" : {
+            "daemon" : {
+              "type" : "boolean",
+              "description" : "Run the server as daemon.",
+              "default" : "false"
+            },
+            "open-browser" : {
+              "type" : "boolean",
+              "description" : "Open server URL in browser.",
+              "default" : "false"
+            }
+          },
+          "additionalProperties" : false
+        },
+        "skip" : {
+          "type" : "boolean",
+          "description" : "Skip execution of jQAssistant tasks/goals.",
+          "default" : "false"
+        },
+        "store" : {
+          "type" : "object",
+          "properties" : {
+            "auto-commit-threshold" : {
+              "type" : "integer",
+              "description" : "The threshold before auto-committing a transaction when creating/deleting nodes."
+            },
+            "embedded" : {
+              "type" : "object",
+              "properties" : {
+                "bolt-port" : {
+                  "type" : "integer",
+                  "default" : "7687"
+                },
+                "connector-enabled" : {
+                  "type" : "boolean",
+                  "default" : "false"
+                },
+                "http-port" : {
+                  "type" : "integer",
+                  "default" : "7474"
+                },
+                "listen-address" : {
+                  "type" : "string",
+                  "default" : "localhost"
+                },
+                "neo4j-plugins" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/$defs/com.buschmais.jqassistant.core.shared.aether.configuration.-plugin",
+                    "description" : "The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version."
+                  }
+                }
+              },
+              "additionalProperties" : false,
+              "description" : "Configuration of the embedded store."
+            },
+            "remote" : {
+              "type" : "object",
+              "properties" : {
+                "encryption" : {
+                  "type" : "boolean",
+                  "description" : "Activate encryption level for 'bolt' connections.",
+                  "default" : "false"
+                },
+                "password" : {
+                  "type" : "string",
+                  "description" : "The password 'bolt' connections."
+                },
+                "properties" : {
+                  "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_",
+                  "description" : "Additional properties to be passed to the store."
+                },
+                "trust-certificate" : {
+                  "type" : "string",
+                  "description" : "The file containing the custom CA certificate for trust strategy."
+                },
+                "trust-strategy" : {
+                  "type" : "string",
+                  "description" : "The trust strategy for 'bolt' connections: trustAllCertificates (default), trustCustomCaSignedCertificates or trustSystemCaSignedCertificates."
+                },
+                "username" : {
+                  "type" : "string",
+                  "description" : "The username 'bolt' connections."
+                }
+              },
+              "additionalProperties" : false,
+              "description" : "Configuration of the remote store."
+            },
+            "uri" : {
+              "type" : "string",
+              "description" : "URI of the database to connect to. Supported URI schemes are 'file' for embedded databases and 'bolt' for connecting to a running Neo4j instance (3.x+)."
+            }
+          },
+          "additionalProperties" : false
+        }
+      },
+      "additionalProperties" : false
+    },
+    "java.util.-map_java.lang.-string.java.lang.-string_" : {
+      "type" : "object",
+      "patternProperties" : {
+        "^.*$" : {
+          "type" : "string"
+        }
+      },
+      "additionalProperties" : false
+    }
+  },
+  "type" : "object",
+  "properties" : {
+    "jqassistant" : {
+      "$ref" : "#/$defs/com.buschmais.jqassistant.scm.maven.configuration.-maven-configuration"
+    }
+  },
+  "patternProperties" : {
+    "^%.*$" : {
+      "type" : "object",
+      "properties" : {
+        "jqassistant" : {
+          "$ref" : "#/$defs/com.buschmais.jqassistant.scm.maven.configuration.-maven-configuration"
+        }
+      }
+    }
+  }
+}
