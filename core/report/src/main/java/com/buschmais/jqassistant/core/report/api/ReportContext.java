@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.report.api.configuration.Build;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -15,6 +16,13 @@ public interface ReportContext {
     String JQASSISTANT_REPORT_ARCHIVE = "jqassistant-report.zip";
 
     String REPORT_DIRECTORY = "report";
+
+    /**
+     * Return the {@link Build}.
+     *
+     * @return The {@link Build}.
+     */
+    Build getBuild();
 
     /**
      * Return the plugin {@link ClassLoader}.
@@ -33,7 +41,7 @@ public interface ReportContext {
      * written to.
      *
      * @param path
-     *            The path.
+     *     The path.
      * @return The report directory.
      */
     File getReportDirectory(String path);
@@ -49,15 +57,15 @@ public interface ReportContext {
      * Add a report for a {@link ExecutableRule}.
      *
      * @param <E>
-     *            The type of the {@link ExecutableRule}.
+     *     The type of the {@link ExecutableRule}.
      * @param rule
-     *            The rule.
+     *     The rule.
      * @param reportType
-     *            The {@link ReportType}.
+     *     The {@link ReportType}.
      * @param url
-     *            The {@link URL}.
+     *     The {@link URL}.
      * @throws ReportException
-     *             If a problem occurs.
+     *     If a problem occurs.
      */
     <E extends ExecutableRule<?>> Report<E> addReport(String label, E rule, ReportType reportType, URL url);
 
@@ -65,12 +73,12 @@ public interface ReportContext {
      * Return all {@link Report}s for the given {@link ExecutableRule}.
      *
      * @param <E>
-     *            The type of the {@link ExecutableRule}.
+     *     The type of the {@link ExecutableRule}.
      * @param rule
-     *            The {@link ExecutableRule}.
+     *     The {@link ExecutableRule}.
      * @return The {@link List} of available {@link Report}s.
      * @throws ReportException
-     *             If a problem occurs.
+     *     If a problem occurs.
      */
     <E extends ExecutableRule<?>> List<Report<?>> getReports(E rule);
 
@@ -85,14 +93,15 @@ public interface ReportContext {
      * Defines supported report types.
      */
     enum ReportType {
-        IMAGE, LINK;
+        IMAGE,
+        LINK;
     }
 
     /**
      * Defines the interface for a report created by a plugin.
      *
      * @param <E>
-     *            The type of the {@link ExecutableRule} the report refers to.
+     *     The type of the {@link ExecutableRule} the report refers to.
      */
     interface Report<E extends ExecutableRule<?>> {
 

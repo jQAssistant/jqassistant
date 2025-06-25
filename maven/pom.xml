@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>parent</artifactId>
-        <version>2.7.0-SNAPSHOT</version>
+        <version>2.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>jqassistant-maven-plugin</artifactId>
@@ -45,6 +45,7 @@
                                 <include>analyze/*/pom.xml</include>
                                 <include>cli/*/pom.xml</include>
                                 <include>configuration/*/pom.xml</include>
+                                <include>context/*/pom.xml</include>
                                 <include>multimodule/*/*/pom.xml</include>
                                 <include>neo4j-plugin/pom.xml</include>
                                 <include>plugin/pom.xml</include>
@@ -193,6 +194,22 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin><groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.15.1</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                            <goal>helpmojo</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
             </plugin>
         </plugins>
     </build>

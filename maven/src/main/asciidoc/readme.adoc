@@ -150,8 +150,9 @@ The configuration furthermore supports profiles, e.g. for `mvn verify -Pcustom-p
                                   skip: true
                             ]]></yaml>
                             <properties>
-                              <jqassistant.skip>true</jqassistant.skip>
+                              <jqassistant.skip>false</jqassistant.skip>
                             </properties>
+                            <skip>false</skip>
                             -->
                         </configuration>
                     </execution>
@@ -198,6 +199,9 @@ properties::
 * embedded configuration using properties
 * can be used as an alternative to the .jqassistant.yml file, e.g. to provide the pom.xml as a parent with a pre-defined jQAssistant configuration
 
+skip::
+* skip the execution (without loading the full configuration)
+* default: `false`
 
 If multiple, partially overlapping configurations are provided then the following priorities apply (from lowest to highest):
 

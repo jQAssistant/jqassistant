@@ -43,7 +43,7 @@
     </concept>
 
     <constraint id="junit:IgnoreWithoutMessage">
-        <description>All @Ignore annotations must provide a message.</description>
+        <description>All @Ignore and @Disabled annotations must provide a message.</description>
         <cypher><![CDATA[
             MATCH
               (e)-[:ANNOTATED_BY]->(ignore:Annotation)-[:OF_TYPE]->(ignoreType:Type)

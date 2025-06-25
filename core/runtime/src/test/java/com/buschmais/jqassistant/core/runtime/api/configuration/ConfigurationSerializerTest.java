@@ -1,20 +1,25 @@
 package com.buschmais.jqassistant.core.runtime.api.configuration;
 
+import java.time.ZonedDateTime;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.core.report.api.configuration.Build;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationSerializer;
 
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.source.yaml.YamlConfigSource;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoaderTest.USER_HOME;
 import static com.buschmais.jqassistant.core.runtime.api.configuration.ConfigurationMappingLoaderTest.WORKING_DIRECTORY;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.eclipse.microprofile.config.spi.ConfigSource.DEFAULT_ORDINAL;
 
 /**
  * Tests for the {@link ConfigurationSerializer}.
@@ -23,6 +28,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ConfigurationSerializerTest {
 
     private final ConfigurationSerializer<Configuration> configurationSerializer = new ConfigurationSerializer<>();
+
+    public static final ConfigSource BUILD_CONFIG_SOURCE = new ConfigurationBuilder("Build", DEFAULT_ORDINAL).with(Build.class, Build.NAME, "Test")
+        .with(Build.class, Build.TIMESTAMP, ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
+        .build();
 
     @Test
     void types() {
@@ -35,7 +44,7 @@ class ConfigurationSerializerTest {
         properties.put("jqassistant.plugins[0].version", "1.0.0");
         PropertiesConfigSource configSource = new PropertiesConfigSource(properties, "test");
         Configuration configuration = ConfigurationMappingLoader.builder(Configuration.class)
-            .load(configSource);
+            .load(BUILD_CONFIG_SOURCE, configSource);
 
         String yaml = toYaml(configuration);
 
@@ -51,7 +60,7 @@ class ConfigurationSerializerTest {
         Configuration configuration = ConfigurationMappingLoader.builder(Configuration.class)
             .withUserHome(USER_HOME)
             .withWorkingDirectory(WORKING_DIRECTORY)
-            .load();
+            .load(BUILD_CONFIG_SOURCE);
 
         String yaml = toYaml(configuration);
 
@@ -60,10 +69,8 @@ class ConfigurationSerializerTest {
         Configuration restoredConfiguration = ConfigurationMappingLoader.builder(Configuration.class)
             .load(yamlConfigSource);
         Scan scan = restoredConfiguration.scan();
-        Assertions.assertThat(scan.properties())
-            .containsEntry("user-value", "default");
-        Assertions.assertThat(scan.properties())
-            .containsEntry("overwritten-user-value", "overwritten");
+        assertThat(scan.properties()).containsEntry("user-value", "default");
+        assertThat(scan.properties()).containsEntry("overwritten-user-value", "overwritten");
     }
 
     private String toYaml(Configuration configuration) {

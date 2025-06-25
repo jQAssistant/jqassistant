@@ -9,7 +9,38 @@
     <artifactId>@project.artifactId@.integration.singlemodule.skip</artifactId>
 
     <properties>
-        <jqa.skip>true</jqa.skip>
+        <!-- Overridden by profile yamlConfig -->
+        <jqa.skip>false</jqa.skip>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>pomConfig</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>@project.groupId@</groupId>
+                        <artifactId>@project.artifactId@</artifactId>
+                        <version>@project.version@</version>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>systemProperty</id>
+            <properties>
+                <jqassistant.skip>true</jqassistant.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>yamlConfig</id>
+            <properties>
+                <jqa.skip>true</jqa.skip>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

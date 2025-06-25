@@ -11,6 +11,7 @@ import java.util.zip.ZipInputStream;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
+import com.buschmais.jqassistant.core.report.api.configuration.Build;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -26,12 +27,16 @@ class ReportContextImplTest {
     void archiveReports() throws IOException, ReportException {
         // given
         File reportDirectory = new File("target/report");
-        ReportContext reportContext = new ReportContextImpl(ReportContextImplTest.class.getClassLoader(), mock(Store.class), reportDirectory, reportDirectory);
+        ReportContext reportContext = new ReportContextImpl(mock(Build.class), ReportContextImplTest.class.getClassLoader(), mock(Store.class), reportDirectory,
+            reportDirectory);
         File file = new File(reportContext.getReportDirectory("test-plugin"), "test-report.txt");
         try (FileWriter fileWriter = new FileWriter(file)) {
             IOUtils.write("Test", fileWriter);
         }
-        reportContext.addReport("test", Concept.builder().id("test:Concept").build(), ReportContext.ReportType.LINK, file.toURI().toURL());
+        reportContext.addReport("test", Concept.builder()
+            .id("test:Concept")
+            .build(), ReportContext.ReportType.LINK, file.toURI()
+            .toURL());
 
         // when
         File reportArchive = reportContext.createReportArchive();

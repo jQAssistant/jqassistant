@@ -22,7 +22,12 @@ public class ServerMojo extends AbstractProjectMojo {
     }
 
     @Override
-    protected void aggregate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+    protected void beforeProject(MojoExecutionContext mojoExecutionContext) {
+        // nothing to do here
+    }
+
+    @Override
+    protected void afterProject(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
         withStore(store -> server(mojoExecutionContext, (EmbeddedGraphStore) store), mojoExecutionContext);
     }
 

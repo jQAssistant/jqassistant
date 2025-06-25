@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.scanner.api.ScopeHelper;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A task for listing all available scanner scopes as provided by plugins.
  */
+@Description("Lists all available scanner scopes.")
 public class AvailableScopesTask extends AbstractTask {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AvailableScopesTask.class);
