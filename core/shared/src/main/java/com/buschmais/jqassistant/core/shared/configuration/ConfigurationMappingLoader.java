@@ -238,6 +238,7 @@ public class ConfigurationMappingLoader {
             Map<String, String> filteredProperties = stream(interpolatedConfig.getPropertyNames()
                 .spliterator(), false).filter(property -> property.startsWith(PREFIX))
                 .filter(property -> !ignoreProperties.contains(property))
+                .filter(property -> interpolatedConfig.getRawValue(property) != null)
                 .collect(toMap(property -> property, interpolatedConfig::getRawValue, (s1, s2) -> null, TreeMap::new));
             log.debug("jQAssistant config properties:");
             for (Map.Entry<String, String> entry : filteredProperties.entrySet()) {
