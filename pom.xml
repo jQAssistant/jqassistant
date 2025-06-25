@@ -76,7 +76,8 @@
         <commons-io.version>2.19.0</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
-        <commons-text.version>1.13.1</commons-text.version>
+        <!-- must be synchronized with APOC v5, currently only up to 1.12.0 supported -->
+        <commons-text.version>1.12.0</commons-text.version>
         <guava.version>33.4.8-jre</guava.version>
         <guice.version>7.0.0</guice.version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
@@ -98,11 +99,11 @@
         <model-assert.version>1.1.0</model-assert.version>
         <neo4j_4x.version>4.4.44</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
-        <neo4j_5x.version>2025.04.0</neo4j_5x.version>
+        <neo4j_5x.version>5.26.8</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
-        <neo4j.neo4j-java-driver.version>4.4.18</neo4j.neo4j-java-driver.version>
+        <neo4j.neo4j-java-driver.version>4.4.20</neo4j.neo4j-java-driver.version>
         <neo4j-browser.version>5.24.0</neo4j-browser.version>
         <slf4j.version>2.0.17</slf4j.version>
         <smallrye-config.version>3.10.2</smallrye-config.version>

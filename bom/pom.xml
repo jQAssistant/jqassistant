@@ -169,6 +169,10 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.neo4j</groupId>
+                        <artifactId>neo4j-import-tool</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.neo4j</groupId>
                         <artifactId>neo4j-slf4j-provider</artifactId>
                     </exclusion>
                     <exclusion>
