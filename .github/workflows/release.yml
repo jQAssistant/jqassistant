@@ -36,17 +36,21 @@ on:
         type: boolean
         required: false
         default: false
-      candidate:
-        description: "SDKMAN candidate ID."
-        type: string
-        required: true
-        default: "jqassistant"
-      setDefault:
-        description: "SDKMAN default candidate."
+      sdkmanPublishEnabled:
+        description: "SDKMAN: Publish"
         type: boolean
         required: false
         default: false
-
+      sdkmanCandidate:
+        description: "SDKMAN: candidate ID."
+        type: string
+        required: true
+        default: "jqassistant"
+      sdkmanSetDefault:
+        description: "SDKMAN: default candidate."
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build:
@@ -66,6 +70,7 @@ jobs:
       sonar_token: ${{ secrets.SONAR_TOKEN }}
 
   publish-via-sdkman:
+    if: ${{ github.event.inputs.sdkmanPublish == 'true' }}
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -73,23 +78,21 @@ jobs:
         with:
           repository: sdkman/sdkman-release-action
           path: sdkman-release-action
+      - uses: actions/checkout@v4
+        with:
+          repository: sdkman/sdkman-default-action
+          path: sdkman-default-action
       - uses: ./sdkman-release-action
         with:
-          CANDIDATE: ${{ github.event.inputs.candidate }}
+          CANDIDATE: ${{ github.event.inputs.sdkmanCandidate }}
           VERSION: ${{ github.event.inputs.releaseVersion }}
           URL: https://github.com/jQAssistant/jqassistant/releases/download/${{ github.event.inputs.releaseVersion }}/jqassistant-commandline-neo4jv5-${{ github.event.inputs.releaseVersion }}-distribution.zip
           CONSUMER-KEY: ${{ secrets.SDKMAN_CONSUMER_KEY }}
           CONSUMER-TOKEN: ${{ secrets.SDKMAN_CONSUMER_TOKEN }}
-      - name: defaultRelease
-        if: ${{ github.event.inputs.setDefault == 'true' }}
-        uses: actions/checkout@v4
-        with:
-          repository: sdkman/sdkman-default-action
-          path: sdkman-default-action
-      - if: ${{ github.event.inputs.setDefault == 'true' }}
+      - if: ${{ github.event.inputs.sdkmanSetDefault == 'true' }}
         uses: ./sdkman-default-action
         with:
-          CANDIDATE: ${{ github.event.inputs.candidate }}
+          CANDIDATE: ${{ github.event.inputs.sdkmanCandidate }}
           VERSION: ${{ github.event.inputs.releaseVersion }}
           CONSUMER-KEY: ${{ secrets.SDKMAN_CONSUMER_KEY }}
           CONSUMER-TOKEN: ${{ secrets.SDKMAN_CONSUMER_TOKEN }}
