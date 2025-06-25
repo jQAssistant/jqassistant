@@ -8,7 +8,9 @@ jqassistant:
       neo4j-plugins:
         - group-id: org.neo4j.procedure
           artifact-id: apoc-core
-          classifier: core
+          version: ${neo4j_5x.version}
+        - group-id: org.neo4j.procedure
+          artifact-id: apoc-common
           version: ${neo4j_5x.version}
   analyze:
     rule:
