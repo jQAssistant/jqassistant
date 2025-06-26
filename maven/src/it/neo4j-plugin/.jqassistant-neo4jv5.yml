@@ -7,7 +7,5 @@ jqassistant:
       neo4j-plugins:
         - group-id: org.neo4j.procedure
           artifact-id: apoc-core
-          version: ${jqassistant.store.embedded.neo4j-version}
-        - group-id: org.neo4j.procedure
-          artifact-id: apoc-common
+          classifier: core
           version: ${jqassistant.store.embedded.neo4j-version}
