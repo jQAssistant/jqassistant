@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="http://example.org" xmlns:definedElement="http://example.org/defined" xmlns:undefined="http://example.org/undefined">
+    <undefined:child undefined:attr="value">
+        <definedElement:smallChild >
+            Text
+        </definedElement:smallChild>
+    </undefined:child>
+    <definedElement:element attribute1="attribute1">
+        Element with defined namespace
+    </definedElement:element>
+</root>

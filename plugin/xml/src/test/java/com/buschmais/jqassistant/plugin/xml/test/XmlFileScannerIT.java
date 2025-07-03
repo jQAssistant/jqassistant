@@ -54,6 +54,15 @@ class XmlFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstra
     }
 
     @Test
+    void undefinedNameSpacesXmlFile() {
+        store.beginTransaction();
+        File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/undefinedNamespaces.xml");
+        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
+        //verifyDocument(xmlFileDescriptor);
+        store.commitTransaction();
+    }
+
+    @Test
     void excludeXmlFile() {
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
         FileDescriptor fileDescriptor = getScanner(Map.of("xml.file.exclude", "*.xml")).scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);

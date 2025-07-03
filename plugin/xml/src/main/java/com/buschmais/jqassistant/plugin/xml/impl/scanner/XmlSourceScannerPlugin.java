@@ -24,6 +24,8 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDocumentDescriptor> {
 
+    public static final String PROPERTY_NAMESPACE_AWARE = "xml.source.namespace_aware";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlSourceScannerPlugin.class);
 
     private XMLInputFactory inputFactory;
@@ -33,6 +35,12 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
         inputFactory = XMLInputFactory.newInstance();
         inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         inputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
+    }
+
+    @Override
+    protected void configure() {
+        boolean namespaceAware = getBooleanProperty(PROPERTY_NAMESPACE_AWARE, true);
+        inputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, namespaceAware);
     }
 
     @Override
