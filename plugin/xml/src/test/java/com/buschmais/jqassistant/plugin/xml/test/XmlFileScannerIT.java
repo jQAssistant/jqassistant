@@ -11,21 +11,18 @@ import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
+import com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlSourceScannerPlugin;
 
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Tests the generic XML scanner.
  */
 class XmlFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
 
-    /**
-     * @throws java.io.IOException
-     *             If the test fails.
-     */
     @Test
     void validXmlSource() {
         store.beginTransaction();
@@ -33,17 +30,15 @@ class XmlFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstra
         Source source = new StreamSource(xmlFile);
         Scanner scanner = getScanner();
         XmlDocumentDescriptor documentDescriptor = store.create(XmlDocumentDescriptor.class);
-        scanner.getContext().push(XmlDocumentDescriptor.class, documentDescriptor);
+        scanner.getContext()
+            .push(XmlDocumentDescriptor.class, documentDescriptor);
         scanner.scan(source, xmlFile.getAbsolutePath(), DefaultScope.NONE);
-        scanner.getContext().pop(XmlDocumentDescriptor.class);
+        scanner.getContext()
+            .pop(XmlDocumentDescriptor.class);
         verifyDocument(documentDescriptor);
         store.commitTransaction();
     }
 
-    /**
-     * @throws java.io.IOException
-     *             If the test fails.
-     */
     @Test
     void validXmlFile() {
         store.beginTransaction();
@@ -54,11 +49,14 @@ class XmlFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstra
     }
 
     @Test
-    void undefinedNameSpacesXmlFile() {
+    void undefinedNamespacePrefixFile() {
         store.beginTransaction();
-        File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/undefinedNamespaces.xml");
-        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
-        //verifyDocument(xmlFileDescriptor);
+        File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/undefinedNamespacePrefix.xml");
+        XmlFileDescriptor invalidXmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
+        assertThat(invalidXmlFileDescriptor.isXmlWellFormed()).isFalse();
+        XmlFileDescriptor validXmlFileDescriptor = getScanner(Map.of(XmlSourceScannerPlugin.PROPERTY_NAMESPACE_AWARE, "false")).scan(xmlFile,
+            xmlFile.getAbsolutePath(), DefaultScope.NONE);
+        assertThat(validXmlFileDescriptor.isXmlWellFormed()).isTrue();
         store.commitTransaction();
     }
 
@@ -101,7 +99,8 @@ class XmlFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstra
     }
 
     private void verifyChildElement(XmlElementDescriptor childElement) {
-        assertThat(childElement.getDeclaredNamespaces().size()).isEqualTo(0);
+        assertThat(childElement.getDeclaredNamespaces()
+            .size()).isEqualTo(0);
         assertThat(childElement.getLineNumber()).isEqualTo(3);
         List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
         assertThat(childElementAttributes.size()).isEqualTo(1);
@@ -115,9 +114,11 @@ class XmlFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstra
     }
 
     private void verifyExtraElement(XmlElementDescriptor childElement) {
-        assertThat(childElement.getDeclaredNamespaces().size()).isEqualTo(1);
+        assertThat(childElement.getDeclaredNamespaces()
+            .size()).isEqualTo(1);
         assertThat(childElement.getLineNumber()).isEqualTo(10);
-        XmlNamespaceDescriptor extraNamespace = childElement.getDeclaredNamespaces().get(0);
+        XmlNamespaceDescriptor extraNamespace = childElement.getDeclaredNamespaces()
+            .get(0);
         assertThat(extraNamespace.getUri()).isEqualTo("http://jqassistant.org/plugin/xml/test/extra");
         assertThat(extraNamespace.getPrefix()).isEqualTo("extra");
         List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
