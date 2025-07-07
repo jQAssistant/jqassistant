@@ -40,10 +40,6 @@
         <tag>parent-2.4.0-M1</tag>
     </scm>
 
-    <prerequisites>
-        <maven>${maven.version}</maven>
-    </prerequisites>
-
     <developers>
         <developer>
             <id>dirk-mahler</id>
@@ -484,11 +480,7 @@
                         <failBuildOnCVSS>7</failBuildOnCVSS>
                         -->
                         <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
-                        <formats>
-                            <format>CSV</format>
-                            <format>XML</format>
-                            <format>HTML</format>
-                        </formats>
+                        <format>CSV,XML,HTML</format>
                     </configuration>
                 </plugin>
             </plugins>
