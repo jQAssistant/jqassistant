@@ -24,6 +24,8 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDocumentDescriptor> {
 
+    public static final String PROPERTY_NAMESPACE_AWARE = "xml.source.namespace-aware";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlSourceScannerPlugin.class);
 
     private XMLInputFactory inputFactory;
@@ -33,6 +35,12 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
         inputFactory = XMLInputFactory.newInstance();
         inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         inputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
+    }
+
+    @Override
+    protected void configure() {
+        boolean namespaceAware = getBooleanProperty(PROPERTY_NAMESPACE_AWARE, true);
+        inputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, namespaceAware);
     }
 
     @Override
@@ -55,7 +63,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
                 int eventType = streamReader.getEventType();
                 switch (eventType) {
                 case XMLStreamConstants.START_DOCUMENT:
-                    documentDescriptor = startDocument(streamReader, documentDescriptor);
+                    startDocument(streamReader, documentDescriptor);
                     break;
                 case XMLStreamConstants.START_ELEMENT:
                     XmlElementDescriptor childElement = startElement(streamReader, documentDescriptor, parentElement, namespaceMappings, store);
@@ -89,7 +97,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
     }
 
     private <X extends SiblingDescriptor & XmlDescriptor> void addSibling(XmlElementDescriptor parentElement, X child,
-            Map<XmlElementDescriptor, SiblingDescriptor> siblings) {
+        Map<XmlElementDescriptor, SiblingDescriptor> siblings) {
         if (child != null) {
             SiblingDescriptor lastSibling = siblings.get(parentElement);
             if (lastSibling == null) {
@@ -103,16 +111,16 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
         }
     }
 
-    private XmlDocumentDescriptor startDocument(XMLStreamReader streamReader, XmlDocumentDescriptor documentDescriptor) {
+    private void startDocument(XMLStreamReader streamReader, XmlDocumentDescriptor documentDescriptor) {
         documentDescriptor.setXmlVersion(streamReader.getVersion());
         documentDescriptor.setCharacterEncodingScheme(streamReader.getCharacterEncodingScheme());
         documentDescriptor.setStandalone(streamReader.isStandalone());
-        documentDescriptor.setLineNumber(streamReader.getLocation().getLineNumber());
-        return documentDescriptor;
+        documentDescriptor.setLineNumber(streamReader.getLocation()
+            .getLineNumber());
     }
 
     private XmlElementDescriptor startElement(XMLStreamReader streamReader, XmlDocumentDescriptor documentDescriptor, XmlElementDescriptor parentElement,
-            Map<String, XmlNamespaceDescriptor> namespaceMappings, Store store) {
+        Map<String, XmlNamespaceDescriptor> namespaceMappings, Store store) {
         XmlElementDescriptor elementDescriptor = store.create(XmlElementDescriptor.class);
         if (parentElement == null) {
             documentDescriptor.setRootElement(elementDescriptor);
@@ -129,7 +137,8 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
                 namespaceMappings.put(prefix, namespaceDescriptor);
             }
             namespaceDescriptor.setUri(uri);
-            elementDescriptor.getDeclaredNamespaces().add(namespaceDescriptor);
+            elementDescriptor.getDeclaredNamespaces()
+                .add(namespaceDescriptor);
         }
         setName(elementDescriptor, streamReader.getLocalName(), streamReader.getPrefix(), namespaceMappings);
 
@@ -137,16 +146,18 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             XmlAttributeDescriptor attributeDescriptor = store.create(XmlAttributeDescriptor.class);
             setName(attributeDescriptor, streamReader.getAttributeLocalName(i), streamReader.getAttributePrefix(i), namespaceMappings);
             attributeDescriptor.setValue(streamReader.getAttributeValue(i));
-            elementDescriptor.getAttributes().add(attributeDescriptor);
+            elementDescriptor.getAttributes()
+                .add(attributeDescriptor);
         }
 
-        elementDescriptor.setLineNumber(streamReader.getLocation().getLineNumber());
+        elementDescriptor.setLineNumber(streamReader.getLocation()
+            .getLineNumber());
 
         return elementDescriptor;
     }
 
     private XmlElementDescriptor endElement(XMLStreamReader streamReader, XmlElementDescriptor parentElement,
-            Map<String, XmlNamespaceDescriptor> namespaceMappings) {
+        Map<String, XmlNamespaceDescriptor> namespaceMappings) {
         for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
             String prefix = streamReader.getNamespacePrefix(i);
             if (isNotEmpty(prefix)) {
@@ -164,8 +175,10 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             if (isNotEmpty(text)) {
                 T textDescriptor = store.create(type);
                 textDescriptor.setValue(text);
-                textDescriptor.setLineNumber(streamReader.getLocation().getLineNumber());
-                parentElement.getCharacters().add(textDescriptor);
+                textDescriptor.setLineNumber(streamReader.getLocation()
+                    .getLineNumber());
+                parentElement.getCharacters()
+                    .add(textDescriptor);
                 return textDescriptor;
             }
         }

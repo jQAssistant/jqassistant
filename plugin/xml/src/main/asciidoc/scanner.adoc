@@ -28,8 +28,24 @@ The files to scan may be configured using include and exclude filters.
 == Scanner for XML sources
 Imports all XML documents in a generic representation, e.g. namespaces, elements, attributes and text.
 
-This plugin is internally used by other plugins (e.g. <<XmlFileScanner>>) to create an alternative native structure of
+This plugin is used by other plugins (e.g. <<XmlFileScanner>>) to create an alternative native structure of
 XML documents.
+
+=== Configuration
+
+.Configuration properties
+[options="header", cols="3"]
+|====
+| Property
+| Description
+| Default
+
+| `xml.source.namespace-aware`
+| Determines if the XML parser shall be aware of namespace. Can be set to `false` if scanned XML documents use undeclared namespace prefixes.
+| `true`
+
+|====
+
 
 === :Xml:Document
 Represents an XML document.
