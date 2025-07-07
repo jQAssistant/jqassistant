@@ -2249,7 +2249,7 @@ LIMIT 20</code></pre>
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;project&gt;</span>
     <span class="tag">&lt;properties&gt;</span>
         <span class="comment">&lt;!-- Define your desired jQAssistant version here --&gt;</span>
-        <span class="tag">&lt;jqassistant.version&gt;</span>2.7.0<span class="tag">&lt;/jqassistant.version&gt;</span>
+        <span class="tag">&lt;jqassistant.version&gt;</span>2.7.1<span class="tag">&lt;/jqassistant.version&gt;</span>
     <span class="tag">&lt;/properties&gt;</span>
     <span class="tag">&lt;build&gt;</span>
         <span class="tag">&lt;plugins&gt;</span>
@@ -6653,7 +6653,7 @@ It works in a similar way like <code>java.lang.SuppressWarnings</code> provided 
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
   <span class="tag">&lt;groupId&gt;</span>com.buschmais.jqassistant<span class="tag">&lt;/groupId&gt;</span>
   <span class="tag">&lt;artifactId&gt;</span>manual<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>2.7.0<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;version&gt;</span>2.7.1<span class="tag">&lt;/version&gt;</span>
   <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
@@ -12112,16 +12112,41 @@ The files to scan may be configured using include and exclude filters.</p>
 <p>Imports all XML documents in a generic representation, e.g. namespaces, elements, attributes and text.</p>
 </div>
 <div class="paragraph">
-<p>This plugin is internally used by other plugins (e.g. <a href="#XmlFileScanner">Scanner for XML files</a>) to create an alternative native structure of
+<p>This plugin is used by other plugins (e.g. <a href="#XmlFileScanner">Scanner for XML files</a>) to create an alternative native structure of
 XML documents.</p>
 </div>
 <div class="sect4">
-<h5 id="_xmldocument"><a class="link" href="#_xmldocument">7.7.2.1. :Xml:Document</a></h5>
+<h5 id="_configuration_11"><a class="link" href="#_configuration_11">7.7.2.1. Configuration</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 110. Configuration properties</caption>
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 33.3333%;"/>
+<col style="width: 33.3334%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>xml.source.namespace-aware</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Determines if the XML parser shall be aware of namespace. Can be set to <code>false</code> if scanned XML documents use undeclared namespace prefixes.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_xmldocument"><a class="link" href="#_xmldocument">7.7.2.2. :Xml:Document</a></h5>
 <div class="paragraph">
 <p>Represents an XML document.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 110. Properties of :Xml:Document</caption>
+<caption class="title">Table 111. Properties of :Xml:Document</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -12156,7 +12181,7 @@ XML documents.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 111. Relations of :Xml:Document</caption>
+<caption class="title">Table 112. Relations of :Xml:Document</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -12182,12 +12207,12 @@ XML documents.</p>
 </table>
 </div>
 <div class="sect4">
-<h5 id=":Xml:Element"><a class="link" href="#:Xml:Element">7.7.2.2. :Xml:Element</a></h5>
+<h5 id=":Xml:Element"><a class="link" href="#:Xml:Element">7.7.2.3. :Xml:Element</a></h5>
 <div class="paragraph">
 <p>An XML element.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 112. Properties of :Xml:Element</caption>
+<caption class="title">Table 113. Properties of :Xml:Element</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -12210,7 +12235,7 @@ XML documents.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 113. Relations of :Xml:Element</caption>
+<caption class="title">Table 114. Relations of :Xml:Element</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -12260,12 +12285,12 @@ XML documents.</p>
 </table>
 </div>
 <div class="sect4">
-<h5 id=":Xml:Namespace"><a class="link" href="#:Xml:Namespace">7.7.2.3. :Xml:Namespace</a></h5>
+<h5 id=":Xml:Namespace"><a class="link" href="#:Xml:Namespace">7.7.2.4. :Xml:Namespace</a></h5>
 <div class="paragraph">
 <p>A XML namespace declaration.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 114. Properties of :Xml:Namespace</caption>
+<caption class="title">Table 115. Properties of :Xml:Namespace</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -12289,12 +12314,12 @@ XML documents.</p>
 </table>
 </div>
 <div class="sect4">
-<h5 id=":Xml:Attribute"><a class="link" href="#:Xml:Attribute">7.7.2.4. :Xml:Attribute</a></h5>
+<h5 id=":Xml:Attribute"><a class="link" href="#:Xml:Attribute">7.7.2.5. :Xml:Attribute</a></h5>
 <div class="paragraph">
 <p>An XML attribute.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 115. Properties of :Xml:Attribute</caption>
+<caption class="title">Table 116. Properties of :Xml:Attribute</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -12317,7 +12342,7 @@ XML documents.</p>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 116. Relations of :Xml:Attribute</caption>
+<caption class="title">Table 117. Relations of :Xml:Attribute</caption>
 <colgroup>
 <col style="width: 25%;"/>
 <col style="width: 25%;"/>
@@ -12343,12 +12368,12 @@ XML documents.</p>
 </table>
 </div>
 <div class="sect4">
-<h5 id=":Xml:Text"><a class="link" href="#:Xml:Text">7.7.2.5. :Xml:Text</a></h5>
+<h5 id=":Xml:Text"><a class="link" href="#:Xml:Text">7.7.2.6. :Xml:Text</a></h5>
 <div class="paragraph">
 <p>A text value of an XML element.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 117. Properties of :Xml:Text</caption>
+<caption class="title">Table 118. Properties of :Xml:Text</caption>
 <colgroup>
 <col style="width: 50%;"/>
 <col style="width: 50%;"/>
@@ -12464,7 +12489,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-08 16:41:06 UTC
+Last updated 2025-07-07 13:13:37 UTC
 </div>
 </div>
 </body>
