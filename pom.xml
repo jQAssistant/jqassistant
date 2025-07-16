@@ -478,6 +478,10 @@
                         <failBuildOnCVSS>7</failBuildOnCVSS>
                         -->
                         <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                        <formats>
+                            <format>XML</format>
+                            <format>HTML</format>
+                        </formats>
                     </configuration>
                 </plugin>
             </plugins>
