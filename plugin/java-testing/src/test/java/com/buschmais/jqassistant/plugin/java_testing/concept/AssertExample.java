@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.java_testing.concept;
 
 import org.assertj.core.api.Assertions;
+import org.camunda.bpm.engine.repository.ProcessDefinition;
+import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests;
 import org.mockito.BDDMockito;
 import org.xmlunit.assertj.XmlAssert;
 
@@ -29,4 +31,10 @@ public class AssertExample {
     void bddMockitoThenShouldExampleMethod() {
         BDDMockito.then(mock(Object.class)).shouldHaveNoInteractions();
     }
+
+    void camundaBpmnAssertExampleMethod() {
+        ProcessDefinition processDefinition = mock(ProcessDefinition.class);
+        BpmnAwareTests.assertThat(processDefinition).hasActiveInstances(0);
+    }
+
 }

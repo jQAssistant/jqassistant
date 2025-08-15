@@ -90,6 +90,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <maven.version>3.6.3</maven.version>
         <mockito.version>5.18.0</mockito.version>
+        <camunda-bpm-assert.version>7.23.0</camunda-bpm-assert.version>
         <system-lambda.version>1.2.1</system-lambda.version>
         <model-assert.version>1.1.0</model-assert.version>
         <neo4j_4x.version>4.4.44</neo4j_4x.version>

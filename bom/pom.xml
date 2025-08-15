@@ -486,6 +486,18 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-bpm-assert</artifactId>
+                <version>${camunda-bpm-assert.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-engine</artifactId>
+                <version>${camunda-bpm-assert.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.github.stefanbirkner</groupId>
                 <artifactId>system-lambda</artifactId>
                 <version>${system-lambda.version}</version>
