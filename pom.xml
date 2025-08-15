@@ -64,7 +64,7 @@
         <!-- library versions -->
         <assertj.version>3.27.4</assertj.version>
         <asm.version>9.8</asm.version>
-        <caffeine.version>3.2.1</caffeine.version>
+        <caffeine.version>3.2.2</caffeine.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-codec.version>1.19.0</commons-codec.version>
         <commons-collections.version>3.2.2</commons-collections.version>
