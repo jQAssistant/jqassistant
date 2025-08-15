@@ -16,6 +16,10 @@
         analyze Java test related artifacts.
     </description>
 
+    <properties>
+        <camunda-bpm-assert.version>7.23.0</camunda-bpm-assert.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -51,6 +55,23 @@
             </plugin>
         </plugins>
     </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-bpm-assert</artifactId>
+                <version>${camunda-bpm-assert.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-engine</artifactId>
+                <version>${camunda-bpm-assert.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
