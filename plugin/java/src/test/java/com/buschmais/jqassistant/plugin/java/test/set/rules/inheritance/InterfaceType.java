@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance;
 
-public interface InterfaceType {
+public interface InterfaceType<T> {
 
     void method();
 
@@ -8,4 +8,5 @@ public interface InterfaceType {
 
     void subClassMethod();
 
+    void genericMethod(T t);
 }
