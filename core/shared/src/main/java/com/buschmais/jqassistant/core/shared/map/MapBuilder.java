@@ -3,19 +3,24 @@ package com.buschmais.jqassistant.core.shared.map;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+
 import static java.util.Collections.unmodifiableMap;
 
 /**
  * Utility class for building maps using a fluent API.
  *
  * @param <K>
- *            The key type.
+ *     The key type.
  * @param <V>
- *            The value Type.
+ *     The value Type.
+ * @deprecated Use Map.of instead.
  */
+@Deprecated(forRemoval = true)
+@ToBeRemovedInVersion(major = 3, minor = 0)
 public class MapBuilder<K, V> {
 
-    private Map<K, V> map = new HashMap<>();
+    private final Map<K, V> map = new HashMap<>();
 
     /**
      * Private constructor.
@@ -36,9 +41,9 @@ public class MapBuilder<K, V> {
      * Add an entry.
      *
      * @param key
-     *            The key.
+     *     The key.
      * @param value
-     *            The value.
+     *     The value.
      * @return The map builder.
      */
     public MapBuilder<K, V> entry(K key, V value) {
