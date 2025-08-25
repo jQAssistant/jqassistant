@@ -97,8 +97,7 @@
     </concept>
 
     <concept id="java:MethodOverrides">
-        <description>Provides a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
-            one from a super type.
+        <description>Provides a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.
         </description>
         <cypher><![CDATA[
             MATCH
@@ -115,7 +114,7 @@
         <providesConcept refId="java:MethodOverrides"/>
         <requiresConcept refId="java:MemberInheritedFrom"/>
         <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
-            one from a super type by raw method signature).
+            one from a super type using the same raw method signature).
         </description>
         <cypher><![CDATA[
             MATCH
@@ -152,8 +151,8 @@
     <concept id="java:MethodOverridesByGenericParameterBinding">
         <providesConcept refId="java:MethodOverrides"/>
         <requiresConcept refId="java:MethodOverridesByRawSignature"/>
-        <description>Creates a relationship OVERRIDES between a "Method" labeled nodes if a method overrides another
-            one from a super type by binding generic type parameters.
+        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
+            one from a super type with bound generic type parameters (e.g. "class SubType extends SuperType&lt;String&gt;").
         </description>
         <cypher><![CDATA[
             MATCH

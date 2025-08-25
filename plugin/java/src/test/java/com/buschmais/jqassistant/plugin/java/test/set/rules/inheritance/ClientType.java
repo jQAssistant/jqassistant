@@ -4,7 +4,7 @@ public class ClientType {
 
     private SubClassType subClassType = new SubClassType();
 
-    private AbstractClassType abstractClassType = subClassType;
+    private AbstractClassType<String> abstractClassType = subClassType;
 
     private InterfaceType<String> interfaceType = subClassType;
 
