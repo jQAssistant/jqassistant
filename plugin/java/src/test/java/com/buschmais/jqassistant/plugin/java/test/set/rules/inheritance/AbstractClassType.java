@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance;
 
-public abstract class AbstractClassType implements InterfaceType {
+public abstract class AbstractClassType<T> implements InterfaceType<T> {
 
     protected int abstractClassField;
 
