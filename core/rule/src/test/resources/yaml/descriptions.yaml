@@ -1,3 +1,8 @@
+groups:
+  - id: "test:WithoutDescription"
+  - id: "test:WithDescription"
+    description: "  Cal took a long, deep breath, struggling to control his own emotions.  "
+
 concepts:
   - id: "test:WithoutDescription"
     source: |
