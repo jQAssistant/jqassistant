@@ -16,9 +16,6 @@
     </xs:element>
 
     <xs:complexType name="referencableType" abstract="true">
-        <xs:sequence>
-            <xs:element name="description" type="xs:string" minOccurs="0"/>
-        </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
     </xs:complexType>
 
@@ -149,6 +146,7 @@
                         maxOccurs="unbounded"/>
             <xs:element name="requiresParameter" type="tns:parameterType" minOccurs="0"
                         maxOccurs="unbounded"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
             <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
             <xs:element name="transactional" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:choice minOccurs="0">
@@ -187,6 +185,7 @@
         <xs:complexContent>
             <xs:extension base="tns:severityRuleType">
                 <xs:sequence>
+                    <xs:element name="description" type="xs:string" minOccurs="0"/>
                     <xs:element name="includeConcept" type="tns:includeConceptType" minOccurs="0"
                                 maxOccurs="unbounded"/>
                     <xs:element name="includeConstraint" type="tns:includedReferenceType" minOccurs="0"
