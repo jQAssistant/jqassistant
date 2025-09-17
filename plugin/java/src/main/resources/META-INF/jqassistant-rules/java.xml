@@ -97,7 +97,7 @@
     </concept>
 
     <concept id="java:MethodOverrides">
-        <description>Provides a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.
+        <description>Abstract concept providing a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.
         </description>
         <cypher><![CDATA[
             MATCH
