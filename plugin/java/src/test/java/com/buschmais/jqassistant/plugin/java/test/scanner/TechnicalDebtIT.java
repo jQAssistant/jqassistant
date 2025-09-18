@@ -8,25 +8,43 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.Tech
 
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TechnicalDebtIT extends AbstractJavaPluginIT {
 
     @Test
-    void technicalDebtAnnotationTest() throws RuleException {
-        scanClasses(TechnicalDebtExample.class); //
-        Result<Constraint> constraintResult = validateConstraint("java:TechnicalDebtTest"); // simples Constraint failed mit technicalDebt Klasse, succeeded aber mit Suppress-Klasse
-        assertThat(constraintResult.getStatus()).isEqualTo(SUCCESS);
-/*
+    void technicalDebtAnnotationTest() throws RuleException { // priority as Priority, type as Type, memberName as Member, description as Description, issue as Issue
+        scanClasses(TechnicalDebtExample.class);
+        Result<Constraint> constraintResult = validateConstraint("java:TechnicalDebt");
+        assertThat(constraintResult.getStatus()).isEqualTo(FAILURE);
         store.beginTransaction();
-        assertThat(constraintResult.getRows().get(0).getColumns().get("Priority").equals("LOW"));
-        assertThat(constraintResult.getRows().size()).isEqualTo(2);
-        System.out.println( constraintResult.getRows().get(0).getColumns().get("issue").toString());
-        assertThat(constraintResult.getRows().get(0).getColumns().get("value").equals("technicalDebt:Method"));
+
+        assertThat(constraintResult.getRows().get(0).getColumns().get("Priority").getLabel()).isEqualTo("0");
+        assertThat(constraintResult.getRows().get(0).getColumns().get("Type").getLabel()).isEqualTo("com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample");
+        assertThat(constraintResult.getRows().get(0).getColumns().get("Member").getLabel()).isEqualTo("debtField");
+        assertThat(constraintResult.getRows().get(0).getColumns().get("Description").getLabel()).isEqualTo("technicalDebt:Field with debts");
+        assertThat(constraintResult.getRows().get(0).getColumns().get("Issue").getLabel()).isEqualTo("859");
+
+        assertThat(constraintResult.getRows().get(1).getColumns().get("Priority").getLabel()).isEqualTo("2");
+        assertThat(constraintResult.getRows().get(1).getColumns().get("Type").getLabel()).isEqualTo("com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample");
+        assertThat(constraintResult.getRows().get(1).getColumns().get("Member").getLabel()).isEqualTo("doSomething");
+        assertThat(constraintResult.getRows().get(1).getColumns().get("Description").getLabel()).isEqualTo("technicalDebt:Method with debts");
+        assertThat(constraintResult.getRows().get(1).getColumns().get("Issue").getLabel()).isEqualTo("3");
+
+        assertThat(constraintResult.getRows().get(2).getColumns().get("Priority").getLabel()).isEqualTo("1");
+        assertThat(constraintResult.getRows().get(2).getColumns().get("Type").getLabel()).isEqualTo("com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample");
+        assertThat(constraintResult.getRows().get(2).getColumns().get("Member").getLabel()).isEqualTo("TechnicalDebtExample");
+        assertThat(constraintResult.getRows().get(2).getColumns().get("Description").getLabel()).isEqualTo("technicalDebt:Class with defaults");
+        assertThat(constraintResult.getRows().get(2).getColumns().get("Issue").getLabel()).isEqualTo("284");
+
+        assertThat(constraintResult.getRows().get(3).getColumns().get("Priority").getLabel()).isEqualTo("1");
+        assertThat(constraintResult.getRows().get(3).getColumns().get("Type").getLabel()).isEqualTo("com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample");
+        assertThat(constraintResult.getRows().get(3).getColumns().get("Member").getLabel()).isEqualTo("");
+        assertThat(constraintResult.getRows().get(3).getColumns().get("Description").getLabel()).isEqualTo("technicalDebt:Class with defaults");
+        assertThat(constraintResult.getRows().get(3).getColumns().get("Issue").getLabel()).isEqualTo("");
+
         store.commitTransaction();
-        assertThat(constraintResult.getStatus()).isEqualTo(SUCCESS);
-*/
     }
 
 }

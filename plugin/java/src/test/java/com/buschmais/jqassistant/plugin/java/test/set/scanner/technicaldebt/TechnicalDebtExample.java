@@ -2,16 +2,16 @@ package com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt;
 
 import com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt;
 
-import static com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt.Priority.LOW;
-import static com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt.Priority.MEDIUM;
+import static com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt.Priority.*;
 
-@TechnicalDebt(value = "technicalDebt:Class", priority = MEDIUM, issue = "Description why this class is a debt.")
+@TechnicalDebt("technicalDebt:Class with defaults")
+@TechnicalDebt(value = "technicalDebt:Class with debts", priority = MEDIUM, issue = "284")
 public class TechnicalDebtExample {
 
-    @TechnicalDebt(value = "technicalDebt:Method", priority = LOW, issue = "Description why this field is problematic.")
+    @TechnicalDebt(value = "technicalDebt:Field with debts", priority = HIGH, issue = "859")
     private String debtField;
 
-    @TechnicalDebt(value = "technicalDebt:Method", priority = LOW, issue = "Description why field is broken.")
+    @TechnicalDebt(value = "technicalDebt:Method with debts", priority = LOW, issue = "3")
     public void doSomething() {
     }
 }
