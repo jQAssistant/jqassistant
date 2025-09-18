@@ -34,6 +34,23 @@ class DescriptionTest {
 
     @ParameterizedTest
     @MethodSource
+    void getIdAndDescriptionOfGroups(String id, String expected) throws RuleException {
+        for (RuleSet ruleSet : ruleSets) {
+            Group group = ruleSet.getGroupsBucket().getById(id);
+            assertThat(group.getDescription()).isEqualTo(expected);
+        }
+    }
+
+    public static Stream<Arguments> getIdAndDescriptionOfGroups() {
+        return Stream.of(
+            Arguments.of("test:WithoutDescription", null),
+            Arguments.of("test:EmptyDescription", ""),
+            Arguments.of("test:WithDescription", "Cal took a long, deep breath, struggling to control his own emotions."),
+            Arguments.of("test:MultiMixEmptyLineDescription", "Cal took a long, deep breath.\n\nHe struggled to control his own emotions."));
+    }
+
+    @ParameterizedTest
+    @MethodSource
     void getIdAndResultOfConcepts(String id, String expected) throws RuleException {
         for (RuleSet ruleSet : ruleSets) {
             Concept concept = ruleSet.getConceptBucket().getById(id);

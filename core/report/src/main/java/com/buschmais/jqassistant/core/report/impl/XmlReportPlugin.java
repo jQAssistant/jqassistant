@@ -45,7 +45,7 @@ public class XmlReportPlugin implements ReportPlugin {
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.7";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.8";
 
     private static final Pattern XML_10_INVALID_CHARACTERS = Pattern.compile("[^\t\r\n -\uD7FF\uE000-�\uD800\uDC00-\uDBFF\uDFFF]");
 
@@ -143,6 +143,13 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeStartElement("group");
             xmlStreamWriter.writeAttribute("id", group.getId());
             xmlStreamWriter.writeAttribute("date", XML_DATE_FORMAT.format(now));
+
+            xmlStreamWriter.writeStartElement("description");
+            if (group.getDescription() != null) {
+                xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(group.getDescription())
+                    .replaceAll(""));
+            }
+            xmlStreamWriter.writeEndElement();
         });
         this.groupBeginTime = now.getTime();
     }

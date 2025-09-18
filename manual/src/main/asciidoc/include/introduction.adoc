@@ -37,7 +37,7 @@ Rules are expressed as Cypher queries and are specified in XML files:
 ----
 <jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd">
 
     <group id="default">
         <includeConstraint refId="my-rules:MyConstraint"/>
