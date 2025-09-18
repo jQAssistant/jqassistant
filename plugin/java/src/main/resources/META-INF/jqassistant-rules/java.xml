@@ -712,7 +712,7 @@
                 when element:Member then element.name
               end as memberName,
               descriptionValue.value as description,
-              case priorityField.name
+              case split(priorityField.signature, " ")[1]
                 when "HIGH" then 0
                 when "MEDIUM" then 1
                 when "LOW" then 2
@@ -720,7 +720,7 @@
               end as priority,
               issueValue.value as issue
             RETURN DISTINCT
-              priority as Priority, type as Type, memberName as Member, description as Description, issue as Issue
+              priority as Priority, type.fqn as Type, memberName as Member, description as Description, issue as Issue
             ORDER BY
               priority, type.fqn, memberName, description, issue
         ]]></cypher>
