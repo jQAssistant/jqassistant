@@ -142,8 +142,14 @@ public class XmlReportPlugin implements ReportPlugin {
         xml(() -> {
             xmlStreamWriter.writeStartElement("group");
             xmlStreamWriter.writeAttribute("id", group.getId());
-            writeElementWithCharacters("description", group.getDescription());
             xmlStreamWriter.writeAttribute("date", XML_DATE_FORMAT.format(now));
+
+            xmlStreamWriter.writeStartElement("description");
+            if (group.getDescription() != null) {
+                xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(group.getDescription())
+                    .replaceAll(""));
+            }
+            xmlStreamWriter.writeEndElement();
         });
         this.groupBeginTime = now.getTime();
     }
