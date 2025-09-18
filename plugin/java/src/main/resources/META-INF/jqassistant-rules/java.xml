@@ -97,9 +97,24 @@
     </concept>
 
     <concept id="java:MethodOverrides">
+        <description>Abstract concept providing a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (method:Java:Method)-[:OVERRIDES]->(superMethod)
+            RETURN
+              count(*) as OverriddenMethods
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:MethodOverridesByRawSignature">
+        <providesConcept refId="java:MethodOverrides"/>
         <requiresConcept refId="java:MemberInheritedFrom"/>
         <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
-            one from a super type.
+            one from a super type using the same raw method signature).
         </description>
         <cypher><![CDATA[
             MATCH
@@ -125,6 +140,28 @@
               MERGE
                 (method)-[:OVERRIDES]->(overriddenMethod)
             } IN TRANSACTIONS
+            RETURN
+              count(*) as OverriddenMethods
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java:MethodOverridesByGenericParameterBinding">
+        <providesConcept refId="java:MethodOverrides"/>
+        <requiresConcept refId="java:MethodOverridesByRawSignature"/>
+        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
+            one from a super type with bound generic type parameters (e.g. "class SubType extends SuperType&lt;String&gt;").
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type),
+              (type)-[:DECLARES]->(syntheticMethod:Method{synthetic:true}),
+              (type)-[:DECLARES]->(overridingMethod:Method),
+              (overriddenMethod)<-[:OVERRIDES]-(syntheticMethod)-[:INVOKES]->(overridingMethod)
+            MERGE
+              (overridingMethod)-[:OVERRIDES]->(overriddenMethod)
             RETURN
               count(*) as OverriddenMethods
         ]]></cypher>
