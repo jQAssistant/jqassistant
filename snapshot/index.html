@@ -6715,6 +6715,12 @@ If not explicitly specified this is the first column specified in the return cla
 <p><a href="#java:MethodOverrides">Concept <code>java:MethodOverrides</code></a></p>
 </li>
 <li>
+<p><a href="#java:MethodOverridesByRawSignature">Concept <code>java:MethodOverridesByRawSignature</code></a></p>
+</li>
+<li>
+<p><a href="#java:MethodOverridesByGenericParameterBinding">Concept <code>java:MethodOverridesByGenericParameterBinding</code></a></p>
+</li>
+<li>
 <p><a href="#java:VirtualInvokes">Concept <code>java:VirtualInvokes</code></a></p>
 </li>
 <li>
@@ -6956,8 +6962,22 @@ RETURN
 <div class="sect4">
 <h5 id="java:MethodOverrides"><a class="link" href="#java:MethodOverrides">Concept <code>java:MethodOverrides</code></a></h5>
 <div class="paragraph">
+<p>Abstract concept providing a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (method:Java:Method)-[:OVERRIDES]-&gt;(superMethod)
+RETURN
+  count(*) as OverriddenMethods</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="java:MethodOverridesByRawSignature"><a class="link" href="#java:MethodOverridesByRawSignature">Concept <code>java:MethodOverridesByRawSignature</code></a></h5>
+<div class="paragraph">
 <p>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
-            one from a super type.</p>
+            one from a super type using the same raw method signature).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -6995,6 +7015,56 @@ RETURN
 <ul>
 <li>
 <p><a href="#java:MemberInheritedFrom">java:MemberInheritedFrom</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:MethodOverrides">java:MethodOverrides</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="java:MethodOverridesByGenericParameterBinding"><a class="link" href="#java:MethodOverridesByGenericParameterBinding">Concept <code>java:MethodOverridesByGenericParameterBinding</code></a></h5>
+<div class="paragraph">
+<p>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
+            one from a super type with bound generic type parameters (e.g. "class SubType extends SuperType&lt;String&gt;").</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type),
+  (type)-[:DECLARES]-&gt;(syntheticMethod:Method{synthetic:true}),
+  (type)-[:DECLARES]-&gt;(overridingMethod:Method),
+  (overriddenMethod)&lt;-[:OVERRIDES]-(syntheticMethod)-[:INVOKES]-&gt;(overridingMethod)
+MERGE
+  (overridingMethod)-[:OVERRIDES]-&gt;(overriddenMethod)
+RETURN
+  count(*) as OverriddenMethods</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:MethodOverridesByRawSignature">java:MethodOverridesByRawSignature</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:MethodOverrides">java:MethodOverrides</a></p>
 </li>
 </ul>
 </div>
@@ -12523,7 +12593,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-09-18 06:26:28 UTC
+Last updated 2025-09-18 14:00:15 UTC
 </div>
 </div>
 </body>
