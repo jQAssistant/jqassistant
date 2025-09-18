@@ -142,7 +142,7 @@ public class XmlReportPlugin implements ReportPlugin {
         xml(() -> {
             xmlStreamWriter.writeStartElement("group");
             xmlStreamWriter.writeAttribute("id", group.getId());
-            xmlStreamWriter.writeAttribute("description", group.getDescription());
+            writeElementWithCharacters("description", group.getDescription());
             xmlStreamWriter.writeAttribute("date", XML_DATE_FORMAT.format(now));
         });
         this.groupBeginTime = now.getTime();

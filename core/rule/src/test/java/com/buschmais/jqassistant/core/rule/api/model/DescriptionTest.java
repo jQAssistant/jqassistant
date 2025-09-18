@@ -44,7 +44,9 @@ class DescriptionTest {
     public static Stream<Arguments> getIdAndDescriptionOfGroups() {
         return Stream.of(
             Arguments.of("test:WithoutDescription", null),
-            Arguments.of("test:WithDescription", "Cal took a long, deep breath, struggling to control his own emotions."));
+            Arguments.of("test:EmptyDescription", ""),
+            Arguments.of("test:WithDescription", "Cal took a long, deep breath, struggling to control his own emotions."),
+            Arguments.of("test:MultiMixEmptyLineDescription", "Cal took a long, deep breath.\n\nHe struggled to control his own emotions."));
     }
 
     @ParameterizedTest

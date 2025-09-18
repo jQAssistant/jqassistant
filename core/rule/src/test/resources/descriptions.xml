@@ -9,6 +9,18 @@
         <description>Cal took a long, deep breath, struggling to control his own emotions.</description>
     </group>
 
+    <group id="test:EmptyDescription">
+        <description></description>
+    </group>
+
+    <group id="test:MultiMixEmptyLineDescription">
+        <description>
+
+            Cal took a long, deep breath.
+
+            He struggled to control his own emotions.</description>
+    </group>
+
     <concept id="test:WithoutDescription">
         <cypher><![CDATA[
             Cypher Concept

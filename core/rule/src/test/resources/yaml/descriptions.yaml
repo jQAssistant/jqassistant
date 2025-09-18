@@ -1,7 +1,15 @@
 groups:
   - id: "test:WithoutDescription"
+  - id: "test:EmptyDescription"
+    description: ""
   - id: "test:WithDescription"
     description: "  Cal took a long, deep breath, struggling to control his own emotions.  "
+  - id: "test:MultiMixEmptyLineDescription"
+    description: |
+      Cal took a long, deep breath. 
+      
+      He struggled to control his own emotions.  
+      
 
 concepts:
   - id: "test:WithoutDescription"
