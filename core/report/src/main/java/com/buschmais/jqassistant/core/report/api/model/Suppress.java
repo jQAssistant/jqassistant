@@ -14,4 +14,7 @@ public interface Suppress {
     String getSuppressColumn();
     void setSuppressColumn(String suppressColumn);
 
+    String getSuppressUntil();
+    void setSuppressUntil(String suppressUntil);
+
 }

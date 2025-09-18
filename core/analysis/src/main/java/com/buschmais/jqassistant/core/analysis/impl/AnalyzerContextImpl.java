@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -90,9 +92,11 @@ class AnalyzerContextImpl implements AnalyzerContext {
                 String suppressColumn = suppress.getSuppressColumn();
                 if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
                     String[] suppressIds = suppress.getSuppressIds();
-                    for (String suppressId : suppressIds) {
-                        if (ruleId.equals(suppressId)) {
-                            return true;
+                    if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
+                        for (String suppressId : suppressIds) {
+                            if (ruleId.equals(suppressId)) {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -100,6 +104,17 @@ class AnalyzerContextImpl implements AnalyzerContext {
         }
         return false;
     }
+
+    public boolean validateSuppressUntilDate(String until){
+        if(until != null && !until.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate untilDate = LocalDate.parse(until, formatter);
+            LocalDate today = LocalDate.now();
+            return untilDate.isAfter(today);
+        }
+        return false;
+    }
+
 
     @Override
     public <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException {
