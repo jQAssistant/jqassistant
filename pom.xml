@@ -101,7 +101,7 @@
         <neo4j.neo4j-java-driver.version>4.4.18</neo4j.neo4j-java-driver.version>
         <neo4j-browser.version>5.24.0</neo4j-browser.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <smallrye-config.version>3.10.2</smallrye-config.version>
+        <smallrye-config.version>3.14.0</smallrye-config.version>
         <maven-resolver.version>1.9.24</maven-resolver.version>
         <snakeyaml.version>2.5</snakeyaml.version>
         <snakeyaml-engine.version>2.10</snakeyaml-engine.version>
