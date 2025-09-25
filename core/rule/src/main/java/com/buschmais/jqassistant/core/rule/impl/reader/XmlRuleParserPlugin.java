@@ -27,8 +27,8 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.7";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.7.xsd";
+    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.8";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.8.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
@@ -98,6 +98,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     }
 
     private Group createGroup(String id, RuleSource ruleSource, GroupType referencableType) throws RuleException {
+        String description = removeIndent(referencableType.getDescription());
         SeverityEnumType severityType = referencableType.getSeverity();
         Severity severity = getSeverity(severityType, this::getDefaultGroupSeverity);
         Map<String, Severity> includeConcepts = getIncludedReferences(referencableType.getIncludeConcept());
@@ -106,6 +107,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         Map<String, Severity> includeGroups = getIncludedReferences(referencableType.getIncludeGroup());
         return Group.builder()
             .id(id)
+            .description(description)
             .severity(severity)
             .ruleSource(ruleSource)
             .concepts(includeConcepts)
