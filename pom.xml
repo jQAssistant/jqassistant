@@ -71,7 +71,7 @@
         <commons-digester.version>2.1</commons-digester.version>
         <commons-io.version>2.20.0</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <commons-lang3.version>3.19.0</commons-lang3.version>
         <commons-text.version>1.14.0</commons-text.version>
         <guava.version>33.5.0-jre</guava.version>
         <guice.version>7.0.0</guice.version>
