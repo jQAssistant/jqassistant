@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.WithoutTechnicalDebt;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,8 @@ class TechnicalDebtIT extends AbstractJavaPluginIT {
         Result<Constraint> constraintResult = validateConstraint("java:TechnicalDebt");
         assertThat(constraintResult.getStatus()).isEqualTo(FAILURE);
         store.beginTransaction();
+
+        assertThat(constraintResult.getRows().size()).isEqualTo(4);
 
         assertThat(constraintResult.getRows().get(0).getColumns().get("Priority").getLabel()).isEqualTo("0");
         assertThat(constraintResult.getRows().get(0).getColumns().get("Type").getLabel()).isEqualTo("com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample");
@@ -44,6 +47,15 @@ class TechnicalDebtIT extends AbstractJavaPluginIT {
         assertThat(constraintResult.getRows().get(3).getColumns().get("Description").getLabel()).isEqualTo("technicalDebt:Method with debts");
         assertThat(constraintResult.getRows().get(3).getColumns().get("Issue").getLabel()).isEqualTo("3");
 
+        store.commitTransaction();
+    }
+
+    @Test
+    void withoutTechnicalDebtTest() throws RuleException {
+        scanClasses(WithoutTechnicalDebt.class);
+        Result<Constraint> constraintResult = validateConstraint("java:TechnicalDebt");
+        store.beginTransaction();
+        assertThat(constraintResult.getRows().size()).isEqualTo(0);
         store.commitTransaction();
     }
 
