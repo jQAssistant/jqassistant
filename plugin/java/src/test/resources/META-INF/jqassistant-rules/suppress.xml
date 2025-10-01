@@ -119,4 +119,77 @@
         ]]></cypher>
         <report primaryColumn="type" />
     </constraint>
+
+<!--
+    <constraint id="suppress:SuppressedFieldsShouldProvideAReason">
+        <description>Types annotated with @jQASuppress must provide a suppression reason.</description>
+        <cypher><![CDATA[
+        MATCH
+          (class:Java:jQASuppress:Class),
+          (:Class:Java)-[:DECLARES]->(fieldOrMethod:Java:jQASuppress)
+        WHERE
+          not method:Constructor
+        RETURN
+          type, method
+        ]]></cypher>
+    </constraint>
+-->
+
+    <constraint id="suppress:ExpirationDateShouldNotBeTooFarInTheFuture">
+        <description>The provided expiration date must not be more than 12 months in the future.</description>
+        <cypher><![CDATA[
+        MATCH
+            (type:Java:jQASuppress)
+        WITH type, type.suppressUntil AS untilDate
+
+        WITH
+            type,
+            toInteger(substring(untilDate,6,4)) AS y,
+            toInteger(substring(untilDate,3,2)) AS m,
+            toInteger(substring(untilDate,0,2)) AS day
+            WITH type, date({year:y, month:m, day:day}) AS until
+        WHERE
+            until > date() + duration({months: 12})
+        RETURN
+            type, until
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="suppress:ExpirationDatesShouldNotBeNullOrInThePast">
+        <description>The provided expiration date must not be in the past.</description>
+        <cypher><![CDATA[
+        MATCH
+            (type:Java:jQASuppress)
+        WITH type, type.suppressUntil AS untilDate
+        WITH
+            type,
+            toInteger(substring(untilDate,6,4)) AS y,
+            toInteger(substring(untilDate,3,2)) AS m,
+            toInteger(substring(untilDate,0,2)) AS day
+            WITH type, date({year:y, month:m, day:day}) AS until
+        WHERE
+            until < date()
+        RETURN
+            type, until
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="suppress:suppressExpiresInLessThanOneMonth">
+        <description>The suppression of this type expires in less than one month.</description>
+        <cypher><![CDATA[
+      MATCH
+            (type:Java:jQASuppress)
+        WITH type, type.suppressUntil AS untilDate
+        WITH
+            type,
+            toInteger(substring(untilDate,6,4)) AS y,
+            toInteger(substring(untilDate,3,2)) AS m,
+            toInteger(substring(untilDate,0,2)) AS day
+            WITH type, date({year:y, month:m, day:day}) AS until
+        WHERE
+            until < date() + duration({months: 1}) AND until >= date()
+        RETURN
+            type, until
+        ]]></cypher>
+    </constraint>
 </jqa:jqassistant-rules>
