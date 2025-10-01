@@ -1,18 +1,15 @@
 <jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8">
 
     <group id="test">
-        <description>This is a test group description.</description>
         <includeGroup refId="test:Constraints" />
         <includeGroup refId="test:Concepts" />
     </group>
 
     <group id="test:Constraints">
-        <description>Group of constraints.</description>
         <includeConstraint refId="test:Constraint" />
     </group>
 
     <group id="test:Concepts">
-        <description>Group of concepts.</description>
         <includeConcept refId="test:ProvidingConcept2">
             <providesConcept refId="test:AbstractConcept"/>
         </includeConcept>
