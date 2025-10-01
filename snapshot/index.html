@@ -8416,6 +8416,9 @@ RETURN
 <li>
 <p><a href="#camunda-bpmn:AssertMethod">Concept <code>camunda-bpmn:AssertMethod</code></a></p>
 </li>
+<li>
+<p><a href="#projectreactor:AssertMethod">Concept <code>projectreactor:AssertMethod</code></a></p>
+</li>
 </ul>
 </div>
 <div class="sect4">
@@ -8559,6 +8562,37 @@ WHERE
     AND assertMethod.signature =~ '.* assert.*'
 SET
     assertMethod:Camunda:Assert
+RETURN
+    assertMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="projectreactor:AssertMethod"><a class="link" href="#projectreactor:AssertMethod">Concept <code>projectreactor:AssertMethod</code></a></h5>
+<div class="literalblock">
+<div class="content">
+<pre>Sets labels :Assert and :ProjectReactor for Project Reactor assert methods.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (assertType:Type)-[:DECLARES]-&gt;(assertMethod)
+WHERE
+    assertType.fqn =~ 'reactor\\.test\\.StepVerifier.*'
+    AND assertMethod.signature =~ '.* verify.*'
+SET
+    assertMethod:ProjectReactor:Assert
 RETURN
     assertMethod</code></pre>
 </div>
@@ -12593,7 +12627,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-01 05:48:27 UTC
+Last updated 2025-10-01 13:42:57 UTC
 </div>
 </div>
 </body>
