@@ -10,5 +10,6 @@
         <resource>xmlunit-assertj.xml</resource>
         <resource>mockito.xml</resource>
         <resource>camunda-bpmn.xml</resource>
+        <resource>projectreactor.xml</resource>
     </rules>
 </jqassistant-plugin>
