@@ -4,9 +4,9 @@ public class ClientType {
 
     private SubClassType subClassType = new SubClassType();
 
-    private AbstractClassType abstractClassType = subClassType;
+    private AbstractClassType<String> abstractClassType = subClassType;
 
-    private InterfaceType interfaceType = subClassType;
+    private InterfaceType<String> interfaceType = subClassType;
 
     public void methodOnInterfaceType() {
         interfaceType.method();
@@ -42,5 +42,13 @@ public class ClientType {
 
     public void subClassMethodOnSubType() {
         subClassType.subClassMethod();
+    }
+
+    public void genericMethodOnInterfaceType() {
+        interfaceType.genericMethod("test");
+    }
+
+    public void genericMethodOnSubClassType() {
+        subClassType.genericMethod("test");
     }
 }

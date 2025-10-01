@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance;
 
-public class SubClassType extends AbstractClassType {
+public class SubClassType extends AbstractClassType<String> {
 
     private int overriddenAbstractClassField;
 
@@ -18,4 +18,7 @@ public class SubClassType extends AbstractClassType {
     public final void subClassMethod() {
     }
 
+    @Override
+    public void genericMethod(String value) {
+    }
 }

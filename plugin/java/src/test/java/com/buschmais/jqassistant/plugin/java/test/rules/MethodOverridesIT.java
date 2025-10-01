@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.AbstractClassType;
@@ -34,14 +33,15 @@ class MethodOverridesIT extends AbstractJavaPluginIT {
 
     @MethodSource("parameters")
     @ParameterizedTest
-    void inheritedFrom(Class<?> type, String signature, List<Matcher<? super MethodDescriptor>> methodDescriptorMatchers) throws RuleException {
+    void methodOverrides(Class<?> type, String signature, List<Matcher<? super MethodDescriptor>> methodDescriptorMatchers) throws RuleException {
         scanClasses(ClientType.class, InterfaceType.class, AbstractClassType.class, SubClassType.class);
         assertThat(applyConcept("java:MethodOverrides").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         TestResult result = query(
-                "MATCH (type:Type{fqn:$type})-[:DECLARES]->(:Method{signature:$signature})-[:OVERRIDES]->(overriddenMethod:Method) RETURN overriddenMethod",
-                MapBuilder.<String, Object> builder().entry("type", type.getName()).entry("signature", signature).build());
-        assertThat(result.getRows().size()).isEqualTo(methodDescriptorMatchers.size());
+            "MATCH (type:Type{fqn:$type})-[:DECLARES]->(:Method{signature:$signature})-[:OVERRIDES]->(overriddenMethod:Method) RETURN overriddenMethod",
+            Map.of("type", type.getName(), "signature", signature));
+        assertThat(result.getRows()
+            .size()).isEqualTo(methodDescriptorMatchers.size());
         for (Map<String, Object> row : result.getRows()) {
             MethodDescriptor methodDescriptor = (MethodDescriptor) row.get("overriddenMethod");
             assertThat(methodDescriptor, anyOf(methodDescriptorMatchers));
@@ -51,15 +51,16 @@ class MethodOverridesIT extends AbstractJavaPluginIT {
 
     private static Stream<Arguments> parameters() throws NoSuchMethodException {
         return Stream.of(of(InterfaceType.class, "void method()", emptyList()),
-                of(AbstractClassType.class, "void method()", singletonList(methodDescriptor(InterfaceType.class, "method"))),
-                of(SubClassType.class, "void method()", singletonList(methodDescriptor(AbstractClassType.class, "method"))),
+            of(AbstractClassType.class, "void method()", singletonList(methodDescriptor(InterfaceType.class, "method"))),
+            of(SubClassType.class, "void method()", singletonList(methodDescriptor(AbstractClassType.class, "method"))),
 
-                of(InterfaceType.class, "void abstractClassMethod()", emptyList()),
-                of(AbstractClassType.class, "void abstractClassMethod()", singletonList(methodDescriptor(InterfaceType.class, "abstractClassMethod"))),
-                of(SubClassType.class, "void abstractClassMethod()", emptyList()),
+            of(InterfaceType.class, "void abstractClassMethod()", emptyList()),
+            of(AbstractClassType.class, "void abstractClassMethod()", singletonList(methodDescriptor(InterfaceType.class, "abstractClassMethod"))),
+            of(SubClassType.class, "void abstractClassMethod()", emptyList()),
 
-                of(InterfaceType.class, "void subClassMethod()", emptyList()),
-                of(AbstractClassType.class, "void subClassMethod()", emptyList()),
-                of(SubClassType.class, "void subClassMethod()", singletonList(methodDescriptor(InterfaceType.class, "subClassMethod"))));
+            of(InterfaceType.class, "void subClassMethod()", emptyList()), of(AbstractClassType.class, "void subClassMethod()", emptyList()),
+            of(SubClassType.class, "void subClassMethod()", singletonList(methodDescriptor(InterfaceType.class, "subClassMethod"))),
+            of(SubClassType.class, "void genericMethod(java.lang.String)",
+                singletonList(methodDescriptor(InterfaceType.class, "genericMethod", Object.class))));
     }
 }
