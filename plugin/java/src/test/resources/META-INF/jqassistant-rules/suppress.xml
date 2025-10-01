@@ -1,6 +1,6 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
 
-    <constraint id="suppress:SuppressAnnotationMustNotBeScanned">
+    <constraint id="test-suppress:SuppressAnnotationMustNotBeScanned">
         <description>The annotation @jQASuppress not be reported.</description>
         <cypher><![CDATA[
         MATCH
@@ -10,7 +10,7 @@
         ]]></cypher>
     </constraint>
 
-    <concept id="suppress:SuppressedClass">
+    <concept id="test-suppress:SuppressedClass">
         <description>Return all suppressed classes.</description>
         <cypher><![CDATA[
         MATCH
@@ -20,7 +20,7 @@
         ]]></cypher>
     </concept>
 
-    <constraint id="suppress:Class">
+    <constraint id="test-suppress:Class">
         <description>Return all classes.</description>
         <cypher><![CDATA[
         MATCH
@@ -30,7 +30,7 @@
         ]]></cypher>
     </constraint>
 
-    <concept id="suppress:SuppressedField">
+    <concept id="test-suppress:SuppressedField">
         <description>Return all suppressed fields.</description>
         <cypher><![CDATA[
         MATCH
@@ -40,7 +40,7 @@
         ]]></cypher>
     </concept>
 
-    <constraint id="suppress:Field">
+    <constraint id="test-suppress:Field">
         <description>Return all fields.</description>
         <cypher><![CDATA[
         MATCH
@@ -50,7 +50,7 @@
         ]]></cypher>
     </constraint>
 
-    <concept id="suppress:SuppressedMethod">
+    <concept id="test-suppress:SuppressedMethod">
         <description>Return all suppressed methods.</description>
         <cypher><![CDATA[
         MATCH
@@ -60,7 +60,7 @@
         ]]></cypher>
     </concept>
 
-    <constraint id="suppress:Method">
+    <constraint id="test-suppress:Method">
         <description>Return all methods.</description>
         <cypher><![CDATA[
         MATCH
@@ -72,7 +72,7 @@
         ]]></cypher>
     </constraint>
 
-    <concept id="suppress:SuppressedMethodInPrimaryColumn">
+    <concept id="test-suppress:SuppressedMethodInPrimaryColumn">
         <description>Return all suppressed methods.</description>
         <cypher><![CDATA[
         MATCH
@@ -83,7 +83,7 @@
         <report primaryColumn="method" />
     </concept>
 
-    <constraint id="suppress:MethodInPrimaryColumn">
+    <constraint id="test-suppress:MethodInPrimaryColumn">
         <description>Return all methods.</description>
         <cypher><![CDATA[
         MATCH
@@ -96,7 +96,7 @@
         <report primaryColumn="method" />
     </constraint>
 
-    <concept id="suppress:SuppressedMethodInNonPrimaryColumn">
+    <concept id="test-suppress:SuppressedMethodInNonPrimaryColumn">
         <description>Return all suppressed methods.</description>
         <cypher><![CDATA[
         MATCH
@@ -107,7 +107,7 @@
         <report primaryColumn="type" />
     </concept>
 
-    <constraint id="suppress:MethodInNonPrimaryColumn">
+    <constraint id="test-suppress:MethodInNonPrimaryColumn">
         <description>Return all methods.</description>
         <cypher><![CDATA[
         MATCH
@@ -118,78 +118,5 @@
           type, method
         ]]></cypher>
         <report primaryColumn="type" />
-    </constraint>
-
-<!--
-    <constraint id="suppress:SuppressedFieldsShouldProvideAReason">
-        <description>Types annotated with @jQASuppress must provide a suppression reason.</description>
-        <cypher><![CDATA[
-        MATCH
-          (class:Java:jQASuppress:Class),
-          (:Class:Java)-[:DECLARES]->(fieldOrMethod:Java:jQASuppress)
-        WHERE
-          not method:Constructor
-        RETURN
-          type, method
-        ]]></cypher>
-    </constraint>
--->
-
-    <constraint id="suppress:ExpirationDateShouldNotBeTooFarInTheFuture">
-        <description>The provided expiration date must not be more than 12 months in the future.</description>
-        <cypher><![CDATA[
-        MATCH
-            (type:Java:jQASuppress)
-        WITH type, type.suppressUntil AS untilDate
-
-        WITH
-            type,
-            toInteger(substring(untilDate,6,4)) AS y,
-            toInteger(substring(untilDate,3,2)) AS m,
-            toInteger(substring(untilDate,0,2)) AS day
-            WITH type, date({year:y, month:m, day:day}) AS until
-        WHERE
-            until > date() + duration({months: 12})
-        RETURN
-            type, until
-        ]]></cypher>
-    </constraint>
-
-    <constraint id="suppress:ExpirationDatesShouldNotBeNullOrInThePast">
-        <description>The provided expiration date must not be in the past.</description>
-        <cypher><![CDATA[
-        MATCH
-            (type:Java:jQASuppress)
-        WITH type, type.suppressUntil AS untilDate
-        WITH
-            type,
-            toInteger(substring(untilDate,6,4)) AS y,
-            toInteger(substring(untilDate,3,2)) AS m,
-            toInteger(substring(untilDate,0,2)) AS day
-            WITH type, date({year:y, month:m, day:day}) AS until
-        WHERE
-            until < date()
-        RETURN
-            type, until
-        ]]></cypher>
-    </constraint>
-
-    <constraint id="suppress:suppressExpiresInLessThanOneMonth">
-        <description>The suppression of this type expires in less than one month.</description>
-        <cypher><![CDATA[
-      MATCH
-            (type:Java:jQASuppress)
-        WITH type, type.suppressUntil AS untilDate
-        WITH
-            type,
-            toInteger(substring(untilDate,6,4)) AS y,
-            toInteger(substring(untilDate,3,2)) AS m,
-            toInteger(substring(untilDate,0,2)) AS day
-            WITH type, date({year:y, month:m, day:day}) AS until
-        WHERE
-            until < date() + duration({months: 1}) AND until >= date()
-        RETURN
-            type, until
-        ]]></cypher>
     </constraint>
 </jqa:jqassistant-rules>

@@ -70,5 +70,6 @@
     <rules>
         <resource>java.xml</resource>
         <resource>java-classpath.xml</resource>
+        <resource>java-suppress.xml</resource>
     </rules>
 </jqassistant-plugin>

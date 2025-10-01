@@ -17,4 +17,7 @@ public interface Suppress {
     String getSuppressUntil();
     void setSuppressUntil(String suppressUntil);
 
+    String getSuppressReason();
+    void setSuppressReason(String suppressReason);
+
 }
