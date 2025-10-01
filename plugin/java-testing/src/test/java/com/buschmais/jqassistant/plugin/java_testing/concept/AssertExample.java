@@ -5,6 +5,7 @@ import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests;
 import org.mockito.BDDMockito;
 import org.xmlunit.assertj.XmlAssert;
+import reactor.test.StepVerifier;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -35,6 +36,10 @@ public class AssertExample {
     void camundaBpmnAssertExampleMethod() {
         ProcessDefinition processDefinition = mock(ProcessDefinition.class);
         BpmnAwareTests.assertThat(processDefinition).hasActiveInstances(0);
+    }
+
+    void projectReactorAssertExampleMethod() {
+        StepVerifier.create(null).expectComplete().verify();
     }
 
 }
