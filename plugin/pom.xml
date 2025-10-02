@@ -284,7 +284,6 @@
     <modules>
         <module>common</module>
         <module>java</module>
-        <module>java-testing</module>
         <module>junit</module>
         <module>json</module>
         <module>maven</module>
