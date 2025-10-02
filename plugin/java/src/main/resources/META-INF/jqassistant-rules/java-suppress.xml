@@ -2,20 +2,19 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 http://schema.jqassistant.org/rule/jqassistant-rule-v2.7.xsd">
 
-    <!--
-        <constraint id="suppress:SuppressedFieldsShouldProvideAReason">
+
+        <constraint id="suppress:suppressFieldsMustProvideAReason">
             <description>Types annotated with @jQASuppress must provide a suppression reason.</description>
             <cypher><![CDATA[
             MATCH
-              (class:Java:jQASuppress:Class),
-              (:Class:Java)-[:DECLARES]->(fieldOrMethod:Java:jQASuppress)
+                (type:Java:jQASuppress)
             WHERE
-              not method:Constructor
+                type.suppressReason IS NULL OR type.suppressReason = ""
             RETURN
-              type, method
+                type, type.suppressReason AS reason
             ]]></cypher>
         </constraint>
-    -->
+
 
     <constraint id="suppress:suppressUntilWithMonthsLimit">
         <requiresParameter name="suppressUntilMonthsLimit" type="int" defaultValue="12"/>
@@ -23,14 +22,7 @@
         <cypher><![CDATA[
         MATCH
             (type:Java:jQASuppress)
-        WITH type, type.suppressUntil AS untilDate
-
-        WITH
-            type,
-            toInteger(substring(untilDate,6,4)) AS y,
-            toInteger(substring(untilDate,3,2)) AS m,
-            toInteger(substring(untilDate,0,2)) AS day
-            WITH type, date({year:y, month:m, day:day}) AS until
+        WITH type, date(type.suppressUntil) AS until
         WHERE
             until > date() + duration({months: $suppressUntilMonthsLimit})
         RETURN
@@ -38,18 +30,12 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="suppress:ExpirationDatesShouldNotBeNullOrInThePast">
+    <constraint id="suppress:suppressUntilMustNotBeInThePast">
         <description>The provided expiration date must not be in the past.</description>
         <cypher><![CDATA[
         MATCH
             (type:Java:jQASuppress)
-        WITH type, type.suppressUntil AS untilDate
-        WITH
-            type,
-            toInteger(substring(untilDate,6,4)) AS y,
-            toInteger(substring(untilDate,3,2)) AS m,
-            toInteger(substring(untilDate,0,2)) AS day
-            WITH type, date({year:y, month:m, day:day}) AS until
+        WITH type, date(type.suppressUntil) AS until
         WHERE
             until < date()
         RETURN
@@ -63,13 +49,7 @@
         <cypher><![CDATA[
       MATCH
             (type:Java:jQASuppress)
-        WITH type, type.suppressUntil AS untilDate
-        WITH
-            type,
-            toInteger(substring(untilDate,6,4)) AS y,
-            toInteger(substring(untilDate,3,2)) AS m,
-            toInteger(substring(untilDate,0,2)) AS day
-            WITH type, date({year:y, month:m, day:day}) AS until
+        WITH type, date(type.suppressUntil) AS until
         WHERE
             until < date() + duration({months: 1}) AND until >= date()
         RETURN

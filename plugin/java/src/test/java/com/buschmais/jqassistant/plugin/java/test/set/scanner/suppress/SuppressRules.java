@@ -8,10 +8,10 @@ public class SuppressRules {
     @jQASuppress(value = "test-suppress:Field", until = "2024-08-25") // date expired, should not be suppressed
     private String expiredValue;
 
-    @jQASuppress({ "test-suppress:Field" }) // no expiration Date, should be suppressed
+    @jQASuppress(value = "test-suppress:Field", reason = "Reason for suppressing this field.") // no expiration date, should be suppressed
     private String noExpirationDateValue;
 
-    @jQASuppress(value = "test-suppress:Field", until = "2075-03-02") // should be suppressed
+    @jQASuppress(value = "test-suppress:Field", until = "2075-06-04", reason = "") // should be suppressed
     private String suppressedValue;
 
     @jQASuppress(value = "test-suppress:Method", column = "method", until = "2075-12-31")

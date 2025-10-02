@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -106,23 +105,16 @@ class AnalyzerContextImpl implements AnalyzerContext {
         return false;
     }
 
-    public boolean validateSuppressUntilDate(String until){
-        if(until == null || until.isEmpty()){
+    public boolean validateSuppressUntilDate(String until) {
+        if (until == null || until.isEmpty()) {
             return true;
-        }
-        else {
+        } else {
             LocalDate untilDate;
-            try {
-                untilDate = LocalDate.parse(until, DateTimeFormatter.ISO_DATE);
-            }
-            catch (DateTimeParseException e){
-                throw new IllegalArgumentException("Wrong jQASuppress until date format, should be of format 'yyyy-MM-dd'.", e );
-            }
+            untilDate = LocalDate.parse(until, DateTimeFormatter.ISO_LOCAL_DATE);
             LocalDate today = LocalDate.now();
             return untilDate.isAfter(today);
         }
     }
-
 
     @Override
     public <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException {

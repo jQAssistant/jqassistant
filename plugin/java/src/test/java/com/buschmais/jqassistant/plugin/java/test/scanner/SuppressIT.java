@@ -74,19 +74,7 @@ class SuppressIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void suppressedFieldsWithDate() throws RuleException {
-        scanClasses(SuppressRules.class);
-        store.beginTransaction();
-        Result<Concept> supressedItems = applyConcept("test-suppress:SuppressedField");
-        assertThat(supressedItems.getStatus()).isEqualTo(SUCCESS);
-        assertThat(supressedItems.getRows()
-            .size()).isEqualTo(3);
-        store.commitTransaction();
-
-    }
-
-    @Test
-    void expirationDateShouldNotBeTooFarInTheFuture() throws RuleException {
+    void suppressUntilWithMonthsLimit() throws RuleException {
         scanClasses(SuppressRules.class);
         Result<Constraint> result = validateConstraint("suppress:suppressUntilWithMonthsLimit");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
@@ -95,24 +83,33 @@ class SuppressIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void expirationDatesShouldNotBeInThePast() throws RuleException {
-        scanClasses(Suppress.class);
-        Result<Constraint> result = validateConstraint("suppress:ExpirationDatesShouldNotBeNullOrInThePast");
+    void suppressUntilMustNotBeInThePast() throws RuleException {
+        scanClasses(SuppressRules.class);
+        Result<Constraint> result = validateConstraint("suppress:suppressUntilMustNotBeInThePast");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
-            .size()).isEqualTo(2);
+            .size()).isEqualTo(1);
     }
 
     @Test
     void suppressExpiresInLessThanOneMonth() throws RuleException {
-        scanClasses(Suppress.class);
+        scanClasses(SuppressRules.class);
         LocalDate dateInTwoWeeks = LocalDate.now()
             .plusWeeks(2);
-        query("MATCH (n:Java:jQASuppress {name: 'expiredValue'}) SET n.suppressUntil = '" + dateInTwoWeeks + "' RETURN n");
+        query("MATCH (n:Java:jQASuppress {name: 'suppressedValue'}) SET n.suppressUntil = '" + dateInTwoWeeks + "' RETURN n");
         Result<Constraint> result = validateConstraint("suppress:suppressExpiresInLessThanOneMonth");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
             .size()).isEqualTo(1);
+    }
+
+    @Test
+    void suppressFieldsMustProvideAReason() throws RuleException {
+        scanClasses(SuppressRules.class);
+        Result<Constraint> result = validateConstraint("suppress:suppressFieldsMustProvideAReason");
+        assertThat(result.getStatus()).isEqualTo(FAILURE);
+        assertThat(result.getRows()
+            .size()).isEqualTo(3);
     }
 
 }
