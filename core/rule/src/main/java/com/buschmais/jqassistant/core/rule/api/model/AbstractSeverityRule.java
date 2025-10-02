@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
+import lombok.*;
+
 /**
  * Abstract base class for rules with a severity.
  */
@@ -13,6 +15,10 @@ public abstract class AbstractSeverityRule extends AbstractRule implements Sever
     public Severity getSeverity() {
         return severity;
     }
+
+    @Getter
+    @Setter
+    private String overridesConceptId;
 
     protected abstract static class Builder<B extends Builder<B, R>, R extends AbstractSeverityRule> extends AbstractRule.Builder<B, R> {
 

@@ -1,0 +1,55 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7">
+
+    <group id="overriding-group-constraints">
+        <includeGroup refId="test:Constraints" />
+        <includeGroup refId="test:Concepts" />
+    </group>
+
+    <group id="test:overridden">
+        <includeConstraint refId="test:Constraint" />
+    </group>
+
+
+    <constraint id="test:Constraint">
+        <requiresConcept refId="test:OverriddenConcept" />
+        <description>Test constraint</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </constraint>
+
+    <concept id="test:OverridingConcept">
+        <overridesConcept refId="test:OverriddenConcept" />
+        <description>Overriding test concept</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:OverriddenConcept">
+        <description>Concept that is overriden</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:AnotherConcept">
+        <providesConcept refId="test:OverriddenConcept"/>
+        <description>Concept that is overriden</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+</jqassistant-rules>

@@ -163,6 +163,7 @@
         <xs:complexContent>
             <xs:extension base="tns:severityRuleType">
                 <xs:sequence>
+                    <xs:element name="overridesConcept" type="tns:referenceType" minOccurs="0"/>
                     <xs:element name="providesConcept" type="tns:providesReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
                     <xs:group ref="tns:executableRuleType"/>
@@ -175,6 +176,7 @@
         <xs:complexContent>
             <xs:extension base="tns:severityRuleType">
                 <xs:sequence>
+                    <xs:element name="overridesConstraint" type="tns:referenceType" minOccurs="0"/>
                     <xs:group ref="tns:executableRuleType"/>
                 </xs:sequence>
             </xs:extension>
@@ -185,6 +187,7 @@
         <xs:complexContent>
             <xs:extension base="tns:severityRuleType">
                 <xs:sequence>
+                    <xs:element name="overridesGroup" type="tns:referenceType" minOccurs="0"/>
                     <xs:element name="includeConcept" type="tns:includeConceptType" minOccurs="0"
                                 maxOccurs="unbounded"/>
                     <xs:element name="includeConstraint" type="tns:includedReferenceType" minOccurs="0"

@@ -43,6 +43,9 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String INCLUDED_GROUPS = "includedGroups";
     protected static final String INCLUDED_CONCEPTS = "includedConcepts";
     protected static final String INCLUDED_CONSTRAINTS = "includedConstraints";
+    protected static final String OVERRIDE_GROUPS = "overrideGroups";
+    protected static final String OVERRIDE_CONCEPTS = "overrideConcepts";
+    protected static final String OVERRIDE_CONSTRAINTS = "overrideConstraints";
 
     protected static final String SEVERITY = "severity";
     protected static final String DEPENDS = "depends";

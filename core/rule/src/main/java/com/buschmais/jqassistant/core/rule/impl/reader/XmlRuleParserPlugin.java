@@ -117,6 +117,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType conceptType) throws RuleException {
         String description = removeIndent(conceptType.getDescription());
+        ReferenceType overrideConcept =  conceptType.getOverridesConcept();
         Executable<?> executable = createExecutable(conceptType.getSource(), conceptType.getCypher(), conceptType.getScript());
         Map<String, Parameter> parameters = getRequiredParameters(conceptType.getRequiresParameter());
         SeverityEnumType severityType = conceptType.getSeverity();
@@ -144,6 +145,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .parameters(parameters)
             .providedConcepts(providedConcepts)
             .requiresConcepts(requiresConcepts)
+            .overrideConcept(overrideConcept)
             .verification(verification)
             .report(report)
             .build();

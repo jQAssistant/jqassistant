@@ -29,6 +29,7 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder addConcept(Concept concept) throws RuleException {
         ruleSet.conceptBucket.add(concept);
+        ruleSet.conceptBucket.updateOverrideConcepts(concept);
         updateProvidedConcepts(concept.getProvidedConcepts());
         return this;
     }
