@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -90,15 +92,28 @@ class AnalyzerContextImpl implements AnalyzerContext {
                 String suppressColumn = suppress.getSuppressColumn();
                 if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
                     String[] suppressIds = suppress.getSuppressIds();
-                    for (String suppressId : suppressIds) {
-                        if (ruleId.equals(suppressId)) {
-                            return true;
+                    if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
+                        for (String suppressId : suppressIds) {
+                            if (ruleId.equals(suppressId)) {
+                                return true;
+                            }
                         }
                     }
                 }
             }
         }
         return false;
+    }
+
+    public boolean validateSuppressUntilDate(String until) {
+        if (until == null || until.isEmpty()) {
+            return true;
+        } else {
+            LocalDate untilDate;
+            untilDate = LocalDate.parse(until, DateTimeFormatter.ISO_LOCAL_DATE);
+            LocalDate today = LocalDate.now();
+            return untilDate.isAfter(today);
+        }
     }
 
     @Override

@@ -36,6 +36,8 @@ class AnalyzerContextImplTest {
     private static final String CONSTRAINT_ID = "constraint";
     public static final String PRIMARY_COLUMN = "primary";
     public static final String SECONDARY_COLUMN = "secondary";
+    public static final String VALID_DATE = "2065-06-01";
+    public static final String INVALID_DATE = "2025-01-01";
 
     private AnalyzerContext analyzerContext;
 
@@ -102,7 +104,7 @@ class AnalyzerContextImplTest {
 
     @Test
     void suppressByPrimaryColumn() {
-        Suppress suppressedValue = createSuppressedValue(empty(), CONSTRAINT_ID);
+        Suppress suppressedValue = createSuppressedValue(empty(), empty(), empty(),CONSTRAINT_ID);
         Constraint constraint = getConstraint();
 
         Row row = analyzerContext.toRow(constraint,
@@ -113,7 +115,7 @@ class AnalyzerContextImplTest {
 
     @Test
     void suppressByNonPrimaryColumn() {
-        Suppress suppressedValue = createSuppressedValue(of(SECONDARY_COLUMN), CONSTRAINT_ID);
+        Suppress suppressedValue = createSuppressedValue(of(SECONDARY_COLUMN), empty(), empty(), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
 
         Row row = analyzerContext.toRow(constraint,
@@ -124,7 +126,27 @@ class AnalyzerContextImplTest {
 
     @Test
     void nonMatchingSuppressId() {
-        Suppress suppressedValue = createSuppressedValue(empty(), "otherConstraint");
+        Suppress suppressedValue = createSuppressedValue(empty(), empty(),empty(),"otherConstraint");
+        Constraint constraint = getConstraint();
+        Row row = analyzerContext.toRow(constraint,
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
+
+        assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isFalse();
+    }
+
+    @Test
+    void validSuppressUntilWithReason() {
+        Suppress suppressedValue = createSuppressedValue(empty(), of(VALID_DATE), empty(), CONSTRAINT_ID);
+        Constraint constraint = getConstraint();
+        Row row = analyzerContext.toRow(constraint,
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
+
+        assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isTrue();
+    }
+
+    @Test
+    void expiredSuppressUntil() {
+        Suppress suppressedValue = createSuppressedValue(empty(), of(INVALID_DATE), empty(),CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
@@ -158,7 +180,7 @@ class AnalyzerContextImplTest {
             .build();
     }
 
-    private static Suppress createSuppressedValue(Optional<String> suppressColumn, String... suppressIds) {
+    private static Suppress createSuppressedValue(Optional<String> suppressColumn, Optional<String> suppressUntil, Optional<String> suppressReason, String... suppressIds) {
         return new Suppress() {
             @Override
             public String[] getSuppressIds() {
@@ -176,6 +198,24 @@ class AnalyzerContextImplTest {
 
             @Override
             public void setSuppressColumn(String suppressColumn1) {
+            }
+
+            @Override
+            public String getSuppressUntil() {
+                return suppressUntil.orElse(null);
+            }
+
+            @Override
+            public void setSuppressUntil(String suppressUntil) {
+            }
+
+            @Override
+            public String getSuppressReason() {
+                return suppressReason.orElse(null);
+            }
+
+            @Override
+            public void setSuppressReason(String suppressReason) {
             }
         };
     }
