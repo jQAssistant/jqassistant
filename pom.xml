@@ -63,7 +63,7 @@
         <jqassistant.build.version>2.7.2</jqassistant.build.version>
         <!-- library versions -->
         <assertj.version>3.27.6</assertj.version>
-        <asm.version>9.8</asm.version>
+        <asm.version>9.9</asm.version>
         <caffeine.version>3.2.2</caffeine.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-codec.version>1.19.0</commons-codec.version>
