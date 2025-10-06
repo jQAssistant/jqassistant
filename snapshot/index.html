@@ -2446,7 +2446,7 @@ like "java:classpath" for a directory containing Java classes or "maven:reposito
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">default</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;includeConstraint</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
@@ -6700,6 +6700,9 @@ If not explicitly specified this is the first column specified in the return cla
 <p><a href="#java:TestMethodWithoutAssertion">Constraint <code>java:TestMethodWithoutAssertion</code></a></p>
 </li>
 <li>
+<p><a href="#java:TechnicalDebt">Constraint <code>java:TechnicalDebt</code></a></p>
+</li>
+<li>
 <p><a href="#java:InnerType">Concept <code>java:InnerType</code></a></p>
 </li>
 <li>
@@ -7814,6 +7817,41 @@ ORDER BY
 <p><a href="#java:MethodPerformsAssertion">java:MethodPerformsAssertion</a></p>
 </li>
 </ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="java:TechnicalDebt"><a class="link" href="#java:TechnicalDebt">Constraint <code>java:TechnicalDebt</code></a></h5>
+<div class="paragraph">
+<p>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[declares:DECLARES*0..]-&gt;(element),
+  (element)-[:ANNOTATED_BY]-&gt;()-[:HAS|CONTAINS*0..]-&gt;(technicalDebt)-[:OF_TYPE]-&gt;(:Type{fqn:&quot;com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt&quot;}),
+  (technicalDebt)-[:HAS]-&gt;(descriptionValue:Value{name: &quot;value&quot;})
+OPTIONAL MATCH
+  (technicalDebt)-[:HAS]-&gt;(:Value{name: &quot;priority&quot;})-[:IS]-&gt;(priorityField:Field)
+OPTIONAL MATCH
+  (technicalDebt)-[:HAS]-&gt;(issueValue:Value{name: &quot;issue&quot;})
+WITH
+  type,
+  case
+    when element:Member then element.name
+  end as memberName,
+  descriptionValue.value as description,
+  case split(priorityField.signature, &quot; &quot;)[1]
+    when &quot;HIGH&quot; then 0
+    when &quot;MEDIUM&quot; then 1
+    when &quot;LOW&quot; then 2
+    else 1 // default priority is MEDIUM
+  end as priority,
+  issueValue.value as issue
+RETURN DISTINCT
+  priority as Priority, type.fqn as Type, memberName as Member, description as Description, issue as Issue
+ORDER BY
+  priority, type.fqn, memberName, description, issue</code></pre>
+</div>
 </div>
 </div>
 <div class="sect4">
@@ -12627,7 +12665,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-06 07:00:20 UTC
+Last updated 2025-10-06 11:31:11 UTC
 </div>
 </div>
 </body>
