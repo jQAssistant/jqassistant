@@ -169,9 +169,11 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         String severityVal = (String) map.get(SEVERITY);
         Severity severity = getSeverity(severityVal, this::getDefaultGroupSeverity);
+        String description = IndentHelper.removeIndent((String) map.get(DESCRIPTION));
 
         Group group = Group.builder()
             .id(id)
+            .description(description)
             .severity(severity)
             .ruleSource(context.getSource())
             .concepts(includedConcepts)
