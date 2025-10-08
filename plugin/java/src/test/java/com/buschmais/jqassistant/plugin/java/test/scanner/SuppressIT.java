@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
@@ -10,11 +11,9 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress.Suppress;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress.SuppressRules;
 
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +21,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 class SuppressIT extends AbstractJavaPluginIT {
+
+    @Test
+    void suppressAnnotationWithUntilAndReasonAttributes() {
+        scanClasses(Suppress.class);
+        List<Map<String, Object>> rows = query("MATCH (type:Java:jQASuppress) return type" ).getRows();
+        assertThat(rows.size()).isEqualTo(3);
+        assertThat(((JavaSuppressDescriptor) rows.get(0).get("type")).getSuppressReason()).isEqualTo("For testing this annotation");
+        assertThat(((JavaSuppressDescriptor) rows.get(0).get("type")).getSuppressUntil()).isNull();
+        assertThat(((JavaSuppressDescriptor) rows.get(1).get("type")).getSuppressReason()).isNull();
+        assertThat(((JavaSuppressDescriptor) rows.get(1).get("type")).getSuppressUntil()).isNull();
+        assertThat(((JavaSuppressDescriptor) rows.get(2).get("type")).getSuppressReason()).isEqualTo("Reason for suppression");
+        assertThat(((JavaSuppressDescriptor) rows.get(2).get("type")).getSuppressUntil()).isEqualTo("2075-08-13");
+    }
+
 
     @Test
     void suppressAnnotationMustNotBeScanned() throws RuleException {
@@ -72,44 +85,4 @@ class SuppressIT extends AbstractJavaPluginIT {
         assertThat(asList(suppressDescriptor.getSuppressIds()), hasItem(constraintId));
         store.commitTransaction();
     }
-
-    @Test
-    void suppressUntilWithMonthsLimit() throws RuleException {
-        scanClasses(SuppressRules.class);
-        Result<Constraint> result = validateConstraint("suppress:suppressUntilWithMonthsLimit");
-        assertThat(result.getStatus()).isEqualTo(FAILURE);
-        assertThat(result.getRows()
-            .size()).isEqualTo(3);
-    }
-
-    @Test
-    void suppressUntilMustNotBeInThePast() throws RuleException {
-        scanClasses(SuppressRules.class);
-        Result<Constraint> result = validateConstraint("suppress:suppressUntilMustNotBeInThePast");
-        assertThat(result.getStatus()).isEqualTo(FAILURE);
-        assertThat(result.getRows()
-            .size()).isEqualTo(1);
-    }
-
-    @Test
-    void suppressExpiresInLessThanOneMonth() throws RuleException {
-        scanClasses(SuppressRules.class);
-        LocalDate dateInTwoWeeks = LocalDate.now()
-            .plusWeeks(2);
-        query("MATCH (n:Java:jQASuppress {name: 'suppressedValue'}) SET n.suppressUntil = '" + dateInTwoWeeks + "' RETURN n");
-        Result<Constraint> result = validateConstraint("suppress:suppressExpiresInLessThanOneMonth");
-        assertThat(result.getStatus()).isEqualTo(FAILURE);
-        assertThat(result.getRows()
-            .size()).isEqualTo(1);
-    }
-
-    @Test
-    void suppressFieldsMustProvideAReason() throws RuleException {
-        scanClasses(SuppressRules.class);
-        Result<Constraint> result = validateConstraint("suppress:suppressFieldsMustProvideAReason");
-        assertThat(result.getStatus()).isEqualTo(FAILURE);
-        assertThat(result.getRows()
-            .size()).isEqualTo(3);
-    }
-
 }

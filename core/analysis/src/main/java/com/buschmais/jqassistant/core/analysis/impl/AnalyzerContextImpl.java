@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -105,14 +104,12 @@ class AnalyzerContextImpl implements AnalyzerContext {
         return false;
     }
 
-    public boolean validateSuppressUntilDate(String until) {
-        if (until == null || until.isEmpty()) {
+    public boolean validateSuppressUntilDate(LocalDate until) {
+        if (until == null) {
             return true;
         } else {
-            LocalDate untilDate;
-            untilDate = LocalDate.parse(until, DateTimeFormatter.ISO_LOCAL_DATE);
             LocalDate today = LocalDate.now();
-            return untilDate.isAfter(today);
+            return until.isAfter(today);
         }
     }
 

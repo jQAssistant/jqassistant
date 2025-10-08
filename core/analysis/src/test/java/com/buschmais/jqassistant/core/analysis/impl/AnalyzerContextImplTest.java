@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -36,8 +37,8 @@ class AnalyzerContextImplTest {
     private static final String CONSTRAINT_ID = "constraint";
     public static final String PRIMARY_COLUMN = "primary";
     public static final String SECONDARY_COLUMN = "secondary";
-    public static final String VALID_DATE = "2065-06-01";
-    public static final String INVALID_DATE = "2025-01-01";
+    public static final LocalDate VALID_DATE = LocalDate.parse("2065-06-01");
+    public static final LocalDate INVALID_DATE = LocalDate.parse("2025-01-01");
 
     private AnalyzerContext analyzerContext;
 
@@ -126,7 +127,7 @@ class AnalyzerContextImplTest {
 
     @Test
     void nonMatchingSuppressId() {
-        Suppress suppressedValue = createSuppressedValue(empty(), empty(),empty(),"otherConstraint");
+        Suppress suppressedValue = createSuppressedValue(empty(), empty(), empty(), "otherConstraint");
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
@@ -180,7 +181,7 @@ class AnalyzerContextImplTest {
             .build();
     }
 
-    private static Suppress createSuppressedValue(Optional<String> suppressColumn, Optional<String> suppressUntil, Optional<String> suppressReason, String... suppressIds) {
+    private static Suppress createSuppressedValue(Optional<String> suppressColumn, Optional<LocalDate> suppressUntil, Optional<String> suppressReason, String... suppressIds) {
         return new Suppress() {
             @Override
             public String[] getSuppressIds() {
@@ -201,12 +202,12 @@ class AnalyzerContextImplTest {
             }
 
             @Override
-            public String getSuppressUntil() {
+            public LocalDate getSuppressUntil() {
                 return suppressUntil.orElse(null);
             }
 
             @Override
-            public void setSuppressUntil(String suppressUntil) {
+            public void setSuppressUntil(LocalDate suppressUntil) {
             }
 
             @Override

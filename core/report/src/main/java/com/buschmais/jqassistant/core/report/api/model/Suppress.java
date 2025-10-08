@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.report.api.model;
 
+import java.time.LocalDate;
+
 import com.buschmais.xo.api.annotation.Abstract;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 
@@ -14,8 +16,8 @@ public interface Suppress {
     String getSuppressColumn();
     void setSuppressColumn(String suppressColumn);
 
-    String getSuppressUntil();
-    void setSuppressUntil(String suppressUntil);
+    LocalDate getSuppressUntil();
+    void setSuppressUntil(LocalDate suppressUntil);
 
     String getSuppressReason();
     void setSuppressReason(String suppressReason);

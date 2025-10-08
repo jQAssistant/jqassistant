@@ -3,17 +3,17 @@
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 http://schema.jqassistant.org/rule/jqassistant-rule-v2.7.xsd">
 
 
-        <constraint id="suppress:suppressFieldsMustProvideAReason">
-            <description>Types annotated with @jQASuppress must provide a suppression reason.</description>
-            <cypher><![CDATA[
+    <constraint id="suppress:suppressFieldsMustProvideAReason">
+        <description>Types annotated with @jQASuppress must provide a suppression reason.</description>
+        <cypher><![CDATA[
             MATCH
                 (type:Java:jQASuppress)
             WHERE
                 type.suppressReason IS NULL OR type.suppressReason = ""
             RETURN
-                type, type.suppressReason AS reason
+                type.name AS AnnotatedElement, type.suppressReason AS Reason
             ]]></cypher>
-        </constraint>
+    </constraint>
 
 
     <constraint id="suppress:suppressUntilWithMonthsLimit">
@@ -26,7 +26,7 @@
         WHERE
             until > date() + duration({months: $suppressUntilMonthsLimit})
         RETURN
-            type, until
+            type.name AS AnnotatedElement, until AS ExpirationDate
         ]]></cypher>
     </constraint>
 
@@ -39,11 +39,11 @@
         WHERE
             until < date()
         RETURN
-            type, until
+            type.name AS AnnotatedElement, until AS ExpirationDate
         ]]></cypher>
     </constraint>
 
-    <constraint id="suppress:suppressExpiresInLessThanOneMonth">
+    <constraint id="suppress:suppressExpiresInLessThanOneMonth" severity="minor">
         <requiresParameter name="suppressWarnBeforeMonths" type="int" defaultValue="1"/>
         <description>The suppression of this type expires in less than one month.</description>
         <cypher><![CDATA[
@@ -53,7 +53,7 @@
         WHERE
             until < date() + duration({months: 1}) AND until >= date()
         RETURN
-            type, until
+            type.name AS AnnotatedElement, until AS ExpirationDate
         ]]></cypher>
     </constraint>
 </jqassistant-rules>
