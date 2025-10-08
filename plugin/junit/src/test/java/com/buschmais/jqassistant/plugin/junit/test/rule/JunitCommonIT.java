@@ -17,8 +17,10 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.AbstractAssertions4Junit5;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithMessage;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutMessage;
 
 import org.junit.jupiter.api.Test;
 
