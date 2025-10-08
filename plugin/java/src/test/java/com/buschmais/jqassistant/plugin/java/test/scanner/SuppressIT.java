@@ -27,12 +27,14 @@ class SuppressIT extends AbstractJavaPluginIT {
         scanClasses(Suppress.class);
         List<Map<String, Object>> rows = query("MATCH (type:Java:jQASuppress) return type" ).getRows();
         assertThat(rows.size()).isEqualTo(3);
+        store.beginTransaction();
         assertThat(((JavaSuppressDescriptor) rows.get(0).get("type")).getSuppressReason()).isEqualTo("For testing this annotation");
         assertThat(((JavaSuppressDescriptor) rows.get(0).get("type")).getSuppressUntil()).isNull();
         assertThat(((JavaSuppressDescriptor) rows.get(1).get("type")).getSuppressReason()).isNull();
         assertThat(((JavaSuppressDescriptor) rows.get(1).get("type")).getSuppressUntil()).isNull();
         assertThat(((JavaSuppressDescriptor) rows.get(2).get("type")).getSuppressReason()).isEqualTo("Reason for suppression");
         assertThat(((JavaSuppressDescriptor) rows.get(2).get("type")).getSuppressUntil()).isEqualTo("2075-08-13");
+        store.commitTransaction();
     }
 
 
