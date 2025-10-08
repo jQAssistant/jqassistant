@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,8 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
     private List<String> suppressIds = new ArrayList<>();
 
     private String suppressColumn;
+    private LocalDate suppressUntil;
+    private String suppressReason;
 
     public SuppressAnnotationVisitor(JavaSuppressDescriptor suppressDescriptor) {
         super(VisitorHelper.ASM_OPCODES);
@@ -33,6 +38,15 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
                 this.suppressColumn = value.toString();
                 break;
             case "reason":
+                this.suppressReason = value.toString();
+                break;
+            case "until":
+                try {
+                    this.suppressUntil = LocalDate.parse(value.toString(), DateTimeFormatter.ISO_LOCAL_DATE);
+                }
+                catch (DateTimeParseException e){
+                    throw new IllegalArgumentException("Wrong jQASuppress until date format, must be of format 'yyyy-MM-dd'.", e );
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown attribute '" + name + "' for " + jQASuppress.class.getName());
@@ -58,5 +72,7 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
     public void visitEnd() {
         suppressDescriptor.setSuppressIds(suppressIds.toArray(new String[suppressIds.size()]));
         suppressDescriptor.setSuppressColumn(suppressColumn);
+        suppressDescriptor.setSuppressUntil(suppressUntil);
+        suppressDescriptor.setSuppressReason(suppressReason);
     }
 }

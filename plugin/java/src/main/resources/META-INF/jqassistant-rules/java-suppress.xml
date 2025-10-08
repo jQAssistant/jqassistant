@@ -1,0 +1,59 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 http://schema.jqassistant.org/rule/jqassistant-rule-v2.7.xsd">
+
+
+    <constraint id="suppress:suppressFieldsMustProvideAReason">
+        <description>Types annotated with @jQASuppress must provide a suppression reason.</description>
+        <cypher><![CDATA[
+            MATCH
+                (type:Java:jQASuppress)
+            WHERE
+                type.suppressReason IS NULL OR type.suppressReason = ""
+            RETURN
+                type.name AS AnnotatedElement, type.suppressReason AS Reason
+            ]]></cypher>
+    </constraint>
+
+
+    <constraint id="suppress:suppressUntilWithMonthsLimit">
+        <requiresParameter name="suppressUntilMonthsLimit" type="int" defaultValue="12"/>
+        <description>The provided expiration date must not be more than 12 months in the future.</description>
+        <cypher><![CDATA[
+        MATCH
+            (type:Java:jQASuppress)
+        WITH type, date(type.suppressUntil) AS until
+        WHERE
+            until > date() + duration({months: $suppressUntilMonthsLimit})
+        RETURN
+            type.name AS AnnotatedElement, until AS ExpirationDate
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="suppress:suppressUntilMustNotBeInThePast">
+        <description>The provided expiration date must not be in the past.</description>
+        <cypher><![CDATA[
+        MATCH
+            (type:Java:jQASuppress)
+        WITH type, date(type.suppressUntil) AS until
+        WHERE
+            until < date()
+        RETURN
+            type.name AS AnnotatedElement, until AS ExpirationDate
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="suppress:suppressExpiresInLessThanOneMonth" severity="minor">
+        <requiresParameter name="suppressWarnBeforeMonths" type="int" defaultValue="1"/>
+        <description>The suppression of this type expires in less than one month.</description>
+        <cypher><![CDATA[
+      MATCH
+            (type:Java:jQASuppress)
+        WITH type, date(type.suppressUntil) AS until
+        WHERE
+            until < date() + duration({months: 1}) AND until >= date()
+        RETURN
+            type.name AS AnnotatedElement, until AS ExpirationDate
+        ]]></cypher>
+    </constraint>
+</jqassistant-rules>

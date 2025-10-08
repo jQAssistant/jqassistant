@@ -697,3 +697,12 @@ If needed a custom column can be specified as well:
 public class ClassViolatingMyConstraint {
 }
 ----
+
+It is possible to set an expiry date and specify a reason for suppression. The expiry date must be specified in the format "yyyy-MM-dd".
+
+[source,java]
+----
+@jQASuppress(value = "my-rules:MyConstraint", until = "2026-02-28", reason = "The reason for suppressing this class.")
+public class ClassViolatingMyConstraint {
+}
+----
