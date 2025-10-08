@@ -30,6 +30,7 @@ import static com.buschmais.jqassistant.core.test.matcher.ConstraintMatcher.cons
 import static com.buschmais.jqassistant.core.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
