@@ -26,4 +26,6 @@ class ApocIT extends AbstractPluginIT {
         store.commitTransaction();
     }
 
+    //case apoc-enabled : false -> apoc available but should not be
+
 }

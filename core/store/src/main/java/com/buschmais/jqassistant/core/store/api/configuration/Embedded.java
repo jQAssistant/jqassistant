@@ -38,4 +38,9 @@ public interface Embedded {
 
     List<Plugin> neo4jPlugins();
 
+    @WithDefault("false")
+    boolean apocEnabled();
+
+    String neo4jVersion();
+
 }
