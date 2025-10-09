@@ -149,6 +149,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(group.getDescription())
                     .replaceAll(""));
             }
+            writeElementWithCharacters("overrides", (group.getOverriddenId()));
             xmlStreamWriter.writeEndElement();
         });
         this.groupBeginTime = now.getTime();
@@ -200,6 +201,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
                 writeElementWithCharacters("description", rule.getDescription());
+                writeElementWithCharacters("overrides", ((AbstractExecutableRule) rule).getOverriddenId());
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);
                 writeVerificationResult(result.getVerificationResult());

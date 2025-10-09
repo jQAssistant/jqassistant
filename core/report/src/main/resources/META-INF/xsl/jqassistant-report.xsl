@@ -203,6 +203,7 @@
             </td>
             <td>
                 <xsl:value-of select="tns:description/text()"/>
+                <xsl:value-of select="tns:overrides/text()"/>
             </td>
             <td>
                 <xsl:value-of select="@date"/>
@@ -254,6 +255,7 @@
             <td colspan="5">
                 <p>
                     <xsl:value-of select="tns:description/text()"/>
+                    <xsl:value-of select="tns:overrides/text()"/>
                 </p>
                 <p>
                     Execution Time (in ms): <xsl:value-of select="tns:duration/text()"/>
