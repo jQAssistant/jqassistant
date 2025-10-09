@@ -27,8 +27,8 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.8";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.8.xsd";
+    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.9";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.9.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 

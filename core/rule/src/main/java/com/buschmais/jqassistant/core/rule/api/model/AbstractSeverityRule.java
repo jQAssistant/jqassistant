@@ -18,7 +18,7 @@ public abstract class AbstractSeverityRule extends AbstractRule implements Sever
 
     @Getter
     @Setter
-    private String overridesConceptId;
+    private String overriddenId;
 
     protected abstract static class Builder<B extends Builder<B, R>, R extends AbstractSeverityRule> extends AbstractRule.Builder<B, R> {
 

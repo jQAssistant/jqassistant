@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import lombok.Getter;
+import org.jqassistant.schema.rule.v2.ReferenceType;
 
 /**
  * Defines a group.
@@ -79,6 +80,14 @@ public class Group extends AbstractSeverityRule {
 
         public GroupBuilder group(String id, Severity severity) {
             rule.groups.put(id, severity);
+            return this;
+        }
+
+        public Group.GroupBuilder overrideGroup(ReferenceType overrideGroup) {
+            Group r = build();
+            if (overrideGroup != null) {
+                r.setOverriddenId(overrideGroup.getRefId());
+            }
             return this;
         }
     }

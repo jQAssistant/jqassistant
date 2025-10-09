@@ -120,8 +120,12 @@ public class RuleSetExecutor<R> {
             .match(conceptPattern);
         if (matchingConcepts.isEmpty()) {
             LOGGER.warn("Could not find concepts matching to '{}'.", conceptPattern);
-        } else {
+        }
+         else {
             for (Concept matchingConcept : matchingConcepts) {
+                if (ruleSet.getConceptBucket().isOverridden(matchingConcept.getId())){
+                    matchingConcept = (Concept) ruleSet.getConceptBucket().getOverridingRule(matchingConcept); // overrides the concept by the overriding concept
+                }
                 applyConcept(ruleSet, matchingConcept, overriddenSeverity, activatedConcepts, new LinkedHashSet<>());
             }
         }

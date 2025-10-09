@@ -75,7 +75,9 @@ public class Concept extends AbstractExecutableRule {
 
         public ConceptBuilder overrideConcept(ReferenceType overrideConcept) {
             Concept r = build();
-            r.setOverridesConceptId(overrideConcept.getRefId());
+            if(overrideConcept != null) {
+                r.setOverriddenId(overrideConcept.getRefId());
+            }
             return this;
         }
     }

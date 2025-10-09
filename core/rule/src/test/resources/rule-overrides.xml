@@ -1,4 +1,4 @@
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7">
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.9">
 
     <group id="overriding-group-constraints">
         <includeGroup refId="test:Constraints" />
