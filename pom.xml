@@ -84,7 +84,7 @@
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <json-schema-validator.version>1.5.9</json-schema-validator.version>
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
-        <junit.version>5.13.4</junit.version>
+        <junit.version>5.14.0</junit.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
         <lombok.version>1.18.42</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -109,7 +109,7 @@
         <xmlunit-assertj.version>2.10.4</xmlunit-assertj.version>
         <xo.version>2.6.4</xo.version>
         <!-- Maven plugin versions -->
-        <exec-maven-plugin.version>3.6.0</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.6.1</exec-maven-plugin.version>
         <doxia-markdown.version>2.0.0</doxia-markdown.version>
         <maven.buildhelper.version>3.6.1</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>

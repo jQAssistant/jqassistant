@@ -732,5 +732,37 @@
         <report primaryColumn="TestMethod"/>
     </constraint>
 
+    <constraint id="java:TechnicalDebt">
+        <description>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt".</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type)-[declares:DECLARES*0..]->(element),
+              (element)-[:ANNOTATED_BY]->()-[:HAS|CONTAINS*0..]->(technicalDebt)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt"}),
+              (technicalDebt)-[:HAS]->(descriptionValue:Value{name: "value"})
+            OPTIONAL MATCH
+              (technicalDebt)-[:HAS]->(:Value{name: "priority"})-[:IS]->(priorityField:Field)
+            OPTIONAL MATCH
+              (technicalDebt)-[:HAS]->(issueValue:Value{name: "issue"})
+            WITH
+              type,
+              case
+                when element:Member then element.name
+              end as memberName,
+              descriptionValue.value as description,
+              case split(priorityField.signature, " ")[1]
+                when "HIGH" then 0
+                when "MEDIUM" then 1
+                when "LOW" then 2
+                else 1 // default priority is MEDIUM
+              end as priority,
+              issueValue.value as issue
+            RETURN DISTINCT
+              priority as Priority, type.fqn as Type, memberName as Member, description as Description, issue as Issue
+            ORDER BY
+              priority, type.fqn, memberName, description, issue
+        ]]></cypher>
+        <report primaryColumn="Type"/>
+    </constraint>
+
 </jqassistant-rules>
 
