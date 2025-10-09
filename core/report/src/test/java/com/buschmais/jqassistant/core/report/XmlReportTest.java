@@ -14,6 +14,7 @@ import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import org.jqassistant.schema.report.v2.*;
+import org.jqassistant.schema.rule.v2.ReferenceType;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.XmlReportTestHelper.ROW_COUNT_VERIFICATION;
@@ -241,6 +242,31 @@ class XmlReportTest {
         assertThat(constraintType.getRequiredConcept()
             .get(0)
             .getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+    }
+
+    @Test
+    void reportWithOverriddenConcepts() throws ReportException {
+        XmlReportPlugin xmlReportPlugin = XmlReportTestHelper.getXmlReportPlugin();
+
+        ReferenceType overridden = new ReferenceType();
+        overridden.setRefId("overridden-Concept-A");
+
+        Concept overridingConcept = Concept.builder()
+            .id("overriding-Concept")
+            .description("This concepts overrides another which should be noted additionally in the report.")
+            .severity(Severity.MINOR)
+            .overrideConcept(overridden)
+            .report(Report.builder()
+                .build())
+            .build();
+
+        xmlReportPlugin.begin();
+
+        xmlReportPlugin.beginConcept(overridingConcept, emptyMap(), emptyMap());
+        xmlReportPlugin.setResult(getResult(overridingConcept));
+        xmlReportPlugin.endConcept();
+
+        xmlReportPlugin.end();
     }
 
     private static <T extends ExecutableRule<?>> Result<T> getResult(T rule) {

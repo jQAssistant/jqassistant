@@ -4,7 +4,9 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.rule.api.filter.RuleFilter;
 
+import lombok.Singular;
 import lombok.ToString;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Container to store {@link Rule Rules}.
@@ -17,6 +19,13 @@ import lombok.ToString;
 public abstract class AbstractRuleBucket<T extends AbstractRule> {
 
     private TreeMap<String, T> rules = new TreeMap<>();
+
+    /**
+     * A map containing the id of the overridden and the overriding concept pairs.
+     * Key is the id of the overridden rule, value the overriding rule.
+     */
+    @Singular
+    private Map<String, AbstractSeverityRule> overrides = new HashMap<>();
 
     /**
      * Returns the number of rules of type {@code T} contained in the bucket.
@@ -33,6 +42,34 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
             throw new RuleException("Cannot add rule with id '" + rule.getId() + "' from '" + rule.getSource().getId() + "' as it has already been defined in '"
                     + existingRule.getSource().getId() + "'.");
         }
+    }
+
+    /**
+     * Adds the overridden and the overriding rules to the overrides map for later resolving.
+     */
+    public void updateOverrideRules(AbstractSeverityRule rule){
+        if(StringUtils.isNotEmpty(rule.getOverriddenId())){
+            overrides.put(rule.getOverriddenId(), rule);
+        }
+    }
+
+    /**
+     * Checks if a rule is overridden by another rule of the same type.
+     * @param refId of the rule in question
+     * @return true if the rule is overridden
+     */
+    public boolean isOverridden(String refId){
+        return overrides.containsKey(refId);
+    }
+
+
+    /**
+     * Returns the rule overriding the given rule.
+     * @param rule in question
+     * @return referenceId of the overriding rule
+     */
+    public AbstractSeverityRule getOverridingRule(AbstractSeverityRule rule){
+        return overrides.get(rule.getId());
     }
 
     protected abstract String getRuleTypeName();

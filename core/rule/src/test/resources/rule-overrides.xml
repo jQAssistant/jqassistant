@@ -1,0 +1,78 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.9">
+
+    <group id="test:Overriding-group-constraints">
+        <includeGroup refId="test:Constraints" />
+        <includeGroup refId="test:Concepts" />
+    </group>
+
+    <group id="test:OverriddenGroup"> </group>
+
+    <group id="test:OverridingGroup">
+        <overridesGroup refId="test:OverriddenGroup"/>
+    </group>
+
+
+    <constraint id="test:Constraint">
+        <requiresConcept refId="test:OverriddenConcept" />
+        <description>Test constraint</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:Constraint2">
+        <overridesConstraint refId="test:OverriddenConstraint" />
+        <description>Test constraint</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:OverriddenConstraint">
+        <description>Test constraint</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </constraint>
+
+    <concept id="test:OverridingConcept">
+        <overridesConcept refId="test:OverriddenConcept" />
+        <description>Overriding test concept</description>
+        <cypher><![CDATA[
+            CREATE
+                (overriding:Concept {name: 'overriding - should be there'})
+            RETURN
+                overridden
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:OverriddenConcept">
+        <description>Concept that is overridden</description>
+        <cypher><![CDATA[
+            CREATE
+                (overriding:Concept {name: 'overridden - should not be here'})
+            RETURN
+                overriding
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:AnotherConcept">
+        <providesConcept refId="test:OverriddenConcept"/>
+        <description>Concept that is overriden</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+</jqassistant-rules>
