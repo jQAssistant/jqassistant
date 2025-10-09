@@ -1,12 +1,14 @@
 <jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.9">
 
-    <group id="overriding-group-constraints">
+    <group id="test:Overriding-group-constraints">
         <includeGroup refId="test:Constraints" />
         <includeGroup refId="test:Concepts" />
     </group>
 
-    <group id="test:overridden">
-        <includeConstraint refId="test:Constraint" />
+    <group id="test:OverriddenGroup"> </group>
+
+    <group id="test:OverridingGroup">
+        <overridesGroup refId="test:OverriddenGroup"/>
     </group>
 
 
@@ -21,24 +23,45 @@
         ]]></cypher>
     </constraint>
 
-    <concept id="test:OverridingConcept">
-        <overridesConcept refId="test:OverriddenConcept" />
-        <description>Overriding test concept</description>
+    <constraint id="test:Constraint2">
+        <overridesConstraint refId="test:OverriddenConstraint" />
+        <description>Test constraint</description>
         <cypher><![CDATA[
             match
               (n)
             return
               n
         ]]></cypher>
-    </concept>
+    </constraint>
 
-    <concept id="test:OverriddenConcept">
-        <description>Concept that is overriden</description>
+    <constraint id="test:OverriddenConstraint">
+        <description>Test constraint</description>
         <cypher><![CDATA[
             match
               (n)
             return
               n
+        ]]></cypher>
+    </constraint>
+
+    <concept id="test:OverridingConcept">
+        <overridesConcept refId="test:OverriddenConcept" />
+        <description>Overriding test concept</description>
+        <cypher><![CDATA[
+            CREATE
+                (overriding:Concept {name: 'overriding - should be there'})
+            RETURN
+                overridden
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:OverriddenConcept">
+        <description>Concept that is overridden</description>
+        <cypher><![CDATA[
+            CREATE
+                (overriding:Concept {name: 'overridden - should not be here'})
+            RETURN
+                overriding
         ]]></cypher>
     </concept>
 

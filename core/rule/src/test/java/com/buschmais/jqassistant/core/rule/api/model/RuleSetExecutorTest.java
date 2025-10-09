@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
 
+import org.jqassistant.schema.rule.v2.ReferenceType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -587,4 +588,125 @@ class RuleSetExecutorTest {
         verify(visitor).visitConstraint(constraint, MAJOR, emptyMap());
         verify(visitor, never()).visitConstraint(excludedConstraint, MAJOR, emptyMap());
     }
+
+    //TODO: Add test for checkOverridesProvides method (overriding and overridden concepts must provide the same concepts, otherwise the overriding does not happens)
+    @Test
+    void overriddenConcept() throws RuleException {
+        Group group = Group.builder()
+            .id("group")
+            .concept("test:OverriddenConcept", MINOR)
+            .build();
+
+        Concept overriddenConcept = Concept.builder()
+            .id("test:OverriddenConcept")
+            .severity(MINOR)
+            .build();
+
+        ReferenceType overridden = new ReferenceType();
+        overridden.setRefId("test:OverriddenConcept");
+
+        Concept overridingConcept = Concept.builder()
+            .id("test:OverridingConcept")
+            .severity(MINOR)
+            .overrideConcept(overridden)
+            .build();
+
+        RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addConcept(overriddenConcept)
+            .addConcept(overridingConcept)
+            .addGroup(group)
+            .getRuleSet();
+
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId("group")
+            .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).visitConcept(overridingConcept, MINOR, emptyMap(), emptyMap());
+        verify(visitor, never()).visitConcept(overriddenConcept, MINOR, emptyMap(), emptyMap());
+    }
+
+    @Test
+    void overriddenConstraint() throws RuleException {
+        Group group = Group.builder()
+            .id("group")
+            .constraint("test:OverriddenConstraint", MINOR)
+            .build();
+
+        Constraint overriddenConstraint = Constraint.builder()
+            .id("test:OverriddenConstraint")
+            .severity(MINOR)
+            .build();
+
+        ReferenceType overridden = new ReferenceType();
+        overridden.setRefId("test:OverriddenConstraint");
+
+        Constraint overridingConstraint = Constraint.builder()
+            .id("test:OverridingConstraint")
+            .severity(MINOR)
+            .overrideConstraint(overridden)
+            .build();
+
+        RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addConstraint(overriddenConstraint)
+            .addConstraint(overridingConstraint)
+            .addGroup(group)
+            .getRuleSet();
+
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId("group")
+            .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).visitConstraint(overridingConstraint, MINOR, emptyMap());
+        verify(visitor, never()).visitConstraint(overriddenConstraint, MINOR, emptyMap());
+    }
+
+    @Test
+    void overriddenGroup() throws RuleException {
+        ReferenceType overridden = new ReferenceType();
+        overridden.setRefId("test:OverriddenGroup");
+
+        Group overridingGroup = Group.builder()
+            .id("test:OverridingGroup")
+            .constraint("test:Constraint", MINOR)
+            .overrideGroup(overridden)
+            .build();
+
+        Group overriddenGroup = Group.builder()
+            .id("test:OverriddenGroup")
+            .constraint("test:Constraint2", MINOR)
+            .build();
+
+        Constraint constraint = Constraint.builder()
+            .id("test:Constraint")
+            .severity(MINOR)
+            .build();
+
+        Constraint constraint2 = Constraint.builder()
+            .id("test:Constraint2")
+            .severity(MINOR)
+            .build();
+
+        RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addGroup(overriddenGroup)
+            .addGroup(overridingGroup)
+            .addConstraint(constraint)
+            .addConstraint(constraint2)
+            .getRuleSet();
+
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId("test:OverriddenGroup")
+            .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).beforeGroup(overridingGroup, null);
+        verify(visitor).afterGroup(overridingGroup);
+        verify(visitor, never()).beforeGroup(overriddenGroup, null);
+        verify(visitor, never()).afterGroup(overriddenGroup);
+    }
+
 }

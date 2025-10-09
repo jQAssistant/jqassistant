@@ -25,7 +25,7 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
      * Key is the id of the overridden rule, value the overriding rule.
      */
     @Singular
-    private Map<String, AbstractRule> overrides = new HashMap<>();
+    private Map<String, AbstractSeverityRule> overrides = new HashMap<>();
 
     /**
      * Returns the number of rules of type {@code T} contained in the bucket.
@@ -44,9 +44,12 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
         }
     }
 
-    public void updateOverrideConcepts(Concept concept){
-        if(StringUtils.isNotEmpty(concept.getOverriddenId())){
-            overrides.put(concept.getOverriddenId(), concept);
+    /**
+     * Adds the overridden and the overriding rules to the overrides map for later resolving.
+     */
+    public void updateOverrideRules(AbstractSeverityRule rule){
+        if(StringUtils.isNotEmpty(rule.getOverriddenId())){
+            overrides.put(rule.getOverriddenId(), rule);
         }
     }
 
@@ -65,7 +68,7 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
      * @param rule in question
      * @return referenceId of the overriding rule
      */
-    public AbstractRule getOverridingRule(AbstractRule rule){
+    public AbstractSeverityRule getOverridingRule(AbstractSeverityRule rule){
         return overrides.get(rule.getId());
     }
 
