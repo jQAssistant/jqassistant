@@ -19,13 +19,12 @@ class RuleOverridesTest {
     void xml() throws Exception {
         verifyRuleset(RuleSetTestHelper.readRuleSet("/rule-overrides.xml", rule));
     }
-    //TODO: Add Yaml Implementation
-    /**
+
     @Test
     void yaml() throws Exception {
-        verifyRuleset(RuleSetTestHelper.readRuleSet("/rule-overrides.yaml", rule));
+        verifyRuleset(RuleSetTestHelper.readRuleSet("/yaml/rule-overrides.yaml", rule));
     }
-**/
+
     private void verifyRuleset(RuleSet ruleSet) throws RuleException {
         assertThat(ruleSet.getConceptBucket().isOverridden("test:OverriddenConcept")).isTrue();
         assertThat(ruleSet.getConceptBucket().getOverridingRule(ruleSet.getConceptBucket().getById("test:OverriddenConcept")).getId()).isEqualTo("test:OverridingConcept");

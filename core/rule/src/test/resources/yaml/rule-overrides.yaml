@@ -1,0 +1,46 @@
+---
+groups:
+  - id: test:OverriddenGroup
+  - id: test:OverridingGroup
+    overridesGroup:
+      refId: test:OverriddenGroup
+
+
+constraints:
+  - id: test:Constraint
+    description: Test Constraint
+    requiresConcepts:
+      - refId: test:OverriddenConcept
+  - id: test:Constraint2
+    overridesConstraint:
+      refId: test:OverriddenConstraint
+  - id: test:OverriddenConstraint
+    description: Test constraint that is overridden
+
+concepts:
+  - id: test:OverridingConcept
+    description: Overriding test concept
+    overridesConcept:
+      refId: test:OverriddenConcept
+    source: |
+      CREATE
+        (overriding:Concept {name: 'overriding - should be there'})
+      RETURN
+        overridden
+
+  - id: test:OverriddenConcept
+    description: Concept that is overridden
+    source: |
+      CREATE
+        (overriding:Concept {name: 'overridden - should not be here'})
+      RETURN
+        overriding
+
+  - id: test:AnotherConcept
+    providesConcepts:
+      - refId: test:OverriddenConcept
+    source: |
+      match
+        (n)
+      return
+        n

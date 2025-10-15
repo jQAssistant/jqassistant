@@ -1,9 +1,5 @@
 <jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.9">
 
-    <group id="test:Overriding-group-constraints">
-        <includeGroup refId="test:Constraints" />
-        <includeGroup refId="test:Concepts" />
-    </group>
 
     <group id="test:OverriddenGroup"> </group>
 
@@ -67,7 +63,7 @@
 
     <concept id="test:AnotherConcept">
         <providesConcept refId="test:OverriddenConcept"/>
-        <description>Concept that is overriden</description>
+        <description>Concept</description>
         <cypher><![CDATA[
             match
               (n)
