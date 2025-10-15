@@ -99,7 +99,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
             @Override
             public String type() {
-                return "";
+                return "jar";
             }
 
             @Override

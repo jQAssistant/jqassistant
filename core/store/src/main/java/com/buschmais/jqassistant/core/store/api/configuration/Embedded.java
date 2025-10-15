@@ -15,6 +15,7 @@ public interface Embedded {
     String DEFAULT_HTTP_PORT = "7474";
 
     String CONNECTOR_ENABLED = "connector-enabled";
+    String APOC_ENABLED = "apoc-enabled";
 
     @WithDefault("false")
     boolean connectorEnabled();

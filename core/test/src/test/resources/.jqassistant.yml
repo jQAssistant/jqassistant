@@ -1,14 +1,4 @@
 jqassistant:
-  plugins:
-    - group-id: com.buschmais.jqassistant.plugin
-      artifact-id: java
-      version: 2.6.0-M2
   store:
     embedded:
-      apoc-enabled: true
       neo4j-version: ${neo4j_5x.version}
-  analyze:
-    rule:
-      directory: ${project.basedir}/test/resources/rules
-    groups:
-      - bootstrap:Default
