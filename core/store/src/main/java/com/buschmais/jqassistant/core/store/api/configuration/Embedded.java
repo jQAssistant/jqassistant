@@ -1,8 +1,10 @@
 package com.buschmais.jqassistant.core.store.api.configuration;
 
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
+import com.buschmais.jqassistant.core.shared.annotation.Description;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
@@ -33,6 +35,11 @@ public interface Embedded {
 
     @WithDefault(DEFAULT_HTTP_PORT)
     Integer httpPort();
+
+    String PROPERTIES = "properties";
+
+    @Description("Additional properties to be passed to the store.")
+    Map<String, String> properties();
 
     String NEO4J_PLUGINS = "neo4j-plugins";
 
