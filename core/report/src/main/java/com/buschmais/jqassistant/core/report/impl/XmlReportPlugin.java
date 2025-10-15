@@ -149,7 +149,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(group.getDescription())
                     .replaceAll(""));
             }
-            writeElementWithCharacters("overrides", (group.getOverriddenId()));
+            writeElementWithCharacters("overridesGroup", (group.getOverriddenId()));
             xmlStreamWriter.writeEndElement();
         });
         this.groupBeginTime = now.getTime();
