@@ -10,6 +10,8 @@ import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor;
 
 import org.objectweb.asm.AnnotationVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link AnnotationVisitor} for processing jQASuppress annotations.
@@ -30,6 +32,8 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
         this.suppressDescriptor = suppressDescriptor;
     }
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuppressAnnotationVisitor.class);
+
     @Override
     public void visit(String name, Object value) {
         if (name != null) {
@@ -49,7 +53,7 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Unknown attribute '" + name + "' for " + jQASuppress.class.getName());
+                LOGGER.warn("Unknown attribute '{}' for {}", name, jQASuppress.class.getName());
             }
         } else {
             switch (currentAttribute) {
@@ -57,7 +61,7 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
                 suppressIds.add(value.toString());
                 break;
             default:
-                throw new IllegalArgumentException("Unknown attribute '" + currentAttribute + "' for " + jQASuppress.class.getName());
+                LOGGER.warn("Unknown attribute '{}' for {}", currentAttribute, jQASuppress.class.getName());
             }
         }
     }

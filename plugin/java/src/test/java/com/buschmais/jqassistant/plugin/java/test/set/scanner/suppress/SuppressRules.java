@@ -18,4 +18,9 @@ public class SuppressRules {
     public void suppressedMethod() {
     }
 
+    @jQASuppress(value = "test-suppress:Class",  reason = "", until = "2025-02-14")
+    public class ClassWithoutReason {
+
+    }
+
 }

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress.SuppressRules;
 
@@ -17,50 +18,73 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SuppressIT extends AbstractJavaPluginIT {
 
     @Test
-    void suppressUntilWithMonthsLimit() throws RuleException {
+    void suppressUntilWithMonthsLimit() throws RuleException, ClassNotFoundException {
         scanClasses(SuppressRules.class);
-        Result<Constraint> result = validateConstraint("suppress:suppressUntilWithMonthsLimit");
+        scanInnerClass(SuppressRules.class, "ClassWithoutReason");
+        Result<Constraint> result = validateConstraint("suppress:suppressUntilMustNotExceedMonthsLimit");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
             .size()).isEqualTo(3);
-        assertThat((result.getRows().get(0).getColumns().get("AnnotatedElement")).getValue()).isEqualTo("SuppressRules");
-        assertThat((result.getRows().get(1).getColumns().get("AnnotatedElement")).getValue()).isEqualTo("suppressedValue");
-        assertThat((result.getRows().get(2).getColumns().get("AnnotatedElement")).getValue()).isEqualTo("suppressedMethod");
+
+        store.beginTransaction();
+        assertThat(((NamedDescriptor) result.getRows().get(0).getColumns().get("Element").getValue()).getName()).isEqualTo("SuppressRules");
+        assertThat(((NamedDescriptor) result.getRows().get(1).getColumns().get("Element").getValue()).getName()).isEqualTo("suppressedValue");
+        assertThat(((NamedDescriptor) result.getRows().get(2).getColumns().get("Element").getValue()).getName()).isEqualTo("suppressedMethod");
+        assertThat(result.getRows().get(0).getColumns().get("ExpirationDate").getValue()).isEqualTo(LocalDate.parse("2075-08-25"));
+        assertThat(result.getRows().get(1).getColumns().get("ExpirationDate").getValue()).isEqualTo(LocalDate.parse("2075-06-04"));
+        assertThat(result.getRows().get(2).getColumns().get("ExpirationDate").getValue()).isEqualTo(LocalDate.parse("2075-12-31"));
+        store.commitTransaction();
     }
 
     @Test
-    void suppressUntilMustNotBeInThePast() throws RuleException {
+    void suppressUntilMustNotBeInThePast() throws RuleException, ClassNotFoundException {
         scanClasses(SuppressRules.class);
+        scanInnerClass(SuppressRules.class, "ClassWithoutReason");
         Result<Constraint> result = validateConstraint("suppress:suppressUntilMustNotBeInThePast");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
-            .size()).isEqualTo(1);
-        assertThat((result.getRows().get(0).getColumns().get("AnnotatedElement")).getValue()).isEqualTo("expiredValue");
+            .size()).isEqualTo(2);
+
+        store.beginTransaction();
+        assertThat(((NamedDescriptor) result.getRows().get(0).getColumns().get("Element").getValue()).getName()).isEqualTo("SuppressRules$ClassWithoutReason");
+        assertThat(((NamedDescriptor) result.getRows().get(1).getColumns().get("Element").getValue()).getName()).isEqualTo("expiredValue");
+        assertThat(result.getRows().get(0).getColumns().get("ExpirationDate").getValue()).isEqualTo(LocalDate.parse("2025-02-14"));
+        assertThat(result.getRows().get(1).getColumns().get("ExpirationDate").getValue()).isEqualTo(LocalDate.parse("2024-08-25"));
+        store.commitTransaction();
     }
 
     @Test
-    void suppressExpiresInLessThanOneMonth() throws RuleException {
+    void suppressExpiresInLessThanOneMonth() throws RuleException, ClassNotFoundException {
         scanClasses(SuppressRules.class);
+        scanInnerClass(SuppressRules.class, "ClassWithoutReason");
         LocalDate dateInTwoWeeks = LocalDate.now()
             .plusWeeks(2);
         query("MATCH (n:Java:jQASuppress {name: 'suppressedValue'}) SET n.suppressUntil = date('"+ dateInTwoWeeks + "') RETURN n");
-        Result<Constraint> result = validateConstraint("suppress:suppressExpiresInLessThanOneMonth");
+        Result<Constraint> result = validateConstraint("suppress:suppressExpiresInLessThanMonthsLimit");
         assertThat(result.getStatus()).isEqualTo(WARNING);
         assertThat(result.getRows()
             .size()).isEqualTo(1);
-        assertThat((result.getRows().get(0).getColumns().get("AnnotatedElement")).getValue()).isEqualTo("suppressedValue");
+
+        store.beginTransaction();
+        assertThat(((NamedDescriptor) result.getRows().get(0).getColumns().get("Element").getValue()).getName()).isEqualTo("suppressedValue");
+        assertThat(result.getRows().get(0).getColumns().get("ExpirationDate").getValue()).isEqualTo(dateInTwoWeeks);
+        store.commitTransaction();
     }
 
     @Test
-    void suppressFieldsMustProvideAReason() throws RuleException {
+    void suppressFieldsMustProvideAReason() throws RuleException, ClassNotFoundException {
         scanClasses(SuppressRules.class);
-        Result<Constraint> result = validateConstraint("suppress:suppressFieldsMustProvideAReason");
+        scanInnerClass(SuppressRules.class, "ClassWithoutReason");
+        Result<Constraint> result = validateConstraint("suppress:suppressElementMustProvideAReason");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
-            .size()).isEqualTo(3);
+            .size()).isEqualTo(4);
 
-        assertThat((result.getRows().get(0).getColumns().get("AnnotatedElement")).getValue()).isEqualTo("expiredValue");
-        assertThat((result.getRows().get(1).getColumns().get("AnnotatedElement")).getValue()).isEqualTo("suppressedValue");
-        assertThat((result.getRows().get(2).getColumns().get("AnnotatedElement")).getValue()).isEqualTo("suppressedMethod");
+        store.beginTransaction();
+        assertThat(((NamedDescriptor) result.getRows().get(0).getColumns().get("Element").getValue()).getName()).isEqualTo("SuppressRules$ClassWithoutReason");
+        assertThat(((NamedDescriptor) result.getRows().get(1).getColumns().get("Element").getValue()).getName()).isEqualTo("expiredValue");
+        assertThat(((NamedDescriptor) result.getRows().get(2).getColumns().get("Element").getValue()).getName()).isEqualTo("suppressedValue");
+        assertThat(((NamedDescriptor) result.getRows().get(3).getColumns().get("Element").getValue()).getName()).isEqualTo("suppressedMethod");
+        store.commitTransaction();
     }
 }
