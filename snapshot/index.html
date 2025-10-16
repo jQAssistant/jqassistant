@@ -10906,20 +10906,22 @@ RETURN
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:DECLARES*0..1]-&gt;(e),
   (e)-[:ANNOTATED_BY]-&gt;(ignore:Annotation)-[:OF_TYPE]-&gt;(ignoreType:Type)
 WHERE
   ignoreType.fqn= &quot;org.junit.Ignore&quot;
   AND NOT (ignore)-[:HAS]-&gt;(:Value{name:&quot;value&quot;})
 RETURN
-  e AS IgnoreWithoutMessage
+  t AS DeclaringClass, e AS IgnoreWithoutMessage
 UNION
 MATCH
+  (t:Type)-[:DECLARES*0..1]-&gt;(e),
   (e)-[:ANNOTATED_BY]-&gt;(disabled:Annotation)-[:OF_TYPE]-&gt;(disabledType:Type)
 WHERE
   disabledType.fqn = &quot;org.junit.jupiter.api.Disabled&quot;
   AND NOT (disabled)-[:HAS]-&gt;(:Value{name:&quot;value&quot;})
 RETURN
-  e AS IgnoreWithoutMessage</code></pre>
+  t AS DeclaringClass, e AS IgnoreWithoutMessage</code></pre>
 </div>
 </div>
 </div>
@@ -12665,7 +12667,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-15 06:03:54 UTC
+Last updated 2025-10-16 07:47:04 UTC
 </div>
 </div>
 </body>
