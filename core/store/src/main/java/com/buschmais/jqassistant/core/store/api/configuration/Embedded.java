@@ -42,6 +42,7 @@ public interface Embedded {
     @WithDefault("false")
     boolean apocEnabled();
 
+    @WithDefault("0.0.0")
     String neo4jVersion();
 
 }
