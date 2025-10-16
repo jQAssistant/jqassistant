@@ -115,23 +115,25 @@ public class JunitCommonIT extends AbstractJunitIT {
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit:IgnoreWithoutMessage")));
         List<Row> rows = result.getRows();
-        List<Map.Entry<String,String>> typesAndIgnoredType = new ArrayList<>();
+        List<Map.Entry<String, String>> typesAndIgnoredType = new ArrayList<>();
 
-            for (Row row : rows) {
-                String type = ((ClassTypeDescriptor) row.getColumns().get("DeclaringClass").getValue()).getName();
+        for (Row row : rows) {
+            String type = ((ClassTypeDescriptor) row.getColumns()
+                .get("DeclaringClass")
+                .getValue()).getName();
 
-                String ignoredType;
-                Object ignoreWithoutMessage = row.getColumns()
-                    .get("IgnoreWithoutMessage")
-                    .getValue();
-                if (ignoreWithoutMessage instanceof ClassTypeDescriptor) {
-                    ignoredType = ((ClassTypeDescriptor) ignoreWithoutMessage).getName();
-                } else {
-                    ignoredType = ((MethodDescriptor) ignoreWithoutMessage).getName();
-                }
-                typesAndIgnoredType.add(Map.entry(type, ignoredType));
+            String ignoredType;
+            Object ignoreWithoutMessage = row.getColumns()
+                .get("IgnoreWithoutMessage")
+                .getValue();
+            if (ignoreWithoutMessage instanceof ClassTypeDescriptor) {
+                ignoredType = ((ClassTypeDescriptor) ignoreWithoutMessage).getName();
+            } else {
+                ignoredType = ((MethodDescriptor) ignoreWithoutMessage).getName();
             }
-
+            typesAndIgnoredType.add(Map.entry(type, ignoredType));
+        }
+        assertThat(typesAndIgnoredType.size()).isEqualTo(4);
         assertThat(typesAndIgnoredType).contains(Map.entry("IgnoredTest", "IgnoredTest"));
         assertThat(typesAndIgnoredType).contains(Map.entry("IgnoredTest", "ignoredTest"));
         assertThat(typesAndIgnoredType).contains(Map.entry("DisabledTestWithoutMessage", "DisabledTestWithoutMessage"));
