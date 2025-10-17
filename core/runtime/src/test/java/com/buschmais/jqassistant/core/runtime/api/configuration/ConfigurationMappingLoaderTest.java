@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
+import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
 
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
@@ -32,6 +33,10 @@ class ConfigurationMappingLoaderTest {
     public static final File USER_HOME = new File("src/test/resources/configuration/userhome");
 
     public static final File WORKING_DIRECTORY = new File("src/test/resources/configuration/working directory");
+
+    public static final ConfigSource NEO4J_CONFIG_SOURCE = new ConfigurationBuilder("Neo4j", DEFAULT_ORDINAL).with(Embedded.class, Embedded.NEO4J_VERSION,
+            "0.0.0")
+        .build();
 
     public static final ConfigSource BUILD_CONFIG_SOURCE = new ConfigurationBuilder("Build", DEFAULT_ORDINAL).with(Build.class, Build.NAME, "Test")
         .with(Build.class, Build.TIMESTAMP, ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
@@ -98,7 +103,7 @@ class ConfigurationMappingLoaderTest {
             .withUserHome(USER_HOME)
             .withWorkingDirectory(WORKING_DIRECTORY)
             .withIgnoreProperties(Set.of(unknownProperty))
-            .load(BUILD_CONFIG_SOURCE, new PropertiesConfigSource(Map.of(unknownProperty, "test value"), "Test", DEFAULT_ORDINAL));
+            .load(BUILD_CONFIG_SOURCE, NEO4J_CONFIG_SOURCE, new PropertiesConfigSource(Map.of(unknownProperty, "test value"), "Test", DEFAULT_ORDINAL));
 
         assertThat(configuration).isNotNull();
     }
@@ -143,6 +148,6 @@ class ConfigurationMappingLoaderTest {
             .withClasspath()
             .withEnvVariables()
             .withProfiles(profiles)
-            .load(BUILD_CONFIG_SOURCE, new SysPropConfigSource());
+            .load(BUILD_CONFIG_SOURCE, NEO4J_CONFIG_SOURCE, new SysPropConfigSource());
     }
 }

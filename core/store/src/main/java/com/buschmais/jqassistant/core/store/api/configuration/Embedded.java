@@ -15,7 +15,6 @@ public interface Embedded {
     String DEFAULT_HTTP_PORT = "7474";
 
     String CONNECTOR_ENABLED = "connector-enabled";
-    String APOC_ENABLED = "apoc-enabled";
 
     @WithDefault("false")
     boolean connectorEnabled();
@@ -39,10 +38,13 @@ public interface Embedded {
 
     List<Plugin> neo4jPlugins();
 
+    String APOC_ENABLED = "apoc-enabled";
+
     @WithDefault("false")
     boolean apocEnabled();
 
-    @WithDefault("0.0.0")
+    String NEO4J_VERSION = "neo4j-version";
+
     String neo4jVersion();
 
 }

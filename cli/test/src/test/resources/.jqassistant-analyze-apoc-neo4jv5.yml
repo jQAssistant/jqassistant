@@ -2,5 +2,4 @@ jqassistant:
   store:
     embedded:
       apoc-enabled: true
-      neo4j-version: ${neo4j_5x.version}
 
