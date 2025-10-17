@@ -69,8 +69,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected void configure(XOUnit.XOUnitBuilder builder) {
         List<File> plugins = resolveNeo4jPlugins();
-        Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(),
-            plugins);
+        Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(), plugins);
         builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
     }
@@ -78,7 +77,9 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     private List<File> resolveNeo4jPlugins() {
         List<Plugin> plugins = embedded.neo4jPlugins();
         if (embedded.apocEnabled()) {
-            Plugin neo4j = newPlugin("org.neo4j.procedure", "apoc-core", "core", embedded.neo4jVersion());
+            String neo4jVersion = embedded.neo4jVersion()
+                .orElseThrow(() -> new IllegalStateException("Neo4j version is not configured for embedded store."));
+            Plugin neo4j = newPlugin("org.neo4j.procedure", "apoc-core", "core", neo4jVersion);
             plugins.add(neo4j);
         }
         log.info("Resolving {} Neo4j plugin(s).", plugins.size());

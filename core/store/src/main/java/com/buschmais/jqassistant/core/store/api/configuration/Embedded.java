@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.store.api.configuration;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 
@@ -45,6 +46,6 @@ public interface Embedded {
 
     String NEO4J_VERSION = "neo4j-version";
 
-    String neo4jVersion();
+    Optional<String> neo4jVersion();
 
 }
