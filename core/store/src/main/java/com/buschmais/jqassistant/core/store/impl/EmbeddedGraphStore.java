@@ -3,8 +3,10 @@ package com.buschmais.jqassistant.core.store.impl;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.core.shared.aether.configuration.Exclusion;
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -67,16 +69,55 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected void configure(XOUnit.XOUnitBuilder builder) {
         List<File> plugins = resolveNeo4jPlugins();
-        Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(),
-            plugins);
+        Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(), plugins);
         builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
     }
 
     private List<File> resolveNeo4jPlugins() {
         List<Plugin> plugins = embedded.neo4jPlugins();
+        if (embedded.apocEnabled()) {
+            String neo4jVersion = embedded.neo4jVersion()
+                .orElseThrow(() -> new IllegalStateException("Neo4j version is not configured for embedded store."));
+            Plugin neo4j = newPlugin("org.neo4j.procedure", "apoc-core", "core", neo4jVersion);
+            plugins.add(neo4j);
+        }
         log.info("Resolving {} Neo4j plugin(s).", plugins.size());
         return artifactProvider.resolve(plugins);
+    }
+
+    public Plugin newPlugin(String groupId, String artifactId, String classifier, String version) {
+        return new Plugin() {
+            @Override
+            public String groupId() {
+                return groupId;
+            }
+
+            @Override
+            public String artifactId() {
+                return artifactId;
+            }
+
+            @Override
+            public String type() {
+                return "jar";
+            }
+
+            @Override
+            public Optional<String> classifier() {
+                return Optional.ofNullable(classifier);
+            }
+
+            @Override
+            public String version() {
+                return version;
+            }
+
+            @Override
+            public List<Exclusion> exclusions() {
+                return List.of();
+            }
+        };
     }
 
     @Override
