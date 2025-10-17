@@ -36,10 +36,10 @@ public interface Embedded {
     @WithDefault(DEFAULT_HTTP_PORT)
     Integer httpPort();
 
-    String PROPERTIES = "properties";
+    String NEO4J_PROPERTIES = "neo4j-properties";
 
-    @Description("Additional properties to be passed to the store.")
-    Map<String, String> properties();
+    @Description("Additional properties to be passed to the embedded Neo4j instance.")
+    Map<String, String> neo4jProperties();
 
     String NEO4J_PLUGINS = "neo4j-plugins";
 

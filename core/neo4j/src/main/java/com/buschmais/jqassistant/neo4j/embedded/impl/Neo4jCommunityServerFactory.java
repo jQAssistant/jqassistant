@@ -28,8 +28,7 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
     }
 
     @Override
-    public Properties getProperties(boolean connectorEnabled, String listenAddress, Integer boltPort, Map<String, String> additionalProperties,
-        List<File> plugins) {
+    public Properties getProperties(boolean connectorEnabled, String listenAddress, Integer boltPort, Map<String, String> neo4jProperties, List<File> plugins) {
         EmbeddedNeo4jXOProvider.PropertiesBuilder propertiesBuilder = EmbeddedNeo4jXOProvider.propertiesBuilder()
             .property(GraphDatabaseSettings.procedure_unrestricted, List.of("*"))
             // keep disk footprint small (TX logs)
@@ -44,7 +43,7 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
             propertiesBuilder.property(BoltConnector.enabled, true);
             propertiesBuilder.property(BoltConnector.listen_address, new SocketAddress(listenAddress, boltPort));
         }
-        additionalProperties.forEach(propertiesBuilder::property);
+        neo4jProperties.forEach(propertiesBuilder::property);
         // set string properties which are not available for Neo4j v4
         // deactivate internal debug logs
         propertiesBuilder.property("server.logs.debug.enabled", FALSE.toString());

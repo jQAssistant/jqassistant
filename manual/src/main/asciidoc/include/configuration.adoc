@@ -89,11 +89,11 @@ jqassistant:
       # -Djqassistant.store.embedded.http-port
       http-port: 7474
 
-      # Additional properties to be passed to Neo4j
+      # Additional properties to be passed to the embedded Neo4j instance
       #
-      # -Djqassistant.store.embedded.<neo4j property>
+      # -Djqassistant.store.embedded.neo4j-properties.<neo4j property>
       # e.g. db.tx_log.rotation.size: 50M
-      properties:
+      neo4j-properties:
 
       # The list of Neo4j plugins to load and activate.
       neo4j-plugins:

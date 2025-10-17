@@ -16,14 +16,13 @@ public interface EmbeddedNeo4jServerFactory {
      *     The listen address of the Bolt connector.
      * @param boltPort
      *     The port of the Bolt connector.
-     * @param additionalProperties
-     *     Additional properties to be passed to Neo4j
+     * @param neo4jProperties
+     *     Additional properties to be passed to Neo4j.
      * @param neo4jPlugins
      *     The Neo4j plugins to deploy.
      * @return The {@link Properties}
      */
-    Properties getProperties(boolean connectorEnabled, String listenAddress, Integer boltPort, Map<String, String> additionalProperties,
-        List<File> neo4jPlugins);
+    Properties getProperties(boolean connectorEnabled, String listenAddress, Integer boltPort, Map<String, String> neo4jProperties, List<File> neo4jPlugins);
 
     EmbeddedNeo4jServer getServer();
 
