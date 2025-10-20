@@ -114,7 +114,7 @@
         <maven.buildhelper.version>3.6.1</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven.jaxb2-plugin.version>0.15.3</maven.jaxb2-plugin.version>
-        <maven.xml.version>1.1.0</maven.xml.version>
+        <maven.xml.version>1.2.0</maven.xml.version>
         <!-- Maven config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
