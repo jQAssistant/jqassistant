@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress.SuppressRules;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
@@ -17,10 +18,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SuppressIT extends AbstractJavaPluginIT {
 
+    @BeforeEach
+    void init() {
+        scanClasses(SuppressRules.class, SuppressRules.ClassWithoutReason.class);
+    }
+
     @Test
-    void suppressUntilWithMonthsLimit() throws RuleException, ClassNotFoundException {
-        scanClasses(SuppressRules.class);
-        scanInnerClass(SuppressRules.class, "ClassWithoutReason");
+    void suppressUntilWithMonthsLimit() throws RuleException {
         Result<Constraint> result = validateConstraint("suppress:suppressUntilMustNotExceedMonthsLimit");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
@@ -37,9 +41,7 @@ public class SuppressIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void suppressUntilMustNotBeInThePast() throws RuleException, ClassNotFoundException {
-        scanClasses(SuppressRules.class);
-        scanInnerClass(SuppressRules.class, "ClassWithoutReason");
+    void suppressUntilMustNotBeInThePast() throws RuleException {
         Result<Constraint> result = validateConstraint("suppress:suppressUntilMustNotBeInThePast");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
@@ -54,9 +56,7 @@ public class SuppressIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void suppressExpiresInLessThanOneMonth() throws RuleException, ClassNotFoundException {
-        scanClasses(SuppressRules.class);
-        scanInnerClass(SuppressRules.class, "ClassWithoutReason");
+    void suppressExpiresInLessThanOneMonth() throws RuleException {
         LocalDate dateInTwoWeeks = LocalDate.now()
             .plusWeeks(2);
         query("MATCH (n:Java:jQASuppress {name: 'suppressedValue'}) SET n.suppressUntil = date('"+ dateInTwoWeeks + "') RETURN n");
@@ -72,9 +72,7 @@ public class SuppressIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void suppressFieldsMustProvideAReason() throws RuleException, ClassNotFoundException {
-        scanClasses(SuppressRules.class);
-        scanInnerClass(SuppressRules.class, "ClassWithoutReason");
+    void suppressFieldsMustProvideAReason() throws RuleException{
         Result<Constraint> result = validateConstraint("suppress:suppressElementMustProvideAReason");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()

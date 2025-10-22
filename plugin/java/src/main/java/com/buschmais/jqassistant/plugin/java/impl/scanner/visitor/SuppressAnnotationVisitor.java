@@ -9,13 +9,13 @@ import java.util.List;
 import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.objectweb.asm.AnnotationVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link AnnotationVisitor} for processing jQASuppress annotations.
  */
+@Slf4j
 class SuppressAnnotationVisitor extends AnnotationVisitor {
 
     private final JavaSuppressDescriptor suppressDescriptor;
@@ -32,7 +32,6 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
         this.suppressDescriptor = suppressDescriptor;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SuppressAnnotationVisitor.class);
 
     @Override
     public void visit(String name, Object value) {
@@ -53,7 +52,7 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
                 }
                 break;
             default:
-                LOGGER.warn("Unknown attribute '{}' for {}", name, jQASuppress.class.getName());
+                log.warn("Unknown attribute '{}' for {}", name, jQASuppress.class.getName());
             }
         } else {
             switch (currentAttribute) {
@@ -61,7 +60,7 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
                 suppressIds.add(value.toString());
                 break;
             default:
-                LOGGER.warn("Unknown attribute '{}' for {}", currentAttribute, jQASuppress.class.getName());
+                log.warn("Unknown attribute '{}' for {}", currentAttribute, jQASuppress.class.getName());
             }
         }
     }
