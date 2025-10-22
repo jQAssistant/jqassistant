@@ -21,6 +21,10 @@ import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 import com.buschmais.xo.neo4j.embedded.impl.datastore.EmbeddedDatastore;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,45 +83,36 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         if (embedded.apocEnabled()) {
             String neo4jVersion = embedded.neo4jVersion()
                 .orElseThrow(() -> new IllegalStateException("Neo4j version is not configured for embedded store."));
-            Plugin neo4j = newPlugin("org.neo4j.procedure", "apoc-core", "core", neo4jVersion);
+            Plugin neo4j = PluginImpl.pluginImplBuilder()
+                .groupId("org.neo4j.procedure")
+                .artifactId("apoc-core")
+                .classifier("core")
+                .version(neo4jVersion)
+                .build();
             plugins.add(neo4j);
         }
         log.info("Resolving {} Neo4j plugin(s).", plugins.size());
         return artifactProvider.resolve(plugins);
     }
 
-    public Plugin newPlugin(String groupId, String artifactId, String classifier, String version) {
-        return new Plugin() {
-            @Override
-            public String groupId() {
-                return groupId;
-            }
+    @ToString
+    @Getter
+    @Accessors(fluent = true)
+    public static class PluginImpl implements Plugin {
+        private final String groupId;
+        private final String artifactId;
+        private final String type = "jar";
+        private final Optional<String> classifier;
+        private final String version;
+        private final List<Exclusion> exclusions = List.of();
 
-            @Override
-            public String artifactId() {
-                return artifactId;
-            }
-
-            @Override
-            public String type() {
-                return "jar";
-            }
-
-            @Override
-            public Optional<String> classifier() {
-                return Optional.ofNullable(classifier);
-            }
-
-            @Override
-            public String version() {
-                return version;
-            }
-
-            @Override
-            public List<Exclusion> exclusions() {
-                return List.of();
-            }
-        };
+        @Builder(builderMethodName = "pluginImplBuilder")
+        public PluginImpl(String groupId, String artifactId, String classifier, String version) {
+            this.groupId = groupId;
+            this.artifactId = artifactId;
+            this.classifier = Optional.of(classifier);
+            this.version = version;
+        }
     }
 
     @Override
