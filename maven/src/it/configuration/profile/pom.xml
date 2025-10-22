@@ -19,6 +19,12 @@
         <profile>
             <id>test-store</id>
         </profile>
+        <profile>
+            <id>activeByDefault</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
     </profiles>
 
 </project>

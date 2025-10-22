@@ -25,6 +25,7 @@ import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.source.yaml.YamlConfigSource;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -299,13 +300,15 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, yamlConfiguration, propertiesConfiguration };
         File userHome = new File(System.getProperty("user.home"));
         File executionRootDirectory = new File(session.getExecutionRootDirectory());
+        List<String> activatedProfiles = new ArrayList<>(session.getProjectBuildingRequest()
+            .getActiveProfileIds());
+        currentProject.getActiveProfiles().stream().map(Profile::getId).forEach(activatedProfiles::add);
         ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(MavenConfiguration.class, configurationLocations)
             .withUserHome(userHome)
             .withDirectory(executionRootDirectory, CONFIGURATION_ORDINAL_EXECUTION_ROOT)
             .withEnvVariables()
             .withClasspath()
-            .withProfiles(session.getProjectBuildingRequest()
-                .getActiveProfileIds())
+            .withProfiles(activatedProfiles)
             .withIgnoreProperties(Set.of(PROPERTY_CONFIGURATION_LOCATIONS));
         if (!executionRootDirectory.equals(currentProject.getBasedir())) {
             builder.withWorkingDirectory(currentProject.getBasedir());
