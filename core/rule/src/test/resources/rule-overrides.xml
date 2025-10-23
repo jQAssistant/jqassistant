@@ -2,25 +2,17 @@
 
 
     <group id="test:OverriddenGroup"> </group>
+    <group id="test:OverriddenGroup2"> </group>
 
     <group id="test:OverridingGroup">
         <overridesGroup refId="test:OverriddenGroup"/>
+        <overridesGroup refId="test:OverriddenGroup2"/>
     </group>
 
 
     <constraint id="test:Constraint">
-        <requiresConcept refId="test:OverriddenConcept" />
-        <description>Test constraint</description>
-        <cypher><![CDATA[
-            match
-              (n)
-            return
-              n
-        ]]></cypher>
-    </constraint>
-
-    <constraint id="test:Constraint2">
         <overridesConstraint refId="test:OverriddenConstraint" />
+        <overridesConstraint refId="test:OverriddenConstraint2" />
         <description>Test constraint</description>
         <cypher><![CDATA[
             match
@@ -31,6 +23,16 @@
     </constraint>
 
     <constraint id="test:OverriddenConstraint">
+        <description>Test constraint</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:OverriddenConstraint2">
         <description>Test constraint</description>
         <cypher><![CDATA[
             match

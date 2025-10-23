@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 import org.jqassistant.schema.rule.v2.ReferenceType;
@@ -83,11 +81,12 @@ public class Group extends AbstractSeverityRule {
             return this;
         }
 
-        public Group.GroupBuilder overrideGroup(ReferenceType overrideGroup) {
+        public Group.GroupBuilder overrideGroups(List<ReferenceType> overrideGroups) {
             Group r = build();
-            if (overrideGroup != null) {
-                r.setOverriddenId(overrideGroup.getRefId());
-            }
+            List<String> ids = overrideGroups.stream()
+                .map(ReferenceType::getRefId)
+                .collect(Collectors.toList());
+            r.setOverriddenIds(ids);
             return this;
         }
     }

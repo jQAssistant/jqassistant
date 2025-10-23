@@ -12,11 +12,13 @@
     <group id="group:GroupThatOverridesSmth" date="13/04/2025">
         <description>This group overrides another.</description>
         <duration>3</duration>
-        <overrides-group id="group:OverriddenGroup"/>
+        <overrides-group id="group:OverriddenGroup1"/>
+        <overrides-group id="group:OverriddenGroup2"/>
     </group>
     <concept id="concept:ConceptWithOverridingConcept">
         <description>Minor Success</description>
-        <overrides-concept id="conept:OverriddenConcept"/>
+        <overrides-concept id="concept:OverriddenConcept1"/>
+        <overrides-concept id="concept:OverriddenConcept2"/>
         <verificationResult>
             <success>true</success>
             <rowCount>1</rowCount>

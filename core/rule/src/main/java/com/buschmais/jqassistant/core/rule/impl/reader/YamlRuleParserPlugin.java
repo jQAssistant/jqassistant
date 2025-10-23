@@ -108,17 +108,13 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
             for (Map<String, Object> executableRule : executableRules) {
                 Concept.ConceptBuilder builder = Concept.builder();
-
                 String conceptId = this.processExecutableRule(executableRule, context, builder, this::getDefaultConceptSeverity);
                 Set<Concept.ProvidedConcept> providedConcepts = this.extractProvidedConcepts(conceptId, executableRule);
-
                 if (executableRule.containsKey(OVERRIDES_CONCEPT)) {
-                    ReferenceType overriddenConcept = new ReferenceType();
-                    overriddenConcept.setRefId(((Map<String, Object>) executableRule.get(OVERRIDES_CONCEPT)).get("refId")
-                        .toString());
-                    builder.overrideConcept(overriddenConcept);
+                    if(executableRule.get(OVERRIDES_CONCEPT) instanceof List){
+                        builder.overrideConcepts((List<ReferenceType>) executableRule.get(OVERRIDES_CONCEPT));
+                    }
                 }
-
                 builder.providedConcepts(providedConcepts);
                 context.getBuilder()
                     .addConcept(builder.build());
@@ -131,14 +127,11 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             for (Map<String, Object> executableRule : executableRules) {
                 Constraint.ConstraintBuilder builder = Constraint.builder();
                 this.processExecutableRule(executableRule, context, builder, this::getDefaultConstraintSeverity);
-
                 if (executableRule.containsKey(OVERRIDES_CONSTRAINT)) {
-                    ReferenceType overriddenConstraint = new ReferenceType();
-                    overriddenConstraint.setRefId(((Map<String, Object>) executableRule.get(OVERRIDES_CONSTRAINT)).get("refId")
-                        .toString());
-                    builder.overrideConstraint(overriddenConstraint);
+                    if(executableRule.get(OVERRIDES_CONSTRAINT) instanceof List){
+                        builder.overrideConstraints((List<ReferenceType>) executableRule.get(OVERRIDES_CONCEPT));
+                    }
                 }
-
                 context.getBuilder()
                     .addConstraint(builder.build());
             }
@@ -162,11 +155,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
 
         List<Map<String, Object>> groups = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_GROUPS, key -> emptyList());
 
-        ReferenceType overriddenGroup = null;
+        List<ReferenceType> overriddenGroups = null;
+
         if (map.containsKey(OVERRIDES_GROUP)) {
-            overriddenGroup = new ReferenceType();
-            overriddenGroup.setRefId(((Map<String, Object>) map.get(OVERRIDES_GROUP)).get("refId")
-                .toString());
+            overriddenGroups  = ((List<ReferenceType>) map.get(OVERRIDES_GROUP));
         }
 
         SeverityMap includedGroups = new SeverityMap();
@@ -204,7 +196,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             .concepts(includedConcepts)
             .constraints(includedConstraints)
             .providedConcepts(providedConcepts)
-            .overrideGroup(overriddenGroup)
+            .overrideGroups(overriddenGroups)
             .groups(includedGroups)
             .build();
 

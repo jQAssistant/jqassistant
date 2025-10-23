@@ -99,7 +99,6 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private Group createGroup(String id, RuleSource ruleSource, GroupType referencableType) throws RuleException {
         String description = removeIndent(referencableType.getDescription());
-        ReferenceType overridesGroup =  referencableType.getOverridesGroup();
         SeverityEnumType severityType = referencableType.getSeverity();
         Severity severity = getSeverity(severityType, this::getDefaultGroupSeverity);
         Map<String, Severity> includeConcepts = getIncludedReferences(referencableType.getIncludeConcept());
@@ -112,7 +111,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .severity(severity)
             .ruleSource(ruleSource)
             .concepts(includeConcepts)
-            .overrideGroup(overridesGroup)
+            .overrideGroups(referencableType.getOverridesGroup())
             .providedConcepts(providedConcepts)
             .constraints(includeConstraints)
             .groups(includeGroups)
@@ -121,7 +120,6 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType conceptType) throws RuleException {
         String description = removeIndent(conceptType.getDescription());
-        ReferenceType overrideConcept =  conceptType.getOverridesConcept();
         Executable<?> executable = createExecutable(conceptType.getSource(), conceptType.getCypher(), conceptType.getScript());
         Map<String, Parameter> parameters = getRequiredParameters(conceptType.getRequiresParameter());
         SeverityEnumType severityType = conceptType.getSeverity();
@@ -149,7 +147,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .parameters(parameters)
             .providedConcepts(providedConcepts)
             .requiresConcepts(requiresConcepts)
-            .overrideConcept(overrideConcept)
+            .overrideConcepts(conceptType.getOverridesConcept())
             .verification(verification)
             .report(report)
             .build();
@@ -158,7 +156,6 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType constraintType) throws RuleException {
         Executable<?> executable = createExecutable(constraintType.getSource(), constraintType.getCypher(), constraintType.getScript());
         String description = removeIndent(constraintType.getDescription());
-        ReferenceType overridesConstraint =  constraintType.getOverridesConstraint();
         Map<String, Parameter> parameters = getRequiredParameters(constraintType.getRequiresParameter());
         SeverityEnumType severityType = constraintType.getSeverity();
         Severity severity = getSeverity(severityType, this::getDefaultConstraintSeverity);
@@ -175,7 +172,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .deprecation(deprecated)
             .executable(executable)
             .parameters(parameters)
-            .overrideConstraint(overridesConstraint)
+            .overrideConstraints(constraintType.getOverridesConstraint())
             .requiresConcepts(requiresConcepts)
             .verification(verification)
             .report(report)

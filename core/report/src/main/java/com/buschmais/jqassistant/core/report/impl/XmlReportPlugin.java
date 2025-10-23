@@ -151,10 +151,13 @@ public class XmlReportPlugin implements ReportPlugin {
                     .replaceAll(""));
                 xmlStreamWriter.writeEndElement();
             }
-            if (StringUtils.isNotEmpty(group.getOverriddenId())) {
-                xmlStreamWriter.writeStartElement("overrides-group");
-                xmlStreamWriter.writeAttribute("id", group.getOverriddenId());
-                xmlStreamWriter.writeEndElement();
+            List<String> overriddenIds = group.getOverriddenIds();
+            if (overriddenIds != null && !overriddenIds.isEmpty()) {
+                for(String id : overriddenIds){
+                    xmlStreamWriter.writeStartElement("overrides-group");
+                    xmlStreamWriter.writeAttribute("id", id);
+                    xmlStreamWriter.writeEndElement();
+                }
             }
         });
         this.groupBeginTime = now.getTime();
@@ -206,15 +209,17 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
                 writeElementWithCharacters("description", rule.getDescription());
-                String overriddenId = ((AbstractExecutableRule) rule).getOverriddenId();
-                if (StringUtils.isNotEmpty(overriddenId)) {
-                    if (elementName.equals("concept")) {
-                        xmlStreamWriter.writeStartElement("overrides-concept");
-                    } else {
-                        xmlStreamWriter.writeStartElement("overrides-constraint");
+                List<String> overriddenIds = ((AbstractExecutableRule) rule).getOverriddenIds();
+                if(overriddenIds != null && !overriddenIds.isEmpty()) {
+                    for (String id : overriddenIds) {
+                        if (elementName.equals("concept")) {
+                            xmlStreamWriter.writeStartElement("overrides-concept");
+                        } else {
+                            xmlStreamWriter.writeStartElement("overrides-constraint");
+                        }
+                        xmlStreamWriter.writeAttribute("id", id);
+                        xmlStreamWriter.writeEndElement();
                     }
-                    xmlStreamWriter.writeAttribute("id", overriddenId);
-                    xmlStreamWriter.writeEndElement();
                 }
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);

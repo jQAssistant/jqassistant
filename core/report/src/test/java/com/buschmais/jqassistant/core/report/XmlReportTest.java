@@ -2,10 +2,8 @@ package com.buschmais.jqassistant.core.report;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportReader;
@@ -249,18 +247,30 @@ class XmlReportTest {
     void reportWithOverrides() throws ReportException {
         XmlReportPlugin xmlReportPlugin = XmlReportTestHelper.getXmlReportPlugin();
 
-        ReferenceType overriddenA = new ReferenceType();
-        overriddenA.setRefId("overridden-ConceptA");
-        ReferenceType overriddenB = new ReferenceType();
-        overriddenB.setRefId("overridden-ConstraintB");
-        ReferenceType overriddenC = new ReferenceType();
-        overriddenC.setRefId("overridden-GroupC");
+        ReferenceType overriddenAReference = new ReferenceType();
+        overriddenAReference.setRefId("overridden-ConceptA");
+        ReferenceType overriddenA2Reference = new ReferenceType();
+        overriddenA2Reference.setRefId("overridden-ConceptA2");
+        List<ReferenceType> overriddenA = new LinkedList<>();
+        overriddenA.add(overriddenAReference);
+        overriddenA.add(overriddenA2Reference);
+
+        ReferenceType overriddenBReference = new ReferenceType();
+        overriddenBReference.setRefId("overridden-ConstraintB");
+        List<ReferenceType> overriddenB = new LinkedList<>();
+        overriddenB.add(overriddenBReference);
+
+        ReferenceType overriddenCReference = new ReferenceType();
+        overriddenCReference.setRefId("overridden-GroupC");
+        List<ReferenceType> overriddenC = new LinkedList<>();
+        overriddenC.add(overriddenCReference);
+
 
         Concept overridingConcept = Concept.builder()
             .id("overriding-Concept")
             .description("This concept overrides another which should be noted additionally in the report.")
             .severity(Severity.MINOR)
-            .overrideConcept(overriddenA)
+            .overrideConcepts(overriddenA)
             .report(Report.builder()
                 .build())
             .build();
@@ -275,7 +285,7 @@ class XmlReportTest {
         Constraint overridingconstraint = Constraint.builder()
             .id("overriding-Constraint")
             .severity(Severity.BLOCKER)
-            .overrideConstraint(overriddenB)
+            .overrideConstraints(overriddenB)
             .report(Report.builder()
                 .build())
             .build();
@@ -287,7 +297,7 @@ class XmlReportTest {
             .id("overriding-Group")
             .description("This group overrides another..")
             .concepts(concepts)
-            .overrideGroup(overriddenC)
+            .overrideGroups(overriddenC)
             .build();
         Group overriddenGroup = Group.builder()
             .id("overridden-Group")
@@ -320,14 +330,24 @@ class XmlReportTest {
         List<ReferencableRuleType> groupOrConceptOrConstraint = jqassistantReport.getGroupOrConceptOrConstraint();
         assertThat(groupOrConceptOrConstraint).hasSize(5);
 
+        List<String> overriddenConcepts = new ArrayList<>();
+        overriddenConcepts.add("overridden-ConceptA");
+        overriddenConcepts.add("overridden-ConceptA2");
+
         assertThat(((ConceptType) groupOrConceptOrConstraint.get(0)).getOverridesConcept()
-            .getId()).isEqualTo("overridden-ConceptA");
-        assertThat(((ConceptType) groupOrConceptOrConstraint.get(1)).getOverridesConcept()).isNull();
+            .stream()
+            .map(OverriddenReferenceType::getId)
+            .collect(Collectors.toList())
+            .containsAll(overriddenConcepts)).isTrue();
+
+        assertThat(((ConceptType) groupOrConceptOrConstraint.get(1)).getOverridesConcept()).isEmpty();
         assertThat(((ConstraintType) groupOrConceptOrConstraint.get(2)).getOverridesConstraint()
+            .get(0)
             .getId()).isEqualTo("overridden-ConstraintB");
         assertThat(((GroupType) groupOrConceptOrConstraint.get(3)).getOverridesGroup()
+            .get(0)
             .getId()).isEqualTo("overridden-GroupC");
-        assertThat(((GroupType) groupOrConceptOrConstraint.get(4)).getOverridesGroup()).isNull();
+        assertThat(((GroupType) groupOrConceptOrConstraint.get(4)).getOverridesGroup()).isEmpty();
 
     }
 

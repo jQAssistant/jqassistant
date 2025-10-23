@@ -59,7 +59,7 @@
             <xs:extension base="tns:ReferencableRuleType">
                 <xs:sequence>
                     <xs:group ref="tns:RuleGroup"/>
-                    <xs:element name="overrides-group" type="tns:OverriddenReferenceType"/>
+                    <xs:element name="overrides-group" type="tns:OverriddenReferenceType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="description" type="xs:string"/>
                     <xs:element name="duration" type="xs:int"/>
                 </xs:sequence>
@@ -114,7 +114,7 @@
             <xs:extension base="tns:ExecutableRuleType">
                 <xs:sequence>
                     <xs:element name="providing-concept" type="tns:ConceptReferenceType" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="overrides-concept" type="tns:OverriddenReferenceType" />
+                    <xs:element name="overrides-concept" type="tns:OverriddenReferenceType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -124,7 +124,7 @@
         <xs:complexContent>
             <xs:extension base="tns:ExecutableRuleType">
                 <xs:sequence>
-                      <xs:element name="overrides-constraint" type="tns:OverriddenReferenceType" />
+                      <xs:element name="overrides-constraint" type="tns:OverriddenReferenceType" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

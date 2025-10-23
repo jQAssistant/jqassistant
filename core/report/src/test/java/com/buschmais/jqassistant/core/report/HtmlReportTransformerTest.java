@@ -50,9 +50,10 @@ class HtmlReportTransformerTest {
 
         transformer.toEmbedded(xmlSource, htmlTarget);
         String html = htmlWriter.toString();
-        assertThat(getRuleIds(html, "([a-zA-Z]*):Overridden([a-zA-Z]*)")).containsExactlyInAnyOrder("conept:OverriddenConcept",
-            "constraint:OverriddenConstraint", "group:OverriddenGroup");
         saveHtml(html);
+        assertThat(getRuleIds(html, "([a-zA-Z]*):Overridden([a-zA-Z]*)")).containsExactlyInAnyOrder("concept:OverriddenConcept1", "concept:OverriddenConcept2",
+            "constraint:OverriddenConstraint", "group:OverriddenGroup1", "group:OverriddenGroup2");
+
     }
 
     private static Set<String> getRuleIds(String html, String rulePattern) {

@@ -29,9 +29,11 @@ class RuleOverridesTest {
         assertThat(ruleSet.getConceptBucket().isOverridden("test:OverriddenConcept")).isTrue();
         assertThat(ruleSet.getConceptBucket().getOverridingRule(ruleSet.getConceptBucket().getById("test:OverriddenConcept")).getId()).isEqualTo("test:OverridingConcept");
         assertThat(ruleSet.getConstraintBucket().isOverridden("test:OverriddenConstraint")).isTrue();
-        assertThat(ruleSet.getConstraintBucket().getOverridingRule(ruleSet.getConstraintBucket().getById("test:OverriddenConstraint")).getId()).isEqualTo("test:Constraint2");
+        assertThat(ruleSet.getConstraintBucket().getOverridingRule(ruleSet.getConstraintBucket().getById("test:OverriddenConstraint")).getId()).isEqualTo("test:Constraint");
+        assertThat(ruleSet.getConstraintBucket().getOverridingRule(ruleSet.getConstraintBucket().getById("test:OverriddenConstraint2")).getId()).isEqualTo("test:Constraint");
         assertThat(ruleSet.getGroupsBucket().isOverridden("test:OverriddenGroup")).isTrue();
         assertThat(ruleSet.getGroupsBucket().getOverridingRule(ruleSet.getGroupsBucket().getById("test:OverriddenGroup")).getId()).isEqualTo("test:OverridingGroup");
+        assertThat(ruleSet.getGroupsBucket().getOverridingRule(ruleSet.getGroupsBucket().getById("test:OverriddenGroup2")).getId()).isEqualTo("test:OverridingGroup");
     }
 
 }

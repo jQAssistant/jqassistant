@@ -6,7 +6,6 @@ import com.buschmais.jqassistant.core.rule.api.filter.RuleFilter;
 
 import lombok.Singular;
 import lombok.ToString;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Container to store {@link Rule Rules}.
@@ -48,8 +47,10 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
      * Adds the overridden and the overriding rules to the overrides map for later resolving.
      */
     public void updateOverrideRules(AbstractSeverityRule rule){
-        if(StringUtils.isNotEmpty(rule.getOverriddenId())){
-            overrides.put(rule.getOverriddenId(), rule);
+        if(rule.getOverriddenIds() != null && !rule.getOverriddenIds().isEmpty()){
+            for(String overriddenId : rule.getOverriddenIds()){
+                overrides.put(overriddenId, rule);
+            }
         }
     }
 

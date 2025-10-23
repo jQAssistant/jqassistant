@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
@@ -602,13 +600,23 @@ class RuleSetExecutorTest {
             .severity(MINOR)
             .build();
 
+        Concept overriddenConceptSecond = Concept.builder()
+            .id("test:OverriddenConceptSecond")
+            .severity(MINOR)
+            .build();
+
         ReferenceType overridden = new ReferenceType();
         overridden.setRefId("test:OverriddenConcept");
+        ReferenceType overriddenSecond = new ReferenceType();
+        overriddenSecond.setRefId("test:OverriddenConceptSecond");
+        List<ReferenceType> overriddenConcepts = new LinkedList<>();
+        overriddenConcepts.add(overridden);
+        overriddenConcepts.add(overriddenSecond);
 
         Concept overridingConcept = Concept.builder()
             .id("test:OverridingConcept")
             .severity(MINOR)
-            .overrideConcept(overridden)
+            .overrideConcepts(overriddenConcepts)
             .build();
 
         RuleSet ruleSet = RuleSetBuilder.newInstance()
@@ -625,6 +633,7 @@ class RuleSetExecutorTest {
 
         verify(visitor).visitConcept(overridingConcept, MINOR, emptyMap(), emptyMap());
         verify(visitor, never()).visitConcept(overriddenConcept, MINOR, emptyMap(), emptyMap());
+        verify(visitor, never()).visitConcept(overriddenConceptSecond, MINOR, emptyMap(), emptyMap());
     }
 
     @Test
@@ -639,13 +648,23 @@ class RuleSetExecutorTest {
             .severity(MINOR)
             .build();
 
+        Constraint overriddenConstraintSecond = Constraint.builder()
+            .id("test:OverriddenConstraintSecond")
+            .severity(MINOR)
+            .build();
+
         ReferenceType overridden = new ReferenceType();
         overridden.setRefId("test:OverriddenConstraint");
+        ReferenceType overriddenSecond = new ReferenceType();
+        overriddenSecond.setRefId("test:OverriddenConstraintSecond");
+        List<ReferenceType> overriddenConstraints = new LinkedList<>();
+        overriddenConstraints.add(overridden);
+        overriddenConstraints.add(overriddenSecond);
 
         Constraint overridingConstraint = Constraint.builder()
             .id("test:OverridingConstraint")
             .severity(MINOR)
-            .overrideConstraint(overridden)
+            .overrideConstraints(overriddenConstraints)
             .build();
 
         RuleSet ruleSet = RuleSetBuilder.newInstance()
@@ -662,22 +681,33 @@ class RuleSetExecutorTest {
 
         verify(visitor).visitConstraint(overridingConstraint, MINOR, emptyMap());
         verify(visitor, never()).visitConstraint(overriddenConstraint, MINOR, emptyMap());
+        verify(visitor, never()).visitConstraint(overriddenConstraintSecond, MINOR, emptyMap());
     }
 
     @Test
     void overriddenGroup() throws RuleException {
         ReferenceType overridden = new ReferenceType();
         overridden.setRefId("test:OverriddenGroup");
+        ReferenceType overriddenSecond = new ReferenceType();
+        overriddenSecond.setRefId("test:OverriddenGroupSecond");
+
+        List<ReferenceType> overriddenGroups = new LinkedList<>();
+        overriddenGroups.add(overridden);
+        overriddenGroups.add(overriddenSecond);
 
         Group overridingGroup = Group.builder()
             .id("test:OverridingGroup")
             .constraint("test:Constraint", MINOR)
-            .overrideGroup(overridden)
+            .overrideGroups(overriddenGroups)
             .build();
 
         Group overriddenGroup = Group.builder()
             .id("test:OverriddenGroup")
             .constraint("test:Constraint2", MINOR)
+            .build();
+
+        Group overriddenGroupSecond = Group.builder()
+            .id("test:OverriddenGroupSecond")
             .build();
 
         Constraint constraint = Constraint.builder()
@@ -707,6 +737,8 @@ class RuleSetExecutorTest {
         verify(visitor).afterGroup(overridingGroup);
         verify(visitor, never()).beforeGroup(overriddenGroup, null);
         verify(visitor, never()).afterGroup(overriddenGroup);
+        verify(visitor, never()).beforeGroup(overriddenGroupSecond, null);
+        verify(visitor, never()).afterGroup(overriddenGroupSecond);
     }
 
 }

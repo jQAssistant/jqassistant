@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
+import java.util.List;
+
 import lombok.*;
 
 /**
@@ -18,7 +20,7 @@ public abstract class AbstractSeverityRule extends AbstractRule implements Sever
 
     @Getter
     @Setter
-    private String overriddenId;
+    private List<String> overriddenIds;
 
     protected abstract static class Builder<B extends Builder<B, R>, R extends AbstractSeverityRule> extends AbstractRule.Builder<B, R> {
 

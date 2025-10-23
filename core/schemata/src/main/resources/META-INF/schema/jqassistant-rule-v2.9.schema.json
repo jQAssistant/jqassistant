@@ -169,7 +169,7 @@
         },
         "required" : [ "id" ]
       },
-      "additionalProperties" : false
+      "unevaluatedProperties" : false
     },
     "reportJScn" : {
       "type" : "object",
@@ -206,14 +206,27 @@
           "anyOf": [
             {
               "allOf": [
-                { "$ref": "#/$defs/executableRuleJSch",
-                  "properties": {
-                    "overridesConcept": {
-                      "anyOf": [
-                        { "$ref": "#/$defs/referenceJSch" },
-                        { "type": "null" }
-                      ]
-                    }
+                {"$ref": "#/$defs/executableRuleJSch"},
+                {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/executableRuleJSch/items"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "overridesConcept": {
+                            "type": "array",
+                            "minItems": 0,
+                            "items": {
+                              "$ref": "#/$defs/referenceJSch"
+                            }
+                          }
+                        }
+                      }
+                    ]
                   }
                 }
               ]
@@ -226,14 +239,27 @@
           "anyOf": [
             {
               "allOf": [
-                { "$ref": "#/$defs/executableRuleJSch",
-                  "properties": {
-                    "overridesConstraint": {
-                      "anyOf": [
-                        { "$ref": "#/$defs/referenceJSch" },
-                        { "type": "null" }
-                      ]
-                    }
+                {"$ref": "#/$defs/executableRuleJSch"},
+                {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/executableRuleJSch/items"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "overridesConstraint": {
+                            "type": "array",
+                            "minItems": 0,
+                            "items": {
+                              "$ref": "#/$defs/referenceJSch"
+                            }
+                          }
+                        }
+                      }
+                    ]
                   }
                 }
               ]
@@ -270,11 +296,10 @@
                       { "type": "null" }
                     ]
                   },
-                  "overridesGroup": {
-                    "anyOf": [
-                      { "$ref": "#/$defs/referenceJSch" },
-                      { "type": "null" }
-                    ]
+                  "overridesGroups": {
+                    "type" : "array",
+                    "minItems" : 0,
+                    "items" : { "$ref" : "#/$defs/referenceJSch" }
                   }
                 },
                 "additionalProperties": false,

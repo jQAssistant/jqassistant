@@ -225,18 +225,20 @@
         </tr>
         <tr id="detailsOf{$groupId}" style="display:none;" name="detailsRow">
             <td colspan="5">
-                <xsl:if test="tns:overrides-group/@id">
+                <xsl:if test="tns:description">
                     <p>
                         <xsl:value-of select="tns:description/text()"/>
                     </p>
                 </xsl:if>
-
                 <xsl:if test="tns:overrides-group">
                     <p>
-                        <xsl:value-of select="concat('Overrides: ', tns:overrides-group/@id)"/>
+                        <xsl:for-each select="tns:overrides-group[@id]">
+                            <xsl:if test="position() = 1">Overrides: </xsl:if>
+                            <xsl:value-of select="@id"/>
+                            <xsl:if test="position() != last()">, </xsl:if>
+                        </xsl:for-each>
                     </p>
                 </xsl:if>
-
             </td>
         </tr>
     </xsl:template>
@@ -317,10 +319,18 @@
                 </xsl:if>
                 <p>
                     <xsl:if test="tns:overrides-concept">
-                        <xsl:value-of select="concat('Overrides: ', tns:overrides-concept/@id)"/>
+                            <xsl:for-each select="tns:overrides-concept[@id]">
+                                <xsl:if test="position() = 1">Overrides: </xsl:if>
+                                <xsl:value-of select="@id"/>
+                                <xsl:if test="position() != last()">, </xsl:if>
+                            </xsl:for-each>
                     </xsl:if>
                     <xsl:if test="tns:overrides-constraint">
-                        <xsl:value-of select="concat('Overrides: ', tns:overrides-constraint/@id)"/>
+                            <xsl:for-each select="tns:overrides-constraint[@id]">
+                                <xsl:if test="position() = 1">Overrides: </xsl:if>
+                                <xsl:value-of select="@id"/>
+                                <xsl:if test="position() != last()">, </xsl:if>
+                            </xsl:for-each>
                     </xsl:if>
                 </p>
             </td>
