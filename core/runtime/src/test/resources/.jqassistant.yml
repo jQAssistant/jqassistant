@@ -4,3 +4,6 @@ jqassistant:
     - group-id: org.jqassistant.plugin
       artifact-id: test-plugin
       version: 1.0.0
+  store:
+    embedded:
+      neo4j-version: ${neo4j.version}
