@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jqassistant.schema.rule.v2.ReferenceType;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
@@ -109,6 +110,11 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 Concept.ConceptBuilder builder = Concept.builder();
                 String conceptId = this.processExecutableRule(executableRule, context, builder, this::getDefaultConceptSeverity);
                 Set<Concept.ProvidedConcept> providedConcepts = this.extractProvidedConcepts(conceptId, executableRule);
+                if (executableRule.containsKey(OVERRIDES_CONCEPT)) {
+                    if(executableRule.get(OVERRIDES_CONCEPT) instanceof List){
+                        builder.overrideConcepts((List<ReferenceType>) executableRule.get(OVERRIDES_CONCEPT));
+                    }
+                }
                 builder.providedConcepts(providedConcepts);
                 context.getBuilder()
                     .addConcept(builder.build());
@@ -121,6 +127,11 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             for (Map<String, Object> executableRule : executableRules) {
                 Constraint.ConstraintBuilder builder = Constraint.builder();
                 this.processExecutableRule(executableRule, context, builder, this::getDefaultConstraintSeverity);
+                if (executableRule.containsKey(OVERRIDES_CONSTRAINT)) {
+                    if(executableRule.get(OVERRIDES_CONSTRAINT) instanceof List){
+                        builder.overrideConstraints((List<ReferenceType>) executableRule.get(OVERRIDES_CONCEPT));
+                    }
+                }
                 context.getBuilder()
                     .addConstraint(builder.build());
             }
@@ -143,6 +154,12 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         List<Map<String, Object>> constraints = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS, key -> emptyList());
 
         List<Map<String, Object>> groups = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_GROUPS, key -> emptyList());
+
+        List<ReferenceType> overriddenGroups = null;
+
+        if (map.containsKey(OVERRIDES_GROUP)) {
+            overriddenGroups  = ((List<ReferenceType>) map.get(OVERRIDES_GROUP));
+        }
 
         SeverityMap includedGroups = new SeverityMap();
         SeverityMap includedConstraints = new SeverityMap();
@@ -179,6 +196,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             .concepts(includedConcepts)
             .constraints(includedConstraints)
             .providedConcepts(providedConcepts)
+            .overrideGroups(overriddenGroups)
             .groups(includedGroups)
             .build();
 
