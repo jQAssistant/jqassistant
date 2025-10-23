@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HtmlReportTransformerTest {
 
     @Test
-    void reportWithSeverities() throws ReportTransformerException, IOException {
+    void reportWithSeverities() throws ReportTransformerException {
         HtmlReportTransformer transformer = new HtmlReportTransformer();
         Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-severities.xml"));
         StringWriter htmlWriter = new StringWriter();
@@ -35,11 +35,24 @@ class HtmlReportTransformerTest {
         transformer.toEmbedded(xmlSource, htmlTarget);
 
         String html = htmlWriter.toString();
-        saveHtml(html);
         assertThat(getRuleIds(html, "constraint:([a-zA-Z]*Severity)")).containsExactlyInAnyOrder("constraint:FailureCriticalMajorSeverity",
             "constraint:WarningWithMajorSeverity", "constraint:SuccessWithMinorSeverity");
         assertThat(getRuleIds(html, "concept:([a-zA-Z]*Severity)")).containsExactlyInAnyOrder("concept:FailureCriticalMajorSeverity",
             "concept:WarningWithMajorSeverity", "concept:SuccessWithMinorSeverity");
+    }
+
+    @Test
+    void reportWithOverrides() throws ReportTransformerException, IOException {
+        HtmlReportTransformer transformer = new HtmlReportTransformer();
+        Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-overrides.xml"));
+        StringWriter htmlWriter = new StringWriter();
+        javax.xml.transform.Result htmlTarget = new StreamResult(htmlWriter);
+
+        transformer.toEmbedded(xmlSource, htmlTarget);
+        String html = htmlWriter.toString();
+        assertThat(getRuleIds(html, "([a-zA-Z]*):Overridden([a-zA-Z]*)")).containsExactlyInAnyOrder("conept:OverriddenConcept",
+            "constraint:OverriddenConstraint", "group:OverriddenGroup");
+        saveHtml(html);
     }
 
     private static Set<String> getRuleIds(String html, String rulePattern) {
@@ -55,7 +68,7 @@ class HtmlReportTransformerTest {
     /** for testing purposes, delete later **/
 
     public void saveHtml (String html) throws IOException {
-        String filePath = "target/reportHtml";
+        String filePath = "target/reportHtml.html";
             File file = new File(filePath);
             file.getParentFile().mkdirs();
             FileWriter writer = new FileWriter(file);

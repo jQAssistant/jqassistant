@@ -9,8 +9,14 @@
         <description>This is an extraordinary group containing content.</description>
         <duration>3</duration>
     </group>
-    <concept id="concept:SuccessWithMinorSeverity">
+    <group id="group:GroupThatOverridesSmth" date="13/04/2025">
+        <description>This group overrides another.</description>
+        <duration>3</duration>
+        <overrides-group id="group:OverriddenGroup"/>
+    </group>
+    <concept id="concept:ConceptWithOverridingConcept">
         <description>Minor Success</description>
+        <overrides-concept id="conept:OverriddenConcept"/>
         <verificationResult>
             <success>true</success>
             <rowCount>1</rowCount>
@@ -19,7 +25,7 @@
         <severity level="3">major</severity>
         <duration>10</duration>
     </concept>
-    <concept id="concept:WarningWithMajorSeverity">
+    <concept id="concept:NormalConcept">
         <description>Major Warning</description>
         <verificationResult>
             <success>false</success>
@@ -29,18 +35,9 @@
         <severity level="2">major</severity>
         <duration>10</duration>
     </concept>
-    <concept id="concept:FailureCriticalMajorSeverity">
-        <description>Critical Failure</description>
-        <verificationResult>
-            <success>false</success>
-            <rowCount>0</rowCount>
-        </verificationResult>
-        <status>failure</status>
-        <severity level="1">critical</severity>
-        <duration>10</duration>
-    </concept>
-    <constraint id="constraint:SuccessWithMinorSeverity">
+    <constraint id="constraint:ConstraintOverriding">
         <description>Minor Success</description>
+        <overrides-constraint id="constraint:OverriddenConstraint"/>
         <verificationResult>
             <success>true</success>
             <rowCount>0</rowCount>
@@ -49,7 +46,7 @@
         <severity level="3">major</severity>
         <duration>10</duration>
     </constraint>
-    <constraint id="constraint:WarningWithMajorSeverity">
+    <constraint id="constraint:NormalConstraint">
         <description>Major Warning</description>
         <verificationResult>
             <success>false</success>
@@ -57,16 +54,6 @@
         </verificationResult>
         <status>warning</status>
         <severity level="2">major</severity>
-        <duration>10</duration>
-    </constraint>
-    <constraint id="constraint:FailureCriticalMajorSeverity">
-        <description>Critical Failure</description>
-        <verificationResult>
-            <success>false</success>
-            <rowCount>1</rowCount>
-        </verificationResult>
-        <status>failure</status>
-        <severity level="1">critical</severity>
         <duration>10</duration>
     </constraint>
 </jqassistant-report>
