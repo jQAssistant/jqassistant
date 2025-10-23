@@ -26,6 +26,7 @@ import com.buschmais.xo.api.CompositeObject;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
@@ -45,7 +46,7 @@ public class XmlReportPlugin implements ReportPlugin {
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.8";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.9";
 
     private static final Pattern XML_10_INVALID_CHARACTERS = Pattern.compile("[^\t\r\n -\uD7FF\uE000-�\uD800\uDC00-\uDBFF\uDFFF]");
 
@@ -144,13 +145,17 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeAttribute("id", group.getId());
             xmlStreamWriter.writeAttribute("date", XML_DATE_FORMAT.format(now));
 
-            xmlStreamWriter.writeStartElement("description");
             if (group.getDescription() != null) {
+                xmlStreamWriter.writeStartElement("description");
                 xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(group.getDescription())
                     .replaceAll(""));
+                xmlStreamWriter.writeEndElement();
             }
-            writeElementWithCharacters("overridesGroup", (group.getOverriddenId()));
-            xmlStreamWriter.writeEndElement();
+            if (StringUtils.isNotEmpty(group.getOverriddenId())) {
+                xmlStreamWriter.writeStartElement("overrides-group");
+                xmlStreamWriter.writeAttribute("id", group.getOverriddenId());
+                xmlStreamWriter.writeEndElement();
+            }
         });
         this.groupBeginTime = now.getTime();
     }
@@ -201,7 +206,16 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
                 writeElementWithCharacters("description", rule.getDescription());
-                writeElementWithCharacters("overrides", ((AbstractExecutableRule) rule).getOverriddenId());
+                String overriddenId = ((AbstractExecutableRule) rule).getOverriddenId();
+                if (StringUtils.isNotEmpty(overriddenId)) {
+                    if (elementName.equals("concept")) {
+                        xmlStreamWriter.writeStartElement("overrides-concept");
+                    } else {
+                        xmlStreamWriter.writeStartElement("overrides-constraint");
+                    }
+                    xmlStreamWriter.writeAttribute("id", overriddenId);
+                    xmlStreamWriter.writeEndElement();
+                }
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);
                 writeVerificationResult(result.getVerificationResult());

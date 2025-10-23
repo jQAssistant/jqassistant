@@ -3,7 +3,6 @@
            xmlns:tns="http://schema.jqassistant.org/report/v2.9"
            targetNamespace="http://schema.jqassistant.org/report/v2.9"
            elementFormDefault="qualified">
-
     <xs:group name="RuleGroup">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -60,7 +59,7 @@
             <xs:extension base="tns:ReferencableRuleType">
                 <xs:sequence>
                     <xs:group ref="tns:RuleGroup"/>
-                    <xs:element name="overridesGroup" type="tns:GroupType"/>
+                    <xs:element name="overrides-group" type="tns:OverriddenReferenceType"/>
                     <xs:element name="description" type="xs:string"/>
                     <xs:element name="duration" type="xs:int"/>
                 </xs:sequence>
@@ -115,7 +114,7 @@
             <xs:extension base="tns:ExecutableRuleType">
                 <xs:sequence>
                     <xs:element name="providing-concept" type="tns:ConceptReferenceType" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="overridesConcept" type="tns:ConceptType"/>
+                    <xs:element name="overrides-concept" type="tns:OverriddenReferenceType" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -125,7 +124,7 @@
         <xs:complexContent>
             <xs:extension base="tns:ExecutableRuleType">
                 <xs:sequence>
-                    <xs:element name="overrides" type="tns:ConstraintType"/>
+                      <xs:element name="overrides-constraint" type="tns:OverriddenReferenceType" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -135,6 +134,10 @@
         <xs:sequence>
             <xs:element name="status" type="tns:StatusEnumType"/>
         </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="OverriddenReferenceType">
         <xs:attribute name="id" type="xs:string" use="required"/>
     </xs:complexType>
 

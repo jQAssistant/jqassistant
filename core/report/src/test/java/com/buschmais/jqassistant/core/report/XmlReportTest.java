@@ -264,7 +264,6 @@ class XmlReportTest {
             .report(Report.builder()
                 .build())
             .build();
-
         Concept nonnecessaryConcept = Concept.builder()
             .id("nonnecessary-Concept")
             .description("This concept does not matter.")
@@ -284,14 +283,13 @@ class XmlReportTest {
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("overriding-Concept", Severity.MINOR);
 
-        Group overriding = Group.builder()
+        Group overridingGroup = Group.builder()
             .id("overriding-Group")
             .description("This group overrides another..")
             .concepts(concepts)
             .overrideGroup(overriddenC)
             .build();
-
-        Group overridden = Group.builder()
+        Group overriddenGroup = Group.builder()
             .id("overridden-Group")
             .description("This group is overridden and should not be seen in the report.")
             .build();
@@ -301,7 +299,6 @@ class XmlReportTest {
         xmlReportPlugin.beginConcept(overridingConcept, emptyMap(), emptyMap());
         xmlReportPlugin.setResult(getResult(overridingConcept));
         xmlReportPlugin.endConcept();
-
         xmlReportPlugin.beginConcept(nonnecessaryConcept, emptyMap(), emptyMap());
         xmlReportPlugin.setResult(getResult(nonnecessaryConcept));
         xmlReportPlugin.endConcept();
@@ -310,10 +307,9 @@ class XmlReportTest {
         xmlReportPlugin.setResult(getResult(overridingconstraint));
         xmlReportPlugin.endConcept();
 
-        xmlReportPlugin.beginGroup(overriding);
+        xmlReportPlugin.beginGroup(overridingGroup);
         xmlReportPlugin.endGroup();
-
-        xmlReportPlugin.beginGroup(overridden);
+        xmlReportPlugin.beginGroup(overriddenGroup);
         xmlReportPlugin.endGroup();
 
         xmlReportPlugin.end();
@@ -324,10 +320,13 @@ class XmlReportTest {
         List<ReferencableRuleType> groupOrConceptOrConstraint = jqassistantReport.getGroupOrConceptOrConstraint();
         assertThat(groupOrConceptOrConstraint).hasSize(5);
 
-        assertThat(((ConceptType) groupOrConceptOrConstraint.get(0)).getOverridesConcept().getId()).isEqualTo("overridden-ConceptA");
+        assertThat(((ConceptType) groupOrConceptOrConstraint.get(0)).getOverridesConcept()
+            .getId()).isEqualTo("overridden-ConceptA");
         assertThat(((ConceptType) groupOrConceptOrConstraint.get(1)).getOverridesConcept()).isNull();
-        assertThat(((ConstraintType) groupOrConceptOrConstraint.get(2)).getOverrides().getId()).isEqualTo("overridden-ConstraintB");
-        assertThat(((GroupType) groupOrConceptOrConstraint.get(3)).getOverridesGroup().getId()).isEqualTo("overridden-GroupC");
+        assertThat(((ConstraintType) groupOrConceptOrConstraint.get(2)).getOverridesConstraint()
+            .getId()).isEqualTo("overridden-ConstraintB");
+        assertThat(((GroupType) groupOrConceptOrConstraint.get(3)).getOverridesGroup()
+            .getId()).isEqualTo("overridden-GroupC");
         assertThat(((GroupType) groupOrConceptOrConstraint.get(4)).getOverridesGroup()).isNull();
 
     }
