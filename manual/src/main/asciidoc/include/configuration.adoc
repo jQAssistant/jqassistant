@@ -92,8 +92,8 @@ jqassistant:
       # Specifies if the apoc plugin should be activated: true|false. Deactivated by default.
       apoc-enabled: true
 
-      # The neo4j-version for the embedded store.
-      neo4j-version: 5.26.13
+      # The neo4j-version for the embedded store. The property is provided by the CLI or Maven plugin at startup and should not be overridden.
+      neo4j-version:
 
       # The list of Neo4j plugins to load and activate.
       neo4j-plugins:
@@ -379,18 +379,3 @@ The properties in placeholders can be defined in different sources:
 - environment variables
 - Maven or user properties specified in the files pom.xml or settings.xml (for the jQAssistant Maven plugin)
 
-[TIP]
-====
-The property `jqassistant.store.embedded.apoc-enaled` may be used to activate the https://github.com/neo4j/apoc[APOC] plugin.
-For that, provide the neo4j for the embedded store version by the predefined property `jqassistant.store.embedded.neo4j-version` (Neo4j v5 only):
-
-[source,yaml]
-..jqassistant.yml
-----
-jqassistant:
-  store:
-    embedded:
-      apoc-enabled: true
-      neo4j-version: ${neo4j_5x.version}
-----
-====
