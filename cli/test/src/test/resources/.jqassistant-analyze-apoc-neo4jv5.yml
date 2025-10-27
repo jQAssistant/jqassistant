@@ -1,9 +1,5 @@
 jqassistant:
   store:
     embedded:
-      neo4j-plugins:
-        - group-id: org.neo4j.procedure
-          artifact-id: apoc-core
-          classifier: core
-          version: ${jqassistant.store.embedded.neo4j-version}
+      apoc-enabled: true
 

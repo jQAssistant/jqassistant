@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.store.api.configuration;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 import com.buschmais.jqassistant.core.shared.annotation.Description;
@@ -36,6 +37,11 @@ public interface Embedded {
     @WithDefault(DEFAULT_HTTP_PORT)
     Integer httpPort();
 
+    String APOC_ENABLED = "apoc-enabled";
+
+    @WithDefault("false")
+    boolean apocEnabled();
+
     String NEO4J_PROPERTIES = "neo4j-properties";
 
     @Description("Additional properties to be passed to the embedded Neo4j instance.")
@@ -44,5 +50,9 @@ public interface Embedded {
     String NEO4J_PLUGINS = "neo4j-plugins";
 
     List<Plugin> neo4jPlugins();
+
+    String NEO4J_VERSION = "neo4j-version";
+
+    Optional<String> neo4jVersion();
 
 }

@@ -89,6 +89,12 @@ jqassistant:
       # -Djqassistant.store.embedded.http-port
       http-port: 7474
 
+      # Specifies if the apoc plugin should be activated: true|false. Deactivated by default.
+      apoc-enabled: true
+
+      # The neo4j-version for the embedded store. The property is provided by the CLI or Maven plugin at startup and should not be overridden.
+      neo4j-version:
+
       # Additional properties to be passed to the embedded Neo4j instance
       #
       # -Djqassistant.store.embedded.neo4j-properties.<neo4j property>
@@ -379,20 +385,3 @@ The properties in placeholders can be defined in different sources:
 - environment variables
 - Maven or user properties specified in the files pom.xml or settings.xml (for the jQAssistant Maven plugin)
 
-[TIP]
-====
-The predefined property `jqassistant.store.embedded.neo4j-version` may be used to specify the version of the https://github.com/neo4j/apoc[APOC] plugin for the embedded store (Neo4j v5 only):
-
-[source,yaml]
-..jqassistant.yml
-----
-jqassistant:
-  store:
-    embedded:
-      neo4j-plugins:
-        - group-id: org.neo4j.procedure
-          artifact-id: apoc-core
-          classifier: core
-          version: ${jqassistant.store.embedded.neo4j-version}
-----
-====
