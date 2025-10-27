@@ -29,4 +29,10 @@ public @interface jQASuppress {
      * The human-readable reason for this suppression.
      */
     String reason() default "";
+
+    /**
+     * The expiration date for this suppression.
+     */
+    String until() default "";
+
 }

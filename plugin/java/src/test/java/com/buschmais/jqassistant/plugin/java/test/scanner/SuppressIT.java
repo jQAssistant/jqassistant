@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import java.util.List;
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
@@ -20,9 +23,25 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 class SuppressIT extends AbstractJavaPluginIT {
 
     @Test
+    void suppressAnnotationWithUntilAndReasonAttributes() {
+        scanClasses(Suppress.class);
+        List<Map<String, Object>> rows = query("MATCH (type:Java:jQASuppress) return type" ).getRows();
+        assertThat(rows.size()).isEqualTo(3);
+        store.beginTransaction();
+        assertThat(((JavaSuppressDescriptor) rows.get(0).get("type")).getSuppressReason()).isEqualTo("For testing this annotation");
+        assertThat(((JavaSuppressDescriptor) rows.get(0).get("type")).getSuppressUntil()).isNull();
+        assertThat(((JavaSuppressDescriptor) rows.get(1).get("type")).getSuppressReason()).isNull();
+        assertThat(((JavaSuppressDescriptor) rows.get(1).get("type")).getSuppressUntil()).isNull();
+        assertThat(((JavaSuppressDescriptor) rows.get(2).get("type")).getSuppressReason()).isEqualTo("Reason for suppression");
+        assertThat(((JavaSuppressDescriptor) rows.get(2).get("type")).getSuppressUntil()).isEqualTo("2075-08-13");
+        store.commitTransaction();
+    }
+
+
+    @Test
     void suppressAnnotationMustNotBeScanned() throws RuleException {
         scanClasses(Suppress.class);
-        Result<Constraint> constraintResult = validateConstraint("suppress:SuppressAnnotationMustNotBeScanned");
+        Result<Constraint> constraintResult = validateConstraint("test-suppress:SuppressAnnotationMustNotBeScanned");
         assertThat(constraintResult.getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         assertThat(constraintResult.getRows().size()).isEqualTo(0);
@@ -31,27 +50,27 @@ class SuppressIT extends AbstractJavaPluginIT {
 
     @Test
     void suppressedClass() throws RuleException {
-        verifySuppress("suppress:Class", "suppress:SuppressedClass", "class");
+        verifySuppress("test-suppress:Class", "test-suppress:SuppressedClass", "class");
     }
 
     @Test
     void suppressedField() throws RuleException {
-        verifySuppress("suppress:Field", "suppress:SuppressedField", "field");
+        verifySuppress("test-suppress:Field", "test-suppress:SuppressedField", "field");
     }
 
     @Test
     void suppressedMethod() throws RuleException {
-        verifySuppress("suppress:Method", "suppress:SuppressedMethod", "method");
+        verifySuppress("test-suppress:Method", "test-suppress:SuppressedMethod", "method");
     }
 
     @Test
     void suppressedMethodInPrimaryColumn() throws RuleException {
-        verifySuppress("suppress:MethodInPrimaryColumn", "suppress:SuppressedMethodInPrimaryColumn", "method");
+        verifySuppress("test-suppress:MethodInPrimaryColumn", "test-suppress:SuppressedMethodInPrimaryColumn", "method");
     }
 
     @Test
     void suppressedMethodInNonPrimaryColumn() throws RuleException {
-        verifySuppress("suppress:MethodInNonPrimaryColumn", "suppress:SuppressedMethodInNonPrimaryColumn", "method");
+        verifySuppress("test-suppress:MethodInNonPrimaryColumn", "test-suppress:SuppressedMethodInNonPrimaryColumn", "method");
     }
 
     private void verifySuppress(String constraintId, String conceptId, String column) throws RuleException {
@@ -68,5 +87,4 @@ class SuppressIT extends AbstractJavaPluginIT {
         assertThat(asList(suppressDescriptor.getSuppressIds()), hasItem(constraintId));
         store.commitTransaction();
     }
-
 }

@@ -2,14 +2,13 @@ package com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress;
 
 import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
 
-@jQASuppress(value = "suppress:Class", reason = "For testing this annotation")
+@jQASuppress(value = "test-suppress:Class", reason = "For testing this annotation")
 public class Suppress {
 
-    @jQASuppress({ "suppress:Field" })
+    @jQASuppress({ "test-suppress:Field" })
     private String value;
 
-    @jQASuppress(value = { "suppress:Method", "suppress:MethodInPrimaryColumn", "suppress:MethodInNonPrimaryColumn" }, column = "method")
+    @jQASuppress(value = { "test-suppress:Method", "test-suppress:MethodInPrimaryColumn", "test-suppress:MethodInNonPrimaryColumn" }, reason = "Reason for suppression", until = "2075-08-13", column = "method")
     public void doSomething() {
     }
-
 }
