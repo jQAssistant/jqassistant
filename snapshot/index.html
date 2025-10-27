@@ -4142,6 +4142,12 @@ The locations can be overridden by command line parameters of the Command Line U
       <span class="comment"># -Djqassistant.store.embedded.http-port</span>
       <span class="key">http-port</span>: <span class="string"><span class="content">7474</span></span>
 
+      <span class="comment"># Specifies if the apoc plugin should be activated: true|false. Deactivated by default.</span>
+      <span class="key">apoc-enabled</span>: <span class="string"><span class="content">true</span></span>
+
+      <span class="comment"># The neo4j-version for the embedded store. The property is provided by the CLI or Maven plugin at startup and should not be overridden.</span>
+      <span class="key">neo4j-version</span>:
+
       <span class="comment"># The list of Neo4j plugins to load and activate.</span>
       <span class="key">neo4j-plugins</span>:
         <span class="comment"># Each plugin is identified using its Maven coordinates:</span>
@@ -4461,33 +4467,6 @@ The priorities are as following: <code>System Property</code> -&#8594; <code>Env
 <p>Maven or user properties specified in the files pom.xml or settings.xml (for the jQAssistant Maven plugin)</p>
 </li>
 </ul>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Tip</div>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The predefined property <code>jqassistant.store.embedded.neo4j-version</code> may be used to specify the version of the <a href="https://github.com/neo4j/apoc">APOC</a> plugin for the embedded store (Neo4j v5 only):</p>
-</div>
-<div class="listingblock">
-<div class="title">.jqassistant.yml</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">jqassistant</span>:
-  <span class="key">store</span>:
-    <span class="key">embedded</span>:
-      <span class="key">neo4j-plugins</span>:
-        - <span class="string"><span class="content">group-id: org.neo4j.procedure</span></span>
-          <span class="key">artifact-id</span>: <span class="string"><span class="content">apoc-core</span></span>
-          <span class="key">classifier</span>: <span class="string"><span class="content">core</span></span>
-          <span class="key">version</span>: <span class="string"><span class="content">${jqassistant.store.embedded.neo4j-version}</span></span></code></pre>
-</div>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -6685,6 +6664,16 @@ If not explicitly specified this is the first column specified in the return cla
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>It is possible to set an expiry date and specify a reason for suppression. The expiry date must be specified in the format "yyyy-MM-dd".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@jQASuppress</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint</span><span class="delimiter">&quot;</span></span>, until = <span class="string"><span class="delimiter">&quot;</span><span class="content">2026-02-28</span><span class="delimiter">&quot;</span></span>, reason = <span class="string"><span class="delimiter">&quot;</span><span class="content">The reason for suppressing this class.</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">ClassViolatingMyConstraint</span> {
+}</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_rules_provided_by_the_jqassistant_java_plugin"><a class="link" href="#_rules_provided_by_the_jqassistant_java_plugin">Rules provided by the jQAssistant Java Plugin</a></h4>
@@ -6701,6 +6690,18 @@ If not explicitly specified this is the first column specified in the return cla
 </li>
 <li>
 <p><a href="#java:TechnicalDebt">Constraint <code>java:TechnicalDebt</code></a></p>
+</li>
+<li>
+<p><a href="#suppress:suppressElementMustProvideAReason">Constraint <code>suppress:suppressElementMustProvideAReason</code></a></p>
+</li>
+<li>
+<p><a href="#suppress:suppressUntilMustNotExceedMonthsLimit">Constraint <code>suppress:suppressUntilMustNotExceedMonthsLimit</code></a></p>
+</li>
+<li>
+<p><a href="#suppress:suppressUntilMustNotBeInThePast">Constraint <code>suppress:suppressUntilMustNotBeInThePast</code></a></p>
+</li>
+<li>
+<p><a href="#suppress:suppressExpiresInLessThanMonthsLimit">Constraint <code>suppress:suppressExpiresInLessThanMonthsLimit</code></a></p>
 </li>
 <li>
 <p><a href="#java:InnerType">Concept <code>java:InnerType</code></a></p>
@@ -8426,6 +8427,73 @@ RETURN
 <p><a href="#java-classpath:ResolveInvokes">java-classpath:ResolveInvokes</a></p>
 </li>
 </ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="suppress:suppressElementMustProvideAReason"><a class="link" href="#suppress:suppressElementMustProvideAReason">Constraint <code>suppress:suppressElementMustProvideAReason</code></a></h5>
+<div class="paragraph">
+<p>Elements annotated with @jQASuppress must provide a suppression reason.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (element:Java:jQASuppress)
+WHERE
+    element.suppressReason IS NULL OR element.suppressReason = &quot;&quot;
+RETURN
+    element AS Element</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="suppress:suppressUntilMustNotExceedMonthsLimit"><a class="link" href="#suppress:suppressUntilMustNotExceedMonthsLimit">Constraint <code>suppress:suppressUntilMustNotExceedMonthsLimit</code></a></h5>
+<div class="paragraph">
+<p>The provided expiration date exceeds the allowed limit (default: 12 months).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (element:Java:jQASuppress)
+WITH element, date(element.suppressUntil) AS until
+WHERE
+    until &gt; date() + duration({months: $suppressUntilMonthsLimit})
+RETURN
+    element AS Element, until AS ExpirationDate</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="suppress:suppressUntilMustNotBeInThePast"><a class="link" href="#suppress:suppressUntilMustNotBeInThePast">Constraint <code>suppress:suppressUntilMustNotBeInThePast</code></a></h5>
+<div class="paragraph">
+<p>The provided expiration date must not be in the past.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (element:Java:jQASuppress)
+WITH element, date(element.suppressUntil) AS until
+WHERE
+    until &lt; date()
+RETURN
+    element AS Element, until AS ExpirationDate</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="suppress:suppressExpiresInLessThanMonthsLimit"><a class="link" href="#suppress:suppressExpiresInLessThanMonthsLimit">Constraint <code>suppress:suppressExpiresInLessThanMonthsLimit</code></a></h5>
+<div class="paragraph">
+<p>The provided expiration date falls within the timeframe for soon expiring (default: 1 month).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+      (element:Java:jQASuppress)
+  WITH element, date(element.suppressUntil) AS until
+  WHERE
+      until &lt; date() + duration({months: 1}) AND until &gt;= date()
+  RETURN
+      element AS Element, until AS ExpirationDate</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -12667,7 +12735,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-27 08:05:24 UTC
+Last updated 2025-10-27 16:30:28 UTC
 </div>
 </div>
 </body>

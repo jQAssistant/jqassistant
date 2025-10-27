@@ -362,6 +362,10 @@
             "embedded" : {
               "type" : "object",
               "properties" : {
+                "apoc-enabled" : {
+                  "type" : "boolean",
+                  "default" : "false"
+                },
                 "bolt-port" : {
                   "type" : "integer",
                   "default" : "7687"
@@ -384,6 +388,9 @@
                     "$ref" : "#/$defs/com.buschmais.jqassistant.core.shared.aether.configuration.-plugin",
                     "description" : "The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version."
                   }
+                },
+                "neo4j-version" : {
+                  "type" : "string"
                 }
               },
               "additionalProperties" : false,
