@@ -95,6 +95,12 @@ jqassistant:
       # The neo4j-version for the embedded store. The property is provided by the CLI or Maven plugin at startup and should not be overridden.
       neo4j-version:
 
+      # Additional properties to be passed to the embedded Neo4j instance
+      #
+      # -Djqassistant.store.embedded.neo4j-properties.<neo4j property>
+      # e.g. db.tx_log.rotation.size: 50M
+      neo4j-properties:
+
       # The list of Neo4j plugins to load and activate.
       neo4j-plugins:
         # Each plugin is identified using its Maven coordinates:

@@ -73,7 +73,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected void configure(XOUnit.XOUnitBuilder builder) {
         List<File> plugins = resolveNeo4jPlugins();
-        Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(), plugins);
+        Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(),
+            this.embedded.neo4jProperties(), plugins);
         builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
     }
