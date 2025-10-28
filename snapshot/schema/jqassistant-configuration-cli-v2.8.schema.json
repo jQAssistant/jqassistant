@@ -389,6 +389,10 @@
                     "description" : "The configuration for a plugin which can be resolved by Maven coordinates, i.e. groupId, artifactId, type, classifier and version."
                   }
                 },
+                "neo4j-properties" : {
+                  "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_",
+                  "description" : "Additional properties to be passed to the embedded Neo4j instance."
+                },
                 "neo4j-version" : {
                   "type" : "string"
                 }

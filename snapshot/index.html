@@ -4148,6 +4148,12 @@ The locations can be overridden by command line parameters of the Command Line U
       <span class="comment"># The neo4j-version for the embedded store. The property is provided by the CLI or Maven plugin at startup and should not be overridden.</span>
       <span class="key">neo4j-version</span>:
 
+      <span class="comment"># Additional properties to be passed to the embedded Neo4j instance</span>
+      <span class="comment">#</span>
+      <span class="comment"># -Djqassistant.store.embedded.neo4j-properties.&lt;neo4j property&gt;</span>
+      <span class="comment"># e.g. db.tx_log.rotation.size: 50M</span>
+      <span class="key">neo4j-properties</span>:
+
       <span class="comment"># The list of Neo4j plugins to load and activate.</span>
       <span class="key">neo4j-plugins</span>:
         <span class="comment"># Each plugin is identified using its Maven coordinates:</span>
@@ -12735,7 +12741,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-27 16:30:28 UTC
+Last updated 2025-10-28 08:40:14 UTC
 </div>
 </div>
 </body>
