@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.core.report;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Set;
 import java.util.TreeSet;
@@ -42,17 +39,16 @@ class HtmlReportTransformerTest {
     }
 
     @Test
-    void reportWithOverrides() throws ReportTransformerException, IOException {
+    void reportWithOverrides() throws ReportTransformerException {
         HtmlReportTransformer transformer = new HtmlReportTransformer();
         Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-overrides.xml"));
         StringWriter htmlWriter = new StringWriter();
         javax.xml.transform.Result htmlTarget = new StreamResult(htmlWriter);
-
         transformer.toEmbedded(xmlSource, htmlTarget);
+
         String html = htmlWriter.toString();
-        saveHtml(html);
-        assertThat(getRuleIds(html, "([a-zA-Z]*):Overridden([a-zA-Z]*)")).containsExactlyInAnyOrder("concept:OverriddenConcept1", "concept:OverriddenConcept2",
-            "constraint:OverriddenConstraint", "group:OverriddenGroup1", "group:OverriddenGroup2");
+        assertThat(getRuleIds(html, "([a-zA-Z]*):Overridden([A-Za-z0-9]*)")).containsExactlyInAnyOrder("concept:OverriddenConcept1",
+                "concept:OverriddenConcept2", "constraint:OverriddenConstraint", "group:OverriddenGroup1", "group:OverriddenGroup2");
 
     }
 
@@ -65,16 +61,4 @@ class HtmlReportTransformerTest {
         }
         return ruleIds;
     }
-
-    /** for testing purposes, delete later **/
-
-    public void saveHtml (String html) throws IOException {
-        String filePath = "target/reportHtml.html";
-            File file = new File(filePath);
-            file.getParentFile().mkdirs();
-            FileWriter writer = new FileWriter(file);
-            writer.write(html);
-            writer.close();
-    }
-
 }
