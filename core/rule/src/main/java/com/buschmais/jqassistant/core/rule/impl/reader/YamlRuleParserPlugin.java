@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.Concept.Activation;
@@ -110,11 +111,15 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 Concept.ConceptBuilder builder = Concept.builder();
                 String conceptId = this.processExecutableRule(executableRule, context, builder, this::getDefaultConceptSeverity);
                 Set<Concept.ProvidedConcept> providedConcepts = this.extractProvidedConcepts(conceptId, executableRule);
-                if (executableRule.containsKey(OVERRIDES_CONCEPT)) {
-                    if(executableRule.get(OVERRIDES_CONCEPT) instanceof List){
-                        builder.overrideConcepts((List<ReferenceType>) executableRule.get(OVERRIDES_CONCEPT));
-                    }
-                }
+                builder.overrideConcepts(((List<Map<String, Object>>) ofNullable(executableRule.get(OVERRIDES_CONCEPTS)).orElse(emptyList())).stream()
+                    .flatMap(map -> map.values()
+                        .stream())
+                    .map(value -> {
+                        ReferenceType overrideConcept = new ReferenceType();
+                        overrideConcept.setRefId((String) value);
+                        return overrideConcept;
+                    })
+                    .collect(Collectors.toList()));
                 builder.providedConcepts(providedConcepts);
                 context.getBuilder()
                     .addConcept(builder.build());
@@ -127,11 +132,15 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             for (Map<String, Object> executableRule : executableRules) {
                 Constraint.ConstraintBuilder builder = Constraint.builder();
                 this.processExecutableRule(executableRule, context, builder, this::getDefaultConstraintSeverity);
-                if (executableRule.containsKey(OVERRIDES_CONSTRAINT)) {
-                    if(executableRule.get(OVERRIDES_CONSTRAINT) instanceof List){
-                        builder.overrideConstraints((List<ReferenceType>) executableRule.get(OVERRIDES_CONCEPT));
-                    }
-                }
+                builder.overrideConstraints(((List<Map<String, Object>>) ofNullable(executableRule.get(OVERRIDES_CONSTRAINTS)).orElse(emptyList())).stream()
+                    .flatMap(map -> map.values()
+                        .stream())
+                    .map(value -> {
+                        ReferenceType overrideConstraint = new ReferenceType();
+                        overrideConstraint.setRefId((String) value);
+                        return overrideConstraint;
+                    })
+                    .collect(Collectors.toList()));
                 context.getBuilder()
                     .addConstraint(builder.build());
             }
@@ -154,12 +163,16 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         List<Map<String, Object>> constraints = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS, key -> emptyList());
 
         List<Map<String, Object>> groups = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_GROUPS, key -> emptyList());
-
-        List<ReferenceType> overriddenGroups = null;
-
-        if (map.containsKey(OVERRIDES_GROUP)) {
-            overriddenGroups  = ((List<ReferenceType>) map.get(OVERRIDES_GROUP));
-        }
+        List<ReferenceType> overriddenGroups = ofNullable((List<Map<String, Object>>) map.get(OVERRIDES_GROUPS)).orElse(emptyList())
+            .stream()
+            .flatMap(overrides -> overrides.values()
+                .stream())
+            .map(value -> {
+                ReferenceType overrideGroup = new ReferenceType();
+                overrideGroup.setRefId((String) value);
+                return overrideGroup;
+            })
+            .collect(Collectors.toList());
 
         SeverityMap includedGroups = new SeverityMap();
         SeverityMap includedConstraints = new SeverityMap();

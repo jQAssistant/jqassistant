@@ -169,7 +169,7 @@
         },
         "required" : [ "id" ]
       },
-      "unevaluatedProperties" : false
+      "additionalProperties" : false
     },
     "reportJScn" : {
       "type" : "object",
@@ -217,7 +217,7 @@
                       {
                         "type": "object",
                         "properties": {
-                          "overridesConcept": {
+                          "overridesConcepts": {
                             "type": "array",
                             "minItems": 0,
                             "items": {
@@ -233,7 +233,7 @@
             },
             { "type": "null" }
           ],
-          "unevaluatedProperties": false
+          "additionalProperties": false
         },
         "constraints": {
           "anyOf": [
@@ -250,7 +250,7 @@
                       {
                         "type": "object",
                         "properties": {
-                          "overridesConstraint": {
+                          "overridesConstraints": {
                             "type": "array",
                             "minItems": 0,
                             "items": {
@@ -266,7 +266,7 @@
             },
             { "type": "null" }
           ],
-          "unevaluatedProperties": false
+          "additionalProperties": false
         },
         "groups": {
           "anyOf": [
