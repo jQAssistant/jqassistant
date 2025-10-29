@@ -26,7 +26,6 @@ import com.buschmais.xo.api.CompositeObject;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
