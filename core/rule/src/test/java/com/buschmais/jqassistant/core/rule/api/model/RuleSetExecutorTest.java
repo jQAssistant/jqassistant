@@ -1,7 +1,11 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
@@ -587,9 +591,8 @@ class RuleSetExecutorTest {
         verify(visitor, never()).visitConstraint(excludedConstraint, MAJOR, emptyMap());
     }
 
-    //TODO: Add test for checkOverridesProvides method (overriding and overridden concepts must provide the same concepts, otherwise the overriding does not happens)
     @Test
-    void overriddenConcept() throws RuleException {
+    void overriddenConcepts() throws RuleException {
         Group group = Group.builder()
             .id("group")
             .concept("test:OverriddenConcept", MINOR)
@@ -637,7 +640,112 @@ class RuleSetExecutorTest {
     }
 
     @Test
-    void overriddenConstraint() throws RuleException {
+    void overriddenConceptsWithProvidedConcepts() throws RuleException {
+        Group group = Group.builder()
+            .id("group")
+            .concept("test:CorrectOverriddenConcept", MINOR)
+            .concept("test:CorrectOverridingConcept", MINOR)
+            .concept("test:IncorrectOverriddenConcept", MINOR)
+            .concept("test:IncorrectOverridingConcept", MINOR)
+            .concept("test:ConceptA", MINOR)
+            .concept("test:ConceptB", MINOR)
+            .build();
+
+        List<ReferenceType> correctOverriddenConceptList = new LinkedList<>();
+        ReferenceType correctOverriddenConceptType = new ReferenceType();
+        correctOverriddenConceptType.setRefId("test:CorrectOverriddenConcept");
+        correctOverriddenConceptList.add(correctOverriddenConceptType);
+
+        List<ReferenceType> incorrectOverriddenConceptList = new LinkedList<>();
+        ReferenceType incorrectOverriddenConceptType = new ReferenceType();
+        incorrectOverriddenConceptType.setRefId("test:IncorrectOverriddenConcept");
+        incorrectOverriddenConceptList.add(incorrectOverriddenConceptType);
+
+        Concept correctOverriddenConcept = Concept.builder()
+            .id("test:CorrectOverriddenConcept")
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("test:CorrectOverriddenConcept")
+                .providedConceptId("test:ConceptA")
+                .activation(IF_REQUIRED)
+                .build())
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("test:CorrectOverriddenConcept")
+                .providedConceptId("test:ConceptB")
+                .activation(IF_REQUIRED)
+                .build())
+            .severity(MINOR)
+            .build();
+
+        Concept correctOverridingConcept = Concept.builder()
+            .id("test:CorrectOverridingConcept")
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("test:CorrectOverridingConcept")
+                .providedConceptId("test:ConceptA")
+                .activation(IF_REQUIRED)
+                .build())
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("test:CorrectOverridingConcept")
+                .providedConceptId("test:ConceptB")
+                .activation(IF_REQUIRED)
+                .build())
+            .overrideConcepts(correctOverriddenConceptList)
+            .severity(MINOR)
+            .build();
+
+        Concept incorrectOverriddenConcept = Concept.builder()
+            .id("test:IncorrectOverriddenConcept")
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("test:IncorrectOverriddenConcept")
+                .providedConceptId("test:ConceptA")
+                .activation(IF_REQUIRED)
+                .build())
+            .severity(MINOR)
+            .build();
+
+        Concept incorrectOverridingConcept = Concept.builder()
+            .id("test:IncorrectOverridingConcept")
+            .providedConcept(Concept.ProvidedConcept.builder()
+                .providingConceptId("test:IncorrectOverridingConcept")
+                .providedConceptId("test:ConceptB")
+                .activation(IF_REQUIRED)
+                .build())
+            .overrideConcepts(incorrectOverriddenConceptList)
+            .severity(MINOR)
+            .build();
+
+        Concept providedConceptA = Concept.builder()
+            .id("test:ConceptA")
+            .severity(MINOR)
+            .build();
+
+        Concept providedConceptB = Concept.builder()
+            .id("test:ConceptB")
+            .severity(MINOR)
+            .build();
+
+        RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addConcept(correctOverriddenConcept)
+            .addConcept(correctOverridingConcept)
+            .addConcept(incorrectOverriddenConcept)
+            .addConcept(incorrectOverridingConcept)
+            .addConcept(providedConceptA)
+            .addConcept(providedConceptB)
+            .addGroup(group)
+            .getRuleSet();
+
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId("group")
+            .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).visitConcept(incorrectOverriddenConcept, MINOR, emptyMap(), emptyMap());
+        verify(visitor, never()).visitConcept(correctOverriddenConcept, MINOR, emptyMap(), emptyMap());
+
+    }
+
+    @Test
+    void overriddenConstraints() throws RuleException {
         Group group = Group.builder()
             .id("group")
             .constraint("test:OverriddenConstraint", MINOR)
@@ -685,7 +793,7 @@ class RuleSetExecutorTest {
     }
 
     @Test
-    void overriddenGroup() throws RuleException {
+    void overriddenGroups() throws RuleException {
         ReferenceType overridden = new ReferenceType();
         overridden.setRefId("test:OverriddenGroup");
         ReferenceType overriddenSecond = new ReferenceType();
