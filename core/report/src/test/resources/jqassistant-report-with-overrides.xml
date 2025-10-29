@@ -5,9 +5,9 @@
         <timestamp>2025-04-07T01:00:00</timestamp>
         <properties/>
     </build>
-    <group id="group:GroupOfContent" date="13/04/2025">
-        <description>This is an extraordinary group containing content.</description>
-        <duration>3</duration>
+    <group id="group:GroupWithoutDetails" date="13/04/2025"></group>
+    <group id="group:GroupWithDescription" date="11/04/2025">
+    <description>Just a basic group.</description>
     </group>
     <group id="group:GroupThatOverridesSmth" date="13/04/2025">
         <description>This group overrides another.</description>

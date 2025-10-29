@@ -217,6 +217,9 @@
                     <xsl:value-of select="@id"/>
                 </span>
                     </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id"/>
+                    </xsl:otherwise>
                 </xsl:choose>
             </td>
             <td>
