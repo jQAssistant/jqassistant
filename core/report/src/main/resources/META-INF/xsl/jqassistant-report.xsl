@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:tns="http://schema.jqassistant.org/report/v2.7">
+                xmlns:tns="http://schema.jqassistant.org/report/v2.8">
     <xsl:output method="html" version="1.0" encoding="UTF-8"
                 indent="yes"/>
     <xsl:template name="content">
@@ -183,7 +183,8 @@
             <table>
                 <tr>
                     <th style="width:5%;">#</th>
-                    <th style="width:80%;">Group Name</th>
+                    <th style="width:30%;">Group Name</th>
+                    <th style="width:50%;">Description</th>
                     <th style="width:15%;">Date</th>
                 </tr>
                 <xsl:apply-templates select="//tns:group"/>
@@ -199,6 +200,9 @@
             </td>
             <td>
                 <xsl:value-of select="@id"/>
+            </td>
+            <td>
+                <xsl:value-of select="tns:description/text()"/>
             </td>
             <td>
                 <xsl:value-of select="@date"/>

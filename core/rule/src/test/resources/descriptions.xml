@@ -1,6 +1,25 @@
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.8 http://schema.jqassistant.org/rule/jqassistant-rule-v2.8.xsd">
+
+    <group id="test:WithoutDescription">
+    </group>
+
+    <group id="test:WithDescription">
+        <description>Cal took a long, deep breath, struggling to control his own emotions.</description>
+    </group>
+
+    <group id="test:EmptyDescription">
+        <description></description>
+    </group>
+
+    <group id="test:MultiMixEmptyLineDescription">
+        <description>
+
+            Cal took a long, deep breath.
+
+            He struggled to control his own emotions.</description>
+    </group>
 
     <concept id="test:WithoutDescription">
         <cypher><![CDATA[
