@@ -87,7 +87,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
             Plugin neo4j = PluginImpl.builder()
                 .groupId("org.neo4j.procedure")
                 .artifactId("apoc-core")
-                .classifier(Optional.of("core"))
+                .classifier(Optional.of(""))
                 .version(neo4jVersion)
                 .build();
             plugins.add(neo4j);
