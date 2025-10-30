@@ -6,34 +6,46 @@
                 indent="yes"/>
     <xsl:template name="content">
         <script type="text/javascript">
-            function toggleResult(id){
-              if (id.length != 0) {
+            function toggleResult(id){ if (id.length != 0) {
                 var resultElement = getResultElement(id);
-                if(resultElement.style.display == "table-row") {
-                  resultElement.style.display = "none";
+                if(resultElement.hidden ) {
+                    resultElement.hidden = false;
                 } else {
-                  resultElement.style.display = "table-row";
+                    resultElement.hidden = "until-found";
+                    resultElement.setAttribute = ('hidden', 'until-found');
+                    }
                 }
-              }
             }
 
             function showResult(id){
               if (id.length != 0) {
                 var resultElement = getResultElement(id);
-                resultElement.style.display = "table-row";
+            resultElement.hidden = false;
               }
             }
 
             function hideAll() {
               var rows = document.getElementsByName('resultRow');
               for (var i = 0; i &lt; rows.length; ++i){
-                rows[i].style.display = 'none';
+                rows[i].hidden = "until-found";
               }
             }
 
             function getResultElement(id) {
               return document.getElementById('resultOf' + id);
             }
+
+
+            document.addEventListener('DOMContentLoaded', function() {
+                hideAll();
+            });
+
+            document.addEventListener("beforematch", event => {
+                const element = event.target;
+                if (element.tagName == "TR") {
+                element.hidden.removeAttribute('hidden');
+                }
+            });
         </script>
         <style type="text/css" onLoad="hideAll()">
             body {
@@ -250,7 +262,7 @@
                 <xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/>
             </td>
         </tr>
-        <tr id="resultOf{$ruleId}" style="display:none;" name="resultRow">
+        <tr id="resultOf{$ruleId}" name="resultRow">
             <td colspan="5">
                 <p>
                     <xsl:value-of select="tns:description/text()"/>
