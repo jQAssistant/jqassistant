@@ -2249,7 +2249,7 @@ LIMIT 20</code></pre>
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;project&gt;</span>
     <span class="tag">&lt;properties&gt;</span>
         <span class="comment">&lt;!-- Define your desired jQAssistant version here --&gt;</span>
-        <span class="tag">&lt;jqassistant.version&gt;</span>2.7.1<span class="tag">&lt;/jqassistant.version&gt;</span>
+        <span class="tag">&lt;jqassistant.version&gt;</span>2.8.0<span class="tag">&lt;/jqassistant.version&gt;</span>
     <span class="tag">&lt;/properties&gt;</span>
     <span class="tag">&lt;build&gt;</span>
         <span class="tag">&lt;plugins&gt;</span>
@@ -2280,9 +2280,9 @@ LIMIT 20</code></pre>
 <div class="listingblock">
 <div class="title">jqassistant/my-rules.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2</span><span class="delimiter">&quot;</span></span>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.2.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">default</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;includeConstraint</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:*</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
@@ -2444,9 +2444,9 @@ like "java:classpath" for a directory containing Java classes or "maven:reposito
 <div class="listingblock">
 <div class="title">my-rules.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2</span><span class="delimiter">&quot;</span></span>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">default</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;includeConstraint</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
@@ -2507,7 +2507,7 @@ like "java:classpath" for a directory containing Java classes or "maven:reposito
 <div class="title">Note</div>
 </td>
 <td class="content">
-The rule XML schema is available <a href="https://jqassistant.github.io/jqassistant/snapshot/schema/jqassistant-rule-v2.7.xsd">online</a> and should be picked automatically for code completion by your IDE.
+The rule XML schema is available <a href="https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd">online</a> and should be picked automatically for code completion by your IDE.
 </td>
 </tr>
 </table>
@@ -2681,9 +2681,9 @@ In this case it can become necessary to extend such concepts with project-specif
 <div class="listingblock">
 <div class="title">my-rules.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7</span><span class="delimiter">&quot;</span></span>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;concept</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:ConcreteConcept</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
        <span class="tag">&lt;providesConcept</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">plugin:AbstractConcept</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
@@ -2702,9 +2702,9 @@ In these cases it is possible to perform a dynamic extension (duck-typing) by sp
 <div class="listingblock">
 <div class="title">my-rules.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7</span><span class="delimiter">&quot;</span></span>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">default</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;includeConcept</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">another-plugin:ConcreteConcept</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
@@ -2723,9 +2723,9 @@ For cases where this is not desirable it is possible to specify an activation st
 <div class="listingblock">
 <div class="title">my-rules.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7</span><span class="delimiter">&quot;</span></span>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;concept</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:ConcreteConcept</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
        <span class="tag">&lt;providesConcept</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">plugin:AbstractConcept</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">activation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">if-required</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
@@ -2789,9 +2789,9 @@ further severity is given, e.g.</p>
 <div class="listingblock">
 <div class="title">my-rules.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7</span><span class="delimiter">&quot;</span></span>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyGroup</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">severity</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">blocker</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;includeConstraint</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint1</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
@@ -2919,9 +2919,9 @@ If violations are exported to dashboards (e.g. SonarQube, Teamscale) then <code>
 <div class="listingblock">
 <div class="title">my-rules.xml</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7</span><span class="delimiter">&quot;</span></span>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;jqassistant-rules</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8</span><span class="delimiter">&quot;</span></span>
                    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
-                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                   <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
     <span class="tag">&lt;concept</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:ApplicationRootPackage</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
         <span class="tag">&lt;requiresParameter</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">rootPackage</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">String</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">defaultValue</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">com.buschmais</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span> <span class="comment">&lt;!-- &lt;1&gt; --&gt;</span>
@@ -4142,6 +4142,18 @@ The locations can be overridden by command line parameters of the Command Line U
       <span class="comment"># -Djqassistant.store.embedded.http-port</span>
       <span class="key">http-port</span>: <span class="string"><span class="content">7474</span></span>
 
+      <span class="comment"># Specifies if the apoc plugin should be activated: true|false. Deactivated by default.</span>
+      <span class="key">apoc-enabled</span>: <span class="string"><span class="content">true</span></span>
+
+      <span class="comment"># The neo4j-version for the embedded store. The property is provided by the CLI or Maven plugin at startup and should not be overridden.</span>
+      <span class="key">neo4j-version</span>:
+
+      <span class="comment"># Additional properties to be passed to the embedded Neo4j instance</span>
+      <span class="comment">#</span>
+      <span class="comment"># -Djqassistant.store.embedded.neo4j-properties.&lt;neo4j property&gt;</span>
+      <span class="comment"># e.g. db.tx_log.rotation.size: 50M</span>
+      <span class="key">neo4j-properties</span>:
+
       <span class="comment"># The list of Neo4j plugins to load and activate.</span>
       <span class="key">neo4j-plugins</span>:
         <span class="comment"># Each plugin is identified using its Maven coordinates:</span>
@@ -4461,33 +4473,6 @@ The priorities are as following: <code>System Property</code> -&#8594; <code>Env
 <p>Maven or user properties specified in the files pom.xml or settings.xml (for the jQAssistant Maven plugin)</p>
 </li>
 </ul>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Tip</div>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The predefined property <code>jqassistant.store.embedded.neo4j-version</code> may be used to specify the version of the <a href="https://github.com/neo4j/apoc">APOC</a> plugin for the embedded store (Neo4j v5 only):</p>
-</div>
-<div class="listingblock">
-<div class="title">.jqassistant.yml</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">jqassistant</span>:
-  <span class="key">store</span>:
-    <span class="key">embedded</span>:
-      <span class="key">neo4j-plugins</span>:
-        - <span class="string"><span class="content">group-id: org.neo4j.procedure</span></span>
-          <span class="key">artifact-id</span>: <span class="string"><span class="content">apoc-core</span></span>
-          <span class="key">classifier</span>: <span class="string"><span class="content">core</span></span>
-          <span class="key">version</span>: <span class="string"><span class="content">${jqassistant.store.embedded.neo4j-version}</span></span></code></pre>
-</div>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -6653,7 +6638,7 @@ It works in a similar way like <code>java.lang.SuppressWarnings</code> provided 
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
   <span class="tag">&lt;groupId&gt;</span>com.buschmais.jqassistant<span class="tag">&lt;/groupId&gt;</span>
   <span class="tag">&lt;artifactId&gt;</span>manual<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>2.7.1<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;version&gt;</span>2.8.0<span class="tag">&lt;/version&gt;</span>
   <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
@@ -6685,6 +6670,16 @@ If not explicitly specified this is the first column specified in the return cla
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>It is possible to set an expiry date and specify a reason for suppression. The expiry date must be specified in the format "yyyy-MM-dd".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@jQASuppress</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint</span><span class="delimiter">&quot;</span></span>, until = <span class="string"><span class="delimiter">&quot;</span><span class="content">2026-02-28</span><span class="delimiter">&quot;</span></span>, reason = <span class="string"><span class="delimiter">&quot;</span><span class="content">The reason for suppressing this class.</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">ClassViolatingMyConstraint</span> {
+}</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_rules_provided_by_the_jqassistant_java_plugin"><a class="link" href="#_rules_provided_by_the_jqassistant_java_plugin">Rules provided by the jQAssistant Java Plugin</a></h4>
@@ -6700,6 +6695,21 @@ If not explicitly specified this is the first column specified in the return cla
 <p><a href="#java:TestMethodWithoutAssertion">Constraint <code>java:TestMethodWithoutAssertion</code></a></p>
 </li>
 <li>
+<p><a href="#java:TechnicalDebt">Constraint <code>java:TechnicalDebt</code></a></p>
+</li>
+<li>
+<p><a href="#suppress:suppressElementMustProvideAReason">Constraint <code>suppress:suppressElementMustProvideAReason</code></a></p>
+</li>
+<li>
+<p><a href="#suppress:suppressUntilMustNotExceedMonthsLimit">Constraint <code>suppress:suppressUntilMustNotExceedMonthsLimit</code></a></p>
+</li>
+<li>
+<p><a href="#suppress:suppressUntilMustNotBeInThePast">Constraint <code>suppress:suppressUntilMustNotBeInThePast</code></a></p>
+</li>
+<li>
+<p><a href="#suppress:suppressExpiresInLessThanMonthsLimit">Constraint <code>suppress:suppressExpiresInLessThanMonthsLimit</code></a></p>
+</li>
+<li>
 <p><a href="#java:InnerType">Concept <code>java:InnerType</code></a></p>
 </li>
 <li>
@@ -6713,6 +6723,12 @@ If not explicitly specified this is the first column specified in the return cla
 </li>
 <li>
 <p><a href="#java:MethodOverrides">Concept <code>java:MethodOverrides</code></a></p>
+</li>
+<li>
+<p><a href="#java:MethodOverridesByRawSignature">Concept <code>java:MethodOverridesByRawSignature</code></a></p>
+</li>
+<li>
+<p><a href="#java:MethodOverridesByGenericParameterBinding">Concept <code>java:MethodOverridesByGenericParameterBinding</code></a></p>
 </li>
 <li>
 <p><a href="#java:VirtualInvokes">Concept <code>java:VirtualInvokes</code></a></p>
@@ -6956,8 +6972,22 @@ RETURN
 <div class="sect4">
 <h5 id="java:MethodOverrides"><a class="link" href="#java:MethodOverrides">Concept <code>java:MethodOverrides</code></a></h5>
 <div class="paragraph">
+<p>Abstract concept providing a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another one from a super type.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (method:Java:Method)-[:OVERRIDES]-&gt;(superMethod)
+RETURN
+  count(*) as OverriddenMethods</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="java:MethodOverridesByRawSignature"><a class="link" href="#java:MethodOverridesByRawSignature">Concept <code>java:MethodOverridesByRawSignature</code></a></h5>
+<div class="paragraph">
 <p>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
-            one from a super type.</p>
+            one from a super type using the same raw method signature).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -6995,6 +7025,56 @@ RETURN
 <ul>
 <li>
 <p><a href="#java:MemberInheritedFrom">java:MemberInheritedFrom</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:MethodOverrides">java:MethodOverrides</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="java:MethodOverridesByGenericParameterBinding"><a class="link" href="#java:MethodOverridesByGenericParameterBinding">Concept <code>java:MethodOverridesByGenericParameterBinding</code></a></h5>
+<div class="paragraph">
+<p>Creates a relationship OVERRIDES between two "Method" labeled nodes if a method overrides another
+            one from a super type with bound generic type parameters (e.g. "class SubType extends SuperType&lt;String&gt;").</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type),
+  (type)-[:DECLARES]-&gt;(syntheticMethod:Method{synthetic:true}),
+  (type)-[:DECLARES]-&gt;(overridingMethod:Method),
+  (overriddenMethod)&lt;-[:OVERRIDES]-(syntheticMethod)-[:INVOKES]-&gt;(overridingMethod)
+MERGE
+  (overridingMethod)-[:OVERRIDES]-&gt;(overriddenMethod)
+RETURN
+  count(*) as OverriddenMethods</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:MethodOverridesByRawSignature">java:MethodOverridesByRawSignature</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:MethodOverrides">java:MethodOverrides</a></p>
 </li>
 </ul>
 </div>
@@ -7747,6 +7827,41 @@ ORDER BY
 </div>
 </div>
 <div class="sect4">
+<h5 id="java:TechnicalDebt"><a class="link" href="#java:TechnicalDebt">Constraint <code>java:TechnicalDebt</code></a></h5>
+<div class="paragraph">
+<p>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Type)-[declares:DECLARES*0..]-&gt;(element),
+  (element)-[:ANNOTATED_BY]-&gt;()-[:HAS|CONTAINS*0..]-&gt;(technicalDebt)-[:OF_TYPE]-&gt;(:Type{fqn:&quot;com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt&quot;}),
+  (technicalDebt)-[:HAS]-&gt;(descriptionValue:Value{name: &quot;value&quot;})
+OPTIONAL MATCH
+  (technicalDebt)-[:HAS]-&gt;(:Value{name: &quot;priority&quot;})-[:IS]-&gt;(priorityField:Field)
+OPTIONAL MATCH
+  (technicalDebt)-[:HAS]-&gt;(issueValue:Value{name: &quot;issue&quot;})
+WITH
+  type,
+  case
+    when element:Member then element.name
+  end as memberName,
+  descriptionValue.value as description,
+  case split(priorityField.signature, &quot; &quot;)[1]
+    when &quot;HIGH&quot; then 0
+    when &quot;MEDIUM&quot; then 1
+    when &quot;LOW&quot; then 2
+    else 1 // default priority is MEDIUM
+  end as priority,
+  issueValue.value as issue
+RETURN DISTINCT
+  priority as Priority, type.fqn as Type, memberName as Member, description as Description, issue as Issue
+ORDER BY
+  priority, type.fqn, memberName, description, issue</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
 <h5 id="java-classpath:ResolveType"><a class="link" href="#java-classpath:ResolveType">Concept <code>java-classpath:ResolveType</code></a></h5>
 <div class="paragraph">
 <p>Adds a relation "RESOLVES_TO" from a type required by an artifact to a type contained in another
@@ -8320,6 +8435,73 @@ RETURN
 </ul>
 </div>
 </div>
+<div class="sect4">
+<h5 id="suppress:suppressElementMustProvideAReason"><a class="link" href="#suppress:suppressElementMustProvideAReason">Constraint <code>suppress:suppressElementMustProvideAReason</code></a></h5>
+<div class="paragraph">
+<p>Elements annotated with @jQASuppress must provide a suppression reason.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (element:Java:jQASuppress)
+WHERE
+    element.suppressReason IS NULL OR element.suppressReason = &quot;&quot;
+RETURN
+    element AS Element</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="suppress:suppressUntilMustNotExceedMonthsLimit"><a class="link" href="#suppress:suppressUntilMustNotExceedMonthsLimit">Constraint <code>suppress:suppressUntilMustNotExceedMonthsLimit</code></a></h5>
+<div class="paragraph">
+<p>The provided expiration date exceeds the allowed limit (default: 12 months).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (element:Java:jQASuppress)
+WITH element, date(element.suppressUntil) AS until
+WHERE
+    until &gt; date() + duration({months: $suppressUntilMonthsLimit})
+RETURN
+    element AS Element, until AS ExpirationDate</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="suppress:suppressUntilMustNotBeInThePast"><a class="link" href="#suppress:suppressUntilMustNotBeInThePast">Constraint <code>suppress:suppressUntilMustNotBeInThePast</code></a></h5>
+<div class="paragraph">
+<p>The provided expiration date must not be in the past.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (element:Java:jQASuppress)
+WITH element, date(element.suppressUntil) AS until
+WHERE
+    until &lt; date()
+RETURN
+    element AS Element, until AS ExpirationDate</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="suppress:suppressExpiresInLessThanMonthsLimit"><a class="link" href="#suppress:suppressExpiresInLessThanMonthsLimit">Constraint <code>suppress:suppressExpiresInLessThanMonthsLimit</code></a></h5>
+<div class="paragraph">
+<p>The provided expiration date falls within the timeframe for soon expiring (default: 1 month).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+      (element:Java:jQASuppress)
+  WITH element, date(element.suppressUntil) AS until
+  WHERE
+      until &lt; date() + duration({months: 1}) AND until &gt;= date()
+  RETURN
+      element AS Element, until AS ExpirationDate</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -8342,6 +8524,12 @@ RETURN
 </li>
 <li>
 <p><a href="#mockito:BddThenShouldMethod">Concept <code>mockito:BddThenShouldMethod</code></a></p>
+</li>
+<li>
+<p><a href="#camunda-bpmn:AssertMethod">Concept <code>camunda-bpmn:AssertMethod</code></a></p>
+</li>
+<li>
+<p><a href="#projectreactor:AssertMethod">Concept <code>projectreactor:AssertMethod</code></a></p>
 </li>
 </ul>
 </div>
@@ -8455,6 +8643,68 @@ WHERE
     and assertMethod.signature =~ '.* should.*'
 SET
     assertMethod:Mockito:Assert
+RETURN
+    assertMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="camunda-bpmn:AssertMethod"><a class="link" href="#camunda-bpmn:AssertMethod">Concept <code>camunda-bpmn:AssertMethod</code></a></h5>
+<div class="literalblock">
+<div class="content">
+<pre>Sets labels :Assert and :Camunda for Camunda BPMN assert methods.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (assertType:Type)-[:DECLARES]-&gt;(assertMethod)
+WHERE
+    assertType.fqn = 'org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests'
+    AND assertMethod.signature =~ '.* assert.*'
+SET
+    assertMethod:Camunda:Assert
+RETURN
+    assertMethod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="projectreactor:AssertMethod"><a class="link" href="#projectreactor:AssertMethod">Concept <code>projectreactor:AssertMethod</code></a></h5>
+<div class="literalblock">
+<div class="content">
+<pre>Sets labels :Assert and :ProjectReactor for Project Reactor assert methods.</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (assertType:Type)-[:DECLARES]-&gt;(assertMethod)
+WHERE
+    assertType.fqn =~ 'reactor\\.test\\.StepVerifier.*'
+    AND assertMethod.signature =~ '.* verify.*'
+SET
+    assertMethod:ProjectReactor:Assert
 RETURN
     assertMethod</code></pre>
 </div>
@@ -10730,20 +10980,22 @@ RETURN
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:DECLARES*0..1]-&gt;(e),
   (e)-[:ANNOTATED_BY]-&gt;(ignore:Annotation)-[:OF_TYPE]-&gt;(ignoreType:Type)
 WHERE
   ignoreType.fqn= &quot;org.junit.Ignore&quot;
   AND NOT (ignore)-[:HAS]-&gt;(:Value{name:&quot;value&quot;})
 RETURN
-  e AS IgnoreWithoutMessage
+  t AS DeclaringClass, e AS IgnoreWithoutMessage
 UNION
 MATCH
+  (t:Type)-[:DECLARES*0..1]-&gt;(e),
   (e)-[:ANNOTATED_BY]-&gt;(disabled:Annotation)-[:OF_TYPE]-&gt;(disabledType:Type)
 WHERE
   disabledType.fqn = &quot;org.junit.jupiter.api.Disabled&quot;
   AND NOT (disabled)-[:HAS]-&gt;(:Value{name:&quot;value&quot;})
 RETURN
-  e AS IgnoreWithoutMessage</code></pre>
+  t AS DeclaringClass, e AS IgnoreWithoutMessage</code></pre>
 </div>
 </div>
 </div>
@@ -12489,7 +12741,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-07-07 13:13:37 UTC
+Last updated 2025-10-31 15:38:50 UTC
 </div>
 </div>
 </body>
