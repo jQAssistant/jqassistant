@@ -1,0 +1,238 @@
+{
+  "$id" : "https://jqassistant.org/schema/jqassistant-rules-v1.10.schema.json",
+  "$schema" : "https://json-schema.org/draft/2019-09/schema",
+  "title" : "jQAssistant Rules Version 1.10",
+  "$defs" : {
+
+    "idJSch" : { "type" : "string" },
+
+    "referenceJSch": {
+      "type" : "object",
+      "properties" : {
+        "refId" : { "$ref" : "#/$defs/idJSch" }
+      },
+      "additionalProperties" : false,
+      "required" : [ "refId" ]
+    },
+
+    "optionalReferenceJSch": {
+      "type" : "object",
+      "properties" : {
+        "refId" : { "$ref" : "#/$defs/idJSch" },
+        "optional" : { "type" : "boolean" }
+      },
+      "additionalProperties" : false,
+      "required" : [ "refId" ]
+    },
+
+    "includedReferenceJSch" : {
+      "type" : "array",
+      "items" : {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "refId" : { "$ref" : "#/$defs/idJSch" },
+          "severity": { "$ref": "#/$defs/severityJSch" },
+          "optional" : { "type" : "boolean" }
+        },
+        "required": [ "refId" ]
+      }
+    },
+
+    "severityJSch" : {
+      "enum" : [ "blocker", "critical", "major", "minor", "info" ]
+    },
+
+    "sourceJSch" : { "type" : "string" },
+
+    "executableRuleJSch" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "id" : { "$ref" : "#/$defs/idJSch" },
+          "deprecated" : { "type" : "string" },
+          "description" : { "type" : "string" },
+          "report" : {
+            "anyOf" : [
+              { "$ref" : "#/$defs/reportJScn" },
+              { "type" : "null" }
+            ]
+          },
+          "providesConcepts" : {
+            "type" : "array",
+            "minItems" : 0,
+            "items" : { "$ref" : "#/$defs/referenceJSch" }
+          },
+          "requiresConcepts" : {
+            "type" : "array",
+            "minItems" : 0,
+            "items" : { "$ref" : "#/$defs/optionalReferenceJSch" }
+          },
+          "requiresParameters" : {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 0,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "defaultValue": { "type": "string" },
+                    "type": {
+                      "enum": [
+                        "boolean", "byte", "char", "double", "float",
+                        "int", "long", "short", "String"
+                      ]
+                    },
+                    "required": [ "name", "type" ]
+                  },
+                  "additionalProperties": false
+                }
+              },
+              { "type": "null" }
+            ]
+          },
+          "severity" : { "$ref" : "#/$defs/severityJSch" },
+          "language" : { "type" : "string" },
+          "source" : { "$ref" : "#/$defs/sourceJSch" },
+          "verify" : {
+            "type" : "object",
+            "properties" : {
+              "rowCount" : {
+                "type" : "object",
+                "properties" : {
+                  "min" : {
+                    "type" : "integer",
+                    "minimum" : 0
+                  },
+                  "max" : {
+                    "type" : "integer",
+                    "minimum" : 0
+                  }
+                },
+                "anyOf": [
+                  { "required": [ "min" ] },
+                  { "required": [ "max" ] },
+                  { "required": [ "max", "min" ] }
+                ],
+                "additionalProperties" : false
+              },
+              "aggregation" : {
+                "type" : "object",
+                "properties" : {
+                  "max": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "min": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "column": { "type": "string" }
+                },
+                "anyOf": [
+                  { "required": ["column", "min", "max"] },
+                  { "required": ["column", "min" ] },
+                  { "required": ["column", "max" ] }
+                ],
+                "additionalProperties" : false
+              }
+            },
+            "oneOf": [
+              { "required": [ "aggregation" ] },
+              { "required": [ "rowCount" ] }
+            ],
+
+            "additionalProperties" : false
+          }
+        },
+        "required" : [ "id", "source" ],
+        "additionalProperties" : false
+      },
+      "additionalProperties" : false
+    },
+    "reportJScn" : {
+      "type" : "object",
+      "properties" : {
+        "primaryColumn" : {
+          "type" : "string"
+        },
+        "properties" : {
+          "type" : "object",
+          "patternProperties" : {
+            "^.+$" : {
+              "anyOf" : [
+                { "type" : "integer" },
+                { "type" : "number" },
+                { "type" : "boolean" },
+                { "type" : "string" }
+              ],
+              "additionalProperties" : false
+            }
+          },
+          "additionalProperties" : false
+        },
+        "type" : { "type" : "string" }
+      },
+      "required": [ "primaryColumn", "type" ],
+      "additionalProperties" : false
+    }
+  },
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "concepts": {
+          "anyOf": [
+            { "$ref": "#/$defs/executableRuleJSch" },
+            { "type": "null" }
+          ]
+        },
+        "constraints": {
+          "anyOf": [
+            { "$ref": "#/$defs/executableRuleJSch" },
+            { "type": "null" }
+          ]
+        },
+        "groups": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "$ref": "#/$defs/idJSch" },
+                  "severity": { "$ref": "#/$defs/severityJSch" },
+                  "includedConcepts": {
+                    "anyOf": [
+                      { "$ref": "#/$defs/includedReferenceJSch" },
+                      { "type": "null" }
+                    ]
+                  },
+                  "includedConstraints": {
+                    "anyOf": [
+                      { "$ref": "#/$defs/includedReferenceJSch" },
+                      { "type": "null" }
+                    ]
+                  },
+                  "includedGroups": {
+                    "anyOf": [
+                      { "$ref": "#/$defs/includedReferenceJSch" },
+                      { "type": "null" }
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "required": [ "id" ]
+              }
+            },
+            { "type": "null" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    { "type": "null" }
+  ]
+}
