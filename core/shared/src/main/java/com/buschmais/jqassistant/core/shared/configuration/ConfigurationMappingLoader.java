@@ -60,7 +60,7 @@ public class ConfigurationMappingLoader {
      *     The configuration mapping mapping.
      */
     public static <C> Builder<C> builder(Class<C> configurationMapping) {
-        return new Builder<>(configurationMapping, emptyList());
+        return new Builder<>(new ConfigurationFileLoader(), configurationMapping, emptyList());
     }
 
     /**
@@ -72,12 +72,26 @@ public class ConfigurationMappingLoader {
      *     The names of the configuration locations. These may either be absolute paths or relative paths to the working directory.
      */
     public static <C> Builder<C> builder(Class<C> configurationMapping, List<String> configLocations) {
-        return new Builder<>(configurationMapping, configLocations);
+        return new Builder<>(new ConfigurationFileLoader(), configurationMapping, configLocations);
+    }
+
+    /**
+     * Return a builder for creating a configuration mapping
+     *
+     * @param configurationFileLoader
+     *     The {@link ConfigurationFileLoader} to use.
+     * @param configurationMapping
+     *     The configuration mapping mapping.
+     * @param configLocations
+     *     The names of the configuration locations. These may either be absolute paths or relative paths to the working directory.
+     */
+    public static <C> Builder<C> builder(ConfigurationFileLoader configurationFileLoader, Class<C> configurationMapping, List<String> configLocations) {
+        return new Builder<>(configurationFileLoader, configurationMapping, configLocations);
     }
 
     public static class Builder<C> {
 
-        private final ConfigurationFileLoader configurationFileLoader = new ConfigurationFileLoader();
+        private final ConfigurationFileLoader configurationFileLoader;
 
         private final ConfigurationSerializer<C> configurationSerializer = new ConfigurationSerializer<>();
 
@@ -91,7 +105,8 @@ public class ConfigurationMappingLoader {
 
         private final Set<String> ignoreProperties = new HashSet<>();
 
-        private Builder(Class<C> configurationMapping, List<String> configLocations) {
+        private Builder(ConfigurationFileLoader configurationFileLoader, Class<C> configurationMapping, List<String> configLocations) {
+            this.configurationFileLoader = configurationFileLoader;
             this.configurationMapping = configurationMapping;
             if (configLocations.isEmpty()) {
                 this.relativeConfigLocations = DEFAULT_CONFIG_LOCATIONS;

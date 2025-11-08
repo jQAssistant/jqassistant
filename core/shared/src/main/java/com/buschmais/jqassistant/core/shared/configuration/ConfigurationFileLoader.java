@@ -28,18 +28,34 @@ import static java.util.Collections.list;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
+/**
+ * {@link ConfigSource} loader for YAML config files/directories and resources.
+ * <p>
+ * The implementation uses caches for once loaded config sources.
+ */
 @Slf4j
 public class ConfigurationFileLoader {
 
+    /**
+     * Defines the key for a file system {@link ConfigSource} .
+     */
     @Builder
     @EqualsAndHashCode
     @ToString
-    private static class ConfigLocationKey {
-
+    private static class FileSystemConfigKey {
         private final Path path;
-
         private final int ordinal;
+    }
 
+    /**
+     * Defines the key for a classpath {@link ConfigSource} .
+     */
+    @Builder
+    @EqualsAndHashCode
+    @ToString
+    private static class ClasspathConfigKey {
+        private final URL resource;
+        private final int ordinal;
     }
 
     private static final String CLASSPATH_RESOURCE = ".jqassistant.yml";
@@ -47,7 +63,16 @@ public class ConfigurationFileLoader {
     private static final String YAML = ".yaml";
     private static final String YML = ".yml";
 
-    private final Cache<ConfigLocationKey, List<ConfigSource>> configSourceCache = Caffeine.newBuilder()
+    /**
+     * Holds {@link ConfigSource}s for a given file system config location, i.e. a config file or a directory containing config files.
+     */
+    private final Cache<FileSystemConfigKey, List<ConfigSource>> fileSystemConfigCache = Caffeine.newBuilder()
+        .build();
+
+    /**
+     * Hold a {@link ConfigSource} for a given classpath configuration resource.
+     */
+    private final Cache<ClasspathConfigKey, ConfigSource> classpathConfigCache = Caffeine.newBuilder()
         .build();
 
     List<ConfigSource> getYamlConfigSources(File directory, List<Path> configLocations, int ordinal) {
@@ -61,10 +86,10 @@ public class ConfigurationFileLoader {
     }
 
     List<ConfigSource> getYamlConfigSources(Path configLocationPath, int ordinal) {
-        return configSourceCache.get(ConfigLocationKey.builder()
+        return fileSystemConfigCache.get(FileSystemConfigKey.builder()
             .path(configLocationPath)
             .ordinal(ordinal)
-            .build(), configLocationKey -> loadYamlConfigSources(configLocationPath, ordinal));
+            .build(), fileSystemConfigKey -> loadYamlConfigSources(configLocationPath, ordinal));
     }
 
     List<ConfigSource> loadYamlConfigResources(int ordinal) {
@@ -73,7 +98,10 @@ public class ConfigurationFileLoader {
                 .getContextClassLoader()
                 .getResources(CLASSPATH_RESOURCE);
             return list(resources).stream()
-                .map(resource -> getYamlConfigSource(resource, ordinal))
+                .map(resource -> classpathConfigCache.get(ClasspathConfigKey.builder()
+                    .resource(resource)
+                    .ordinal(ordinal)
+                    .build(), u -> getYamlConfigSource(resource, ordinal)))
                 .collect(toUnmodifiableList());
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot get classpath resources for " + CLASSPATH_RESOURCE, e);
