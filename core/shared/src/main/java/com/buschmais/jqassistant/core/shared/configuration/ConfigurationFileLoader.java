@@ -75,7 +75,7 @@ public class ConfigurationFileLoader {
     private final Cache<ClasspathConfigKey, ConfigSource> classpathConfigCache = Caffeine.newBuilder()
         .build();
 
-    List<ConfigSource> getYamlConfigSources(File directory, List<Path> configLocations, int ordinal) {
+    public List<ConfigSource> getYamlConfigSources(File directory, List<Path> configLocations, int ordinal) {
         List<ConfigSource> yamlConfigSources = new ArrayList<>();
         for (Path configLocation : configLocations) {
             Path path = directory.toPath()
@@ -85,14 +85,14 @@ public class ConfigurationFileLoader {
         return yamlConfigSources;
     }
 
-    List<ConfigSource> getYamlConfigSources(Path configLocationPath, int ordinal) {
+    public List<ConfigSource> getYamlConfigSources(Path configLocationPath, int ordinal) {
         return fileSystemConfigCache.get(FileSystemConfigKey.builder()
             .path(configLocationPath)
             .ordinal(ordinal)
             .build(), fileSystemConfigKey -> loadYamlConfigSources(configLocationPath, ordinal));
     }
 
-    List<ConfigSource> loadYamlConfigResources(int ordinal) {
+    public List<ConfigSource> loadYamlConfigResources(int ordinal) {
         try {
             Enumeration<URL> resources = Thread.currentThread()
                 .getContextClassLoader()

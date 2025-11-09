@@ -49,7 +49,7 @@ public class ConfigurationMappingLoader {
     /**
      * The default names of configuration files
      */
-    private static final List<Path> DEFAULT_CONFIG_LOCATIONS = Stream.of(".jqassistant.yml", ".jqassistant.yaml", ".jqassistant")
+    public static final List<Path> DEFAULT_CONFIG_LOCATIONS = Stream.of(".jqassistant.yml", ".jqassistant.yaml", ".jqassistant")
         .map(Paths::get)
         .collect(toUnmodifiableList());
 
