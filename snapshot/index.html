@@ -7279,6 +7279,11 @@ RETURN
 SET
   type.javaVersion=
     CASE type.byteCodeVersion
+      WHEN 70 THEN &quot;Java 26&quot;
+      WHEN 69 THEN &quot;Java 25&quot;
+      WHEN 68 THEN &quot;Java 24&quot;
+      WHEN 67 THEN &quot;Java 23&quot;
+      WHEN 66 THEN &quot;Java 22&quot;
       WHEN 65 THEN &quot;Java 21&quot;
       WHEN 64 THEN &quot;Java 20&quot;
       WHEN 63 THEN &quot;Java 19&quot;
@@ -12741,7 +12746,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-10 07:54:22 UTC
+Last updated 2025-11-12 14:16:30 UTC
 </div>
 </div>
 </body>
