@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.runtime.api.configuration;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -10,24 +11,34 @@ import com.buschmais.jqassistant.core.report.api.configuration.Build;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationFileLoader;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader.*;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.microprofile.config.spi.ConfigSource.DEFAULT_ORDINAL;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests for the {@link ConfigurationMappingLoader}.
  */
+@ExtendWith(MockitoExtension.class)
 class ConfigurationMappingLoaderTest {
+
+    @Mock
+    private ConfigurationFileLoader configurationFileLoader;
 
     public static final File USER_HOME = new File("src/test/resources/configuration/userhome");
 
@@ -59,6 +70,19 @@ class ConfigurationMappingLoaderTest {
         assertThat(scan.continueOnError()).isTrue();
         assertThat(scan.properties()).containsEntry("user-value", "default");
         assertThat(scan.properties()).containsEntry("overwritten-user-value", "overwritten");
+    }
+
+    @Test
+    void useExternalConfigurationFileLoader() {
+        ConfigurationMappingLoader.builder(configurationFileLoader, Configuration.class, singletonList(".jqassistant"))
+            .withClasspath()
+            .withUserHome(USER_HOME)
+            .withWorkingDirectory(WORKING_DIRECTORY)
+            .load(BUILD_CONFIG_SOURCE);
+
+        verify(configurationFileLoader).getYamlConfigSources(USER_HOME, DEFAULT_CONFIG_LOCATIONS, ORDINAL_USERHOME);
+        verify(configurationFileLoader).getYamlConfigSources(WORKING_DIRECTORY, singletonList(Paths.get(".jqassistant")), ORDINAL_WORKING_DIRECTORY);
+        verify(configurationFileLoader).loadYamlConfigResources(ORDINAL_CLASSPATH);
     }
 
     /**

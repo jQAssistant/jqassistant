@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.shared.aether.AetherArtifactProvider;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationFileLoader;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
@@ -20,6 +21,7 @@ import com.buschmais.jqassistant.scm.maven.configuration.source.MavenProjectConf
 import com.buschmais.jqassistant.scm.maven.configuration.source.MavenPropertiesConfigSource;
 import com.buschmais.jqassistant.scm.maven.configuration.source.SettingsConfigSource;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
+import com.buschmais.jqassistant.scm.maven.provider.ConfigurationFileLoaderProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 
 import io.smallrye.config.PropertiesConfigSource;
@@ -100,6 +102,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Component
     private RuntimeInformation runtimeInformation;
+
+    @Component
+    private ConfigurationFileLoaderProvider configurationFileLoaderProvider;
 
     @Component
     private PluginRepositoryProvider pluginRepositoryProvider;
@@ -302,8 +307,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         File executionRootDirectory = new File(session.getExecutionRootDirectory());
         List<String> activatedProfiles = new ArrayList<>(session.getProjectBuildingRequest()
             .getActiveProfileIds());
-        currentProject.getActiveProfiles().stream().map(Profile::getId).forEach(activatedProfiles::add);
-        ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(MavenConfiguration.class, configurationLocations)
+        currentProject.getActiveProfiles()
+            .stream()
+            .map(Profile::getId)
+            .forEach(activatedProfiles::add);
+        ConfigurationFileLoader configurationFileLoader = configurationFileLoaderProvider.getConfigurationFileLoader();
+        ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(configurationFileLoader, MavenConfiguration.class,
+                configurationLocations)
             .withUserHome(userHome)
             .withDirectory(executionRootDirectory, CONFIGURATION_ORDINAL_EXECUTION_ROOT)
             .withEnvVariables()
