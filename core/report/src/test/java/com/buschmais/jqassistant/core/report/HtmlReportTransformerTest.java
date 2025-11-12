@@ -38,6 +38,20 @@ class HtmlReportTransformerTest {
             "concept:WarningWithMajorSeverity", "concept:SuccessWithMinorSeverity");
     }
 
+    @Test
+    void reportWithOverrides() throws ReportTransformerException {
+        HtmlReportTransformer transformer = new HtmlReportTransformer();
+        Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-overrides.xml"));
+        StringWriter htmlWriter = new StringWriter();
+        javax.xml.transform.Result htmlTarget = new StreamResult(htmlWriter);
+        transformer.toEmbedded(xmlSource, htmlTarget);
+
+        String html = htmlWriter.toString();
+        assertThat(getRuleIds(html, "([a-zA-Z]*):Overridden([A-Za-z0-9]*)")).containsExactlyInAnyOrder("concept:OverriddenConcept1",
+                "concept:OverriddenConcept2", "constraint:OverriddenConstraint", "group:OverriddenGroup1", "group:OverriddenGroup2");
+
+    }
+
     private static Set<String> getRuleIds(String html, String rulePattern) {
         Matcher matcher = Pattern.compile(rulePattern)
             .matcher(html);
@@ -47,5 +61,4 @@ class HtmlReportTransformerTest {
         }
         return ruleIds;
     }
-
 }

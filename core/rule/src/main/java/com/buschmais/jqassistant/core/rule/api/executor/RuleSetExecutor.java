@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptySet;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Controls execution of {@link RuleSet}s.
@@ -122,6 +123,14 @@ public class RuleSetExecutor<R> {
             LOGGER.warn("Could not find concepts matching to '{}'.", conceptPattern);
         } else {
             for (Concept matchingConcept : matchingConcepts) {
+                if (ruleSet.getConceptBucket()
+                    .isOverridden(matchingConcept.getId())) {
+                    Concept overridingConcept = (Concept) ruleSet.getConceptBucket()
+                        .getOverridingRule(matchingConcept);
+                    if (checkOverridesProvides(matchingConcept, overridingConcept)) {
+                        matchingConcept = overridingConcept;
+                    }
+                }
                 applyConcept(ruleSet, matchingConcept, overriddenSeverity, activatedConcepts, new LinkedHashSet<>());
             }
         }
@@ -135,6 +144,11 @@ public class RuleSetExecutor<R> {
             LOGGER.warn("Could not find groups matching to '{}'.", groupPattern);
         } else {
             for (Group matchingGroup : matchingGroups) {
+                if (ruleSet.getGroupsBucket()
+                    .isOverridden(matchingGroup.getId())) {
+                    matchingGroup = (Group) ruleSet.getGroupsBucket()
+                        .getOverridingRule(matchingGroup);
+                }
                 executeGroup(ruleSet, matchingGroup, excludedConstraintIds, overridingSeverity, activatedConcepts);
             }
         }
@@ -152,6 +166,11 @@ public class RuleSetExecutor<R> {
                 if (excludedConstraintIds.contains(constraintId)) {
                     log.info("Skipping excluded constraint '{}'.", constraintId);
                 } else {
+                    if (ruleSet.getConstraintBucket()
+                        .isOverridden(matchingConstraint.getId())) {
+                        matchingConstraint = (Constraint) ruleSet.getConstraintBucket()
+                            .getOverridingRule(matchingConstraint);
+                    }
                     validateConstraint(ruleSet, matchingConstraint, overriddenSeverity, activatedConcepts);
                 }
             }
@@ -339,6 +358,26 @@ public class RuleSetExecutor<R> {
             log.warn("Rule '{}' is deprecated: {} ({})", executableRule.getId(), executableRule.getDeprecation(), executableRule.getSource()
                 .getId());
         }
+    }
+
+    /**
+     * Checks if an overriding concept provides the same concepts as the overridden concept.
+     */
+    private boolean checkOverridesProvides(Concept overridden, Concept overriding) {
+        List<String> overridingConceptsProvides = overriding.getProvidedConcepts()
+            .stream()
+            .map(Concept.ProvidedConcept::getProvidedConceptId)
+            .collect(toList());
+        List<String> overriddenConceptsProvides = overridden.getProvidedConcepts()
+            .stream()
+            .map(Concept.ProvidedConcept::getProvidedConceptId)
+            .collect(toList());
+        if (!new HashSet<>(overridingConceptsProvides).containsAll(overriddenConceptsProvides)) {
+            LOGGER.warn("Overriding concept '{}' does not have the same ProvidedConcepts as the overridden concept '{}' ", overriding.getProvidedConcepts(),
+                overridden.getId());
+            return false;
+        }
+        return true;
     }
 
     @Getter
