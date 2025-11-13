@@ -5,9 +5,6 @@ jqassistant:
       artifact-id: java
       version: ${project.version}
     - group-id: com.buschmais.jqassistant.plugin
-      artifact-id: java-testing
-      version: ${project.version}
-    - group-id: com.buschmais.jqassistant.plugin
       artifact-id: junit
       version: ${project.version}
     - group-id: com.buschmais.jqassistant.plugin
