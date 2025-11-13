@@ -1,0 +1,8 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.2"
+                    id="jqa.core.test"
+                    name="Test">
+    <description>Test plugin.</description>
+    <rules>
+        <resource>core-test.xml</resource>
+    </rules>
+</jqassistant-plugin>
