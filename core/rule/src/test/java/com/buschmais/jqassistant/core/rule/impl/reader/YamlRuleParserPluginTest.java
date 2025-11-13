@@ -859,6 +859,16 @@ class YamlRuleParserPluginTest {
             assertThatThrownBy(() -> readRuleSet("/yaml/constraint-with-report-and-with-unknown-keyword.yml")).hasNoCause()
                 .isInstanceOf(RuleException.class);
         }
+
+        @Test
+        void reportSectionWithKeyColumns() throws Exception {
+            RuleSet ruleSet = readRuleSet("/yaml/constraint-with-key-columns.yaml");
+            assertThat(ruleSet).isNotNull();
+            assertThat(ruleSet.getConstraintBucket()
+                    .getById("test:Constraint")
+                    .getReport()
+                    .getKeyColumns()).isEqualTo("c1,c2");
+        }
     }
 
     RuleSet readRuleSet(String resource) throws RuleException {

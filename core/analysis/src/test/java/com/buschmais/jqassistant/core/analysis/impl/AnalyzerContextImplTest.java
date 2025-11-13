@@ -29,7 +29,7 @@ import static com.buschmais.jqassistant.core.rule.api.model.Severity.BLOCKER;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -89,17 +89,25 @@ class AnalyzerContextImplTest {
             .entry("c1", analyzerContext.toColumn("v1"))
             .entry("c2", analyzerContext.toColumn("v2"))
             .build(), keyColumns);
-        Row rowWithKeyColumn = analyzerContext.toRow(concept2, MapBuilder.<String, Column<?>>builder()
-                .entry("c1", analyzerContext.toColumn("v1"))
-                .entry("c2", analyzerContext.toColumn("v2"))
-                .build(), MapBuilder.<String, Column<?>>builder()
-                .entry("c3", analyzerContext.toColumn("v3"))
-                .build());
 
-        Set<String> rowKeys = Stream.of(row1_1, row1_2, row2_1, rowWithKeyColumn)
+        Set<String> rowKeys = Stream.of(row1_1, row1_2, row2_1)
             .map(Row::getKey)
             .collect(toSet());
-        assertThat(rowKeys).hasSize(4);
+        assertThat(rowKeys).hasSize(3);
+    }
+
+    @Test
+    void nonExistingRowKeyColumnThrowsException() {
+        Concept concept2 = Concept.builder()
+                .id("id2")
+                .build();
+        assertThatThrownBy(() -> analyzerContext.toRow(concept2, MapBuilder.<String, Column<?>>builder()
+                        .entry("c1", analyzerContext.toColumn("v1"))
+                        .entry("c2", analyzerContext.toColumn("v2"))
+                        .build(),
+                MapBuilder.<String, Column<?>>builder()
+                        .entry("c3", analyzerContext.toColumn("v3"))
+                        .build())).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

@@ -1,0 +1,14 @@
+---
+constraints:
+  - id: test:Constraint
+    description: Test constraint
+    source: |
+      match
+        (n)
+      return
+        n
+    report:
+      primaryColumn: n
+      keyColumns: n
+      type: html
+

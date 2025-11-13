@@ -18,7 +18,7 @@ import com.networknt.schema.ValidationMessage;
 import static java.lang.String.format;
 
 class JsonSchemaValidator {
-    private static final String JSON_SCHEMA = "/META-INF/schema/jqassistant-rule-v2.8.schema.json";
+    private static final String JSON_SCHEMA = "/META-INF/schema/jqassistant-rule-v2.9.schema.json";
     private final ObjectMapper mapper;
     private final JsonSchema schema;
 

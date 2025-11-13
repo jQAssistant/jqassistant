@@ -17,6 +17,7 @@ import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.xo.api.Query;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status;
 import static java.util.Collections.unmodifiableList;
@@ -80,7 +81,7 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
         }
 
         Map<String, Column<?>> keyColumns = new LinkedHashMap<>();
-        if(rule.getReport().getKeyColumns().isEmpty()) {
+        if(StringUtils.isNotEmpty(rule.getReport().getKeyColumns())) {
             for (String columnName : rule.getReport()
                     .getKeyColumns()
                     .split("\\s*,\\s*")) {
