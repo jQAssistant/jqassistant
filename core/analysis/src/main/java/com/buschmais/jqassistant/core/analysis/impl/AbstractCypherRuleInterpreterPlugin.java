@@ -78,7 +78,17 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
             Object columnValue = rowObject.get(columnName, Object.class);
             columns.put(columnName, context.toColumn(columnValue));
         }
-        return context.toRow(rule, columns);
+
+        Map<String, Column<?>> keyColumns = new LinkedHashMap<>();
+        if(rule.getReport().getKeyColumns().isEmpty()) {
+            for (String columnName : rule.getReport()
+                    .getKeyColumns()
+                    .split("\\s*,\\s*")) {
+                Object columnValue = rowObject.get(columnName, Object.class);
+                keyColumns.put(columnName, context.toColumn(columnValue));
+            }
+        }
+        return context.toRow(rule, columns, keyColumns);
     }
 
 }

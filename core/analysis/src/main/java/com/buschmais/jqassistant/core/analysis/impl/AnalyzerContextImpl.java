@@ -71,8 +71,8 @@ class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
-        return ReportHelper.toRow(rule, columns);
+    public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Map<String, Column<?>> keyColumns) {
+        return ReportHelper.toRow(rule, columns, keyColumns);
     }
 
     @Override

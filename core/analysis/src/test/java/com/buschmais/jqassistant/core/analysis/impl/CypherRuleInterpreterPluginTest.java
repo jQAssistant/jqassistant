@@ -54,15 +54,15 @@ class CypherRuleInterpreterPluginTest {
             .getStore();
         doAnswer(invocation -> ((Transactional.TransactionalSupplier<?, ?>) invocation.getArgument(0)).execute()).when(store)
             .requireTransaction(any(Transactional.TransactionalSupplier.class));
-        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1))).when(analyzerContext)
-            .toRow(any(), anyMap());
+        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1), anyMap())).when(analyzerContext)
+            .toRow(any(), anyMap(), anyMap());
         doAnswer(invocation -> ReportHelper.toColumn(invocation.getArgument(0))).when(analyzerContext)
             .toColumn(any());
     }
 
     @Test
     void rows() throws RuleException {
-        Constraint constraint = prepareConstraint(Map.of(PRIMARY_COLUMN, "value1_1", SECONDARY_COLUMN, "value1_2"),
+        Constraint constraint = prepareConstraint (null, Map.of(PRIMARY_COLUMN, "value1_1", SECONDARY_COLUMN, "value1_2"),
             Map.of(PRIMARY_COLUMN, "value2_1", SECONDARY_COLUMN, "value2_2"));
         doReturn(VerificationResult.builder()
             .success(true)
@@ -76,9 +76,10 @@ class CypherRuleInterpreterPluginTest {
         verify(analyzerContext, times(2)).isSuppressed(eq(constraint), eq(PRIMARY_COLUMN), any(Row.class));
     }
 
-    private Constraint prepareConstraint(Map<String, Object>... resultRows) {
+    private Constraint prepareConstraint(String keyColumns, Map<String, Object>... resultRows)  {
         Report report = Report.builder()
             .primaryColumn(PRIMARY_COLUMN)
+                .keyColumns(keyColumns)
             .build();
         Constraint constraint = Constraint.builder()
             .id(CONSTRAINT_ID)
@@ -93,6 +94,22 @@ class CypherRuleInterpreterPluginTest {
             .executeQuery(anyString(), anyMap());
 
         return constraint;
+    }
+
+    @Test
+    void rowKeys() throws RuleException {
+        Constraint constraint = prepareConstraint("primary, secondary, c2", Map.of(PRIMARY_COLUMN, "value1_1", SECONDARY_COLUMN, "value1_2"),
+                Map.of(PRIMARY_COLUMN, "value2_1", SECONDARY_COLUMN, "value2_2"), Map.of("c2", "value3_1", SECONDARY_COLUMN, "value2_2"));
+        doReturn(VerificationResult.builder()
+                .success(true)
+                .rowCount(2)
+                .build()).when(analyzerContext)
+                .verify(any(Constraint.class), anyList(), anyList());
+
+        Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
+
+        assertThat(result.getRows()).hasSize(2);
+        verify(analyzerContext, times(2)).isSuppressed(eq(constraint), eq(PRIMARY_COLUMN), any(Row.class));
     }
 
     private static ResultIterator<CompositeRowObject> asResultIterator(List<CompositeRowObject> queryRows) {

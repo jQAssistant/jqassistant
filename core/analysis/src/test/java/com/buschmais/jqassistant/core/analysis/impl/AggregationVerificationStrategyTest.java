@@ -24,6 +24,7 @@ import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.anyMap;
 
 @ExtendWith(MockitoExtension.class)
 class AggregationVerificationStrategyTest {
@@ -195,6 +196,6 @@ class AggregationVerificationStrategyTest {
         for (int i = 0; i < values.length; i++) {
             columns.put("c" + i, toColumn(values[i]));
         }
-        return toRow(rule, columns);
+        return toRow(rule, columns, anyMap());
     }
 }

@@ -84,19 +84,21 @@ public final class ReportHelper {
             .build();
     }
 
-    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Map<String, Column<?>> keyColumns) {
         return Row.builder()
-            .key(getRowKey(rule, columns))
+            .key(getRowKey(rule, columns, keyColumns))
             .columns(columns)
             .build();
     }
 
-    private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+    private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns, Map<String, Column<?>> keyColumns) {
         StringBuilder id = new StringBuilder(rule.getClass()
             .getName()).append("|")
             .append(rule.getId())
             .append("|");
-        columns.entrySet()
+        rule.getReport();
+        Map<String, Column<?>> rowKeyColumns = keyColumns.isEmpty() ? columns : keyColumns;
+        rowKeyColumns.entrySet()
             .forEach(entry -> id.append(entry.getKey())
                 .append(':')
                 .append(entry.getValue()

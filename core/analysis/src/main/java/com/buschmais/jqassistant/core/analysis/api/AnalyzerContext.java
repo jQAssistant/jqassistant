@@ -50,7 +50,7 @@ public interface AnalyzerContext {
      *     The columns.
      * @return The {@link Row}
      */
-    Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns);
+    Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Map<String, Column<?>> keyColumns);
 
     /**
      * Verifies if the Row shall be suppressed.
