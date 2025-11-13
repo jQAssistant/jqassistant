@@ -87,13 +87,11 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
             Plugin apocCore = PluginImpl.builder()
                     .groupId("org.neo4j.procedure")
                     .artifactId("apoc-core")
-                    .classifier(Optional.empty())
                     .version(neo4jVersion)
                     .build();
             Plugin apocCommon = PluginImpl.builder()
                     .groupId("org.neo4j.procedure")
                     .artifactId("apoc-common")
-                    .classifier(Optional.empty())
                     .version(neo4jVersion)
                     .build();
             plugins.add(apocCore);
@@ -111,7 +109,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         private final String groupId;
         private final String artifactId;
         private final String type = "jar";
-        private final Optional<String> classifier;
+        @Builder.Default
+        private final Optional<String> classifier = Optional.empty();
         private final String version;
         private final List<Exclusion> exclusions = List.of();
     }
