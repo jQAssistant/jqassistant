@@ -668,8 +668,8 @@ For using it the jQAssistant Java plugin must be declared as compile-time depend
 .pom.xml
 ----
 <dependency>
-  <groupId>{projectGroupId}</groupId>
-  <artifactId>{projectArtifactId}</artifactId>
+  <groupId>com.buschmais.jqassistant.plugin</groupId>
+  <artifactId>java</artifactId>
   <version>{projectVersion}</version>
   <scope>provided</scope>
 </dependency>
