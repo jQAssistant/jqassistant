@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
@@ -15,7 +16,19 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void beforeRules() throws RuleException {
+    public void beforeRules(RuleSelection ruleSelection) throws RuleException {
+    }
+
+    @Override
+    public void includedConcepts(List<Concept> concepts) {
+    }
+
+    @Override
+    public void includedGroups(List<Group> groups) {
+    }
+
+    @Override
+    public void includedConstraints(List<Constraint> constraints) {
     }
 
     @Override
@@ -33,6 +46,14 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
+    public void requiredConcepts(Concept concept, List<Concept> requiredConcepts) {
+    }
+
+    @Override
+    public void providingConcepts(Concept concept, List<Concept> providingConcepts) {
+    }
+
+    @Override
     public R visitConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults)
         throws RuleException {
         throw new RuleException("Cannot visit constraint" + constraint);
@@ -44,7 +65,23 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
+    public void requiredConcepts(Constraint constraint, List<Concept> concepts) {
+    }
+
+    @Override
     public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
+    }
+
+    @Override
+    public void includedConcepts(Group group, List<Concept> concepts) {
+    }
+
+    @Override
+    public void includedGroups(Group group, List<Group> groups) {
+    }
+
+    @Override
+    public void includedConstraints(Group group, List<Constraint> constraints) {
     }
 
     @Override
