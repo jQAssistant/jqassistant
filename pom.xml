@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.buschmais.jqassistant.build</groupId>
         <artifactId>parent</artifactId>
-        <version>2.7.2</version>
+        <version>2.8.0</version>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>parent</artifactId>
-    <version>2.8.0-SNAPSHOT</version>
+    <version>2.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant Parent</name>
@@ -60,16 +60,16 @@
 
     <properties>
         <!-- jQA build version -->
-        <jqassistant.build.version>2.7.2</jqassistant.build.version>
+        <jqassistant.build.version>2.8.0</jqassistant.build.version>
         <!-- library versions -->
         <assertj.version>3.27.6</assertj.version>
-        <asm.version>9.8</asm.version>
-        <caffeine.version>3.2.2</caffeine.version>
+        <asm.version>9.9</asm.version>
+        <caffeine.version>3.2.3</caffeine.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
-        <commons-codec.version>1.19.0</commons-codec.version>
+        <commons-codec.version>1.20.0</commons-codec.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-digester.version>2.1</commons-digester.version>
-        <commons-io.version>2.20.0</commons-io.version>
+        <commons-io.version>2.21.0</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.19.0</commons-lang3.version>
         <commons-text.version>1.14.0</commons-text.version>
@@ -77,14 +77,14 @@
         <guice.version>7.0.0</guice.version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
         <httpcore.version>4.4.16</httpcore.version>
-        <jackson.version>2.20.0</jackson.version>
+        <jackson.version>2.20.1</jackson.version>
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <json-schema-validator.version>1.5.9</json-schema-validator.version>
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
-        <junit.version>5.14.0</junit.version>
+        <junit.version>5.14.1</junit.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
         <lombok.version>1.18.42</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -106,15 +106,15 @@
         <snakeyaml.version>2.5</snakeyaml.version>
         <snakeyaml-engine.version>2.10</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <xmlunit-assertj.version>2.10.4</xmlunit-assertj.version>
+        <xmlunit-assertj.version>2.11.0</xmlunit-assertj.version>
         <xo.version>2.6.4</xo.version>
         <!-- Maven plugin versions -->
-        <exec-maven-plugin.version>3.6.1</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
         <doxia-markdown.version>2.0.0</doxia-markdown.version>
         <maven.buildhelper.version>3.6.1</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven.jaxb2-plugin.version>0.15.3</maven.jaxb2-plugin.version>
-        <maven.xml.version>1.1.0</maven.xml.version>
+        <maven.xml.version>1.2.0</maven.xml.version>
         <!-- Maven config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

@@ -3,8 +3,10 @@ package com.buschmais.jqassistant.core.store.impl;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.core.shared.aether.configuration.Exclusion;
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -19,6 +21,10 @@ import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 import com.buschmais.xo.neo4j.embedded.impl.datastore.EmbeddedDatastore;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,15 +74,39 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     protected void configure(XOUnit.XOUnitBuilder builder) {
         List<File> plugins = resolveNeo4jPlugins();
         Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(),
-            plugins);
+            this.embedded.neo4jProperties(), plugins);
         builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
     }
 
     private List<File> resolveNeo4jPlugins() {
         List<Plugin> plugins = embedded.neo4jPlugins();
+        if (embedded.apocEnabled()) {
+            String neo4jVersion = embedded.neo4jVersion()
+                .orElseThrow(() -> new IllegalStateException("Neo4j version is not configured for embedded store."));
+            Plugin neo4j = PluginImpl.builder()
+                .groupId("org.neo4j.procedure")
+                .artifactId("apoc-core")
+                .classifier(Optional.of("core"))
+                .version(neo4jVersion)
+                .build();
+            plugins.add(neo4j);
+        }
         log.info("Resolving {} Neo4j plugin(s).", plugins.size());
         return artifactProvider.resolve(plugins);
+    }
+
+    @ToString
+    @Getter
+    @Accessors(fluent = true)
+    @Builder
+    public static class PluginImpl implements Plugin {
+        private final String groupId;
+        private final String artifactId;
+        private final String type = "jar";
+        private final Optional<String> classifier;
+        private final String version;
+        private final List<Exclusion> exclusions = List.of();
     }
 
     @Override
