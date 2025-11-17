@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.store.api.model;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import com.buschmais.xo.api.annotation.Abstract;
 import com.buschmais.xo.neo4j.api.annotation.Label;
@@ -12,8 +12,8 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 @Label("Task")
 public interface TaskDescriptor extends jQAssistantDescriptor {
 
-    LocalDateTime getTimestamp();
+    OffsetDateTime getTimestamp();
 
-    void setTimestamp(LocalDateTime timestamp);
+    void setTimestamp(OffsetDateTime timestamp);
 
 }

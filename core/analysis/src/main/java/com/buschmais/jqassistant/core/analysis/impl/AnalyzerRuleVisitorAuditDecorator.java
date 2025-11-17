@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 
 import lombok.experimental.Delegate;
 
-import static java.time.LocalDateTime.now;
+import static java.time.OffsetDateTime.now;
 
 public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Status> {
 
@@ -24,6 +25,12 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     private final RuleRepository ruleRepository;
 
     private AnalyzeTaskDescriptor analyzeTaskDescriptor;
+
+    private final Map<String, GroupDescriptor> groups = new HashMap<>();
+
+    private final Map<String, ConceptDescriptor> concepts = new HashMap<>();
+
+    private final Map<String, ConstraintDescriptor> constraints = new HashMap<>();
 
     AnalyzerRuleVisitorAuditDecorator(AnalyzerRuleVisitor delegate, Store store) {
         this.delegate = delegate;
@@ -173,20 +180,21 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     private GroupDescriptor getGroupDescriptor(Group group) {
-        return this.ruleRepository.mergeGroup(group.getId());
+        return this.groups.computeIfAbsent(group.getId(), this.ruleRepository::mergeGroup);
     }
 
     private ConceptDescriptor getConceptDescriptor(Concept concept) {
-        return this.ruleRepository.mergeConcept(concept.getId());
+        return this.concepts.computeIfAbsent(concept.getId(), this.ruleRepository::mergeConcept);
     }
 
     private ConstraintDescriptor getConstraintDescriptor(Constraint constraint) {
-        return this.ruleRepository.mergeConstraint(constraint.getId());
+        return this.constraints.computeIfAbsent(constraint.getId(), this.ruleRepository::mergeConstraint);
     }
 
     private void updateRule(RuleDescriptor ruleDescriptor, SeverityRule rule, Severity effectiveSeverity) {
         ruleDescriptor.setSeverity(rule.getSeverity());
         ruleDescriptor.setEffectiveSeverity(effectiveSeverity);
+        ruleDescriptor.setTimestamp(now());
     }
 
 }

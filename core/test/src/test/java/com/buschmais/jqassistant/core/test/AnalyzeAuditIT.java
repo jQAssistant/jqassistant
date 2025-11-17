@@ -36,6 +36,7 @@ public class AnalyzeAuditIT extends AbstractPluginIT {
         assertThat(concept.getStatus()).isEqualTo(SUCCESS);
         assertThat(concept.getSeverity()).isEqualTo(MINOR);
         assertThat(concept.getEffectiveSeverity()).isEqualTo(MINOR);
+        assertThat(concept.getTimestamp()).isNotNull();
         assertThat(concept.getRequiresConcepts()).isEmpty();
         assertThat(concept.getProvidesConcepts()).isEmpty();
 
@@ -46,6 +47,7 @@ public class AnalyzeAuditIT extends AbstractPluginIT {
         assertThat(providingConcept.getStatus()).isEqualTo(SUCCESS);
         assertThat(providingConcept.getSeverity()).isEqualTo(MINOR);
         assertThat(providingConcept.getEffectiveSeverity()).isEqualTo(MINOR);
+        assertThat(providingConcept.getTimestamp()).isNotNull();
 
         ConstraintDescriptor constraint = (ConstraintDescriptor) row.get("constraint");
         assertThat(constraint).isNotNull();
@@ -53,6 +55,7 @@ public class AnalyzeAuditIT extends AbstractPluginIT {
         assertThat(constraint.getStatus()).isEqualTo(FAILURE);
         assertThat(constraint.getSeverity()).isEqualTo(MAJOR);
         assertThat(constraint.getEffectiveSeverity()).isEqualTo(MAJOR);
+        assertThat(constraint.getTimestamp()).isNotNull();
         assertThat(constraint.getRequiresConcepts()).contains(concept);
 
         GroupDescriptor group = (GroupDescriptor) row.get("group");
@@ -60,6 +63,7 @@ public class AnalyzeAuditIT extends AbstractPluginIT {
         assertThat(group.getId()).isEqualTo("core-test-audit:Group");
         assertThat(group.getSeverity()).isNull();
         assertThat(group.getEffectiveSeverity()).isNull();
+        assertThat(group.getTimestamp()).isNotNull();
         assertThat(group.getIncludesGroups()).isEmpty();
         assertThat(group.getIncludesConcepts()).isEmpty();
         assertThat(group.getIncludesConstraints()).contains(constraint);
