@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.model;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.store.api.model.jQAssistantDescriptor;
@@ -23,7 +23,7 @@ public interface RuleDescriptor extends jQAssistantDescriptor {
 
     void setEffectiveSeverity(Severity severity);
 
-    OffsetDateTime getTimestamp();
+    ZonedDateTime getTimestamp();
 
-    void setTimestamp(OffsetDateTime timestamp);
+    void setTimestamp(ZonedDateTime timestamp);
 }

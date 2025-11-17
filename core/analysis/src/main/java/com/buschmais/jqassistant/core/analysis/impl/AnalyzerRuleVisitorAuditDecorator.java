@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 
 import lombok.experimental.Delegate;
 
-import static java.time.OffsetDateTime.now;
+import static java.time.ZonedDateTime.now;
 
 public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Status> {
 
