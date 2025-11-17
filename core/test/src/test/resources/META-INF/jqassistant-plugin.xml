@@ -3,6 +3,6 @@
                     name="Test">
     <description>Test plugin.</description>
     <rules>
-        <resource>core-test.xml</resource>
+        <resource>core-test-audit.xml</resource>
     </rules>
 </jqassistant-plugin>

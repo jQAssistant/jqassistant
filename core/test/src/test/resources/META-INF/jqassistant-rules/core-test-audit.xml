@@ -1,0 +1,40 @@
+<jqassistant-rules>
+
+    <group id="core-test-audit:Group">
+        <description>Test Group</description>
+        <includeConstraint refId="core-test-audit:*"/>
+    </group>
+
+    <constraint id="core-test-audit:Constraint">
+        <requiresConcept refId="core-test-audit:Concept"/>
+        <description>Test Concept</description>
+        <cypher><![CDATA[
+        MATCH
+          (n:TestLabel)
+        RETURN
+          n
+        ]]></cypher>
+    </constraint>
+
+    <concept id="core-test-audit:Concept">
+        <description>Test Concept</description>
+        <cypher><![CDATA[
+        MATCH
+          (n:TestLabel)
+        RETURN
+          n
+        ]]></cypher>
+    </concept>
+
+    <concept id="core-test-audit:ProvidingConcept">
+        <providesConcept refId="core-test-audit:Concept"/>
+        <description>Test Concept</description>
+        <cypher><![CDATA[
+        MERGE
+          (n:TestLabel)
+        RETURN
+          n
+        ]]></cypher>
+    </concept>
+
+</jqassistant-rules>
