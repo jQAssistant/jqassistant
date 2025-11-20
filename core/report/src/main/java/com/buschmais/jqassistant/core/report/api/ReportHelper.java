@@ -117,7 +117,8 @@ public final class ReportHelper {
                             .append(entry.getValue()
                                     .getLabel());
                 } else {
-                    throw new IllegalArgumentException(MessageFormat.format("The keyColumn {0} is not an existing column", entry.getKey()));
+                    throw new IllegalArgumentException(
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist.", rule.getId(), entry.getKey()));
                 }
             }
         }

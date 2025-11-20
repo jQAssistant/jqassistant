@@ -471,6 +471,26 @@ in SonarQube:
 
 NOTE: The first column will be used automatically if no primary column is explicitly specified.
 
+===== Key Columns
+
+In case the result contains additional columns with context information,
+the columns to be used for calculating the row key can be specified separately:
+
+[source,xml]
+----
+<concept id="my-rules:MyConcept">
+    <description>A human readable description of the concept.</description>
+    <cypher><![CDATA[
+        MATCH
+          (m)-[]->(n), (l)-[]->(n)
+          ...
+        RETURN
+          m, n, l
+    ]]></cypher>
+    <report keyColumns="m, n" />
+</concept>
+----
+
 ==== Baseline Management
 
 Introducing rules to an existing codebase usually leads to a large number of existing violations.

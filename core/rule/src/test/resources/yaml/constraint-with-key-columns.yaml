@@ -4,11 +4,11 @@ constraints:
     description: Test constraint
     source: |
       match
-        (n)
+        (c1:File), (c2:groupId)
       return
-        n
+        c1, c2
     report:
-      primaryColumn: n
-      keyColumns: n
+      primaryColumn: c1
+      keyColumns: c1, c2
       type: html
 
