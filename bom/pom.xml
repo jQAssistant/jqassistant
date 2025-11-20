@@ -110,6 +110,11 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>java-annotation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>java-testing</artifactId>
                 <version>${project.version}</version>
             </dependency>

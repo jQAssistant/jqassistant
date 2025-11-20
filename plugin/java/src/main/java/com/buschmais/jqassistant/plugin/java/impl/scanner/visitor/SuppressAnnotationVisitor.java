@@ -6,7 +6,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
+import com.buschmais.jqassistant.plugin.java.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor;
 
 import lombok.extern.slf4j.Slf4j;
