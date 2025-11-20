@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
@@ -21,7 +22,13 @@ public interface RuleVisitor<R> {
     /**
      * Start processing groups, concepts and constraints.
      */
-    void beforeRules() throws RuleException;
+    void beforeRules(RuleSelection ruleSelection) throws RuleException;
+
+    void includedConcepts(List<Concept> includedConcepts);
+
+    void includedGroups(List<Group> includedGroups);
+
+    void includedConstraints(List<Constraint> includedConstraints);
 
     /**
      * Finished processing groups, concepts and constraints.
@@ -45,6 +52,10 @@ public interface RuleVisitor<R> {
      */
     R visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults,
         Map<Concept, R> providingConceptResults) throws RuleException;
+
+    void requiredConcepts(Concept concept, List<Concept> requiredConcepts);
+
+    void providingConcepts(Concept concept, List<Concept> providingConcepts);
 
     /**
      * Skip a concept.
@@ -75,6 +86,8 @@ public interface RuleVisitor<R> {
      */
     R visitConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException;
 
+    void requiredConcepts(Constraint constraint, List<Concept> requiredConcepts);
+
     /**
      * Skip a constraint.
      *
@@ -100,6 +113,12 @@ public interface RuleVisitor<R> {
      *     If an error occurred.
      */
     void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException;
+
+    void includedConcepts(Group group, List<Concept> includedConcepts);
+
+    void includedGroups(Group group, List<Group> includedGroups);
+
+    void includedConstraints(Group group, List<Constraint> includedConstraints);
 
     /**
      * Finish processing a group.
