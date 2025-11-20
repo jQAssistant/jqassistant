@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.api.annotation;
+package com.buschmais.jqassistant.plugin.java.annotation;
 
 import java.lang.annotation.Retention;
 
