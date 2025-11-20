@@ -83,14 +83,19 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         List<Plugin> plugins = embedded.neo4jPlugins();
         if (embedded.apocEnabled()) {
             String neo4jVersion = embedded.neo4jVersion()
-                .orElseThrow(() -> new IllegalStateException("Neo4j version is not configured for embedded store."));
-            Plugin neo4j = PluginImpl.builder()
-                .groupId("org.neo4j.procedure")
-                .artifactId("apoc-core")
-                .classifier(Optional.of("core"))
-                .version(neo4jVersion)
-                .build();
-            plugins.add(neo4j);
+                    .orElseThrow(() -> new IllegalStateException("Neo4j version is not configured for embedded store."));
+            Plugin apocCore = PluginImpl.builder()
+                    .groupId("org.neo4j.procedure")
+                    .artifactId("apoc-core")
+                    .version(neo4jVersion)
+                    .build();
+            Plugin apocCommon = PluginImpl.builder()
+                    .groupId("org.neo4j.procedure")
+                    .artifactId("apoc-common")
+                    .version(neo4jVersion)
+                    .build();
+            plugins.add(apocCore);
+            plugins.add(apocCommon);
         }
         log.info("Resolving {} Neo4j plugin(s).", plugins.size());
         return artifactProvider.resolve(plugins);
@@ -104,7 +109,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         private final String groupId;
         private final String artifactId;
         private final String type = "jar";
-        private final Optional<String> classifier;
+        @Builder.Default
+        private final Optional<String> classifier = Optional.empty();
         private final String version;
         private final List<Exclusion> exclusions = List.of();
     }
