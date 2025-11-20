@@ -50,7 +50,6 @@ public class ScannerImpl implements Scanner {
         this.scannerContext = scannerContext;
         this.scannerPluginRepository = scannerPluginRepository;
         this.scannerPlugins = scannerPluginRepository.getScannerPlugins(configuration, scannerContext);
-        this.scannerContext.push(Scope.class, null);
     }
 
     @Override

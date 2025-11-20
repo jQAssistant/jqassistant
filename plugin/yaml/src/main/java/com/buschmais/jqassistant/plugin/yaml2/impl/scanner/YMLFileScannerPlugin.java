@@ -55,38 +55,33 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
     protected void configure() {
         String inclusionPattern = getStringProperty(PROPERTY_INCLUDE, null);
         String exclusionPattern = getStringProperty(PROPERTY_EXCLUDE, null);
-
         configure(inclusionPattern, exclusionPattern);
     }
 
     // Enable unit testing
-    protected void configure (final String inclusionPattern, final String exclusionPattern) {
+    protected void configure(final String inclusionPattern, final String exclusionPattern) {
         LOGGER.debug("YAML2: Including '{}' / Excluding '{}'", inclusionPattern, exclusionPattern);
-
-        if (null != inclusionPattern || null != exclusionPattern) {
-            filePatternMatcher = FilePatternMatcher.builder().include(inclusionPattern).exclude(exclusionPattern).build();
-        }
+        filePatternMatcher = FilePatternMatcher.builder()
+            .include(inclusionPattern)
+            .exclude(exclusionPattern)
+            .build();
     }
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) {
         String lowercasePath = path.toLowerCase();
-        boolean decision = true;
-
         if (isFilePatternMatcherActive()) {
-            decision = getFilePatternMatcher().accepts(lowercasePath);
+            return getFilePatternMatcher().accepts(lowercasePath);
         } else {
-            decision = lowercasePath.endsWith(YAML_FILE_EXTENSION) || lowercasePath.endsWith(YML_FILE_EXTENSION);
+            return lowercasePath.endsWith(YAML_FILE_EXTENSION) || lowercasePath.endsWith(YML_FILE_EXTENSION);
         }
-        LOGGER.debug("YAML2: Checking '{}' ('{}') for acceptance: {}", path, lowercasePath, decision);
-
-        return decision;
     }
 
     @Override
     public YMLFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        LoadSettings settings = LoadSettings.builder().build();
+        LoadSettings settings = LoadSettings.builder()
+            .build();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         EventParser eventParser = new EventParser();
         YMLFileDescriptor yamlFileDescriptor = handleFileStart(fileDescriptor);
@@ -100,7 +95,8 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             GraphGenerator generator = new GraphGenerator(store);
 
             Collection<YMLDocumentDescriptor> documents = generator.generate(streamNode);
-            documents.forEach(documentDescriptor -> yamlFileDescriptor.getDocuments().add(documentDescriptor));
+            documents.forEach(documentDescriptor -> yamlFileDescriptor.getDocuments()
+                .add(documentDescriptor));
 
             yamlFileDescriptor.setValid(true);
         } catch (GraphGenerationFailedException | YamlEngineException e) {
@@ -110,9 +106,8 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         return yamlFileDescriptor;
     }
 
-
     private YMLFileDescriptor handleFileStart(FileDescriptor fileDescriptor) {
-        YMLFileDescriptor yamlFileDescriptor = getScannerContext().getStore().addDescriptorType(fileDescriptor, YMLFileDescriptor.class, YMLFileDescriptor.class);
-        return yamlFileDescriptor;
+        return getScannerContext().getStore()
+            .addDescriptorType(fileDescriptor, YMLFileDescriptor.class, YMLFileDescriptor.class);
     }
 }
