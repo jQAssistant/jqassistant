@@ -192,7 +192,7 @@ class AnalyzerRuleVisitorTest {
         doAnswer(i -> {
             ExecutableRule<?> rule = i.getArgument(0);
             Map<String, Column<?>> columns = i.getArgument(1);
-            return toRow(rule, columns, anyMap());
+            return toRow(rule, columns, null);
         }).when(analyzerContext)
             .toRow(any(ExecutableRule.class), anyMap(), anyMap());
 

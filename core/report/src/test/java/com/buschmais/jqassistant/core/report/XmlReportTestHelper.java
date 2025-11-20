@@ -244,6 +244,6 @@ public final class XmlReportTestHelper {
             }
         };
         columns.put(C2, toColumn(testDescriptor));
-        return toRow(rule, columns, new HashMap<>());
+        return toRow(rule, columns, null);
     }
 }
