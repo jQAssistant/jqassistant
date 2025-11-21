@@ -9,7 +9,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import com.buschmais.jqassistant.core.shared.annotation.Description;
 
@@ -20,10 +19,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.*;
 import com.google.common.base.CaseFormat;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.dialect.Dialects;
 import io.smallrye.config.WithDefault;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -148,7 +147,7 @@ public class JsonSchemaGenerator {
      * node with a regex-based name pattern ("^.*$") is used, and the value type definition
      * is assigned to this node.</p>
      * <p>
-     * Based on the idea of https://github.com/victools/jsonschema-generator/blob/main/jsonschema-examples/src/main/java/com/github/victools/jsonschema/examples/EnumMapExample.java
+     * Based on the <a href="https://github.com/victools/jsonschema-generator/blob/main/jsonschema-examples/src/main/java/com/github/victools/jsonschema/examples/EnumMapExample.java">here</a>
      */
     public static class MapDefinitionProvider implements CustomDefinitionProviderV2 {
 
@@ -199,11 +198,9 @@ public class JsonSchemaGenerator {
     /**
      * Helper method for validating a jqassistant.yaml example file to ensure the right behaviour of the schema generator.
      */
-    public static Set<ValidationMessage> validateYaml(URL configResource, JsonNode schemaNode) throws Exception {
-        JsonSchemaFactory bluePrintFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
-        JsonSchemaFactory schemaFactory = JsonSchemaFactory.builder(bluePrintFactory)
-            .build();
-        JsonSchema schema = schemaFactory.getSchema(schemaNode);
+    public static List<Error> validateYaml(URL configResource, JsonNode schemaNode) throws Exception {
+        SchemaRegistry schemaFactory = SchemaRegistry.withDialect(Dialects.getDraft201909());
+        Schema schema = schemaFactory.getSchema(schemaNode);
         ObjectMapper objectMapper = new ObjectMapper();
         Yaml yaml = new Yaml();
         Map<String, Object> yamlData;
@@ -211,7 +208,7 @@ public class JsonSchemaGenerator {
             yamlData = yaml.load(inputStream);
         }
         String jsonString = objectMapper.writeValueAsString(yamlData);
-        Set<ValidationMessage> validationMessages = schema.validate(objectMapper.readTree(jsonString));
+        List<Error> validationMessages = schema.validate(objectMapper.readTree(jsonString));
         if (!validationMessages.isEmpty()) {
             log.error(validationMessages.toString());
         }
