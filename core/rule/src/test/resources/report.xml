@@ -4,15 +4,15 @@
         <description>Test Concept.</description>
         <cypher><![CDATA[
             match
-              (n)
+              (n:File), (g:groupId)
             where
               n.name = {name}
             return
-              n
+              n, g
             limit
               {limit}
         ]]></cypher>
-        <report type="custom" primaryColumn="n">
+        <report type="custom" primaryColumn="n" keyColumns="n,g">
             <property name="key1">value1</property>
             <property name="key2">value2</property>
         </report>
@@ -22,15 +22,15 @@
         <description>Test Constraint.</description>
         <cypher><![CDATA[
             match
-              (n)
+              (n:File), (g:groupId)
             where
               n.name = {name}
             return
-              n
+              n, g
             limit
               {limit}
         ]]></cypher>
-        <report type="custom" primaryColumn="n">
+        <report type="custom" primaryColumn="n" keyColumns="n,g">
             <property name="key1">value1</property>
             <property name="key2">value2</property>
         </report>

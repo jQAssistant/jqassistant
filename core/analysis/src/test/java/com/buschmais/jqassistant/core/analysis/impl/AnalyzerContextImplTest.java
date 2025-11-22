@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +29,7 @@ import static com.buschmais.jqassistant.core.rule.api.model.Severity.BLOCKER;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,6 +40,7 @@ class AnalyzerContextImplTest {
     public static final String SECONDARY_COLUMN = "secondary";
     public static final LocalDate VALID_DATE = LocalDate.parse("2065-06-01");
     public static final LocalDate INVALID_DATE = LocalDate.parse("2025-01-01");
+    private static final HashMap<String, Column<?>> keyColumns = new HashMap<>();
 
     private AnalyzerContext analyzerContext;
 
@@ -78,27 +80,46 @@ class AnalyzerContextImplTest {
         Row row1_1 = analyzerContext.toRow(concept1, MapBuilder.<String, Column<?>>builder()
             .entry("c1", analyzerContext.toColumn("v1"))
             .entry("c2", analyzerContext.toColumn("v2"))
-            .build());
+            .build(), keyColumns);
         Row row1_2 = analyzerContext.toRow(concept1, MapBuilder.<String, Column<?>>builder()
             .entry("c1", analyzerContext.toColumn("v1"))
             .entry("c2", analyzerContext.toColumn("v3"))
-            .build());
+            .build(), keyColumns);
         Row row2_1 = analyzerContext.toRow(concept2, MapBuilder.<String, Column<?>>builder()
             .entry("c1", analyzerContext.toColumn("v1"))
             .entry("c2", analyzerContext.toColumn("v2"))
-            .build());
+            .build(), keyColumns);
+        Row row2_2 = analyzerContext.toRow(concept2, MapBuilder.<String, Column<?>>builder()
+                .entry("c1", analyzerContext.toColumn("v1"))
+                .entry("c2", analyzerContext.toColumn("v2"))
+                .build(), MapBuilder.<String, Column<?>>builder()
+                .entry("c1", analyzerContext.toColumn("v1")).build());
 
-        Set<String> rowKeys = Stream.of(row1_1, row1_2, row2_1)
+        Set<String> rowKeys = Stream.of(row1_1, row1_2, row2_1, row2_2)
             .map(Row::getKey)
             .collect(toSet());
-        assertThat(rowKeys).hasSize(3);
+        assertThat(rowKeys).hasSize(4);
+    }
+
+    @Test
+    void nonExistingRowKeyColumnThrowsException() {
+        Concept concept2 = Concept.builder()
+                .id("id2")
+                .build();
+        assertThatThrownBy(() -> analyzerContext.toRow(concept2, MapBuilder.<String, Column<?>>builder()
+                        .entry("c1", analyzerContext.toColumn("v1"))
+                        .entry("c2", analyzerContext.toColumn("v2"))
+                        .build(),
+                MapBuilder.<String, Column<?>>builder()
+                        .entry("c3", analyzerContext.toColumn("v3"))
+                        .build())).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void withoutSuppression() {
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value1_1"), SECONDARY_COLUMN, analyzerContext.toColumn("value1_2")));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value1_1"), SECONDARY_COLUMN, analyzerContext.toColumn("value1_2")), keyColumns);
 
         assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isFalse();
     }
@@ -109,7 +130,7 @@ class AnalyzerContextImplTest {
         Constraint constraint = getConstraint();
 
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), keyColumns);
 
         assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isTrue();
     }
@@ -120,7 +141,7 @@ class AnalyzerContextImplTest {
         Constraint constraint = getConstraint();
 
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value"), SECONDARY_COLUMN, analyzerContext.toColumn(suppressedValue)));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value"), SECONDARY_COLUMN, analyzerContext.toColumn(suppressedValue)),  new HashMap<String, Column<?>>());
 
         assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isTrue();
     }
@@ -130,7 +151,7 @@ class AnalyzerContextImplTest {
         Suppress suppressedValue = createSuppressedValue(empty(), empty(), empty(), "otherConstraint");
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), keyColumns);
 
         assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isFalse();
     }
@@ -140,7 +161,7 @@ class AnalyzerContextImplTest {
         Suppress suppressedValue = createSuppressedValue(empty(), of(VALID_DATE), empty(), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), keyColumns);
 
         assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isTrue();
     }
@@ -150,7 +171,7 @@ class AnalyzerContextImplTest {
         Suppress suppressedValue = createSuppressedValue(empty(), of(INVALID_DATE), empty(),CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), keyColumns);
 
         assertThat(analyzerContext.isSuppressed(constraint, PRIMARY_COLUMN, row)).isFalse();
     }

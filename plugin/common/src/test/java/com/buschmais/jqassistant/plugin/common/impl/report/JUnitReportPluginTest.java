@@ -154,7 +154,7 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
             .severity(rule.getSeverity())
             .status(status)
             .columnNames(asList("c"))
-            .rows(asList(toRow(rule, columns1), toRow(rule, columns2)))
+            .rows(asList(toRow(rule, columns1, null), toRow(rule, columns2, null)))
             .build();
     }
 
