@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +54,8 @@ class CypherRuleInterpreterPluginTest {
             .getStore();
         doAnswer(invocation -> ((Transactional.TransactionalSupplier<?, ?>) invocation.getArgument(0)).execute()).when(store)
             .requireTransaction(any(Transactional.TransactionalSupplier.class));
-        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1), new HashMap<>())).when(analyzerContext)
-            .toRow(any(), anyMap(), anyMap());
+        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1))).when(analyzerContext)
+            .toRow(any(), anyMap());
         doAnswer(invocation -> ReportHelper.toColumn(invocation.getArgument(0))).when(analyzerContext)
             .toColumn(any());
     }

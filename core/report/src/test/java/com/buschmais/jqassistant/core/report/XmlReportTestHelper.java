@@ -201,6 +201,69 @@ public final class XmlReportTestHelper {
         return xmlReportPlugin.getXmlReportFile();
     }
 
+    public File createXmlReportWithKeyColumns() throws ReportException {
+        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
+        xmlReportPlugin.begin();
+
+        Constraint keyColumConstraint = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder().keyColumns(C1)
+                        .build())
+                .build();
+        Constraint normalConstraint1 = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder()
+                        .build())
+                .build();
+        Constraint normalConstraint2 = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder()
+                        .build())
+                .build();
+
+        List<Constraint> allConstraints = new ArrayList<>();
+        allConstraints.add(keyColumConstraint);
+        allConstraints.add(normalConstraint1);
+        allConstraints.add(normalConstraint2);
+
+        for(Constraint constraint : allConstraints){
+            xmlReportPlugin.beginConstraint(constraint);
+            List<Row> rows = new ArrayList<>();
+            rows.add(createRow(constraint));
+            Result<Constraint> result = Result.<Constraint>builder()
+                    .rule(constraint)
+                    .verificationResult(VerificationResult.builder()
+                            .success(false)
+                            .rowCount(rows.size())
+                            .build())
+                    .status(Result.Status.FAILURE)
+                    .severity(Severity.CRITICAL)
+                    .columnNames(Arrays.asList(C1, C2))
+                    .rows(rows)
+                    .build();
+            xmlReportPlugin.setResult(result);
+            xmlReportPlugin.endConstraint();
+        }
+        xmlReportPlugin.end();
+        return xmlReportPlugin.getXmlReportFile();
+    }
+
+    public void createConstraintsWithConExistingKeyColumn() throws ReportException {
+        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
+        xmlReportPlugin.begin();
+        Constraint constraint = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder().keyColumns("c5")
+                        .build())
+                .build();
+
+        xmlReportPlugin.beginConstraint(constraint);
+        createRow(constraint);
+        xmlReportPlugin.endConstraint();
+        xmlReportPlugin.end();
+
+    }
+
     public static XmlReportPlugin getXmlReportPlugin() {
         ReportContext reportContext = getReportContext();
         return getXmlReportPlugin(reportContext);
@@ -244,6 +307,6 @@ public final class XmlReportTestHelper {
             }
         };
         columns.put(C2, toColumn(testDescriptor));
-        return toRow(rule, columns, null);
+        return toRow(rule, columns);
     }
 }

@@ -168,8 +168,8 @@ class AnalyzerRuleVisitorTest {
         languagePlugins.add(new CypherRuleInterpreterPlugin());
         ruleInterpreterPlugins.put("cypher", languagePlugins);
 
-        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1), null)).when(analyzerContext)
-            .toRow(any(), anyMap(), anyMap());
+        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1))).when(analyzerContext)
+            .toRow(any(), anyMap());
         doAnswer(invocation -> ReportHelper.toColumn(invocation.getArgument(0))).when(analyzerContext)
             .toColumn(any());
 
@@ -192,15 +192,15 @@ class AnalyzerRuleVisitorTest {
         doAnswer(i -> {
             ExecutableRule<?> rule = i.getArgument(0);
             Map<String, Column<?>> columns = i.getArgument(1);
-            return toRow(rule, columns, null);
+            return toRow(rule, columns);
         }).when(analyzerContext)
-            .toRow(any(ExecutableRule.class), anyMap(), anyMap());
+            .toRow(any(ExecutableRule.class), anyMap());
 
         analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
 
         ArgumentCaptor<Result<Concept>> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
-        verify(analyzerContext).toRow(any(ExecutableRule.class), anyMap(), anyMap());
+        verify(analyzerContext).toRow(any(ExecutableRule.class), anyMap());
         Result<Concept> capturedResult = resultCaptor.getValue();
         assertThat(capturedResult.getColumnNames()).as("The reported column names must match the given column names.")
             .isEqualTo(columnNames);

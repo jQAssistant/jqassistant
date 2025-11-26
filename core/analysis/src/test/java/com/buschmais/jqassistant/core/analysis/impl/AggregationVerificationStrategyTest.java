@@ -195,6 +195,6 @@ class AggregationVerificationStrategyTest {
         for (int i = 0; i < values.length; i++) {
             columns.put("c" + i, toColumn(values[i]));
         }
-        return toRow(rule, columns, null);
+        return toRow(rule, columns);
     }
 }

@@ -91,36 +91,38 @@ public final class ReportHelper {
             .build();
     }
 
-    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Map<String, Column<?>> keyColumns) {
+    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
         return Row.builder()
-            .key(getRowKey(rule, columns, keyColumns))
+            .key(getRowKey(rule, columns))
             .columns(columns)
             .build();
     }
 
-    private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns, Map<String, Column<?>> keyColumns) {
+    private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
         StringBuilder id = new StringBuilder(rule.getClass()
-            .getName()).append("|")
-            .append(rule.getId())
-            .append("|");
-        rule.getReport();
+                .getName()).append("|")
+                .append(rule.getId())
+                .append("|");
 
-        if (keyColumns == null || keyColumns.isEmpty()) {
+        if (rule.getReport() != null && StringUtils.isNotEmpty(rule.getReport()
+                .getKeyColumns())) {
+            for (String keyColumnName : rule.getReport()
+                    .getKeyColumns()
+                    .split("\\s*,\\s*")) {
+                if (!columns.containsKey(keyColumnName)) {
+                    throw new IllegalArgumentException(
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist.", rule.getId(), keyColumnName));
+                } else {
+                    id.append(keyColumnName)
+                            .append(':')
+                            .append(columns.get(keyColumnName)
+                                    .getLabel());
+                }
+            }
+        } else {
             columns.forEach((key, value) -> id.append(key)
                     .append(':')
                     .append(value.getLabel()));
-        } else {
-            for (Map.Entry<String, Column<?>> entry : keyColumns.entrySet()) {
-                if (columns.containsKey(entry.getKey())) {
-                    id.append(entry.getKey())
-                            .append(':')
-                            .append(entry.getValue()
-                                    .getLabel());
-                } else {
-                    throw new IllegalArgumentException(
-                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist.", rule.getId(), entry.getKey()));
-                }
-            }
         }
         return DigestUtils.sha256Hex(id.toString());
     }

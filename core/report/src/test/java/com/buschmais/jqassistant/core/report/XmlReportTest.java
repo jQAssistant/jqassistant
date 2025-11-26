@@ -21,6 +21,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class XmlReportTest {
 
@@ -137,6 +138,28 @@ class XmlReportTest {
         assertThat(columnsHeader.getPrimary()).isEqualTo("c1");
         List<String> columnHeaders = columnsHeader.getColumn();
         assertThat(columnHeaders).containsExactly("c1", "c2");
+    }
+
+    @Test
+    void testReportWithKeyColumns() throws ReportException {
+        File xmlReport = xmlReportTestHelper.createXmlReportWithKeyColumns();
+        JqassistantReport report = readReport(xmlReport);
+        ExecutableRuleType ruleType1 = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
+                .get(0);
+        ExecutableRuleType ruleType2 = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
+                .get(1);
+        ExecutableRuleType ruleType3 = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
+                .get(2);
+       String rowKey1 = ruleType1.getResult().getRows().getRow().get(0).getKey();
+       String rowKey2 = ruleType2.getResult().getRows().getRow().get(0).getKey();
+       String rowKey3 = ruleType3.getResult().getRows().getRow().get(0).getKey();
+       assertThat(rowKey1).isNotEqualTo(rowKey2);
+       assertThat(rowKey2).isEqualTo(rowKey3);
+    }
+
+    @Test
+    void nonExistingKeyColumnThrowsException() {
+        assertThatThrownBy(xmlReportTestHelper::createConstraintsWithConExistingKeyColumn).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

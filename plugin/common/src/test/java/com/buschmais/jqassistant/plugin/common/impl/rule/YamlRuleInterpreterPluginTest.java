@@ -74,7 +74,7 @@ public class YamlRuleInterpreterPluginTest {
                 Map<String, Column<?>> columns = new HashMap<>();
                 columns.put("Property", toColumn(entry.getKey()));
                 columns.put("Value", toColumn(entry.getValue()));
-                rows.add(toRow(executableRule, columns, null));
+                rows.add(toRow(executableRule, columns));
             }
             return Result.<T>builder()
                 .rule(executableRule)

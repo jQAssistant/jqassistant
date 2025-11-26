@@ -137,7 +137,7 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
                 }
             }));
             columns.put("EscapedString", toColumn("\"'"));
-            Row row = toRow(rule, columns, null);
+            Row row = toRow(rule, columns);
             return Result.<T>builder()
                 .rule(rule)
                 .severity(rule.getSeverity())
