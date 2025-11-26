@@ -2,3 +2,6 @@ jqassistant:
   analyze:
     rule-parameters:
       testArtifactId: ${project.artifactId}
+      mapParameter:
+        key1: value1
+        key2: value2
