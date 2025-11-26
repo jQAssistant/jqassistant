@@ -74,11 +74,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           repository: sdkman/sdkman-release-action
           path: sdkman-release-action
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           repository: sdkman/sdkman-default-action
           path: sdkman-default-action
