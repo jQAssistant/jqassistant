@@ -1,7 +1,7 @@
 jqassistant:
   analyze:
     rule-parameters:
-      testArtifactId: ${project.artifactId}
+      simpleParameter: value0
       mapParameter:
         key1: value1
         key2: value2
