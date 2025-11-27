@@ -1,20 +1,31 @@
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.2">
+<jqa:jqassistant-rules xmlns:jqa="http://schema.jqassistant.org/rule/v2.8">
 
-    <group id="default">
-        <includeConcept refId="test:RuleParameter" />
-    </group>
+    <jqa:group id="default">
+        <jqa:includeConcept refId="test:SimpleParameter" />
+        <jqa:includeConcept refId="test:MapParameter" />
+    </jqa:group>
 
-    <concept id="test:RuleParameter">
-        <requiresParameter name="testArtifactId" type="String" />
-        <description>Test concept for verifying rule parameters.</description>
-        <cypher>
-            MATCH
-              (project:Maven:Project)
-            WHERE
-              project.artifactId=$testArtifactId
+    <jqa:concept id="test:SimpleParameter">
+        <jqa:requiresParameter name="simpleParameter" type="String" />
+        <jqa:description>Test concept for verifying simple rule parameters.</jqa:description>
+        <jqa:cypher>
+            WITH
+              $simpleParameter as parameter
             RETURN
-              project
-        </cypher>
-    </concept>
+              parameter
+        </jqa:cypher>
+    </jqa:concept>
+
+    <jqa:concept id="test:MapParameter">
+        <jqa:requiresParameter name="mapParameter.key1" type="String"/>
+        <jqa:requiresParameter name="mapParameter.key2" type="String"/>
+        <jqa:description>Test concept for verifying map rule parameters.</jqa:description>
+        <jqa:cypher>
+            WITH
+              $`mapParameter.key1` as key1,  $`mapParameter.key2` as key2
+            RETURN
+              key1, key2
+        </jqa:cypher>
+    </jqa:concept>
 
 </jqa:jqassistant-rules>
