@@ -28,22 +28,40 @@ public @interface Maven {
 
     enum MavenLanguageElement implements LanguageElement {
 
-        PomXmlFile {
+        Pom {
             @Override
             public SourceProvider<MavenPomDescriptor> getSourceProvider() {
-                return new SourceProvider<MavenPomDescriptor>() {
+                return new SourceProvider<>() {
                     @Override
                     public String getName(MavenPomDescriptor descriptor) {
                         String groupId = descriptor.getGroupId() != null ?
-                            descriptor.getGroupId() :
-                            descriptor.getParent()
-                                .getGroup();
+                                descriptor.getGroupId() :
+                                descriptor.getParent()
+                                        .getGroup();
                         return groupId + ":" + descriptor.getArtifactId();
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(MavenPomDescriptor descriptor) {
-                        return FileSourceHelper.getSourceLocation((MavenPomXmlDescriptor) descriptor, empty(), empty());
+                        return empty();
+                    }
+                };
+            }
+        },
+
+        PomXmlFile {
+            @Override
+            public SourceProvider<MavenPomXmlDescriptor> getSourceProvider() {
+                return new SourceProvider<>() {
+                    @Override
+                    public String getName(MavenPomXmlDescriptor descriptor) {
+                        return Pom.getSourceProvider()
+                                .getName(descriptor);
+                    }
+
+                    @Override
+                    public Optional<FileLocation> getSourceLocation(MavenPomXmlDescriptor descriptor) {
+                        return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
                     }
                 };
             }

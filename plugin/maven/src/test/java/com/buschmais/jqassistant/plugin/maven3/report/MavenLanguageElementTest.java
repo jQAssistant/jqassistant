@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.xo.api.CompositeObject;
 
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLanguageElement.Pom;
 import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLanguageElement.PomXmlFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -24,45 +26,63 @@ public class MavenLanguageElementTest {
     private ArtifactDescriptor parentDescriptor;
 
     @Mock
-    private MavenPomXmlDescriptor pomXmlDescriptor;
+    private MavenPomDescriptor pomDescriptor;
+
+    @Mock
+    private MavenPomXmlDescriptor pomXmlFileDescriptor;
 
     @Test
     void mavenPomXmlFileSourceLocation() {
-        doReturn("/projects/my-project/pom.xml").when(pomXmlDescriptor)
+        doReturn("project").when(pomXmlFileDescriptor)
+                .getGroupId();
+        doReturn("module").when(pomXmlFileDescriptor)
+                .getArtifactId();
+
+        doReturn("/projects/my-project/pom.xml").when(pomXmlFileDescriptor)
             .getFileName();
 
         SourceProvider<CompositeObject> sourceProvider = PomXmlFile.getSourceProvider();
 
         assertThat(PomXmlFile.getLanguage()).isEqualTo("Maven");
-        Optional<FileLocation> optionalFileLocation = sourceProvider.getSourceLocation(pomXmlDescriptor);
+        assertThat(sourceProvider.getName(pomXmlFileDescriptor)).isEqualTo("project:module");
+        Optional<FileLocation> optionalFileLocation = sourceProvider.getSourceLocation(pomXmlFileDescriptor);
         assertThat(optionalFileLocation).isPresent();
         assertThat(optionalFileLocation.get()
             .getFileName()).isEqualTo("/projects/my-project/pom.xml");
     }
 
     @Test
-    void mavenPomXmlFileWithGroupIdValue() {
-        doReturn("project").when(pomXmlDescriptor)
-            .getGroupId();
-        doReturn("module").when(pomXmlDescriptor)
-            .getArtifactId();
+    void mavenPomSourceLocation() {
+        SourceProvider<CompositeObject> sourceProvider = Pom.getSourceProvider();
 
-        SourceProvider<CompositeObject> sourceProvider = PomXmlFile.getSourceProvider();
-
-        assertThat(sourceProvider.getName(pomXmlDescriptor)).isEqualTo("project:module");
+        assertThat(Pom.getLanguage()).isEqualTo("Maven");
+        Optional<FileLocation> optionalFileLocation = sourceProvider.getSourceLocation(pomXmlFileDescriptor);
+        assertThat(optionalFileLocation).isEmpty();
     }
 
     @Test
-    void mavenPomXmlFileWithParentGroupIdValue() {
-        doReturn(parentDescriptor).when(pomXmlDescriptor)
+    void mavenPomWithGroupIdValue() {
+        doReturn("project").when(pomDescriptor)
+            .getGroupId();
+        doReturn("module").when(pomDescriptor)
+            .getArtifactId();
+
+        SourceProvider<CompositeObject> sourceProvider = Pom.getSourceProvider();
+
+        assertThat(sourceProvider.getName(pomDescriptor)).isEqualTo("project:module");
+    }
+
+    @Test
+    void mavenPomWithParentGroupIdValue() {
+        doReturn(parentDescriptor).when(pomDescriptor)
             .getParent();
         doReturn("project").when(parentDescriptor)
             .getGroup();
-        doReturn("module").when(pomXmlDescriptor)
+        doReturn("module").when(pomDescriptor)
             .getArtifactId();
 
-        SourceProvider<CompositeObject> sourceProvider = PomXmlFile.getSourceProvider();
+        SourceProvider<CompositeObject> sourceProvider = Pom.getSourceProvider();
 
-        assertThat(sourceProvider.getName(pomXmlDescriptor)).isEqualTo("project:module");
+        assertThat(sourceProvider.getName(pomDescriptor)).isEqualTo("project:module");
     }
 }

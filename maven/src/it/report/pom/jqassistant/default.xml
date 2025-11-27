@@ -10,7 +10,7 @@
             MATCH
                 (pom:Maven:Pom)
             RETURN
-                pom.name as name
+                pom
         </jqa:cypher>
     </jqa:concept>
 

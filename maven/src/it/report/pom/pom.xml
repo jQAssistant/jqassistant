@@ -6,7 +6,7 @@
         <version>@project.version@</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>@project.artifactId@.integration.singlemodule.pom</artifactId>
+    <artifactId>@project.artifactId@.integration.report.pom</artifactId>
     <name>This name should not be shown in the result.</name>
     <description>This pom is necessary to test the pom node creation without the description and only with the artifactId.</description>
 </project>
