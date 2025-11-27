@@ -359,19 +359,18 @@ public class RuleSetExecutor<R> {
     /**
      * Checks if an overriding concept provides the same concepts as the overridden concept.
      */
-    private boolean checkOverridesProvides(Concept overridden, Concept overriding) {
+    private boolean checkOverridesProvides(Concept overridden, Concept overriding) throws IllegalArgumentException {
         List<String> overridingConceptsProvides = overriding.getProvidedConcepts()
-            .stream()
-            .map(Concept.ProvidedConcept::getProvidedConceptId)
-            .collect(toList());
+                .stream()
+                .map(Concept.ProvidedConcept::getProvidedConceptId)
+                .collect(toList());
         List<String> overriddenConceptsProvides = overridden.getProvidedConcepts()
-            .stream()
-            .map(Concept.ProvidedConcept::getProvidedConceptId)
-            .collect(toList());
-        if (!new HashSet<>(overridingConceptsProvides).containsAll(overriddenConceptsProvides)) {
-            LOGGER.warn("Overriding concept '{}' does not have the same ProvidedConcepts as the overridden concept '{}' ", overriding.getProvidedConcepts(),
-                overridden.getId());
-            return false;
+                .stream()
+                .map(Concept.ProvidedConcept::getProvidedConceptId)
+                .collect(toList());
+        if (!new HashSet<>(overridingConceptsProvides).equals(new HashSet<>(overriddenConceptsProvides))) {
+            throw new IllegalArgumentException(String.format("Overriding concept '%s' does not have the same ProvidedConcepts as the overridden concept '%s' ",
+                    overriding.getProvidedConcepts(), overridden.getId()));
         }
         return true;
     }

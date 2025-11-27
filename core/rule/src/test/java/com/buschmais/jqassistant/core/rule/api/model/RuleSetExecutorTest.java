@@ -27,6 +27,7 @@ import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyMap;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -640,108 +641,92 @@ class RuleSetExecutorTest {
     }
 
     @Test
-    void overriddenConceptsWithProvidedConcepts() throws RuleException {
-        Group group = Group.builder()
-            .id("group")
-            .concept("test:CorrectOverriddenConcept", MINOR)
-            .concept("test:CorrectOverridingConcept", MINOR)
-            .concept("test:IncorrectOverriddenConcept", MINOR)
-            .concept("test:IncorrectOverridingConcept", MINOR)
-            .concept("test:ConceptA", MINOR)
-            .concept("test:ConceptB", MINOR)
-            .build();
+    void overriddenConceptsShouldProvideSameConceptsAsOverridingOnes() throws RuleException {
+        Group group1 = Group.builder()
+                .id("group1")
+                .concept("test:IncorrectOverridingConcept1", MINOR)
+                .concept("test:IncorrectOverriddenConcept1", MINOR)
+                .concept("test:ConceptA", MINOR)
+                .build();
+        Group group2 = Group.builder()
+                .id("group2")
+                .concept("test:IncorrectOverridingConcept2", MINOR)
+                .concept("test:IncorrectOverriddenConcept2", MINOR)
+                .concept("test:ConceptA", MINOR)
+                .build();
 
-        List<ReferenceType> correctOverriddenConceptList = new LinkedList<>();
-        ReferenceType correctOverriddenConceptType = new ReferenceType();
-        correctOverriddenConceptType.setRefId("test:CorrectOverriddenConcept");
-        correctOverriddenConceptList.add(correctOverriddenConceptType);
+        List<ReferenceType> incorrectOverriddenConceptList1 = new LinkedList<>();
+        ReferenceType incorrectOverriddenConceptType1 = new ReferenceType();
+        incorrectOverriddenConceptType1.setRefId("test:IncorrectOverriddenConcept1");
+        incorrectOverriddenConceptList1.add(incorrectOverriddenConceptType1);
 
-        List<ReferenceType> incorrectOverriddenConceptList = new LinkedList<>();
-        ReferenceType incorrectOverriddenConceptType = new ReferenceType();
-        incorrectOverriddenConceptType.setRefId("test:IncorrectOverriddenConcept");
-        incorrectOverriddenConceptList.add(incorrectOverriddenConceptType);
+        List<ReferenceType> incorrectOverriddenConceptList2 = new LinkedList<>();
+        ReferenceType incorrectOverriddenConceptType2 = new ReferenceType();
+        incorrectOverriddenConceptType2.setRefId("test:IncorrectOverriddenConcept2");
+        incorrectOverriddenConceptList2.add(incorrectOverriddenConceptType2);
 
-        Concept correctOverriddenConcept = Concept.builder()
-            .id("test:CorrectOverriddenConcept")
-            .providedConcept(Concept.ProvidedConcept.builder()
-                .providingConceptId("test:CorrectOverriddenConcept")
-                .providedConceptId("test:ConceptA")
-                .activation(IF_REQUIRED)
-                .build())
-            .providedConcept(Concept.ProvidedConcept.builder()
-                .providingConceptId("test:CorrectOverriddenConcept")
-                .providedConceptId("test:ConceptB")
-                .activation(IF_REQUIRED)
-                .build())
-            .severity(MINOR)
-            .build();
+        Concept incorrectOverriddenConcept1 = Concept.builder()
+                .id("test:IncorrectOverriddenConcept1")
+                .providedConcept(Concept.ProvidedConcept.builder()
+                        .providingConceptId("test:IncorrectOverriddenConcept1")
+                        .providedConceptId("test:ConceptA")
+                        .activation(IF_REQUIRED)
+                        .build())
+                .severity(MINOR)
+                .build();
 
-        Concept correctOverridingConcept = Concept.builder()
-            .id("test:CorrectOverridingConcept")
-            .providedConcept(Concept.ProvidedConcept.builder()
-                .providingConceptId("test:CorrectOverridingConcept")
-                .providedConceptId("test:ConceptA")
-                .activation(IF_REQUIRED)
-                .build())
-            .providedConcept(Concept.ProvidedConcept.builder()
-                .providingConceptId("test:CorrectOverridingConcept")
-                .providedConceptId("test:ConceptB")
-                .activation(IF_REQUIRED)
-                .build())
-            .overrideConcepts(correctOverriddenConceptList)
-            .severity(MINOR)
-            .build();
+        Concept incorrectOverridingConcept1 = Concept.builder()
+                .id("test:IncorrectOverridingConcept1")
+                .overrideConcepts(incorrectOverriddenConceptList1)
+                .severity(MINOR)
+                .build();
 
-        Concept incorrectOverriddenConcept = Concept.builder()
-            .id("test:IncorrectOverriddenConcept")
-            .providedConcept(Concept.ProvidedConcept.builder()
-                .providingConceptId("test:IncorrectOverriddenConcept")
-                .providedConceptId("test:ConceptA")
-                .activation(IF_REQUIRED)
-                .build())
-            .severity(MINOR)
-            .build();
+        Concept incorrectOverriddenConcept2 = Concept.builder()
+                .id("test:IncorrectOverriddenConcept2")
+                .severity(MINOR)
+                .build();
 
-        Concept incorrectOverridingConcept = Concept.builder()
-            .id("test:IncorrectOverridingConcept")
-            .providedConcept(Concept.ProvidedConcept.builder()
-                .providingConceptId("test:IncorrectOverridingConcept")
-                .providedConceptId("test:ConceptB")
-                .activation(IF_REQUIRED)
-                .build())
-            .overrideConcepts(incorrectOverriddenConceptList)
-            .severity(MINOR)
-            .build();
+        Concept incorrectOverridingConcept2 = Concept.builder()
+                .id("test:IncorrectOverridingConcept2")
+                .providedConcept(Concept.ProvidedConcept.builder()
+                        .providingConceptId("test:IncorrectOverridingConcept2")
+                        .providedConceptId("test:ConceptA")
+                        .activation(IF_REQUIRED)
+                        .build())
+                .overrideConcepts(incorrectOverriddenConceptList2)
+                .severity(MINOR)
+                .build();
 
         Concept providedConceptA = Concept.builder()
             .id("test:ConceptA")
             .severity(MINOR)
             .build();
 
-        Concept providedConceptB = Concept.builder()
-            .id("test:ConceptB")
-            .severity(MINOR)
-            .build();
-
-        RuleSet ruleSet = RuleSetBuilder.newInstance()
-            .addConcept(correctOverriddenConcept)
-            .addConcept(correctOverridingConcept)
-            .addConcept(incorrectOverriddenConcept)
-            .addConcept(incorrectOverridingConcept)
+        RuleSet ruleSet1 = RuleSetBuilder.newInstance()
+            .addConcept(incorrectOverriddenConcept1)
+            .addConcept(incorrectOverridingConcept1)
             .addConcept(providedConceptA)
-            .addConcept(providedConceptB)
-            .addGroup(group)
+            .addGroup(group1)
             .getRuleSet();
+        RuleSet ruleSet2 = RuleSetBuilder.newInstance()
+                .addConcept(incorrectOverriddenConcept2)
+                .addConcept(incorrectOverridingConcept2)
+                .addConcept(providedConceptA)
+                .addGroup(group2)
+                .getRuleSet();
 
-        RuleSelection ruleSelection = RuleSelection.builder()
-            .groupId("group")
+        RuleSelection ruleSelection1 = RuleSelection.builder()
+            .groupId("group1")
             .build();
+        RuleSelection ruleSelection2 = RuleSelection.builder()
+                .groupId("group2")
+                .build();
 
-        ruleExecutor.execute(ruleSet, ruleSelection);
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> ruleExecutor.execute(ruleSet1, ruleSelection1));
 
-        verify(visitor).visitConcept(incorrectOverriddenConcept, MINOR, emptyMap(), emptyMap());
-        verify(visitor, never()).visitConcept(correctOverriddenConcept, MINOR, emptyMap(), emptyMap());
-
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> ruleExecutor.execute(ruleSet2, ruleSelection2));
     }
 
     @Test
