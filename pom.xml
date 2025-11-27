@@ -447,16 +447,6 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>xml-maven-plugin</artifactId>
                     <version>${maven.xml.version}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>transform</goal>
-                            </goals>
-                            <configuration>
-                                <skip>true</skip>
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
 
                 <plugin>

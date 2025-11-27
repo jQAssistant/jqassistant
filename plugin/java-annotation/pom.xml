@@ -46,6 +46,12 @@
                 <executions>
                     <execution>
                         <id>transform-xml2asciidoc</id>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
