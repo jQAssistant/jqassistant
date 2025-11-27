@@ -5,11 +5,14 @@ import java.util.Set;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.report.Maven;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import org.apache.maven.model.Model;
+
+import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLanguageElement.PomXmlFile;
 
 /**
  * Descriptor for a POM.
@@ -17,6 +20,7 @@ import org.apache.maven.model.Model;
  * @see Model
  * @author ronald.kunzmann@buschmais.com
  */
+@Maven(PomXmlFile)
 @Label(value = "Pom")
 public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor, MavenDependentDescriptor, NamedDescriptor {
 
