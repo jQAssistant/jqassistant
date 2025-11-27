@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,6 +11,7 @@ import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
 
+import org.jqassistant.schema.rule.v2.ReferenceType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +27,7 @@ import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyMap;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -587,4 +591,247 @@ class RuleSetExecutorTest {
         verify(visitor).visitConstraint(constraint, MAJOR, emptyMap());
         verify(visitor, never()).visitConstraint(excludedConstraint, MAJOR, emptyMap());
     }
+
+    @Test
+    void overriddenConcepts() throws RuleException {
+        Group group = Group.builder()
+            .id("group")
+            .concept("test:OverriddenConcept", MINOR)
+            .build();
+
+        Concept overriddenConcept = Concept.builder()
+            .id("test:OverriddenConcept")
+            .severity(MINOR)
+            .build();
+
+        Concept overriddenConceptSecond = Concept.builder()
+            .id("test:OverriddenConceptSecond")
+            .severity(MINOR)
+            .build();
+
+        ReferenceType overridden = new ReferenceType();
+        overridden.setRefId("test:OverriddenConcept");
+        ReferenceType overriddenSecond = new ReferenceType();
+        overriddenSecond.setRefId("test:OverriddenConceptSecond");
+        List<ReferenceType> overriddenConcepts = new LinkedList<>();
+        overriddenConcepts.add(overridden);
+        overriddenConcepts.add(overriddenSecond);
+
+        Concept overridingConcept = Concept.builder()
+            .id("test:OverridingConcept")
+            .severity(MINOR)
+            .overrideConcepts(overriddenConcepts)
+            .build();
+
+        RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addConcept(overriddenConcept)
+            .addConcept(overridingConcept)
+            .addGroup(group)
+            .getRuleSet();
+
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId("group")
+            .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).visitConcept(overridingConcept, MINOR, emptyMap(), emptyMap());
+        verify(visitor, never()).visitConcept(overriddenConcept, MINOR, emptyMap(), emptyMap());
+        verify(visitor, never()).visitConcept(overriddenConceptSecond, MINOR, emptyMap(), emptyMap());
+    }
+
+    @Test
+    void overriddenConceptsShouldProvideSameConceptsAsOverridingOnes() throws RuleException {
+        Group group1 = Group.builder()
+                .id("group1")
+                .concept("test:IncorrectOverridingConcept1", MINOR)
+                .concept("test:IncorrectOverriddenConcept1", MINOR)
+                .concept("test:ConceptA", MINOR)
+                .build();
+        Group group2 = Group.builder()
+                .id("group2")
+                .concept("test:IncorrectOverridingConcept2", MINOR)
+                .concept("test:IncorrectOverriddenConcept2", MINOR)
+                .concept("test:ConceptA", MINOR)
+                .build();
+
+        List<ReferenceType> incorrectOverriddenConceptList1 = new LinkedList<>();
+        ReferenceType incorrectOverriddenConceptType1 = new ReferenceType();
+        incorrectOverriddenConceptType1.setRefId("test:IncorrectOverriddenConcept1");
+        incorrectOverriddenConceptList1.add(incorrectOverriddenConceptType1);
+
+        List<ReferenceType> incorrectOverriddenConceptList2 = new LinkedList<>();
+        ReferenceType incorrectOverriddenConceptType2 = new ReferenceType();
+        incorrectOverriddenConceptType2.setRefId("test:IncorrectOverriddenConcept2");
+        incorrectOverriddenConceptList2.add(incorrectOverriddenConceptType2);
+
+        Concept incorrectOverriddenConcept1 = Concept.builder()
+                .id("test:IncorrectOverriddenConcept1")
+                .providedConcept(Concept.ProvidedConcept.builder()
+                        .providingConceptId("test:IncorrectOverriddenConcept1")
+                        .providedConceptId("test:ConceptA")
+                        .activation(IF_REQUIRED)
+                        .build())
+                .severity(MINOR)
+                .build();
+
+        Concept incorrectOverridingConcept1 = Concept.builder()
+                .id("test:IncorrectOverridingConcept1")
+                .overrideConcepts(incorrectOverriddenConceptList1)
+                .severity(MINOR)
+                .build();
+
+        Concept incorrectOverriddenConcept2 = Concept.builder()
+                .id("test:IncorrectOverriddenConcept2")
+                .severity(MINOR)
+                .build();
+
+        Concept incorrectOverridingConcept2 = Concept.builder()
+                .id("test:IncorrectOverridingConcept2")
+                .providedConcept(Concept.ProvidedConcept.builder()
+                        .providingConceptId("test:IncorrectOverridingConcept2")
+                        .providedConceptId("test:ConceptA")
+                        .activation(IF_REQUIRED)
+                        .build())
+                .overrideConcepts(incorrectOverriddenConceptList2)
+                .severity(MINOR)
+                .build();
+
+        Concept providedConceptA = Concept.builder()
+            .id("test:ConceptA")
+            .severity(MINOR)
+            .build();
+
+        RuleSet ruleSet1 = RuleSetBuilder.newInstance()
+            .addConcept(incorrectOverriddenConcept1)
+            .addConcept(incorrectOverridingConcept1)
+            .addConcept(providedConceptA)
+            .addGroup(group1)
+            .getRuleSet();
+        RuleSet ruleSet2 = RuleSetBuilder.newInstance()
+                .addConcept(incorrectOverriddenConcept2)
+                .addConcept(incorrectOverridingConcept2)
+                .addConcept(providedConceptA)
+                .addGroup(group2)
+                .getRuleSet();
+
+        RuleSelection ruleSelection1 = RuleSelection.builder()
+            .groupId("group1")
+            .build();
+        RuleSelection ruleSelection2 = RuleSelection.builder()
+                .groupId("group2")
+                .build();
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> ruleExecutor.execute(ruleSet1, ruleSelection1));
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> ruleExecutor.execute(ruleSet2, ruleSelection2));
+    }
+
+    @Test
+    void overriddenConstraints() throws RuleException {
+        Group group = Group.builder()
+            .id("group")
+            .constraint("test:OverriddenConstraint", MINOR)
+            .build();
+
+        Constraint overriddenConstraint = Constraint.builder()
+            .id("test:OverriddenConstraint")
+            .severity(MINOR)
+            .build();
+
+        Constraint overriddenConstraintSecond = Constraint.builder()
+            .id("test:OverriddenConstraintSecond")
+            .severity(MINOR)
+            .build();
+
+        ReferenceType overridden = new ReferenceType();
+        overridden.setRefId("test:OverriddenConstraint");
+        ReferenceType overriddenSecond = new ReferenceType();
+        overriddenSecond.setRefId("test:OverriddenConstraintSecond");
+        List<ReferenceType> overriddenConstraints = new LinkedList<>();
+        overriddenConstraints.add(overridden);
+        overriddenConstraints.add(overriddenSecond);
+
+        Constraint overridingConstraint = Constraint.builder()
+            .id("test:OverridingConstraint")
+            .severity(MINOR)
+            .overrideConstraints(overriddenConstraints)
+            .build();
+
+        RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addConstraint(overriddenConstraint)
+            .addConstraint(overridingConstraint)
+            .addGroup(group)
+            .getRuleSet();
+
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId("group")
+            .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).visitConstraint(overridingConstraint, MINOR, emptyMap());
+        verify(visitor, never()).visitConstraint(overriddenConstraint, MINOR, emptyMap());
+        verify(visitor, never()).visitConstraint(overriddenConstraintSecond, MINOR, emptyMap());
+    }
+
+    @Test
+    void overriddenGroups() throws RuleException {
+        ReferenceType overridden = new ReferenceType();
+        overridden.setRefId("test:OverriddenGroup");
+        ReferenceType overriddenSecond = new ReferenceType();
+        overriddenSecond.setRefId("test:OverriddenGroupSecond");
+
+        List<ReferenceType> overriddenGroups = new LinkedList<>();
+        overriddenGroups.add(overridden);
+        overriddenGroups.add(overriddenSecond);
+
+        Group overridingGroup = Group.builder()
+            .id("test:OverridingGroup")
+            .constraint("test:Constraint", MINOR)
+            .overrideGroups(overriddenGroups)
+            .build();
+
+        Group overriddenGroup = Group.builder()
+            .id("test:OverriddenGroup")
+            .constraint("test:Constraint2", MINOR)
+            .build();
+
+        Group overriddenGroupSecond = Group.builder()
+            .id("test:OverriddenGroupSecond")
+            .build();
+
+        Constraint constraint = Constraint.builder()
+            .id("test:Constraint")
+            .severity(MINOR)
+            .build();
+
+        Constraint constraint2 = Constraint.builder()
+            .id("test:Constraint2")
+            .severity(MINOR)
+            .build();
+
+        RuleSet ruleSet = RuleSetBuilder.newInstance()
+            .addGroup(overriddenGroup)
+            .addGroup(overridingGroup)
+            .addConstraint(constraint)
+            .addConstraint(constraint2)
+            .getRuleSet();
+
+        RuleSelection ruleSelection = RuleSelection.builder()
+            .groupId("test:OverriddenGroup")
+            .build();
+
+        ruleExecutor.execute(ruleSet, ruleSelection);
+
+        verify(visitor).beforeGroup(overridingGroup, null);
+        verify(visitor).afterGroup(overridingGroup);
+        verify(visitor, never()).beforeGroup(overriddenGroup, null);
+        verify(visitor, never()).afterGroup(overriddenGroup);
+        verify(visitor, never()).beforeGroup(overriddenGroupSecond, null);
+        verify(visitor, never()).afterGroup(overriddenGroupSecond);
+    }
+
 }
