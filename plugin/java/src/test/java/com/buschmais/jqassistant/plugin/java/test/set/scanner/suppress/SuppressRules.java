@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress;
 
-import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
+import com.buschmais.jqassistant.plugin.java.annotation.jQASuppress;
 
 @jQASuppress(value = "test-suppress:Class",  reason = "For testing this annotation", until = "2075-08-25")
 public class SuppressRules {
