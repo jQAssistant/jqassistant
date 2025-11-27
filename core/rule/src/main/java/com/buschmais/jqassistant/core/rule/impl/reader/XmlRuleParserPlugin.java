@@ -27,8 +27,8 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.8";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.8.xsd";
+    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.9";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.9.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
@@ -227,17 +227,20 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     private Report getReport(ReportType reportType) {
         String type = null;
         String primaryColumn = null;
+        String keyColumns = null;
         Properties properties = new Properties();
         if (reportType != null) {
             type = reportType.getType();
             primaryColumn = reportType.getPrimaryColumn();
+            keyColumns = reportType.getKeyColumns();
             for (PropertyType propertyType : reportType.getProperty()) {
                 properties.setProperty(propertyType.getName(), propertyType.getValue());
             }
         }
         Report.ReportBuilder reportBuilder = Report.builder()
-            .primaryColumn(primaryColumn)
-            .properties(properties);
+                .keyColumns(keyColumns)
+                .primaryColumn(primaryColumn)
+                .properties(properties);
         if (type != null) {
             reportBuilder.selectedTypes(Report.selectTypes(type));
         }
