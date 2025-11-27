@@ -94,6 +94,9 @@ public class RuleSetExecutor<R> {
      */
     private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity overriddenSeverity, Set<String> activatedConcepts)
         throws RuleException {
+        if (ruleSet.getGroupsBucket().isOverridden(group.getId())) {
+            group = (Group) ruleSet.getGroupsBucket().getOverridingRule(group);
+        }
         if (!executedGroups.contains(group)) {
             Severity groupSeverity = getEffectiveSeverity(overriddenSeverity, group.getSeverity());
             ruleVisitor.beforeGroup(group, groupSeverity);
@@ -144,11 +147,6 @@ public class RuleSetExecutor<R> {
             LOGGER.warn("Could not find groups matching to '{}'.", groupPattern);
         } else {
             for (Group matchingGroup : matchingGroups) {
-                if (ruleSet.getGroupsBucket()
-                    .isOverridden(matchingGroup.getId())) {
-                    matchingGroup = (Group) ruleSet.getGroupsBucket()
-                        .getOverridingRule(matchingGroup);
-                }
                 executeGroup(ruleSet, matchingGroup, excludedConstraintIds, overridingSeverity, activatedConcepts);
             }
         }
@@ -166,11 +164,6 @@ public class RuleSetExecutor<R> {
                 if (excludedConstraintIds.contains(constraintId)) {
                     log.info("Skipping excluded constraint '{}'.", constraintId);
                 } else {
-                    if (ruleSet.getConstraintBucket()
-                        .isOverridden(matchingConstraint.getId())) {
-                        matchingConstraint = (Constraint) ruleSet.getConstraintBucket()
-                            .getOverridingRule(matchingConstraint);
-                    }
                     validateConstraint(ruleSet, matchingConstraint, overriddenSeverity, activatedConcepts);
                 }
             }
@@ -206,6 +199,9 @@ public class RuleSetExecutor<R> {
      *     If the constraint cannot be validated.
      */
     private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity overriddenSeverity, Set<String> activatedConcepts) throws RuleException {
+        if (ruleSet.getConstraintBucket().isOverridden(constraint.getId())) {
+            constraint = (Constraint) ruleSet.getConstraintBucket().getOverridingRule(constraint);
+        }
         if (!executedConstraints.contains(constraint)) {
             Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, constraint.getSeverity());
             Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyRequiredConcepts(ruleSet, constraint, activatedConcepts, new LinkedHashSet<>());
