@@ -1,5 +1,7 @@
 ---
 concepts:
+  - id: test:Concept1
+  - id: test:Concept2
   - id: test:ProvidingConcept
     description: Test Concept1.
     providesConcepts:
