@@ -61,16 +61,16 @@ public class RuleSetBuilder {
         return ruleSet;
     }
 
-    private void validate() throws RuleException {
+    private void validate() throws RuleException, IllegalArgumentException {
         Set<String> conceptIds = ruleSet.getConceptBucket()
-            .getIds();
+                .getIds();
         for (Map.Entry<String, Set<Concept.ProvidedConcept>> entry : ruleSet.getProvidedConcepts()
-            .entrySet()) {
+                .entrySet()) {
             String providedConceptId = entry.getKey();
             if (!conceptIds.contains(providedConceptId)) {
                 for (Concept.ProvidedConcept providedConcept : entry.getValue()) {
-                    log.warn("Concept {} provides non-resolvable concept with id '{}'.", ruleSet.getConceptBucket()
-                        .getById(providedConcept.getProvidingConceptId()), providedConceptId);
+                    throw new IllegalArgumentException(String.format("Concept '%s' provides non-resolvable concept with id '%s'.", ruleSet.getConceptBucket()
+                            .getById(providedConcept.getProvidingConceptId()), providedConceptId));
                 }
             }
         }
