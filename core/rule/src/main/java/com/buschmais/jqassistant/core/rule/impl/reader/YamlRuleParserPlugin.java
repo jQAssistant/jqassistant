@@ -110,6 +110,9 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 String conceptId = this.processExecutableRule(executableRule, context, builder, this::getDefaultConceptSeverity);
                 Set<Concept.ProvidedConcept> providedConcepts = this.extractProvidedConcepts(conceptId, executableRule);
                 builder.providedConcepts(providedConcepts);
+                if(executableRule.containsKey(ABSTRACT)) {
+                    builder.isAbstract((boolean) executableRule.get(ABSTRACT));
+                }
                 context.getBuilder()
                     .addConcept(builder.build());
             }
