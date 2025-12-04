@@ -61,7 +61,7 @@ public class RuleSetBuilder {
         return ruleSet;
     }
 
-    private void validate() throws RuleException, IllegalArgumentException {
+    private void validate() throws RuleException {
         Set<String> conceptIds = ruleSet.getConceptBucket()
                 .getIds();
         for (Map.Entry<String, Set<Concept.ProvidedConcept>> entry : ruleSet.getProvidedConcepts()
@@ -69,7 +69,7 @@ public class RuleSetBuilder {
             String providedConceptId = entry.getKey();
             if (!conceptIds.contains(providedConceptId)) {
                 for (Concept.ProvidedConcept providedConcept : entry.getValue()) {
-                    throw new IllegalArgumentException(String.format("Concept '%s' provides non-resolvable concept with id '%s'.", ruleSet.getConceptBucket()
+                    throw new RuleException(String.format("Concept '%s' provides non-resolvable concept with id '%s'.", ruleSet.getConceptBucket()
                             .getById(providedConcept.getProvidingConceptId()), providedConceptId));
                 }
             }

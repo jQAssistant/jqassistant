@@ -86,7 +86,7 @@ class RuleSetBuilderTest {
             .ruleSource(RULE_SOURCE)
             .build();
 
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> RuleSetBuilder.newInstance()
+        assertThatExceptionOfType(RuleException.class).isThrownBy(() -> RuleSetBuilder.newInstance()
                         .addConcept(providedConcept)
                         .addConcept(providingConcept)
                         .addConcept(nonResolvableProvidingConcept)
