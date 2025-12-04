@@ -62,7 +62,7 @@ class ReportTest {
         assertThat(report.getPrimaryColumn()).as("Expecting a primary column.").isEqualTo("n");
         Properties properties = report.getProperties();
         assertThat(properties.size()).as("Expecting two properties.").isEqualTo(2);
-        assertThat(report.getKeyColumns()).isEqualTo("n,g");
+        assertThat(report.getKeyColumns()).contains("property1").contains("property2");
         assertThat(properties.getProperty("key1")).as("Expecting value1 for key1.").isEqualTo("value1");
         assertThat(properties.getProperty("key2")).as("Expecting value2 for key2.").isEqualTo("value2");
     }

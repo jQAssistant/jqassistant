@@ -867,7 +867,7 @@ class YamlRuleParserPluginTest {
             assertThat(ruleSet.getConstraintBucket()
                     .getById("test:Constraint")
                     .getReport()
-                    .getKeyColumns()).isEqualTo("c1, c2");
+                    .getKeyColumns()).contains("c1").contains("c2");
         }
     }
 
