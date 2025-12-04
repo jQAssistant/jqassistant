@@ -1,16 +1,14 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.io.File;
-import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
-import com.github.stefanbirkner.systemlambda.SystemLambda;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
@@ -62,7 +60,7 @@ class RuleSetBuilderTest {
     }
 
     @Test
-    void providedConcepts() throws Exception {
+    void providedConcepts() {
         Concept providedConcept = Concept.builder()
             .id("provided")
             .ruleSource(RULE_SOURCE)
@@ -88,23 +86,12 @@ class RuleSetBuilderTest {
             .ruleSource(RULE_SOURCE)
             .build();
 
-        String systemErr = SystemLambda.tapSystemErr(() -> {
-            RuleSet ruleSet = RuleSetBuilder.newInstance()
-                .addConcept(providedConcept)
-                .addConcept(providingConcept)
-                .addConcept(nonResolvableProvidingConcept)
-                .getRuleSet();
-            assertThat(ruleSet.getProvidedConcepts()).hasSize(2)
-                .containsEntry("provided", Set.of(resolvableProvidedConcept))
-                .containsEntry("non-resolvable-provided", Set.of(nonResolvableProvidedConcept));
-            assertThat(ruleSet.getProvidingConceptIds()).hasSize(2)
-                .containsEntry("providing", Set.of("provided"))
-                .containsEntry("non-resolvable-providing", Set.of("non-resolvable-provided"));
-        });
-
-        assertThat(systemErr).hasLineCount(1)
-            .contains("WARN")
-            .contains("non-resolvable-providing")
-            .contains("non-resolvable-provided");
+        assertThatExceptionOfType(RuleException.class).isThrownBy(() -> RuleSetBuilder.newInstance()
+                        .addConcept(providedConcept)
+                        .addConcept(providingConcept)
+                        .addConcept(nonResolvableProvidingConcept)
+                        .getRuleSet())
+                .withMessageStartingWith("Concept 'Concept{id='non-resolvable-providing',")
+                .withMessageEndingWith("provides non-resolvable concept with id 'non-resolvable-provided'.");
     }
 }
