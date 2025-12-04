@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.annotation;
+package com.buschmais.jqassistant.plugin.java.api;
 
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;

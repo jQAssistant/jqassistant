@@ -10,7 +10,6 @@ This section provides detailed descriptions of all distributed plugins.
 
 include::{docRoot}/com.buschmais.jqassistant.plugin/common/asciidoc/plugin.adoc[]
 include::{docRoot}/com.buschmais.jqassistant.plugin/java/asciidoc/plugin.adoc[]
-include::{docRoot}/com.buschmais.jqassistant.plugin/java-annotation/asciidoc/plugin.adoc[]
 include::{docRoot}/com.buschmais.jqassistant.plugin/json/asciidoc/plugin.adoc[]
 include::{docRoot}/com.buschmais.jqassistant.plugin/junit/asciidoc/plugin.adoc[]
 include::{docRoot}/com.buschmais.jqassistant.plugin/maven3/asciidoc/plugin.adoc[]

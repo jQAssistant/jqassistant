@@ -738,11 +738,11 @@
     </constraint>
 
     <constraint id="java:TechnicalDebt">
-        <description>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".</description>
+        <description>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.api.TechnicalDebt".</description>
         <cypher><![CDATA[
             MATCH
               (type:Type)-[declares:DECLARES*0..]->(element),
-              (element)-[:ANNOTATED_BY]->()-[:HAS|CONTAINS*0..]->(technicalDebt)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt"}),
+              (element)-[:ANNOTATED_BY]->()-[:HAS|CONTAINS*0..]->(technicalDebt)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.plugin.java.api.TechnicalDebt"}),
               (technicalDebt)-[:HAS]->(descriptionValue:Value{name: "value"})
             OPTIONAL MATCH
               (technicalDebt)-[:HAS]->(:Value{name: "priority"})-[:IS]->(priorityField:Field)
