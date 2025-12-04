@@ -94,7 +94,6 @@ class AnalyzerContextImplTest {
         assertThat(rowKeys).hasSize(3);
     }
 
-
     @Test
     void withoutSuppression() {
         Constraint constraint = getConstraint();

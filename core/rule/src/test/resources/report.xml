@@ -4,11 +4,11 @@
         <description>Test Concept.</description>
         <cypher><![CDATA[
             match
-              (n:File), (g:groupId)
+              (n)
             where
               n.name = {name}
             return
-              n, g
+              n.property1, n.property2
             limit
               {limit}
         ]]></cypher>
@@ -22,11 +22,11 @@
         <description>Test Constraint.</description>
         <cypher><![CDATA[
             match
-              (n:File), (g:groupId)
+              (n)
             where
               n.name = {name}
             return
-              n, g
+              n.property1, n.property2
             limit
               {limit}
         ]]></cypher>

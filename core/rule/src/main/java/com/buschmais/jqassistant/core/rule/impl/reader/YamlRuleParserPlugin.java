@@ -247,8 +247,9 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             }
 
             if (reportBlock.containsKey(KEY_COLUMNS)) {
-                String keyColumns = (String) reportBlock.get(KEY_COLUMNS);
-                reportBuilder.keyColumns(keyColumns);
+                List<String> keyColumnsList = new ArrayList<>();
+                keyColumnsList = Arrays.asList(((String) reportBlock.get(KEY_COLUMNS)).split("\\s*,\\s*"));
+                reportBuilder.keyColumns(keyColumnsList);
             }
 
             if (reportBlock.containsKey(REPORT_PROPERTIES)) {
@@ -262,7 +263,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 };
 
                 propertiesMap.keySet()
-                    .forEach(propertyConsumer);
+                        .forEach(propertyConsumer);
 
                 reportBuilder.properties(reportProperties);
             }

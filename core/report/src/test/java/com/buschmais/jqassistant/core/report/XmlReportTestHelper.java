@@ -207,7 +207,7 @@ public final class XmlReportTestHelper {
 
         Constraint keyColumConstraint = Constraint.builder()
                 .id("my:Constraint")
-                .report(Report.builder().keyColumns(C1)
+                .report(Report.builder().keyColumns(List.of(C1))
                         .build())
                 .build();
         Constraint normalConstraint1 = Constraint.builder()
@@ -253,7 +253,7 @@ public final class XmlReportTestHelper {
         xmlReportPlugin.begin();
         Constraint constraint = Constraint.builder()
                 .id("my:Constraint")
-                .report(Report.builder().keyColumns("c5")
+                .report(Report.builder().keyColumns(List.of("c5"))
                         .build())
                 .build();
 

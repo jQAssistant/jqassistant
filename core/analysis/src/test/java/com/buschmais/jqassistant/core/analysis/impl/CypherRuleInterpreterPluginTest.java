@@ -79,7 +79,7 @@ class CypherRuleInterpreterPluginTest {
     private Constraint prepareConstraint(String keyColumns, Map<String, Object>... resultRows)  {
         Report report = Report.builder()
             .primaryColumn(PRIMARY_COLUMN)
-            .keyColumns(keyColumns)
+            .keyColumns(List.of(keyColumns))
             .build();
         Constraint constraint = Constraint.builder()
             .id(CONSTRAINT_ID)

@@ -473,6 +473,9 @@ NOTE: The first column will be used automatically if no primary column is explic
 
 ===== Key Columns
 
+By default the values of all columns returned by a constraint or a concept are used
+to calculate a key for each row which are used to uniquely identify rows between different executions.
+These keys are used for baselines or reporting to other tools, e.g. SonarQube or Teamscale.
 In case the result contains additional columns with context information,
 the columns to be used for calculating the row key can be specified separately:
 

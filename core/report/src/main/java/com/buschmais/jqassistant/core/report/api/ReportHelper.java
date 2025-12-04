@@ -104,11 +104,10 @@ public final class ReportHelper {
                 .append(rule.getId())
                 .append("|");
 
-        if (rule.getReport() != null && StringUtils.isNotEmpty(rule.getReport()
-                .getKeyColumns())) {
+        if (rule.getReport() != null && rule.getReport()
+                .getKeyColumns() != null) {
             for (String keyColumnName : rule.getReport()
-                    .getKeyColumns()
-                    .split("\\s*,\\s*")) {
+                    .getKeyColumns()) {
                 if (!columns.containsKey(keyColumnName)) {
                     throw new IllegalArgumentException(
                             MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist.", rule.getId(), keyColumnName));
