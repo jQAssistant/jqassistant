@@ -657,12 +657,7 @@ A file containing the implementation class names for a service interface
 | CONTAINS | <<:Java:Type>> | 0..n | References a type which implements the service interface
 |====
 
-== @jQASuppress
-
-The annotation `com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress` may be used for suppressing results of specific rules.
-It works in a similar way like `java.lang.SuppressWarnings` provided by Java.
-
-For using it the jQAssistant Java plugin must be declared as compile-time dependency for your project, e.g. in case of Maven:
+For using the jQAssistant *Java Plugin* it must be declared as compile-time dependency for your project, e.g. in case of Maven:
 
 [source,xml,subs=attributes+]
 .pom.xml
@@ -674,6 +669,24 @@ For using it the jQAssistant Java plugin must be declared as compile-time depend
   <scope>provided</scope>
 </dependency>
 ----
+
+The java plugin evaluates annotations provided by the *Java Annotation Library*, which must be declared separately.
+
+[source,xml,subs=attributes+]
+.pom.xml
+----
+<dependency>
+  <groupId>com.buschmais.jqassistant.plugin</groupId>
+  <artifactId>java-api</artifactId>
+  <version>{projectVersion}</version>
+  <scope>provided</scope>
+</dependency>
+----
+
+== @jQASuppress
+
+The annotation `com.buschmais.jqassistant.plugin.java.api.jQASuppress` may be used for suppressing results of specific rules.
+It works in a similar way like `java.lang.SuppressWarnings` provided by Java.
 
 The annotation can now be used to suppress annotated elements like classes, fields or methods from rule results.
 
@@ -706,3 +719,24 @@ It is possible to set an expiry date and specify a reason for suppression. The e
 public class ClassViolatingMyConstraint {
 }
 ----
+
+== @TechnicalDebt
+
+The annotation `com.buschmais.jqassistant.plugin.java.api.TechnicalDebt` may be used for marking as technical debt at types and members.
+It requires a short message describing the technical debt.
+
+[source,java]
+----
+@TechnicalDebt("example:Field with technical debt")
+public class ClassWithTechnicalDebt {
+}
+----
+If needed, a optional priority, a link to an id or issue and a link to a related classes can be specified:
+
+[source,java]
+----
+@TechnicalDebt(value = "example:Field with technical debt", priority = HIGH, issue = "259", seeAlso = example.class)
+public class ClassWithTechnicalDebt {
+}
+----
+
