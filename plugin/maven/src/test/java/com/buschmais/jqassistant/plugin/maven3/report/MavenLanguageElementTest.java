@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLanguageElement.Pom;
-import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLanguageElement.PomXmlFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
@@ -38,12 +37,12 @@ public class MavenLanguageElementTest {
         doReturn("module").when(pomXmlFileDescriptor)
                 .getArtifactId();
 
+        assertThat(Pom.getLanguage()).isEqualTo("Maven");
+
         doReturn("/projects/my-project/pom.xml").when(pomXmlFileDescriptor)
-            .getFileName();
+                .getFileName();
+        SourceProvider<CompositeObject> sourceProvider = Pom.getSourceProvider();
 
-        SourceProvider<CompositeObject> sourceProvider = PomXmlFile.getSourceProvider();
-
-        assertThat(PomXmlFile.getLanguage()).isEqualTo("Maven");
         assertThat(sourceProvider.getName(pomXmlFileDescriptor)).isEqualTo("project:module");
         Optional<FileLocation> optionalFileLocation = sourceProvider.getSourceLocation(pomXmlFileDescriptor);
         assertThat(optionalFileLocation).isPresent();
@@ -53,23 +52,17 @@ public class MavenLanguageElementTest {
 
     @Test
     void mavenPomSourceLocation() {
-        SourceProvider<CompositeObject> sourceProvider = Pom.getSourceProvider();
-
-        assertThat(Pom.getLanguage()).isEqualTo("Maven");
-        Optional<FileLocation> optionalFileLocation = sourceProvider.getSourceLocation(pomXmlFileDescriptor);
-        assertThat(optionalFileLocation).isEmpty();
-    }
-
-    @Test
-    void mavenPomWithGroupIdValue() {
         doReturn("project").when(pomDescriptor)
-            .getGroupId();
+                .getGroupId();
         doReturn("module").when(pomDescriptor)
-            .getArtifactId();
+                .getArtifactId();
 
         SourceProvider<CompositeObject> sourceProvider = Pom.getSourceProvider();
 
         assertThat(sourceProvider.getName(pomDescriptor)).isEqualTo("project:module");
+        assertThat(Pom.getLanguage()).isEqualTo("Maven");
+        Optional<FileLocation> optionalFileLocation = sourceProvider.getSourceLocation(pomXmlFileDescriptor);
+        assertThat(optionalFileLocation).isEmpty();
     }
 
     @Test

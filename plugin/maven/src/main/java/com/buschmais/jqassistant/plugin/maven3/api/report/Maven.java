@@ -10,9 +10,9 @@ import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.api.model.Language;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.report.FileSourceHelper;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 
 import static java.util.Optional.empty;
 
@@ -43,25 +43,10 @@ public @interface Maven {
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(MavenPomDescriptor descriptor) {
+                        if (descriptor instanceof FileDescriptor) {
+                            return FileSourceHelper.getSourceLocation((FileDescriptor) descriptor, empty(), empty());
+                        }
                         return empty();
-                    }
-                };
-            }
-        },
-
-        PomXmlFile {
-            @Override
-            public SourceProvider<MavenPomXmlDescriptor> getSourceProvider() {
-                return new SourceProvider<>() {
-                    @Override
-                    public String getName(MavenPomXmlDescriptor descriptor) {
-                        return Pom.getSourceProvider()
-                                .getName(descriptor);
-                    }
-
-                    @Override
-                    public Optional<FileLocation> getSourceLocation(MavenPomXmlDescriptor descriptor) {
-                        return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
                     }
                 };
             }

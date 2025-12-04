@@ -12,7 +12,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import org.apache.maven.model.Model;
 
-import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLanguageElement.PomXmlFile;
+import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLanguageElement.Pom;
 
 /**
  * Descriptor for a POM.
@@ -20,7 +20,7 @@ import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLang
  * @see Model
  * @author ronald.kunzmann@buschmais.com
  */
-@Maven(PomXmlFile)
+@Maven(Pom)
 @Label(value = "Pom")
 public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor, MavenDependentDescriptor, NamedDescriptor {
 
