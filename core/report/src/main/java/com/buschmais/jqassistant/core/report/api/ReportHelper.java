@@ -108,6 +108,10 @@ public final class ReportHelper {
                 .getKeyColumns() != null) {
             for (String keyColumnName : rule.getReport()
                     .getKeyColumns()) {
+                if(keyColumnName.isEmpty()){
+                    throw new IllegalArgumentException(
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn value is empty.", rule.getId()));
+                }
                 if (!columns.containsKey(keyColumnName)) {
                     throw new IllegalArgumentException(
                             MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist.", rule.getId(), keyColumnName));
