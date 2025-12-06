@@ -7,10 +7,14 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+
 /**
  * Test plugin: migrates a required {@link TestItemDescriptor} to a {@link NestedTestItemDescriptor}.
  */
-public class NestedTestItemScannerPlugin implements ScannerPlugin<TestItem, NestedTestItemDescriptor> {
+@ScannerPlugin.Requires(DependentTestItemDescriptor.class)
+public abstract class NestedTestItemScannerPlugin implements ScannerPlugin<TestItem, NestedTestItemDescriptor> {
 
     @Override
     public void initialize() {
@@ -36,13 +40,9 @@ public class NestedTestItemScannerPlugin implements ScannerPlugin<TestItem, Nest
     }
 
     @Override
-    public boolean accepts(TestItem item, String path, Scope scope) {
-        return TestScope.TEST.equals(scope);
-    }
-
-    @Override
     public NestedTestItemDescriptor scan(TestItem item, String path, Scope scope, Scanner scanner) {
-        TestItemDescriptor testItemDescriptor = scanner.getContext().getCurrentDescriptor();
-        return scanner.getContext().getStore().addDescriptorType(testItemDescriptor, NestedTestItemDescriptor.class);
+        assertThat((DependentTestItemDescriptor) scanner.getContext()
+            .getCurrentDescriptor()).isInstanceOf(DependentTestItemDescriptor.class);
+        return mock(NestedTestItemDescriptor.class);
     }
 }
