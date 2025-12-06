@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
+import static java.util.Arrays.stream;
 
 /**
  * Implementation of the {@link Scanner}.
@@ -148,8 +149,10 @@ public class ScannerImpl implements Scanner {
      * @return <code>true</code> if the selected plugin can be used.
      */
     private <I, D extends Descriptor> boolean satisfies(ScannerPlugin<I, D> selectedPlugin, D descriptor) {
-        return !(selectedPlugin.getClass()
-            .isAnnotationPresent(Requires.class) && descriptor == null);
+        Requires requires = selectedPlugin.getClass()
+            .getAnnotation(Requires.class);
+        return requires == null || (descriptor != null && stream(requires.value()).allMatch(
+            requiredDescriptorType -> requiredDescriptorType.isAssignableFrom(descriptor.getClass())));
     }
 
     /**
