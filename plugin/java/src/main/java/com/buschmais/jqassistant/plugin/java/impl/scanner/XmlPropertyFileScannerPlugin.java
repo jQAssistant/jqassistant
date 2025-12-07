@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XMLFileFilter;
 
 import org.slf4j.Logger;
@@ -24,20 +24,15 @@ import org.slf4j.LoggerFactory;
 /**
  * Implementation of a {@link AbstractScannerPlugin} for XML based property files.
  */
-@Requires({FileDescriptor.class, XmlDocumentDescriptor.class})
-public class XmlPropertyFileScannerPlugin
-    extends AbstractScannerPlugin<FileResource, PropertyFileDescriptor> {
+@Requires(XmlFileDescriptor.class)
+public class XmlPropertyFileScannerPlugin extends AbstractScannerPlugin<FileResource, PropertyFileDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlPropertyFileScannerPlugin.class);
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        boolean hasXMLExtension = path.toLowerCase().endsWith(".xml");
-
-        boolean isPropertyFile = hasXMLExtension ? XMLFileFilter.rootElementMatches(item, path, "properties")
-                                                 : false;
-
-        return hasXMLExtension && isPropertyFile;
+        return path.toLowerCase()
+            .endsWith(".xml") && XMLFileFilter.rootElementMatches(item, path, "properties");
     }
 
     @Override
@@ -51,7 +46,7 @@ public class XmlPropertyFileScannerPlugin
         try (InputStream stream = item.createStream()) {
             properties.loadFromXML(stream);
         } catch (IllegalArgumentException e) {
-            LOGGER.warn("Cannot load properties from '" + path + "': " + e.getMessage());
+            LOGGER.warn("Cannot load properties from '{}': {}", path, e.getMessage());
         }
 
         for (String name : properties.stringPropertyNames()) {
@@ -59,7 +54,8 @@ public class XmlPropertyFileScannerPlugin
             PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
             propertyDescriptor.setName(name);
             propertyDescriptor.setValue(value);
-            propertyFileDescriptor.getProperties().add(propertyDescriptor);
+            propertyFileDescriptor.getProperties()
+                .add(propertyDescriptor);
         }
         return propertyFileDescriptor;
     }
