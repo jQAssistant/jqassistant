@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptySet;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Controls execution of {@link RuleSet}s.
@@ -93,6 +94,9 @@ public class RuleSetExecutor<R> {
      */
     private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity overriddenSeverity, Set<String> activatedConcepts)
         throws RuleException {
+        if (ruleSet.getGroupsBucket().isOverridden(group.getId())) {
+            group = (Group) ruleSet.getGroupsBucket().getOverridingRule(group);
+        }
         if (!executedGroups.contains(group)) {
             Severity groupSeverity = getEffectiveSeverity(overriddenSeverity, group.getSeverity());
             ruleVisitor.beforeGroup(group, groupSeverity);
@@ -122,6 +126,14 @@ public class RuleSetExecutor<R> {
             LOGGER.warn("Could not find concepts matching to '{}'.", conceptPattern);
         } else {
             for (Concept matchingConcept : matchingConcepts) {
+                if (ruleSet.getConceptBucket()
+                    .isOverridden(matchingConcept.getId())) {
+                    Concept overridingConcept = (Concept) ruleSet.getConceptBucket()
+                        .getOverridingRule(matchingConcept);
+                    if (checkOverridesProvides(matchingConcept, overridingConcept)) {
+                        matchingConcept = overridingConcept;
+                    }
+                }
                 applyConcept(ruleSet, matchingConcept, overriddenSeverity, activatedConcepts, new LinkedHashSet<>());
             }
         }
@@ -187,6 +199,9 @@ public class RuleSetExecutor<R> {
      *     If the constraint cannot be validated.
      */
     private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity overriddenSeverity, Set<String> activatedConcepts) throws RuleException {
+        if (ruleSet.getConstraintBucket().isOverridden(constraint.getId())) {
+            constraint = (Constraint) ruleSet.getConstraintBucket().getOverridingRule(constraint);
+        }
         if (!executedConstraints.contains(constraint)) {
             Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, constraint.getSeverity());
             Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyRequiredConcepts(ruleSet, constraint, activatedConcepts, new LinkedHashSet<>());
@@ -339,6 +354,25 @@ public class RuleSetExecutor<R> {
             log.warn("Rule '{}' is deprecated: {} ({})", executableRule.getId(), executableRule.getDeprecation(), executableRule.getSource()
                 .getId());
         }
+    }
+
+    /**
+     * Checks if an overriding concept provides the same concepts as the overridden concept.
+     */
+    private boolean checkOverridesProvides(Concept overridden, Concept overriding) throws IllegalArgumentException {
+        List<String> overridingConceptsProvides = overriding.getProvidedConcepts()
+                .stream()
+                .map(Concept.ProvidedConcept::getProvidedConceptId)
+                .collect(toList());
+        List<String> overriddenConceptsProvides = overridden.getProvidedConcepts()
+                .stream()
+                .map(Concept.ProvidedConcept::getProvidedConceptId)
+                .collect(toList());
+        if (!new HashSet<>(overridingConceptsProvides).equals(new HashSet<>(overriddenConceptsProvides))) {
+            throw new IllegalArgumentException(String.format("Overriding concept '%s' does not have the same ProvidedConcepts as the overridden concept '%s' ",
+                    overriding.getProvidedConcepts(), overridden.getId()));
+        }
+        return true;
     }
 
     @Getter
