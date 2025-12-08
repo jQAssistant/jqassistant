@@ -16,6 +16,8 @@ public class Report {
 
     private String primaryColumn;
 
+    private List<String> keyColumns;
+
     @Builder.Default
     private Properties properties = new Properties();
 
