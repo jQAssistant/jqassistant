@@ -14,7 +14,6 @@ import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -61,7 +60,7 @@ public class ReportMojo extends AbstractMavenReport {
             selectedXmlReportFile = xmlReportFile;
         } else {
             selectedXmlReportFile = new File(project.getBuild()
-                .getDirectory() + "/" + MojoExecutionContext.OUTPUT_DIRECTORY + "/" + XmlReportPlugin.DEFAULT_XML_REPORT_FILE);
+                .getDirectory() + "/" + MavenTaskContext.OUTPUT_DIRECTORY + "/" + XmlReportPlugin.DEFAULT_XML_REPORT_FILE);
         }
         return selectedXmlReportFile;
     }
@@ -79,10 +78,5 @@ public class ReportMojo extends AbstractMavenReport {
     @Override
     public String getOutputName() {
         return "jqassistant";
-    }
-
-    @Override
-    protected Renderer getSiteRenderer() {
-        return siteRenderer;
     }
 }
