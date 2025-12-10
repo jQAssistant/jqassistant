@@ -37,9 +37,9 @@ import static java.util.Collections.emptyMap;
 public class XmlReportPlugin implements ReportPlugin {
 
     // Properties
-    public static final String XML_REPORT_FILE = "xml.report.file";
+    public static final String PROPERTY_XML_REPORT_FILE = "xml.report.file";
 
-    public static final String XML_REPORT_TRANSFORM_TO_HTML = "xml.report.transform-to-html";
+    public static final String PROPERTY_XML_REPORT_TRANSFORM_TO_HTML = "xml.report.transform-to-html";
 
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
@@ -80,11 +80,11 @@ public class XmlReportPlugin implements ReportPlugin {
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) {
         this.reportContext = reportContext;
-        String xmlReportFileProperty = (String) properties.get(XML_REPORT_FILE);
+        String xmlReportFileProperty = (String) properties.get(PROPERTY_XML_REPORT_FILE);
         this.xmlReportFile =
             xmlReportFileProperty != null ? new File(xmlReportFileProperty) : new File(reportContext.getOutputDirectory(), DEFAULT_XML_REPORT_FILE);
-        Object transformToHTMLProperty = properties.get(XML_REPORT_TRANSFORM_TO_HTML);
-        this.transformToHTML = transformToHTMLProperty != null ? Boolean.parseBoolean(transformToHTMLProperty.toString()) : true;
+        Object transformToHTMLProperty = properties.get(PROPERTY_XML_REPORT_TRANSFORM_TO_HTML);
+        this.transformToHTML = transformToHTMLProperty == null || Boolean.parseBoolean(transformToHTMLProperty.toString());
     }
 
     @Override
