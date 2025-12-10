@@ -7,7 +7,6 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.jqassistant.scm.maven.MavenTaskContext;
@@ -50,7 +49,7 @@ public class CachingStoreProvider implements Disposable {
      *
      * @return The store.
      */
-    public Store getStore(MavenTaskContext mavenTaskContext, PluginRepository pluginRepository, Supplier<File> storeDirectorySupplier) {
+    public Store getStore(MavenTaskContext mavenTaskContext, Supplier<File> storeDirectorySupplier) {
         com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration = mavenTaskContext.getConfiguration()
             .store();
         URI uri = storeConfiguration.uri()
@@ -69,7 +68,8 @@ public class CachingStoreProvider implements Disposable {
         StoreKey key = storeKeyBuilder.build();
         Store store = storesByKey.get(key);
         if (store == null) {
-            StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), mavenTaskContext.getArtifactProvider());
+            StoreFactory storeFactory = new StoreFactory(mavenTaskContext.getPluginRepository()
+                .getStorePluginRepository(), mavenTaskContext.getArtifactProvider());
             store = storeFactory.getStore(storeConfiguration, storeDirectorySupplier);
             store.start();
             storesByKey.put(key, store);

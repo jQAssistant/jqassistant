@@ -67,7 +67,7 @@ public abstract class AbstractMavenStoreTask extends AbstractMavenTask {
      *     If the store cannot be opened.
      */
     private Store getStore(MavenTaskContext mavenTaskContext, Supplier<File> storeDirectorySupplier) throws MojoExecutionException {
-        Object existingStore = cachingStoreProvider.getStore(mavenTaskContext, mavenTaskContext.getPluginRepository(), storeDirectorySupplier);
+        Object existingStore = cachingStoreProvider.getStore(mavenTaskContext, storeDirectorySupplier);
         if (!Store.class.isAssignableFrom(existingStore.getClass())) {
             throw new MojoExecutionException(
                 "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D" + Maven.REUSE_STORE
