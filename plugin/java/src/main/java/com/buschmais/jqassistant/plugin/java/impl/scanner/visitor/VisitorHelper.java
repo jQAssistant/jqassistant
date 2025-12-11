@@ -6,7 +6,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress;
+import com.buschmais.jqassistant.plugin.java.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
@@ -262,9 +262,9 @@ public class VisitorHelper {
         if (typeName == null) {
             return null;
         }
-        if (jQASuppress.class.getName().equals(typeName)) {
-            JavaSuppressDescriptor javaSuppressDescriptor = scannerContext.getStore().addDescriptorType(annotatedDescriptor, JavaSuppressDescriptor.class);
-            return new SuppressAnnotationVisitor(javaSuppressDescriptor);
+        if (jQASuppress.class.getName()
+            .equals(typeName) || com.buschmais.jqassistant.plugin.java.api.jQASuppress.class.getName().equals(typeName)) {
+            return new SuppressAnnotationVisitor(annotatedDescriptor, this);
         }
         TypeDescriptor type = resolveType(typeName, containingDescriptor).getTypeDescriptor();
         AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class);

@@ -4,7 +4,7 @@
         <description>The annotation @jQASuppress not be reported.</description>
         <cypher><![CDATA[
         MATCH
-          (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress"})
+          (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.plugin.java.api.jQASuppress"})
         RETURN
           e
         ]]></cypher>
