@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt;
 
-import com.buschmais.jqassistant.plugin.java.api.TechnicalDebt;
+import com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt;
 
-import static com.buschmais.jqassistant.plugin.java.api.TechnicalDebt.Priority.*;
+import static com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt.Priority.*;
 
 @TechnicalDebt("technicalDebt:Class with defaults")
 @TechnicalDebt(value = "technicalDebt:Class with debts", priority = MEDIUM, issue = "284")

@@ -284,7 +284,7 @@
     <modules>
         <module>common</module>
         <module>java</module>
-        <module>java-api</module>
+        <module>java-annotation</module>
         <module>junit</module>
         <module>json</module>
         <module>maven</module>

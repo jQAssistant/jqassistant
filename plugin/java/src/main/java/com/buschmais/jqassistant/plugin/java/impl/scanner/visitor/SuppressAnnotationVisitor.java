@@ -6,7 +6,8 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.java.api.jQASuppress;
+import com.buschmais.jqassistant.plugin.java.annotation.jQASuppress;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,19 +20,20 @@ import org.objectweb.asm.AnnotationVisitor;
 class SuppressAnnotationVisitor extends AnnotationVisitor {
 
     private final JavaSuppressDescriptor suppressDescriptor;
+
     private String currentAttribute;
 
-    private List<String> suppressIds = new ArrayList<>();
+    private final List<String> suppressIds = new ArrayList<>();
 
     private String suppressColumn;
     private LocalDate suppressUntil;
     private String suppressReason;
 
-    public SuppressAnnotationVisitor(JavaSuppressDescriptor suppressDescriptor) {
+    public SuppressAnnotationVisitor(AnnotatedDescriptor annotatedDescriptor, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
-        this.suppressDescriptor = suppressDescriptor;
+        this.suppressDescriptor = visitorHelper.getStore()
+            .addDescriptorType(annotatedDescriptor, JavaSuppressDescriptor.class);
     }
-
 
     @Override
     public void visit(String name, Object value) {
@@ -73,7 +75,7 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
 
     @Override
     public void visitEnd() {
-        suppressDescriptor.setSuppressIds(suppressIds.toArray(new String[suppressIds.size()]));
+        suppressDescriptor.setSuppressIds(suppressIds.toArray(new String[0]));
         suppressDescriptor.setSuppressColumn(suppressColumn);
         suppressDescriptor.setSuppressUntil(suppressUntil);
         suppressDescriptor.setSuppressReason(suppressReason);

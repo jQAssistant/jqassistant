@@ -677,7 +677,7 @@ The java plugin evaluates annotations provided by the *Java Annotation Library*,
 ----
 <dependency>
   <groupId>com.buschmais.jqassistant.plugin</groupId>
-  <artifactId>java-api</artifactId>
+  <artifactId>java-annotation</artifactId>
   <version>{projectVersion}</version>
   <scope>provided</scope>
 </dependency>
@@ -685,7 +685,7 @@ The java plugin evaluates annotations provided by the *Java Annotation Library*,
 
 == @jQASuppress
 
-The annotation `com.buschmais.jqassistant.plugin.java.api.jQASuppress` may be used for suppressing results of specific rules.
+The annotation `com.buschmais.jqassistant.plugin.java.annotation.jQASuppress` may be used for suppressing results of specific rules.
 It works in a similar way like `java.lang.SuppressWarnings` provided by Java.
 
 The annotation can now be used to suppress annotated elements like classes, fields or methods from rule results.
@@ -722,7 +722,7 @@ public class ClassViolatingMyConstraint {
 
 == @TechnicalDebt
 
-The annotation `com.buschmais.jqassistant.plugin.java.api.TechnicalDebt` may be used for marking as technical debt at types and members.
+The annotation `com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt` may be used for marking as technical debt at types and members.
 It requires a short message describing the technical debt.
 
 [source,java]

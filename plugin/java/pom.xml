@@ -82,7 +82,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>java-api</artifactId>
+            <artifactId>java-annotation</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>

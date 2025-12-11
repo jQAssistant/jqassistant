@@ -10,13 +10,18 @@
         <version>2.9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>java-api</artifactId>
+    <artifactId>java-annotation</artifactId>
 
-    <name>jQAssistant Java Annotation Library</name>
+    <name>jQAssistant Java Annotations.</name>
 
-    <description>
-        Library for jQAssistant Java annotations.
-    </description>
+    <description>Provides annotations for the jQAssistant Java Plugin.</description>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License 3.0</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+        </license>
+    </licenses>
 
     <dependencies>
         <dependency>
