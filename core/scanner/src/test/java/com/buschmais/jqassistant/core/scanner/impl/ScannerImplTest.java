@@ -19,7 +19,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.mockito.stubbing.Answer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -129,8 +128,9 @@ class ScannerImplTest {
         stubExceptionDuringScan(scanner);
 
         assertThatExceptionOfType(UnrecoverableScannerException.class).isThrownBy(() -> {
-            scanner.scan("test", "test", scope);
-        }).withMessageContaining("test");
+                scanner.scan("test", "test", scope);
+            })
+            .withMessageContaining("test");
         verify(store).beginTransaction();
         verify(store).rollbackTransaction();
         verify(store, never()).commitTransaction();
@@ -193,24 +193,57 @@ class ScannerImplTest {
     @Test
     void pluginPipeline() {
         ScannerContext scannerContext = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
-        when(store.create(any(Class.class))).thenAnswer((Answer<Descriptor>) invocation -> {
-            Class<? extends Descriptor> descriptorType = (Class<? extends Descriptor>) invocation.getArguments()[0];
-            return mock(descriptorType);
-        });
-        when(store.addDescriptorType(any(Descriptor.class), any(Class.class))).thenAnswer((Answer<Descriptor>) invocation -> {
-            Class<? extends Descriptor> descriptorType = (Class<? extends Descriptor>) invocation.getArguments()[1];
-            return mock(descriptorType);
-        });
-        doReturn(Set.<ScannerPlugin<?, ?>>of(new TestItemScannerPlugin(), new DependentTestItemScannerPlugin(), new NestedTestItemScannerPlugin())).when(
-                scannerPluginRepository)
+        doReturn(Set.<ScannerPlugin<?, ?>>of(new TestItemScannerPlugin() {
+            @Override
+            public boolean accepts(TestItem item, String path, Scope scope) {
+                return true;
+            }
+        }, new DependentTestItemScannerPlugin() {
+            @Override
+            public boolean accepts(TestItem item, String path, Scope scope) {
+                return true;
+            }
+        }, new NestedTestItemScannerPlugin() {
+            @Override
+            public boolean accepts(TestItem item, String path, Scope scope) {
+                return true;
+            }
+        })).when(scannerPluginRepository)
             .getScannerPlugins(configuration, scannerContext);
         Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPluginRepository);
 
         Descriptor descriptor = scanner.scan(new TestItem(), "/", DefaultScope.NONE);
 
-        assertThat(descriptor).isInstanceOf(DependentTestItemDescriptor.class);
-        verify(store).create(TestItemDescriptor.class);
-        verify(store).addDescriptorType(any(TestItemDescriptor.class), eq(NestedTestItemDescriptor.class));
-        verify(store).addDescriptorType(any(NestedTestItemDescriptor.class), eq(DependentTestItemDescriptor.class));
+        assertThat(descriptor).isInstanceOf(NestedTestItemDescriptor.class);
+    }
+
+    /**
+     * Verifies that the plugin pipeline stops if an intermediate plugin does not create a required descriptor for a subsequent plugin.
+     */
+    @Test
+    void partialpluginPipeline() {
+        ScannerContext scannerContext = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
+        doReturn(Set.<ScannerPlugin<?, ?>>of(new TestItemScannerPlugin() {
+            @Override
+            public boolean accepts(TestItem item, String path, Scope scope) {
+                return true;
+            }
+        }, new DependentTestItemScannerPlugin() {
+            @Override
+            public boolean accepts(TestItem item, String path, Scope scope) {
+                return false;
+            }
+        }, new NestedTestItemScannerPlugin() {
+            @Override
+            public boolean accepts(TestItem item, String path, Scope scope) {
+                return true;
+            }
+        })).when(scannerPluginRepository)
+            .getScannerPlugins(configuration, scannerContext);
+        Scanner scanner = new ScannerImpl(configuration, scannerContext, scannerPluginRepository);
+
+        Descriptor descriptor = scanner.scan(new TestItem(), "/", DefaultScope.NONE);
+
+        assertThat(descriptor).isInstanceOf(TestItemDescriptor.class);
     }
 }

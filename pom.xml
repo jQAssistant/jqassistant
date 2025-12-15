@@ -89,7 +89,7 @@
         <lombok.version>1.18.42</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <maven.version>3.6.3</maven.version>
-        <mockito.version>5.20.0</mockito.version>
+        <mockito.version>5.21.0</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
         <model-assert.version>1.1.0</model-assert.version>
         <neo4j_4x.version>4.4.46</neo4j_4x.version>
@@ -102,7 +102,7 @@
         <neo4j-browser.version>5.24.0</neo4j-browser.version>
         <slf4j.version>2.0.17</slf4j.version>
         <smallrye-config.version>3.10.2</smallrye-config.version>
-        <maven-resolver.version>1.9.24</maven-resolver.version>
+        <maven-resolver.version>1.9.25</maven-resolver.version>
         <snakeyaml.version>2.5</snakeyaml.version>
         <snakeyaml-engine.version>3.0.1</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
