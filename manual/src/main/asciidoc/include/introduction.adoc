@@ -35,9 +35,9 @@ Rules are expressed as Cypher queries and are specified in XML files:
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd">
 
     <group id="default">
         <includeConstraint refId="my-rules:MyConstraint"/>
@@ -91,7 +91,7 @@ Rules are expressed as Cypher queries and are specified in XML files:
 </jqassistant-rules>
 ----
 
-NOTE: The rule XML schema is available https://jqassistant.github.io/jqassistant/snapshot/schema/jqassistant-rule-v2.7.xsd[online] and should be picked automatically for code completion by your IDE.
+NOTE: The rule XML schema is available https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd[online] and should be picked automatically for code completion by your IDE.
 
 Each rule comes with an unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
 the correct order. Furthermore a human readable description shall help developers to understand the rationale behind them.
@@ -164,9 +164,9 @@ A concept can provide another concept directly:
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd">
 
     <concept id="my-rules:ConcreteConcept">
        <providesConcept refId="plugin:AbstractConcept"/>
@@ -184,9 +184,9 @@ In these cases it is possible to perform a dynamic extension (duck-typing) by sp
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd">
 
     <group id="default">
         <includeConcept refId="another-plugin:ConcreteConcept">
@@ -204,9 +204,9 @@ For cases where this is not desirable it is possible to specify an activation st
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd">
 
     <concept id="my-rules:ConcreteConcept">
        <providesConcept refId="plugin:AbstractConcept" activation="if-required"/>
@@ -242,9 +242,9 @@ further severity is given, e.g.
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd">
 
     <group id="my-rules:MyGroup" severity="blocker">
         <includeConstraint refId="my-rules:MyConstraint1"/>
@@ -329,9 +329,9 @@ Both concepts and constraints may define required parameters:
 [source,xml]
 .my-rules.xml
 ----
-<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7"
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.7.xsd">
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.8 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.8.xsd">
 
     <concept id="my-rules:ApplicationRootPackage">
         <requiresParameter name="rootPackage" type="String" defaultValue="com.buschmais"/> <!-- <1> -->

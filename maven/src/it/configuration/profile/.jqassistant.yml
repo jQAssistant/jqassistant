@@ -2,3 +2,9 @@
   jqassistant:
     store:
       uri: "file://${project.build.directory}/test-store"
+"%activeByDefault":
+  jqassistant:
+    store:
+      uri: "file://${project.build.directory}/active-by-default-store"
+
+

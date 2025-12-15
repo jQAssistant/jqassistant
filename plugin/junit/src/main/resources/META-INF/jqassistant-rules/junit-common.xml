@@ -46,21 +46,23 @@
         <description>All @Ignore and @Disabled annotations must provide a message.</description>
         <cypher><![CDATA[
             MATCH
+              (t:Type)-[:DECLARES*0..1]->(e),
               (e)-[:ANNOTATED_BY]->(ignore:Annotation)-[:OF_TYPE]->(ignoreType:Type)
             WHERE
               ignoreType.fqn= "org.junit.Ignore"
               AND NOT (ignore)-[:HAS]->(:Value{name:"value"})
             RETURN
-              e AS IgnoreWithoutMessage
+              t AS DeclaringClass, e AS IgnoreWithoutMessage
             UNION
             MATCH
+              (t:Type)-[:DECLARES*0..1]->(e),
               (e)-[:ANNOTATED_BY]->(disabled:Annotation)-[:OF_TYPE]->(disabledType:Type)
             WHERE
               disabledType.fqn = "org.junit.jupiter.api.Disabled"
               AND NOT (disabled)-[:HAS]->(:Value{name:"value"})
             RETURN
-              e AS IgnoreWithoutMessage
-
+              t AS DeclaringClass, e AS IgnoreWithoutMessage
         ]]></cypher>
+        <report primaryColumn="IgnoreWithoutMessage"/>
     </constraint>
 </jqassistant-rules>

@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,17 +28,16 @@ class JsonSchemaGeneratorTest {
 
     @Test
     void testInvalidYaml() throws Exception {
-        Set<ValidationMessage> messages = validateYaml(JsonSchemaGenerator.class.getResource("/testdata/generate-schema/invalidJQAYaml.yaml"), schemaNode);
         Set<String> validationResults = new HashSet<>();
-        for (ValidationMessage message : messages) {
+        for (Error message : validateYaml(JsonSchemaGenerator.class.getResource("/testdata/generate-schema/invalidJQAYaml.yaml"), schemaNode)) {
             validationResults.add(message.getInstanceLocation()
                 .toString());
         }
 
         Set<String> expectedPaths = new HashSet<>();
-        expectedPaths.add("$.jqassistant.analyze.report.properties");
-        expectedPaths.add("$.jqassistant.plugins[0]");
-        expectedPaths.add("$.jqassistant.scan.include.files");
+        expectedPaths.add("/jqassistant/analyze/report/properties");
+        expectedPaths.add("/jqassistant/plugins/0");
+        expectedPaths.add("/jqassistant/scan/include/files");
 
         for (String path : expectedPaths) {
             assertThat(validationResults).contains(path);

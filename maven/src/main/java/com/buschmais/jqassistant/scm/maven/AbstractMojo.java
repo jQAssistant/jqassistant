@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.shared.aether.AetherArtifactProvider;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
+import com.buschmais.jqassistant.core.shared.configuration.ConfigurationFileLoader;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
@@ -20,11 +21,13 @@ import com.buschmais.jqassistant.scm.maven.configuration.source.MavenProjectConf
 import com.buschmais.jqassistant.scm.maven.configuration.source.MavenPropertiesConfigSource;
 import com.buschmais.jqassistant.scm.maven.configuration.source.SettingsConfigSource;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
+import com.buschmais.jqassistant.scm.maven.provider.ConfigurationFileLoaderProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.source.yaml.YamlConfigSource;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -99,6 +102,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Component
     private RuntimeInformation runtimeInformation;
+
+    @Component
+    private ConfigurationFileLoaderProvider configurationFileLoaderProvider;
 
     @Component
     private PluginRepositoryProvider pluginRepositoryProvider;
@@ -299,13 +305,20 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             projectPropertiesConfigSource, userPropertiesConfigSource, systemPropertiesConfigSource, yamlConfiguration, propertiesConfiguration };
         File userHome = new File(System.getProperty("user.home"));
         File executionRootDirectory = new File(session.getExecutionRootDirectory());
-        ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(MavenConfiguration.class, configurationLocations)
+        List<String> activatedProfiles = new ArrayList<>(session.getProjectBuildingRequest()
+            .getActiveProfileIds());
+        currentProject.getActiveProfiles()
+            .stream()
+            .map(Profile::getId)
+            .forEach(activatedProfiles::add);
+        ConfigurationFileLoader configurationFileLoader = configurationFileLoaderProvider.getConfigurationFileLoader();
+        ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(configurationFileLoader, MavenConfiguration.class,
+                configurationLocations)
             .withUserHome(userHome)
             .withDirectory(executionRootDirectory, CONFIGURATION_ORDINAL_EXECUTION_ROOT)
             .withEnvVariables()
             .withClasspath()
-            .withProfiles(session.getProjectBuildingRequest()
-                .getActiveProfileIds())
+            .withProfiles(activatedProfiles)
             .withIgnoreProperties(Set.of(PROPERTY_CONFIGURATION_LOCATIONS));
         if (!executionRootDirectory.equals(currentProject.getBasedir())) {
             builder.withWorkingDirectory(currentProject.getBasedir());
