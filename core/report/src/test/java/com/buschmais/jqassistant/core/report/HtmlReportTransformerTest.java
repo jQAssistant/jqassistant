@@ -48,8 +48,8 @@ class HtmlReportTransformerTest {
 
         String html = htmlWriter.toString();
         assertThat(getRuleIds(html, "([a-zA-Z]*):Overridden([A-Za-z0-9]*)")).containsExactlyInAnyOrder("concept:OverriddenConcept1",
-                "concept:OverriddenConcept2", "constraint:OverriddenConstraint", "group:OverriddenGroup1", "group:OverriddenGroup2");
-
+                "concept:OverriddenConcept2", "constraint:OverriddenConstraint", "group:OverriddenGroup1", "group:OverriddenGroup2",
+                "resultOfconcept:OverriddenConcept1", "resultOfconcept:OverriddenConcept2", "resultOfconstraint:OverriddenConstraint");
     }
 
     private static Set<String> getRuleIds(String html, String rulePattern) {
