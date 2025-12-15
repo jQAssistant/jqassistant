@@ -38,18 +38,25 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
     protected void add(T rule) throws RuleException {
         T existingRule = rules.put(rule.getId(), rule);
         if (existingRule != null) {
-            throw new RuleException("Cannot add rule with id '" + rule.getId() + "' from '" + rule.getSource().getId() + "' as it has already been defined in '"
-                    + existingRule.getSource().getId() + "'.");
+            throw new RuleException("Cannot add rule with id '" + rule.getId() + "' from '" + rule.getSource()
+                    .getId() + "' as it has already been defined in '" + existingRule.getSource()
+                    .getId() + "'.");
         }
     }
 
     /**
      * Adds the overridden and the overriding rules to the overrides map for later resolving.
+     * In case there is already a rule overriding the overridden one, an exception is thrown.
      */
-    public void updateOverrideRules(AbstractSeverityRule rule){
-        if(rule.getOverriddenIds() != null && !rule.getOverriddenIds().isEmpty()){
-            for(String overriddenId : rule.getOverriddenIds()){
-                overrides.put(overriddenId, rule);
+    public void updateOverrideRules(AbstractSeverityRule rule) throws RuleException {
+        if (rule.getOverriddenIds() != null && !rule.getOverriddenIds()
+                .isEmpty()) {
+            for (String overriddenId : rule.getOverriddenIds()) {
+                Rule existingOverriding = overrides.put(overriddenId, rule);
+                if (existingOverriding != null) {
+                    throw new RuleException("A rule is overridden by two different rules. The rule " + rule.getId() + " overrides the rule " + overriddenId
+                            + ", which is already overridden by rule " + existingOverriding.getId() + ".");
+                }
             }
         }
     }

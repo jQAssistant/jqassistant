@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toSet;
 
@@ -95,8 +96,10 @@ public class RuleSetExecutor<R> {
     private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity overriddenSeverity, Set<String> activatedConcepts)
         throws RuleException {
         if (ruleSet.getGroupsBucket().isOverridden(group.getId())) {
-            group = (Group) ruleSet.getGroupsBucket().getOverridingRule(group);
-        }
+            Group overridingGroup = (Group) ruleSet.getGroupsBucket().getOverridingRule(group);
+            log.info("The group '{}' is overridden by '{}'." , group.getId(), overridingGroup.getId());
+            executeGroup(ruleSet, (Group) ruleSet.getGroupsBucket().getOverridingRule(group), excludedConstraintIds, overriddenSeverity, activatedConcepts);
+        } else
         if (!executedGroups.contains(group)) {
             Severity groupSeverity = getEffectiveSeverity(overriddenSeverity, group.getSeverity());
             ruleVisitor.beforeGroup(group, groupSeverity);
@@ -191,11 +194,13 @@ public class RuleSetExecutor<R> {
      *     If the constraint cannot be validated.
      */
     private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity overriddenSeverity, Set<String> activatedConcepts) throws RuleException {
+        Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, constraint.getSeverity());
         if (ruleSet.getConstraintBucket().isOverridden(constraint.getId())) {
-            constraint = (Constraint) ruleSet.getConstraintBucket().getOverridingRule(constraint);
-        }
-        if (!executedConstraints.contains(constraint)) {
-            Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, constraint.getSeverity());
+            Constraint overridingConstraint = (Constraint) ruleSet.getConstraintBucket().getOverridingRule(constraint);
+            log.info("The constraint '{}' is overridden by '{}'", constraint.getId(), overridingConstraint.getId());
+            ruleVisitor.skipConstraint(constraint, effectiveSeverity, emptyMap());
+            validateConstraint(ruleSet, overridingConstraint, overriddenSeverity, activatedConcepts);
+        } else if (!executedConstraints.contains(constraint)) {
             Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyRequiredConcepts(ruleSet, constraint, activatedConcepts, new LinkedHashSet<>());
             if (requiredConceptsAreSuccessful(requiredConceptResults)) {
                 checkDeprecation(constraint);
@@ -224,18 +229,21 @@ public class RuleSetExecutor<R> {
      */
     private R applyConcept(RuleSet ruleSet, Concept concept, Severity overriddenSeverity, Set<String> activatedConcepts, Set<Concept> executionStack)
         throws RuleException {
+        Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, concept.getSeverity());
         if (ruleSet.getConceptBucket()
                 .isOverridden(concept.getId())) {
             Concept overridingConcept = (Concept) ruleSet.getConceptBucket()
                     .getOverridingRule(concept);
             if (checkOverridesProvides(concept, overridingConcept)) {
-                concept = overridingConcept;
+                log.info("The concept '{}' is overridden by '{}'", concept.getId(), overridingConcept.getId());
+                ruleVisitor.skipConcept(concept, effectiveSeverity, emptyMap());
+                return applyConcept(ruleSet, overridingConcept, overriddenSeverity, activatedConcepts, executionStack);
             }
         }
         R result = executedConcepts.get(concept);
         if (result == null) {
             executionStack.add(concept);
-            Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, concept.getSeverity());
+
             Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyAllRequiredConcepts(ruleSet, concept, activatedConcepts, executionStack);
             if (requiredConceptsAreSuccessful(requiredConceptResults)) {
                 Map<Concept, R> providedConceptResults = applyProvidingConcepts(ruleSet, concept, overriddenSeverity, activatedConcepts, executionStack);

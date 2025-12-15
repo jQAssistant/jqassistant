@@ -37,6 +37,24 @@
         <severity level="2">major</severity>
         <duration>10</duration>
     </concept>
+    <concept id="concept:OverriddenConcept1">
+        <description>Minor Success</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>skipped</status>
+        <duration>10</duration>
+    </concept>
+    <concept id="concept:OverriddenConcept2">
+        <description>Minor Success</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>skipped</status>
+        <duration>10</duration>
+    </concept>
     <constraint id="constraint:ConstraintOverriding">
         <description>Minor Success</description>
         <overrides-constraint id="constraint:OverriddenConstraint"/>
@@ -56,6 +74,15 @@
         </verificationResult>
         <status>warning</status>
         <severity level="2">major</severity>
+        <duration>10</duration>
+    </constraint>
+    <constraint id="constraint:OverriddenConstraint">
+        <description>Major Warning</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>skipped</status>
         <duration>10</duration>
     </constraint>
 </jqassistant-report>

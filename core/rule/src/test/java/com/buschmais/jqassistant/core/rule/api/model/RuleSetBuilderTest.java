@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
@@ -8,6 +10,7 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -93,5 +96,36 @@ class RuleSetBuilderTest {
                         .getRuleSet())
                 .withMessageStartingWith("Concept 'Concept{id='non-resolvable-providing',")
                 .withMessageEndingWith("provides non-resolvable concept with id 'non-resolvable-provided'.");
+    }
+
+    @Test
+    void twiceOverriddenConceptThrowsException() {
+        Concept overriddenConcept = Concept.builder()
+                .id("test:OverriddenConcept")
+                .severity(MINOR)
+                .build();
+
+        List<String> overriddenConcepts = new LinkedList<>();
+        overriddenConcepts.add("test:OverriddenConcept");
+
+
+        Concept overridingConcept1 = Concept.builder()
+                .id("test:OverridingConcept1")
+                .severity(MINOR)
+                .overrideConcepts(overriddenConcepts)
+                .build();
+
+        Concept overridingConcept2 = Concept.builder()
+                .id("test:OverridingConcept2")
+                .severity(MINOR)
+                .overrideConcepts(overriddenConcepts)
+                .build();
+
+        assertThatExceptionOfType(RuleException.class).isThrownBy(() -> RuleSetBuilder.newInstance()
+                        .addConcept(overriddenConcept)
+                        .addConcept(overridingConcept1)
+                        .addConcept(overridingConcept2)
+                        .getRuleSet())
+                .withMessageContaining("test:OverriddenConcept", "test:OverridingConcept1", "test:OverridingConcept2");
     }
 }

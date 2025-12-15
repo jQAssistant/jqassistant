@@ -596,6 +596,7 @@ class RuleSetExecutorTest {
         Group group = Group.builder()
             .id("group")
             .concept("test:OverriddenConcept", MINOR)
+            .concept("test:OverriddenConceptSecond", MINOR)
             .build();
 
         Concept overriddenConcept = Concept.builder()
@@ -620,6 +621,7 @@ class RuleSetExecutorTest {
 
         RuleSet ruleSet = RuleSetBuilder.newInstance()
             .addConcept(overriddenConcept)
+            .addConcept(overriddenConceptSecond)
             .addConcept(overridingConcept)
             .addGroup(group)
             .getRuleSet();
@@ -633,6 +635,8 @@ class RuleSetExecutorTest {
         verify(visitor).visitConcept(overridingConcept, MINOR, emptyMap(), emptyMap());
         verify(visitor, never()).visitConcept(overriddenConcept, MINOR, emptyMap(), emptyMap());
         verify(visitor, never()).visitConcept(overriddenConceptSecond, MINOR, emptyMap(), emptyMap());
+        verify(visitor).skipConcept(overriddenConcept, MINOR, emptyMap());
+        verify(visitor).skipConcept(overriddenConceptSecond, MINOR, emptyMap());
     }
 
     @Test
@@ -725,6 +729,7 @@ class RuleSetExecutorTest {
         Group group = Group.builder()
             .id("group")
             .constraint("test:OverriddenConstraint", MINOR)
+            .constraint("test:OverriddenConstraintSecond", MINOR)
             .build();
 
         Constraint overriddenConstraint = Constraint.builder()
@@ -749,6 +754,7 @@ class RuleSetExecutorTest {
 
         RuleSet ruleSet = RuleSetBuilder.newInstance()
             .addConstraint(overriddenConstraint)
+                .addConstraint(overriddenConstraintSecond)
             .addConstraint(overridingConstraint)
             .addGroup(group)
             .getRuleSet();
@@ -762,6 +768,8 @@ class RuleSetExecutorTest {
         verify(visitor).visitConstraint(overridingConstraint, MINOR, emptyMap());
         verify(visitor, never()).visitConstraint(overriddenConstraint, MINOR, emptyMap());
         verify(visitor, never()).visitConstraint(overriddenConstraintSecond, MINOR, emptyMap());
+        verify(visitor).skipConstraint(overriddenConstraint, MINOR, emptyMap());
+        verify(visitor).skipConstraint(overriddenConstraintSecond, MINOR, emptyMap());
     }
 
     @Test
