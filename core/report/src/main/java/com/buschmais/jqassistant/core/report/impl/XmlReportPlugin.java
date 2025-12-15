@@ -201,8 +201,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
                 writeElementWithCharacters("description", rule.getDescription());
-                List<String> overriddenIds = ((AbstractExecutableRule) rule).getOverriddenIds();
-                writeOverrides(elementName, overriddenIds); //overrides-concept | overrides-constraint
+                writeOverrides(elementName, ((AbstractExecutableRule) rule).getOverriddenIds()); //overrides-concept | overrides-constraint
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);
                 writeVerificationResult(result.getVerificationResult());
