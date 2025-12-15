@@ -376,7 +376,7 @@ public class RuleSetExecutor<R> {
                 .stream()
                 .map(Concept.ProvidedConcept::getProvidedConceptId)
                 .collect(toSet());
-        if (!new HashSet<>(overridingConceptsProvides).equals(new HashSet<>(overriddenConceptsProvides))) {
+        if (!new HashSet<>(overridingConceptsProvides).containsAll(new HashSet<>(overriddenConceptsProvides))) {
             throw new RuleException(String.format("Overriding concept '%s' does not have the same ProvidedConcepts as the overridden concept '%s' ",
                     overriding.getProvidedConcepts(), overridden.getId()));
         }

@@ -647,18 +647,10 @@ class RuleSetExecutorTest {
                 .concept("test:IncorrectOverriddenConcept1", MINOR)
                 .concept("test:ConceptA", MINOR)
                 .build();
-        Group group2 = Group.builder()
-                .id("group2")
-                .concept("test:IncorrectOverridingConcept2", MINOR)
-                .concept("test:IncorrectOverriddenConcept2", MINOR)
-                .concept("test:ConceptA", MINOR)
-                .build();
 
         List<String> incorrectOverriddenConceptList1 = new LinkedList<>();
         incorrectOverriddenConceptList1.add("test:IncorrectOverriddenConcept1");
 
-        List<String> incorrectOverriddenConceptList2 = new LinkedList<>();
-        incorrectOverriddenConceptList2.add("test:IncorrectOverriddenConcept2");
 
         Concept incorrectOverriddenConcept1 = Concept.builder()
                 .id("test:IncorrectOverriddenConcept1")
@@ -676,22 +668,6 @@ class RuleSetExecutorTest {
                 .severity(MINOR)
                 .build();
 
-        Concept incorrectOverriddenConcept2 = Concept.builder()
-                .id("test:IncorrectOverriddenConcept2")
-                .severity(MINOR)
-                .build();
-
-        Concept incorrectOverridingConcept2 = Concept.builder()
-                .id("test:IncorrectOverridingConcept2")
-                .providedConcept(Concept.ProvidedConcept.builder()
-                        .providingConceptId("test:IncorrectOverridingConcept2")
-                        .providedConceptId("test:ConceptA")
-                        .activation(IF_REQUIRED)
-                        .build())
-                .overrideConcepts(incorrectOverriddenConceptList2)
-                .severity(MINOR)
-                .build();
-
         Concept providedConceptA = Concept.builder()
             .id("test:ConceptA")
             .severity(MINOR)
@@ -703,25 +679,13 @@ class RuleSetExecutorTest {
             .addConcept(providedConceptA)
             .addGroup(group1)
             .getRuleSet();
-        RuleSet ruleSet2 = RuleSetBuilder.newInstance()
-                .addConcept(incorrectOverriddenConcept2)
-                .addConcept(incorrectOverridingConcept2)
-                .addConcept(providedConceptA)
-                .addGroup(group2)
-                .getRuleSet();
 
         RuleSelection ruleSelection1 = RuleSelection.builder()
             .groupId("group1")
             .build();
-        RuleSelection ruleSelection2 = RuleSelection.builder()
-                .groupId("group2")
-                .build();
 
         assertThatExceptionOfType(RuleException.class)
                 .isThrownBy(() -> ruleExecutor.execute(ruleSet1, ruleSelection1));
-
-        assertThatExceptionOfType(RuleException.class)
-                .isThrownBy(() -> ruleExecutor.execute(ruleSet2, ruleSelection2));
     }
 
     @Test
