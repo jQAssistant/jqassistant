@@ -17,7 +17,6 @@ import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jqassistant.schema.rule.v2.ReferenceType;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
@@ -112,14 +111,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 String conceptId = this.processExecutableRule(executableRule, context, builder, this::getDefaultConceptSeverity);
                 Set<Concept.ProvidedConcept> providedConcepts = this.extractProvidedConcepts(conceptId, executableRule);
                 builder.overrideConcepts(((List<Map<String, Object>>) ofNullable(executableRule.get(OVERRIDES_CONCEPTS)).orElse(emptyList())).stream()
-                    .flatMap(map -> map.values()
-                        .stream())
-                    .map(value -> {
-                        ReferenceType overrideConcept = new ReferenceType();
-                        overrideConcept.setRefId((String) value);
-                        return overrideConcept;
-                    })
-                    .collect(Collectors.toList()));
+                        .flatMap(map -> map.values()
+                                .stream())
+                        .map(Object::toString)
+                        .collect(Collectors.toList()));
                 builder.providedConcepts(providedConcepts);
                 context.getBuilder()
                     .addConcept(builder.build());
@@ -133,14 +128,10 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 Constraint.ConstraintBuilder builder = Constraint.builder();
                 this.processExecutableRule(executableRule, context, builder, this::getDefaultConstraintSeverity);
                 builder.overrideConstraints(((List<Map<String, Object>>) ofNullable(executableRule.get(OVERRIDES_CONSTRAINTS)).orElse(emptyList())).stream()
-                    .flatMap(map -> map.values()
-                        .stream())
-                    .map(value -> {
-                        ReferenceType overrideConstraint = new ReferenceType();
-                        overrideConstraint.setRefId((String) value);
-                        return overrideConstraint;
-                    })
-                    .collect(Collectors.toList()));
+                        .flatMap(map -> map.values()
+                                .stream())
+                        .map(Object::toString)
+                        .collect(Collectors.toList()));
                 context.getBuilder()
                     .addConstraint(builder.build());
             }
@@ -163,16 +154,11 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
         List<Map<String, Object>> constraints = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_CONSTRAINTS, key -> emptyList());
 
         List<Map<String, Object>> groups = (List<Map<String, Object>>) map.computeIfAbsent(INCLUDED_GROUPS, key -> emptyList());
-        List<ReferenceType> overriddenGroups = ofNullable((List<Map<String, Object>>) map.get(OVERRIDES_GROUPS)).orElse(emptyList())
-            .stream()
-            .flatMap(overrides -> overrides.values()
-                .stream())
-            .map(value -> {
-                ReferenceType overrideGroup = new ReferenceType();
-                overrideGroup.setRefId((String) value);
-                return overrideGroup;
-            })
-            .collect(Collectors.toList());
+        List<String> overriddenGroups = ofNullable((List<Map<String, Object>>) map.get(OVERRIDES_GROUPS)).orElse(emptyList())
+                .stream()
+                .flatMap(overrides -> overrides.values()
+                        .stream()).map(Object::toString)
+                .collect(Collectors.toList());
 
         SeverityMap includedGroups = new SeverityMap();
         SeverityMap includedConstraints = new SeverityMap();

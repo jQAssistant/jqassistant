@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptySet;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Controls execution of {@link RuleSet}s.
@@ -126,14 +126,6 @@ public class RuleSetExecutor<R> {
             LOGGER.warn("Could not find concepts matching to '{}'.", conceptPattern);
         } else {
             for (Concept matchingConcept : matchingConcepts) {
-                if (ruleSet.getConceptBucket()
-                    .isOverridden(matchingConcept.getId())) {
-                    Concept overridingConcept = (Concept) ruleSet.getConceptBucket()
-                        .getOverridingRule(matchingConcept);
-                    if (checkOverridesProvides(matchingConcept, overridingConcept)) {
-                        matchingConcept = overridingConcept;
-                    }
-                }
                 applyConcept(ruleSet, matchingConcept, overriddenSeverity, activatedConcepts, new LinkedHashSet<>());
             }
         }
@@ -232,6 +224,14 @@ public class RuleSetExecutor<R> {
      */
     private R applyConcept(RuleSet ruleSet, Concept concept, Severity overriddenSeverity, Set<String> activatedConcepts, Set<Concept> executionStack)
         throws RuleException {
+        if (ruleSet.getConceptBucket()
+                .isOverridden(concept.getId())) {
+            Concept overridingConcept = (Concept) ruleSet.getConceptBucket()
+                    .getOverridingRule(concept);
+            if (checkOverridesProvides(concept, overridingConcept)) {
+                concept = overridingConcept;
+            }
+        }
         R result = executedConcepts.get(concept);
         if (result == null) {
             executionStack.add(concept);
@@ -359,17 +359,17 @@ public class RuleSetExecutor<R> {
     /**
      * Checks if an overriding concept provides the same concepts as the overridden concept.
      */
-    private boolean checkOverridesProvides(Concept overridden, Concept overriding) throws IllegalArgumentException {
-        List<String> overridingConceptsProvides = overriding.getProvidedConcepts()
+    private boolean checkOverridesProvides(Concept overridden, Concept overriding) throws RuleException {
+        Set<String> overridingConceptsProvides = overriding.getProvidedConcepts()
                 .stream()
                 .map(Concept.ProvidedConcept::getProvidedConceptId)
-                .collect(toList());
-        List<String> overriddenConceptsProvides = overridden.getProvidedConcepts()
+                .collect(toSet());
+        Set<String> overriddenConceptsProvides = overridden.getProvidedConcepts()
                 .stream()
                 .map(Concept.ProvidedConcept::getProvidedConceptId)
-                .collect(toList());
+                .collect(toSet());
         if (!new HashSet<>(overridingConceptsProvides).equals(new HashSet<>(overriddenConceptsProvides))) {
-            throw new IllegalArgumentException(String.format("Overriding concept '%s' does not have the same ProvidedConcepts as the overridden concept '%s' ",
+            throw new RuleException(String.format("Overriding concept '%s' does not have the same ProvidedConcepts as the overridden concept '%s' ",
                     overriding.getProvidedConcepts(), overridden.getId()));
         }
         return true;

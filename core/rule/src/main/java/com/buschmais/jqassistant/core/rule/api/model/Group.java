@@ -1,10 +1,8 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import lombok.Getter;
-import org.jqassistant.schema.rule.v2.ReferenceType;
 
 /**
  * Defines a group.
@@ -81,12 +79,9 @@ public class Group extends AbstractSeverityRule {
             return this;
         }
 
-        public Group.GroupBuilder overrideGroups(List<ReferenceType> overrideGroups) {
+        public Group.GroupBuilder overrideGroups(List<String> overrideGroupIds) {
             Group r = build();
-            List<String> ids = overrideGroups.stream()
-                .map(ReferenceType::getRefId)
-                .collect(Collectors.toList());
-            r.setOverriddenIds(ids);
+            r.setOverriddenIds(overrideGroupIds);
             return this;
         }
     }

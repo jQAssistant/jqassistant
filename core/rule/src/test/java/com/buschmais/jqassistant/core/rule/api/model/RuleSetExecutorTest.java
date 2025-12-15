@@ -11,7 +11,6 @@ import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleSetExecutor;
 import com.buschmais.jqassistant.core.rule.api.executor.RuleVisitor;
 
-import org.jqassistant.schema.rule.v2.ReferenceType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -609,13 +608,9 @@ class RuleSetExecutorTest {
             .severity(MINOR)
             .build();
 
-        ReferenceType overridden = new ReferenceType();
-        overridden.setRefId("test:OverriddenConcept");
-        ReferenceType overriddenSecond = new ReferenceType();
-        overriddenSecond.setRefId("test:OverriddenConceptSecond");
-        List<ReferenceType> overriddenConcepts = new LinkedList<>();
-        overriddenConcepts.add(overridden);
-        overriddenConcepts.add(overriddenSecond);
+        List<String> overriddenConcepts = new LinkedList<>();
+        overriddenConcepts.add("test:OverriddenConcept");
+        overriddenConcepts.add("test:OverriddenConceptSecond");
 
         Concept overridingConcept = Concept.builder()
             .id("test:OverridingConcept")
@@ -655,15 +650,11 @@ class RuleSetExecutorTest {
                 .concept("test:ConceptA", MINOR)
                 .build();
 
-        List<ReferenceType> incorrectOverriddenConceptList1 = new LinkedList<>();
-        ReferenceType incorrectOverriddenConceptType1 = new ReferenceType();
-        incorrectOverriddenConceptType1.setRefId("test:IncorrectOverriddenConcept1");
-        incorrectOverriddenConceptList1.add(incorrectOverriddenConceptType1);
+        List<String> incorrectOverriddenConceptList1 = new LinkedList<>();
+        incorrectOverriddenConceptList1.add("test:IncorrectOverriddenConcept1");
 
-        List<ReferenceType> incorrectOverriddenConceptList2 = new LinkedList<>();
-        ReferenceType incorrectOverriddenConceptType2 = new ReferenceType();
-        incorrectOverriddenConceptType2.setRefId("test:IncorrectOverriddenConcept2");
-        incorrectOverriddenConceptList2.add(incorrectOverriddenConceptType2);
+        List<String> incorrectOverriddenConceptList2 = new LinkedList<>();
+        incorrectOverriddenConceptList2.add("test:IncorrectOverriddenConcept2");
 
         Concept incorrectOverriddenConcept1 = Concept.builder()
                 .id("test:IncorrectOverriddenConcept1")
@@ -722,10 +713,10 @@ class RuleSetExecutorTest {
                 .groupId("group2")
                 .build();
 
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatExceptionOfType(RuleException.class)
                 .isThrownBy(() -> ruleExecutor.execute(ruleSet1, ruleSelection1));
 
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatExceptionOfType(RuleException.class)
                 .isThrownBy(() -> ruleExecutor.execute(ruleSet2, ruleSelection2));
     }
 
@@ -746,13 +737,9 @@ class RuleSetExecutorTest {
             .severity(MINOR)
             .build();
 
-        ReferenceType overridden = new ReferenceType();
-        overridden.setRefId("test:OverriddenConstraint");
-        ReferenceType overriddenSecond = new ReferenceType();
-        overriddenSecond.setRefId("test:OverriddenConstraintSecond");
-        List<ReferenceType> overriddenConstraints = new LinkedList<>();
-        overriddenConstraints.add(overridden);
-        overriddenConstraints.add(overriddenSecond);
+        List<String> overriddenConstraints = new LinkedList<>();
+        overriddenConstraints.add("test:OverriddenConstraint");
+        overriddenConstraints.add("test:OverriddenConstraintSecond");
 
         Constraint overridingConstraint = Constraint.builder()
             .id("test:OverridingConstraint")
@@ -779,14 +766,10 @@ class RuleSetExecutorTest {
 
     @Test
     void overriddenGroups() throws RuleException {
-        ReferenceType overridden = new ReferenceType();
-        overridden.setRefId("test:OverriddenGroup");
-        ReferenceType overriddenSecond = new ReferenceType();
-        overriddenSecond.setRefId("test:OverriddenGroupSecond");
 
-        List<ReferenceType> overriddenGroups = new LinkedList<>();
-        overriddenGroups.add(overridden);
-        overriddenGroups.add(overriddenSecond);
+        List<String> overriddenGroups = new LinkedList<>();
+        overriddenGroups.add("test:OverriddenGroup");
+        overriddenGroups.add("test:OverriddenGroupSecond");
 
         Group overridingGroup = Group.builder()
             .id("test:OverridingGroup")

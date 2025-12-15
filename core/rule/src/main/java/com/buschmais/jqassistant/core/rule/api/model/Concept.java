@@ -3,10 +3,8 @@ package com.buschmais.jqassistant.core.rule.api.model;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import lombok.*;
-import org.jqassistant.schema.rule.v2.ReferenceType;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 
@@ -75,12 +73,9 @@ public class Concept extends AbstractExecutableRule {
             return this;
         }
 
-        public ConceptBuilder overrideConcepts(List<ReferenceType> overrideConcepts) {
+        public ConceptBuilder overrideConcepts(List<String> overrideConceptIds) {
             Concept r = build();
-            List<String> ids = overrideConcepts.stream()
-                .map(ReferenceType::getRefId)
-                .collect(Collectors.toList());
-            r.setOverriddenIds(ids);
+            r.setOverriddenIds(overrideConceptIds);
             return this;
         }
     }

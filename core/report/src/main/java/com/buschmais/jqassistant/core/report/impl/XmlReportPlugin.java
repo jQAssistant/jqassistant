@@ -150,17 +150,10 @@ public class XmlReportPlugin implements ReportPlugin {
                     .replaceAll(""));
                 xmlStreamWriter.writeEndElement();
             }
-            List<String> overriddenIds = group.getOverriddenIds();
-            if (overriddenIds != null && !overriddenIds.isEmpty()) {
-                for(String id : overriddenIds){
-                    xmlStreamWriter.writeStartElement("overrides-group");
-                    xmlStreamWriter.writeAttribute("id", id);
-                    xmlStreamWriter.writeEndElement();
-                }
-            }
         });
-        this.groupBeginTime = now.getTime();
-    }
+                writeOverrides("group", group.getOverriddenIds());
+                this.groupBeginTime = now.getTime();
+            }
 
     @Override
     public void endGroup() throws ReportException {
@@ -209,17 +202,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeAttribute("id", rule.getId());
                 writeElementWithCharacters("description", rule.getDescription());
                 List<String> overriddenIds = ((AbstractExecutableRule) rule).getOverriddenIds();
-                if(overriddenIds != null && !overriddenIds.isEmpty()) {
-                    for (String id : overriddenIds) {
-                        if (elementName.equals("concept")) {
-                            xmlStreamWriter.writeStartElement("overrides-concept");
-                        } else {
-                            xmlStreamWriter.writeStartElement("overrides-constraint");
-                        }
-                        xmlStreamWriter.writeAttribute("id", id);
-                        xmlStreamWriter.writeEndElement();
-                    }
-                }
+                writeOverrides(elementName, overriddenIds); //overrides-concept | overrides-constraint
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);
                 writeVerificationResult(result.getVerificationResult());
@@ -472,6 +455,25 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeAttribute("id", concept.getId());
                 writeStatus(entryStatusEntry.getValue());
                 xmlStreamWriter.writeEndElement();
+            }
+        }
+    }
+
+    private void writeOverrides(String elementName, List<String> overriddenIds) throws ReportException {
+        if (overriddenIds != null && !overriddenIds.isEmpty()) {
+            for (String id : overriddenIds) {
+                xml(() -> {
+                    if(elementName.equals("concept")){
+                        xmlStreamWriter.writeStartElement("overrides-concept");
+                    }
+                    else if(elementName.equals("constraint")){
+                        xmlStreamWriter.writeStartElement("overrides-constraint");
+                    } else{
+                        xmlStreamWriter.writeStartElement("overrides-group");
+                    }
+                    xmlStreamWriter.writeAttribute("id", id);
+                    xmlStreamWriter.writeEndElement();
+                });
             }
         }
     }

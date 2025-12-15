@@ -13,7 +13,6 @@ import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
 import org.jqassistant.schema.report.v2.*;
-import org.jqassistant.schema.rule.v2.ReferenceType;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.XmlReportTestHelper.ROW_COUNT_VERIFICATION;
@@ -247,23 +246,15 @@ class XmlReportTest {
     void reportWithOverrides() throws ReportException {
         XmlReportPlugin xmlReportPlugin = XmlReportTestHelper.getXmlReportPlugin();
 
-        ReferenceType overriddenAReference = new ReferenceType();
-        overriddenAReference.setRefId("overridden-ConceptA");
-        ReferenceType overriddenA2Reference = new ReferenceType();
-        overriddenA2Reference.setRefId("overridden-ConceptA2");
-        List<ReferenceType> overriddenA = new LinkedList<>();
-        overriddenA.add(overriddenAReference);
-        overriddenA.add(overriddenA2Reference);
+        List<String> overriddenA = new LinkedList<>();
+        overriddenA.add("overridden-ConceptA");
+        overriddenA.add("overridden-ConceptA2");
 
-        ReferenceType overriddenBReference = new ReferenceType();
-        overriddenBReference.setRefId("overridden-ConstraintB");
-        List<ReferenceType> overriddenB = new LinkedList<>();
-        overriddenB.add(overriddenBReference);
+        List<String> overriddenB = new LinkedList<>();
+        overriddenB.add("overridden-ConstraintB");
 
-        ReferenceType overriddenCReference = new ReferenceType();
-        overriddenCReference.setRefId("overridden-GroupC");
-        List<ReferenceType> overriddenC = new LinkedList<>();
-        overriddenC.add(overriddenCReference);
+        List<String> overriddenC = new LinkedList<>();
+        overriddenC.add("overridden-GroupC");
 
 
         Concept overridingConcept = Concept.builder()

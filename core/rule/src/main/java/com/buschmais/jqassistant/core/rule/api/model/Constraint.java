@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import org.jqassistant.schema.rule.v2.ReferenceType;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
 
@@ -24,12 +21,9 @@ public class Constraint extends AbstractExecutableRule {
             return this;
         }
 
-        public Constraint.ConstraintBuilder overrideConstraints(List<ReferenceType> overrideConstraints) {
+        public Constraint.ConstraintBuilder overrideConstraints(List<String> overrideConstraintIds) {
             Constraint r = build();
-            List<String> ids = overrideConstraints.stream()
-                .map(ReferenceType::getRefId)
-                .collect(Collectors.toList());
-            r.setOverriddenIds(ids);
+            r.setOverriddenIds(overrideConstraintIds);
             return this;
         }
     }
