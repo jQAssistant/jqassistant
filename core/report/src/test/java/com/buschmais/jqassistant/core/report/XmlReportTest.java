@@ -159,7 +159,7 @@ class XmlReportTest {
 
     @Test
     void nonExistingKeyColumnThrowsException() {
-        assertThatThrownBy(xmlReportTestHelper::createConstraintsWithConExistingKeyColumn).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(xmlReportTestHelper::createConstraintsWithNonExistingKeyColumn).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

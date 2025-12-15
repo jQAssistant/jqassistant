@@ -248,7 +248,7 @@ public final class XmlReportTestHelper {
         return xmlReportPlugin.getXmlReportFile();
     }
 
-    public void createConstraintsWithConExistingKeyColumn() throws ReportException {
+    public void createConstraintsWithNonExistingKeyColumn() throws ReportException {
         XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
         xmlReportPlugin.begin();
         Constraint constraint = Constraint.builder()
