@@ -234,11 +234,10 @@ public class RuleSetExecutor<R> {
                 .isOverridden(concept.getId())) {
             Concept overridingConcept = (Concept) ruleSet.getConceptBucket()
                     .getOverridingRule(concept);
-            if (checkOverridesProvides(concept, overridingConcept)) {
+            checkOverridesProvides(concept, overridingConcept);
                 log.info("The concept '{}' is overridden by '{}'", concept.getId(), overridingConcept.getId());
                 ruleVisitor.skipConcept(concept, effectiveSeverity, emptyMap());
                 return applyConcept(ruleSet, overridingConcept, overriddenSeverity, activatedConcepts, executionStack);
-            }
         }
         R result = executedConcepts.get(concept);
         if (result == null) {
@@ -367,7 +366,7 @@ public class RuleSetExecutor<R> {
     /**
      * Checks if an overriding concept provides the same concepts as the overridden concept.
      */
-    private boolean checkOverridesProvides(Concept overridden, Concept overriding) throws RuleException {
+    private void checkOverridesProvides(Concept overridden, Concept overriding) throws RuleException {
         Set<String> overridingConceptsProvides = overriding.getProvidedConcepts()
                 .stream()
                 .map(Concept.ProvidedConcept::getProvidedConceptId)
@@ -376,11 +375,10 @@ public class RuleSetExecutor<R> {
                 .stream()
                 .map(Concept.ProvidedConcept::getProvidedConceptId)
                 .collect(toSet());
-        if (!new HashSet<>(overridingConceptsProvides).containsAll(new HashSet<>(overriddenConceptsProvides))) {
+        if (!overridingConceptsProvides.containsAll(overriddenConceptsProvides)) {
             throw new RuleException(String.format("Overriding concept '%s' does not have the same ProvidedConcepts as the overridden concept '%s' ",
                     overriding.getProvidedConcepts(), overridden.getId()));
         }
-        return true;
     }
 
     @Getter
