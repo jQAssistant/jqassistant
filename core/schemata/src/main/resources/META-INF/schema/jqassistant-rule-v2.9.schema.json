@@ -172,6 +172,24 @@
       },
       "additionalProperties" : false
     },
+    "conceptJSch": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          { "$ref": "#/$defs/executableRuleJSch" },
+          {
+            "type": "object",
+            "properties": {
+              "abstract": {
+                "type": "boolean"
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      },
+      "additionalProperties": false
+    },
     "reportJScn" : {
       "type" : "object",
       "properties" : {
@@ -206,21 +224,17 @@
         "concepts": {
           "anyOf": [
             {
-              "allOf": [
-                {
-                  "$ref": "#/$defs/executableRuleJSch/items"
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "abstract": {
-                      "type": "boolean"
-                    }
-                  }
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "$ref": "#/$defs/conceptJSch"
                 }
-              ]
+              }
             },
-            { "type": "null" }
+            {
+              "type": "null"
+            }
           ]
         },
         "constraints": {
