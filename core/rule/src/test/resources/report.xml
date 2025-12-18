@@ -8,11 +8,11 @@
             where
               n.name = {name}
             return
-              n
+              n.property1 as Property1, n.property2 as Property2
             limit
               {limit}
         ]]></cypher>
-        <report type="custom" primaryColumn="n">
+        <report type="custom" primaryColumn="n" keyColumns="Property1,Property2">
             <property name="key1">value1</property>
             <property name="key2">value2</property>
         </report>
@@ -26,11 +26,11 @@
             where
               n.name = {name}
             return
-              n
+              n.property1 as Property1, n.property2 as Property2
             limit
               {limit}
         ]]></cypher>
-        <report type="custom" primaryColumn="n">
+        <report type="custom" primaryColumn="n" keyColumns="Property1 , Property2">
             <property name="key1">value1</property>
             <property name="key2">value2</property>
         </report>

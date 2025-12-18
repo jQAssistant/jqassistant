@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.report.api;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -9,10 +10,15 @@ import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.Constraint;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -23,6 +29,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Provides utility functionality for creating reports.
  */
+@Slf4j
 public final class ReportHelper {
 
     public interface FailAction<E extends Exception> {
@@ -93,14 +100,33 @@ public final class ReportHelper {
 
     private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
         StringBuilder id = new StringBuilder(rule.getClass()
-            .getName()).append("|")
-            .append(rule.getId())
-            .append("|");
-        columns.entrySet()
-            .forEach(entry -> id.append(entry.getKey())
-                .append(':')
-                .append(entry.getValue()
-                    .getLabel()));
+                .getName()).append("|")
+                .append(rule.getId())
+                .append("|");
+
+        if (rule.getReport() != null && rule.getReport()
+                .getKeyColumns() != null) {
+            for (String keyColumnName : rule.getReport()
+                    .getKeyColumns()) {
+                if(keyColumnName.isEmpty()){
+                    throw new IllegalArgumentException(
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn value is empty.", rule.getId()));
+                }
+                if (!columns.containsKey(keyColumnName)) {
+                    throw new IllegalArgumentException(
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist.", rule.getId(), keyColumnName));
+                } else {
+                    id.append(keyColumnName)
+                            .append(':')
+                            .append(columns.get(keyColumnName)
+                                    .getLabel());
+                }
+            }
+        } else {
+            columns.forEach((key, value) -> id.append(key)
+                    .append(':')
+                    .append(value.getLabel()));
+        }
         return DigestUtils.sha256Hex(id.toString());
     }
 
