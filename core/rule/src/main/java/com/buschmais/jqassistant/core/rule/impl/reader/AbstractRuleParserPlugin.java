@@ -62,6 +62,7 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String ID = "id";
     protected static final String REF_ID = "refId";
     protected static final String ACTIVATION = "activation";
+    protected static final String ABSTRACT = "abstract";
 
     @Override
     public void parse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException {
