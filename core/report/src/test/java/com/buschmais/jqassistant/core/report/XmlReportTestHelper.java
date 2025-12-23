@@ -34,8 +34,10 @@ public final class XmlReportTestHelper {
 
     public static final String C1 = "c1";
     public static final String C2 = "c2";
+
     public static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder()
         .build();
+
     public static final Build BUILD = new Build() {
         @Override
         public String name() {
@@ -53,16 +55,20 @@ public final class XmlReportTestHelper {
         }
     };
 
+    public static final File REPORT_DIRECTORY = new File("target/test");
+
     /**
      * Creates a test report.
      *
+     * @param properties
+     *     The report properties.
      * @return The test report.
      * @throws ReportException
      *     If the test fails.
      */
-    public File createXmlReport() throws ReportException, MalformedURLException {
+    public File createXmlReport(Map<String, Object> properties) throws ReportException, MalformedURLException {
         ReportContext reportContext = getReportContext();
-        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin(reportContext);
+        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin(reportContext, properties);
         xmlReportPlugin.begin();
         Concept concept = Concept.builder()
             .id("my:concept")
@@ -203,20 +209,18 @@ public final class XmlReportTestHelper {
 
     public static XmlReportPlugin getXmlReportPlugin() {
         ReportContext reportContext = getReportContext();
-        return getXmlReportPlugin(reportContext);
+        return getXmlReportPlugin(reportContext, emptyMap());
     }
 
-    private static XmlReportPlugin getXmlReportPlugin(ReportContext reportContext) {
+    public static XmlReportPlugin getXmlReportPlugin(ReportContext reportContext, Map<String, Object> properties) {
         XmlReportPlugin xmlReportWriter = new XmlReportPlugin();
         xmlReportWriter.initialize();
-        xmlReportWriter.configure(reportContext, emptyMap());
+        xmlReportWriter.configure(reportContext, properties);
         return xmlReportWriter;
     }
 
     private static ReportContext getReportContext() {
-        File reportDirectory = new File("target/test");
-        reportDirectory.mkdirs();
-        return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), reportDirectory);
+        return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), REPORT_DIRECTORY);
     }
 
     private static Row createRow(ExecutableRule<?> rule) {

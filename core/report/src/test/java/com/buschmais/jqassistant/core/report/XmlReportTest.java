@@ -13,9 +13,12 @@ import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.report.impl.XmlReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
+import org.apache.commons.io.FileUtils;
 import org.jqassistant.schema.report.v2.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.buschmais.jqassistant.core.report.XmlReportTestHelper.REPORT_DIRECTORY;
 import static com.buschmais.jqassistant.core.report.XmlReportTestHelper.ROW_COUNT_VERIFICATION;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -28,10 +31,18 @@ class XmlReportTest {
 
     private final XmlReportTestHelper xmlReportTestHelper = new XmlReportTestHelper();
 
+    @BeforeEach
+    void setUp() {
+        FileUtils.deleteQuietly(REPORT_DIRECTORY);
+        assertThat(REPORT_DIRECTORY.mkdirs()).isTrue();
+    }
+
     @Test
     void writeAndReadReport() throws ReportException, MalformedURLException {
-        File xmlReport = xmlReportTestHelper.createXmlReport();
+        File xmlReport = xmlReportTestHelper.createXmlReport(emptyMap());
+
         JqassistantReport report = readReport(xmlReport);
+
         assertThat(report).isNotNull();
         verifyContext(report.getContext());
         assertThat(report.getGroupOrConceptOrConstraint()).hasSize(1);
@@ -97,6 +108,9 @@ class XmlReportTest {
         AbstractReportType link = reportsByLabel.get("Link");
         assertThat(link).isInstanceOf(LinkType.class);
         assertThat(link.getValue()).isEqualTo("file:report.csv");
+
+        File htmlReport = new File(xmlReport.getParent(), XmlReportPlugin.REPORT_FILE_HTML);
+        assertThat(htmlReport).exists();
     }
 
     private static void verifyContext(ContextType contextType) {
@@ -112,6 +126,15 @@ class XmlReportTest {
         BuildProperty buildProperty = buildProperties.get(0);
         assertThat(buildProperty.getKey()).isEqualTo("BRANCH");
         assertThat(buildProperty.getValue()).isEqualTo("develop");
+    }
+
+    @Test
+    void writeReportWithoutHTML() throws ReportException, MalformedURLException {
+        File xmlReport = xmlReportTestHelper.createXmlReport(Map.of(XmlReportPlugin.PROPERTY_XML_REPORT_TRANSFORM_TO_HTML, "false"));
+
+        assertThat(xmlReport).exists();
+        File htmlReport = new File(xmlReport.getParent(), XmlReportPlugin.REPORT_FILE_HTML);
+        assertThat(htmlReport).doesNotExist();
     }
 
     @Test

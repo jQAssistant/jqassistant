@@ -27,40 +27,48 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
  * Scans the current Maven project.
  */
 @Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST, requiresDependencyResolution = TEST, threadSafe = true)
-public class ScanMojo extends AbstractModuleMojo {
+public class ScanMojo extends AbstractMojo {
 
     @Component(hint = "default")
     private DependencyGraphBuilder dependencyGraphBuilder;
 
     @Override
-    protected boolean isResetStoreBeforeExecution(MavenConfiguration configuration) {
-        return configuration.scan()
-            .reset()
-            .orElse(true);
+    protected MavenTask getMavenTask() {
+        return new AbstractMavenStoreTask(cachingStoreProvider) {
+
+            @Override
+            protected boolean isResetStoreBeforeExecution(MavenConfiguration configuration) {
+                return configuration.scan()
+                    .reset()
+                    .orElse(true);
+            }
+
+            @Override
+            public void enterModule(MavenTaskContext mavenTaskContext) throws MojoExecutionException, MojoFailureException {
+                withStore(store -> scan(mavenTaskContext, store), mavenTaskContext);
+            }
+
+            private void scan(MavenTaskContext mavenTaskContext, Store store) {
+                MavenProject mavenProject = mavenTaskContext.getCurrentModule();
+                MavenConfiguration configuration = mavenTaskContext.getConfiguration();
+                File workingDirectory = mavenProject.getBasedir();
+                File outputDirectory = mavenTaskContext.getOutputDirectory();
+                PluginRepository pluginRepository = mavenTaskContext.getPluginRepository();
+                ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
+                ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, workingDirectory, outputDirectory);
+                Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
+                scannerContext.push(MavenSession.class, mavenTaskContext.getMavenSession());
+                scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
+                try {
+                    scanner.scan(mavenProject, mavenProject.getFile()
+                        .getAbsolutePath(), NONE);
+                } finally {
+                    scannerContext.pop(DependencyGraphBuilder.class);
+                    scannerContext.pop(MavenSession.class);
+                }
+            }
+
+        };
     }
 
-    @Override
-    public void execute(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
-        withStore(store -> scan(mojoExecutionContext, store), mojoExecutionContext);
-    }
-
-    private void scan(MojoExecutionContext mojoExecutionContext, Store store) {
-        MavenProject mavenProject = mojoExecutionContext.getCurrentModule();
-        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
-        File workingDirectory = mavenProject.getBasedir();
-        File outputDirectory = mojoExecutionContext.getOutputDirectory();
-        PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
-        ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
-        ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, workingDirectory, outputDirectory);
-        Scanner scanner = new ScannerImpl(configuration.scan(), scannerContext, scannerPluginRepository);
-        scannerContext.push(MavenSession.class, mojoExecutionContext.getMavenSession());
-        scannerContext.push(DependencyGraphBuilder.class, dependencyGraphBuilder);
-        try {
-            scanner.scan(mavenProject, mavenProject.getFile()
-                .getAbsolutePath(), NONE);
-        } finally {
-            scannerContext.pop(DependencyGraphBuilder.class);
-            scannerContext.pop(MavenSession.class);
-        }
-    }
 }
