@@ -2001,7 +2001,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <li><a href="#ManifestFileScanner">Manifest File Scanner</a></li>
 <li><a href="#PropertyFileScanner">Property File Scanner</a></li>
 <li><a href="#ServiceLoaderFileScanner">Service Loader File Scanner</a></li>
-<li><a href="#_jqasuppress">@jQASuppress</a></li>
+<li><a href="#_annotations">Annotations</a></li>
 <li><a href="#_rules_provided_by_the_jqassistant_java_plugin">Rules provided by the jQAssistant Java Plugin</a></li>
 </ul>
 </li>
@@ -6622,30 +6622,28 @@ or a XML based property file (<code>*.xml</code>).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_jqasuppress"><a class="link" href="#_jqasuppress">@jQASuppress</a></h4>
+<h4 id="_annotations"><a class="link" href="#_annotations">Annotations</a></h4>
 <div class="paragraph">
-<p>The annotation <code>com.buschmais.jqassistant.plugin.java.api.annotation.jQASuppress</code> may be used for suppressing results of specific rules.
-It works in a similar way like <code>java.lang.SuppressWarnings</code> provided by Java.</p>
-</div>
-<div class="paragraph">
-<p>For using it the jQAssistant Java plugin must be declared as compile-time dependency for your project, e.g. in case of Maven:</p>
+<p>The jQAssistant <strong>Java Plugin</strong> plugin evaluates annotations provided by the <strong>Java Annotation Library</strong> which can be declared as dependency for the code of an application:</p>
 </div>
 <div class="listingblock">
 <div class="title">pom.xml</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
   <span class="tag">&lt;groupId&gt;</span>com.buschmais.jqassistant.plugin<span class="tag">&lt;/groupId&gt;</span>
-  <span class="tag">&lt;artifactId&gt;</span>java<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>java-annotation<span class="tag">&lt;/artifactId&gt;</span>
   <span class="tag">&lt;version&gt;</span>2.9.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
   <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_jqasuppress"><a class="link" href="#_jqasuppress">@jQASuppress</a></h5>
 <div class="paragraph">
-<p>The annotation can now be used to suppress annotated elements like classes, fields or methods from rule results.</p>
+<p>The annotation <code>com.buschmais.jqassistant.plugin.java.annotation.jQASuppress</code> can be used to suppress elements like classes, fields or methods from rule results.</p>
 </div>
 <div class="paragraph">
-<p>In the following example the class will not be reported by the constraint with the id <code>my-rules:MyConstraint</code>:</p>
+<p>In the following example any violation reported by constraint with id <code>my-rules:MyConstraint</code> will be suppressed for the annotated class:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -6659,23 +6657,75 @@ It works in a similar way like <code>java.lang.SuppressWarnings</code> provided 
 If not explicitly specified this is the first column specified in the return clause of a concept or constraint.</p>
 </div>
 <div class="paragraph">
-<p>If needed a custom column can be specified as well:</p>
+<p>If needed, any other column provided by the rule can be specified:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@jQASuppress</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint</span><span class="delimiter">&quot;</span></span>, column=<span class="string"><span class="delimiter">&quot;</span><span class="content">method</span><span class="delimiter">&quot;</span></span>)
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@jQASuppress</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint</span><span class="delimiter">&quot;</span></span>, column=<span class="string"><span class="delimiter">&quot;</span><span class="content">TargetType</span><span class="delimiter">&quot;</span></span>)
 <span class="directive">public</span> <span class="type">class</span> <span class="class">ClassViolatingMyConstraint</span> {
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>It is possible to set an expiry date and specify a reason for suppression. The expiry date must be specified in the format "yyyy-MM-dd".</p>
+<p>It is possible to set an expiry date and specify a reason for suppression. The date must be specified in the format "yyyy-MM-dd".</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@jQASuppress</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConstraint</span><span class="delimiter">&quot;</span></span>, until = <span class="string"><span class="delimiter">&quot;</span><span class="content">2026-02-28</span><span class="delimiter">&quot;</span></span>, reason = <span class="string"><span class="delimiter">&quot;</span><span class="content">The reason for suppressing this class.</span><span class="delimiter">&quot;</span></span>)
 <span class="directive">public</span> <span class="type">class</span> <span class="class">ClassViolatingMyConstraint</span> {
 }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_technicaldebt"><a class="link" href="#_technicaldebt">@TechnicalDebt</a></h5>
+<div class="paragraph">
+<p>The annotation <code>com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt</code> can be used to document technical debt on the level of Java types and/or their members.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+The annotation is evaluated by the constraint <code>java:TechnicalDebt</code> to create reports.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The annotation requires at least a message describing the technical debt:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@TechnicalDebt</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">This class must be migrated to ...</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">ClassWithTechnicalDebt</span> {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If needed, more optional information can be provided:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>priority</p>
+</li>
+<li>
+<p>the id of an issue</p>
+</li>
+<li>
+<p>links to related classes</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@TechnicalDebt</span>(value = <span class="string"><span class="delimiter">&quot;</span><span class="content">This class must be migrated to ...</span><span class="delimiter">&quot;</span></span>, priority = HIGH, issue = <span class="string"><span class="delimiter">&quot;</span><span class="content">259</span><span class="delimiter">&quot;</span></span>, seeAlso = { RelatedClass.class })
+<span class="directive">public</span> <span class="type">class</span> <span class="class">ClassWithTechnicalDebt</span> {
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -7832,13 +7882,13 @@ ORDER BY
 <div class="sect4">
 <h5 id="java:TechnicalDebt"><a class="link" href="#java:TechnicalDebt">Constraint <code>java:TechnicalDebt</code></a></h5>
 <div class="paragraph">
-<p>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt".</p>
+<p>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
   (type:Type)-[declares:DECLARES*0..]-&gt;(element),
-  (element)-[:ANNOTATED_BY]-&gt;()-[:HAS|CONTAINS*0..]-&gt;(technicalDebt)-[:OF_TYPE]-&gt;(:Type{fqn:&quot;com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt&quot;}),
+  (element)-[:ANNOTATED_BY]-&gt;()-[:HAS|CONTAINS*0..]-&gt;(technicalDebt)-[:OF_TYPE]-&gt;(:Type{fqn:&quot;com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt&quot;}),
   (technicalDebt)-[:HAS]-&gt;(descriptionValue:Value{name: &quot;value&quot;})
 OPTIONAL MATCH
   (technicalDebt)-[:HAS]-&gt;(:Value{name: &quot;priority&quot;})-[:IS]-&gt;(priorityField:Field)
@@ -12526,7 +12576,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-22 07:43:33 UTC
+Last updated 2025-12-23 17:18:42 UTC
 </div>
 </div>
 </body>
