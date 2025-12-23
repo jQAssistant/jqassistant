@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
+import java.util.List;
+
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
 
 /**
@@ -16,6 +18,12 @@ public class Constraint extends AbstractExecutableRule {
 
         @Override
         protected ConstraintBuilder getThis() {
+            return this;
+        }
+
+        public Constraint.ConstraintBuilder overrideConstraints(List<String> overrideConstraintIds) {
+            Constraint r = build();
+            r.setOverriddenIds(overrideConstraintIds);
             return this;
         }
     }

@@ -5,14 +5,7 @@ import java.util.Map;
 /**
  * Defines the interface for rules which can be executed on the database.
  */
-public interface ExecutableRule<E extends Executable> extends Rule {
-
-    /*
-     * Return the severity.
-     *
-     * @return The severity.
-     */
-    Severity getSeverity();
+public interface ExecutableRule<E extends Executable> extends SeverityRule {
 
     /**
      * Return the ids of required rules.
