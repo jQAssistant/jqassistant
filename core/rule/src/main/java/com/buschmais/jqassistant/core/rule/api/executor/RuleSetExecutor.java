@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.*;
@@ -285,9 +284,7 @@ public class RuleSetExecutor<R> {
                     .stream()
                     .map(Map.Entry::getKey)
                     .collect(toSet()));
-                this.ruleVisitor.providingConcepts(concept, providingConceptResults.keySet()
-                    .stream()
-                    .collect(toSet()));
+                this.ruleVisitor.providingConcepts(concept, providingConceptResults.keySet());
             } else {
                 ruleVisitor.skipConcept(concept, effectiveSeverity, requiredConceptResults);
             }
