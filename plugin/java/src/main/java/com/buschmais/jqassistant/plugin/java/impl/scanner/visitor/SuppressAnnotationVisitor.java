@@ -26,7 +26,9 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
     private final List<String> suppressIds = new ArrayList<>();
 
     private String suppressColumn;
+
     private LocalDate suppressUntil;
+
     private String suppressReason;
 
     public SuppressAnnotationVisitor(AnnotatedDescriptor annotatedDescriptor, VisitorHelper visitorHelper) {
@@ -48,9 +50,8 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
             case "until":
                 try {
                     this.suppressUntil = LocalDate.parse(value.toString(), DateTimeFormatter.ISO_LOCAL_DATE);
-                }
-                catch (DateTimeParseException e){
-                    throw new IllegalArgumentException("Wrong jQASuppress until date format, must be of format 'yyyy-MM-dd'.", e );
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("Wrong jQASuppress until date format, must be of format 'yyyy-MM-dd'.", e);
                 }
                 break;
             default:
