@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.rule.api.executor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
@@ -46,11 +47,11 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void requiredConcepts(Concept concept, List<Concept> requiredConcepts) {
+    public void requiredConcepts(Concept concept, Set<Concept> requiredConcepts) {
     }
 
     @Override
-    public void providingConcepts(Concept concept, List<Concept> providingConcepts) {
+    public void providingConcepts(Concept concept, Set<Concept> providingConcepts) {
     }
 
     @Override
@@ -67,9 +68,8 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
         throw new RuleException("Cannot visit constraint" + constraint);
     }
 
-
     @Override
-    public void requiredConcepts(Constraint constraint, List<Concept> concepts) {
+    public void requiredConcepts(Constraint constraint, Set<Concept> concepts) {
     }
 
     @Override

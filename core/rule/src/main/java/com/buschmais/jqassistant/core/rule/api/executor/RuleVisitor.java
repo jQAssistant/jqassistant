@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.rule.api.executor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
@@ -89,7 +90,7 @@ public interface RuleVisitor<R> {
      * @param requiredConcepts
      *     The required {@link Concept}s.
      */
-    void requiredConcepts(Concept concept, List<Concept> requiredConcepts);
+    void requiredConcepts(Concept concept, Set<Concept> requiredConcepts);
 
     /**
      * Provide {@link Concept}s for a given {@link Concept}.
@@ -99,7 +100,7 @@ public interface RuleVisitor<R> {
      * @param providingConcepts
      *     The providing {@link Concept}s.
      */
-    void providingConcepts(Concept concept, List<Concept> providingConcepts);
+    void providingConcepts(Concept concept, Set<Concept> providingConcepts);
 
     /**
      * Skip a {@link Concept}.
@@ -148,7 +149,7 @@ public interface RuleVisitor<R> {
      * @param requiredConcepts
      *     The required {@link Concept}s.
      */
-    void requiredConcepts(Constraint constraint, List<Concept> requiredConcepts);
+    void requiredConcepts(Constraint constraint, Set<Concept> requiredConcepts);
 
     /**
      * Skip a {@link Constraint}.

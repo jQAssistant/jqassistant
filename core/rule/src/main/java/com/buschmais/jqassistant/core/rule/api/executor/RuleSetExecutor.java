@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.*;
@@ -100,13 +101,15 @@ public class RuleSetExecutor<R> {
      */
     private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity overriddenSeverity, Set<String> activatedConcepts)
         throws RuleException {
-        if (ruleSet.getGroupsBucket().isOverridden(group.getId())) {
-            Group overridingGroup = (Group) ruleSet.getGroupsBucket().getOverridingRule(group);
-            log.info("The group '{}' is overridden by '{}'." , group.getId(), overridingGroup.getId());
+        if (ruleSet.getGroupsBucket()
+            .isOverridden(group.getId())) {
+            Group overridingGroup = (Group) ruleSet.getGroupsBucket()
+                .getOverridingRule(group);
+            log.info("The group '{}' is overridden by '{}'.", group.getId(), overridingGroup.getId());
             ruleVisitor.overriddenGroup(group, overridingGroup);
-            executeGroup(ruleSet, (Group) ruleSet.getGroupsBucket().getOverridingRule(group), excludedConstraintIds, overriddenSeverity, activatedConcepts);
-        } else
-        if (!executedGroups.contains(group)) {
+            executeGroup(ruleSet, (Group) ruleSet.getGroupsBucket()
+                .getOverridingRule(group), excludedConstraintIds, overriddenSeverity, activatedConcepts);
+        } else if (!executedGroups.contains(group)) {
             Severity groupSeverity = getEffectiveSeverity(overriddenSeverity, group.getSeverity());
             ruleVisitor.beforeGroup(group, groupSeverity);
             for (Map.Entry<String, Severity> conceptEntry : group.getConcepts()
@@ -217,8 +220,10 @@ public class RuleSetExecutor<R> {
      */
     private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity overriddenSeverity, Set<String> activatedConcepts) throws RuleException {
         Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, constraint.getSeverity());
-        if (ruleSet.getConstraintBucket().isOverridden(constraint.getId())) {
-            Constraint overridingConstraint = (Constraint) ruleSet.getConstraintBucket().getOverridingRule(constraint);
+        if (ruleSet.getConstraintBucket()
+            .isOverridden(constraint.getId())) {
+            Constraint overridingConstraint = (Constraint) ruleSet.getConstraintBucket()
+                .getOverridingRule(constraint);
             log.info("The constraint '{}' is overridden by '{}'", constraint.getId(), overridingConstraint.getId());
             ruleVisitor.overriddenConstraint(constraint, overridingConstraint);
             ruleVisitor.skipConstraint(constraint, effectiveSeverity, emptyMap());
@@ -234,7 +239,7 @@ public class RuleSetExecutor<R> {
             this.ruleVisitor.requiredConcepts(constraint, requiredConceptResults.keySet()
                 .stream()
                 .map(Map.Entry::getKey)
-                .collect(toList()));
+                .collect(toSet()));
             executedConstraints.add(constraint);
         }
     }
@@ -258,14 +263,14 @@ public class RuleSetExecutor<R> {
         throws RuleException {
         Severity effectiveSeverity = getEffectiveSeverity(overriddenSeverity, concept.getSeverity());
         if (ruleSet.getConceptBucket()
-                .isOverridden(concept.getId())) {
+            .isOverridden(concept.getId())) {
             Concept overridingConcept = (Concept) ruleSet.getConceptBucket()
-                    .getOverridingRule(concept);
+                .getOverridingRule(concept);
             checkOverridesProvides(concept, overridingConcept);
-                log.info("The concept '{}' is overridden by '{}'", concept.getId(), overridingConcept.getId());
-                ruleVisitor.overriddenConcept(concept, overridingConcept);
-                ruleVisitor.skipConcept(concept, effectiveSeverity, emptyMap());
-                return applyConcept(ruleSet, overridingConcept, overriddenSeverity, activatedConcepts, executionStack);
+            log.info("The concept '{}' is overridden by '{}'", concept.getId(), overridingConcept.getId());
+            ruleVisitor.overriddenConcept(concept, overridingConcept);
+            ruleVisitor.skipConcept(concept, effectiveSeverity, emptyMap());
+            return applyConcept(ruleSet, overridingConcept, overriddenSeverity, activatedConcepts, executionStack);
         }
         R result = executedConcepts.get(concept);
         if (result == null) {
@@ -276,8 +281,13 @@ public class RuleSetExecutor<R> {
                 Map<Concept, R> providingConceptResults = applyProvidingConcepts(ruleSet, concept, overriddenSeverity, activatedConcepts, executionStack);
                 checkDeprecation(concept);
                 result = ruleVisitor.visitConcept(concept, effectiveSeverity, requiredConceptResults, providingConceptResults);
-                this.ruleVisitor.requiredConcepts(concept, requiredConceptResults.keySet().stream().map(Map.Entry::getKey).collect(toList()));
-                this.ruleVisitor.providingConcepts(concept, providingConceptResults.keySet().stream().collect(toList()));
+                this.ruleVisitor.requiredConcepts(concept, requiredConceptResults.keySet()
+                    .stream()
+                    .map(Map.Entry::getKey)
+                    .collect(toSet()));
+                this.ruleVisitor.providingConcepts(concept, providingConceptResults.keySet()
+                    .stream()
+                    .collect(toSet()));
             } else {
                 ruleVisitor.skipConcept(concept, effectiveSeverity, requiredConceptResults);
             }
@@ -398,16 +408,16 @@ public class RuleSetExecutor<R> {
      */
     private void checkOverridesProvides(Concept overridden, Concept overriding) throws RuleException {
         Set<String> overridingConceptsProvides = overriding.getProvidedConcepts()
-                .stream()
-                .map(Concept.ProvidedConcept::getProvidedConceptId)
-                .collect(toSet());
+            .stream()
+            .map(Concept.ProvidedConcept::getProvidedConceptId)
+            .collect(toSet());
         Set<String> overriddenConceptsProvides = overridden.getProvidedConcepts()
-                .stream()
-                .map(Concept.ProvidedConcept::getProvidedConceptId)
-                .collect(toSet());
+            .stream()
+            .map(Concept.ProvidedConcept::getProvidedConceptId)
+            .collect(toSet());
         if (!overridingConceptsProvides.containsAll(overriddenConceptsProvides)) {
             throw new RuleException(String.format("Overriding concept '%s' does not have the same ProvidedConcepts as the overridden concept '%s' ",
-                    overriding.getProvidedConcepts(), overridden.getId()));
+                overriding.getProvidedConcepts(), overridden.getId()));
         }
     }
 

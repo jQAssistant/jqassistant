@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.model.*;
 import com.buschmais.jqassistant.core.analysis.spi.RuleRepository;
@@ -88,13 +89,13 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void requiredConcepts(Concept concept, List<Concept> requiredConcepts) {
+    public void requiredConcepts(Concept concept, Set<Concept> requiredConcepts) {
         delegate.requiredConcepts(concept, requiredConcepts);
         requiredConcepts(getConceptDescriptor(concept), requiredConcepts);
     }
 
     @Override
-    public void providingConcepts(Concept concept, List<Concept> providingConcepts) {
+    public void providingConcepts(Concept concept, Set<Concept> providingConcepts) {
         delegate.providingConcepts(concept, providingConcepts);
         store.requireTransaction(() -> {
             ConceptDescriptor conceptDescriptor = getConceptDescriptor(concept);
@@ -165,7 +166,7 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void requiredConcepts(Constraint constraint, List<Concept> requiredConcepts) {
+    public void requiredConcepts(Constraint constraint, Set<Concept> requiredConcepts) {
         delegate.requiredConcepts(constraint, requiredConcepts);
         requiredConcepts(getConstraintDescriptor(constraint), requiredConcepts);
     }
@@ -188,7 +189,7 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
         ruleDescriptor.setTimestamp(now());
     }
 
-    private void requiredConcepts(ExecutableRuleTemplate executableRuleTemplate, List<Concept> requiredConcepts) {
+    private void requiredConcepts(ExecutableRuleTemplate executableRuleTemplate, Set<Concept> requiredConcepts) {
         store.requireTransaction(() -> {
             for (Concept requiredConcept : requiredConcepts) {
                 executableRuleTemplate.getRequiresConcepts()
