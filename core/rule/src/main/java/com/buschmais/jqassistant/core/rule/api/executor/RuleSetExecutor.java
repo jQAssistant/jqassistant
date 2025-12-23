@@ -103,6 +103,7 @@ public class RuleSetExecutor<R> {
         if (ruleSet.getGroupsBucket().isOverridden(group.getId())) {
             Group overridingGroup = (Group) ruleSet.getGroupsBucket().getOverridingRule(group);
             log.info("The group '{}' is overridden by '{}'." , group.getId(), overridingGroup.getId());
+            ruleVisitor.overriddenGroup(group, overridingGroup);
             executeGroup(ruleSet, (Group) ruleSet.getGroupsBucket().getOverridingRule(group), excludedConstraintIds, overriddenSeverity, activatedConcepts);
         } else
         if (!executedGroups.contains(group)) {
@@ -219,6 +220,7 @@ public class RuleSetExecutor<R> {
         if (ruleSet.getConstraintBucket().isOverridden(constraint.getId())) {
             Constraint overridingConstraint = (Constraint) ruleSet.getConstraintBucket().getOverridingRule(constraint);
             log.info("The constraint '{}' is overridden by '{}'", constraint.getId(), overridingConstraint.getId());
+            ruleVisitor.overriddenConstraint(constraint, overridingConstraint);
             ruleVisitor.skipConstraint(constraint, effectiveSeverity, emptyMap());
             validateConstraint(ruleSet, overridingConstraint, overriddenSeverity, activatedConcepts);
         } else if (!executedConstraints.contains(constraint)) {
@@ -261,6 +263,7 @@ public class RuleSetExecutor<R> {
                     .getOverridingRule(concept);
             checkOverridesProvides(concept, overridingConcept);
                 log.info("The concept '{}' is overridden by '{}'", concept.getId(), overridingConcept.getId());
+                ruleVisitor.overriddenConcept(concept, overridingConcept);
                 ruleVisitor.skipConcept(concept, effectiveSeverity, emptyMap());
                 return applyConcept(ruleSet, overridingConcept, overriddenSeverity, activatedConcepts, executionStack);
         }

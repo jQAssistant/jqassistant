@@ -28,4 +28,9 @@ public interface ConceptDescriptor extends RuleDescriptor, ExecutableRuleTemplat
     @Retention(RUNTIME)
     @interface ProvidesConcept {
     }
+
+    @Relation("OVERRIDES_CONCEPT")
+    ConceptDescriptor getOverridesConcept();
+
+    void setOverridesConcept(ConceptDescriptor conceptDescriptor);
 }

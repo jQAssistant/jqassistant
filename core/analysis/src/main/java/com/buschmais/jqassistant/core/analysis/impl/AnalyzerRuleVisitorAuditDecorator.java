@@ -55,39 +55,9 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void includedConcepts(Group group, List<Concept> includedConcepts) {
-        delegate.includedConcepts(group, includedConcepts);
-        this.includedConcepts(getGroupDescriptor(group), includedConcepts);
-    }
-
-    private void includedConcepts(RuleGroupTemplate ruleGroupTemplate, List<Concept> concepts) {
-        store.requireTransaction(() -> {
-            for (Concept concept : concepts) {
-                ruleGroupTemplate.getIncludesConcepts()
-                    .add(getConceptDescriptor(concept));
-            }
-        });
-    }
-
-    @Override
     public void includedGroups(List<Group> groups) {
         delegate.includedGroups(groups);
         this.includedGroups(this.analyzeTaskDescriptor, groups);
-    }
-
-    @Override
-    public void includedGroups(Group group, List<Group> includedGroups) {
-        delegate.includedGroups(group, includedGroups);
-        this.includedGroups(getGroupDescriptor(group), includedGroups);
-    }
-
-    private void includedGroups(RuleGroupTemplate ruleGroupTemplate, List<Group> groups) {
-        store.requireTransaction(() -> {
-            for (Group group : groups) {
-                ruleGroupTemplate.getIncludesGroups()
-                    .add(getGroupDescriptor(group));
-            }
-        });
     }
 
     @Override
@@ -97,62 +67,12 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void includedConstraints(Group group, List<Constraint> includedConstraints) {
-        delegate.includedConstraints(group, includedConstraints);
-        this.includedConstraints(getGroupDescriptor(group), includedConstraints);
-    }
-
-    private void includedConstraints(RuleGroupTemplate ruleGroupTemplate, List<Constraint> constraints) {
-        store.requireTransaction(() -> {
-            for (Constraint constraint : constraints) {
-                ruleGroupTemplate.getIncludesConstraints()
-                    .add(getConstraintDescriptor(constraint));
-            }
-        });
-    }
-
-    @Override
-    public void requiredConcepts(Concept concept, List<Concept> requiredConcepts) {
-        delegate.requiredConcepts(concept, requiredConcepts);
-        requiredConcepts(getConceptDescriptor(concept), requiredConcepts);
-    }
-
-    @Override
-    public void requiredConcepts(Constraint constraint, List<Concept> requiredConcepts) {
-        delegate.requiredConcepts(constraint, requiredConcepts);
-        requiredConcepts(getConstraintDescriptor(constraint), requiredConcepts);
-    }
-
-    private void requiredConcepts(ExecutableRuleTemplate executableRuleTemplate, List<Concept> requiredConcepts) {
-        store.requireTransaction(() -> {
-            for (Concept requiredConcept : requiredConcepts) {
-                executableRuleTemplate.getRequiresConcepts()
-                    .add(getConceptDescriptor(requiredConcept));
-            }
-        });
-    }
-
-    @Override
-    public void providingConcepts(Concept concept, List<Concept> providingConcepts) {
-        delegate.providingConcepts(concept, providingConcepts);
+    public void overriddenConcept(Concept concept, Concept overridingConcept) {
+        delegate.overriddenConcept(concept, overridingConcept);
         store.requireTransaction(() -> {
             ConceptDescriptor conceptDescriptor = getConceptDescriptor(concept);
-            for (Concept providingConcept : providingConcepts) {
-                getConceptDescriptor(providingConcept).getProvidesConcepts()
-                    .add(conceptDescriptor);
-            }
+            getConceptDescriptor(overridingConcept).setOverridesConcept(conceptDescriptor);
         });
-    }
-
-    @Override
-    public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
-        delegate.beforeGroup(group, effectiveSeverity);
-        store.requireTransaction(() -> updateRule(getGroupDescriptor(group), group, effectiveSeverity));
-    }
-
-    @Override
-    public void afterGroup(Group group) throws RuleException {
-        delegate.afterGroup(group);
     }
 
     @Override
@@ -168,6 +88,71 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
+    public void requiredConcepts(Concept concept, List<Concept> requiredConcepts) {
+        delegate.requiredConcepts(concept, requiredConcepts);
+        requiredConcepts(getConceptDescriptor(concept), requiredConcepts);
+    }
+
+    @Override
+    public void providingConcepts(Concept concept, List<Concept> providingConcepts) {
+        delegate.providingConcepts(concept, providingConcepts);
+        store.requireTransaction(() -> {
+            ConceptDescriptor conceptDescriptor = getConceptDescriptor(concept);
+            for (Concept providingConcept : providingConcepts) {
+                getConceptDescriptor(providingConcept).getProvidesConcepts()
+                    .add(conceptDescriptor);
+            }
+        });
+    }
+
+    @Override
+    public void overriddenGroup(Group group, Group overridingGroup) {
+        delegate.overriddenGroup(group, overridingGroup);
+        store.requireTransaction(() -> {
+            GroupDescriptor groupDescriptor = getGroupDescriptor(group);
+            getGroupDescriptor(overridingGroup).setOverridesGroup(groupDescriptor);
+        });
+    }
+
+    @Override
+    public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
+        delegate.beforeGroup(group, effectiveSeverity);
+        store.requireTransaction(() -> updateRule(getGroupDescriptor(group), group, effectiveSeverity));
+    }
+
+    @Override
+    public void includedConcepts(Group group, List<Concept> includedConcepts) {
+        delegate.includedConcepts(group, includedConcepts);
+        this.includedConcepts(getGroupDescriptor(group), includedConcepts);
+    }
+
+    @Override
+    public void includedGroups(Group group, List<Group> includedGroups) {
+        delegate.includedGroups(group, includedGroups);
+        this.includedGroups(getGroupDescriptor(group), includedGroups);
+    }
+
+    @Override
+    public void includedConstraints(Group group, List<Constraint> includedConstraints) {
+        delegate.includedConstraints(group, includedConstraints);
+        this.includedConstraints(getGroupDescriptor(group), includedConstraints);
+    }
+
+    @Override
+    public void afterGroup(Group group) throws RuleException {
+        delegate.afterGroup(group);
+    }
+
+    @Override
+    public void overriddenConstraint(Constraint constraint, Constraint overridingConstraint) {
+        delegate.overriddenConstraint(constraint, overridingConstraint);
+        store.requireTransaction(() -> {
+            ConstraintDescriptor constraintDescriptor = getConstraintDescriptor(constraint);
+            getConstraintDescriptor(overridingConstraint).setOverridesConstraint(constraintDescriptor);
+        });
+    }
+
+    @Override
     public Result.Status visitConstraint(Constraint constraint, Severity effectiveSeverity,
         Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults) throws RuleException {
         Result.Status status = delegate.visitConstraint(constraint, effectiveSeverity, requiredConceptResults);
@@ -179,8 +164,10 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
         return status;
     }
 
-    private GroupDescriptor getGroupDescriptor(Group group) {
-        return this.groups.computeIfAbsent(group.getId(), this.ruleRepository::mergeGroup);
+    @Override
+    public void requiredConcepts(Constraint constraint, List<Concept> requiredConcepts) {
+        delegate.requiredConcepts(constraint, requiredConcepts);
+        requiredConcepts(getConstraintDescriptor(constraint), requiredConcepts);
     }
 
     private ConceptDescriptor getConceptDescriptor(Concept concept) {
@@ -191,10 +178,49 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
         return this.constraints.computeIfAbsent(constraint.getId(), this.ruleRepository::mergeConstraint);
     }
 
+    private GroupDescriptor getGroupDescriptor(Group group) {
+        return this.groups.computeIfAbsent(group.getId(), this.ruleRepository::mergeGroup);
+    }
+
     private void updateRule(RuleDescriptor ruleDescriptor, SeverityRule rule, Severity effectiveSeverity) {
         ruleDescriptor.setSeverity(rule.getSeverity());
         ruleDescriptor.setEffectiveSeverity(effectiveSeverity);
         ruleDescriptor.setTimestamp(now());
     }
 
+    private void requiredConcepts(ExecutableRuleTemplate executableRuleTemplate, List<Concept> requiredConcepts) {
+        store.requireTransaction(() -> {
+            for (Concept requiredConcept : requiredConcepts) {
+                executableRuleTemplate.getRequiresConcepts()
+                    .add(getConceptDescriptor(requiredConcept));
+            }
+        });
+    }
+
+    private void includedConcepts(RuleGroupTemplate ruleGroupTemplate, List<Concept> concepts) {
+        store.requireTransaction(() -> {
+            for (Concept concept : concepts) {
+                ruleGroupTemplate.getIncludesConcepts()
+                    .add(getConceptDescriptor(concept));
+            }
+        });
+    }
+
+    private void includedGroups(RuleGroupTemplate ruleGroupTemplate, List<Group> groups) {
+        store.requireTransaction(() -> {
+            for (Group group : groups) {
+                ruleGroupTemplate.getIncludesGroups()
+                    .add(getGroupDescriptor(group));
+            }
+        });
+    }
+
+    private void includedConstraints(RuleGroupTemplate ruleGroupTemplate, List<Constraint> constraints) {
+        store.requireTransaction(() -> {
+            for (Constraint constraint : constraints) {
+                ruleGroupTemplate.getIncludesConstraints()
+                    .add(getConstraintDescriptor(constraint));
+            }
+        });
+    }
 }

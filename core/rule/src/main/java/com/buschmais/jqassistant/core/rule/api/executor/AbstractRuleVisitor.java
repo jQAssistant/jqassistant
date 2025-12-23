@@ -36,13 +36,13 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public R visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults,
-        Map<Concept, R> providingConceptResults) throws RuleException {
-        throw new RuleException("Cannot visit concept" + concept);
+    public void overriddenConcept(Concept concept, Concept overridingConcept) {
     }
 
     @Override
-    public void skipConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException {
+    public R visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults,
+        Map<Concept, R> providingConceptResults) throws RuleException {
+        throw new RuleException("Cannot visit concept" + concept);
     }
 
     @Override
@@ -54,9 +54,22 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
+    public void skipConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException {
+    }
+
+    @Override
+    public void overriddenConstraint(Constraint constraint, Constraint overridingConstraint) {
+    }
+
+    @Override
     public R visitConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults)
         throws RuleException {
         throw new RuleException("Cannot visit constraint" + constraint);
+    }
+
+
+    @Override
+    public void requiredConcepts(Constraint constraint, List<Concept> concepts) {
     }
 
     @Override
@@ -65,7 +78,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void requiredConcepts(Constraint constraint, List<Concept> concepts) {
+    public void overriddenGroup(Group group, Group overridingGroup) {
     }
 
     @Override
