@@ -110,11 +110,6 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>java-testing</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>java</artifactId>
                 <type>test-jar</type>
                 <version>${project.version}</version>
@@ -219,7 +214,7 @@
             <dependency>
                 <groupId>org.takes</groupId>
                 <artifactId>takes</artifactId>
-                <version>1.24.6</version>
+                <version>1.25.0</version>
             </dependency>
             <!-- Java APIs -->
             <dependency>

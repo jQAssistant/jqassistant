@@ -317,6 +317,9 @@ jqassistant:
     # -Djqassistant.analyze.rule-parameters."parameterName"
     rule-parameters:
     # parameterName: value
+    # parameterMap:
+    #   key1: value1
+    #   key2: value2
 
     # Execute concepts even if they have already been applied before
     #

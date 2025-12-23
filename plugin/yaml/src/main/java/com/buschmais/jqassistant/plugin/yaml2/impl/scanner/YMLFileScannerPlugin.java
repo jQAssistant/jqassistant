@@ -7,7 +7,7 @@ import java.util.stream.StreamSupport;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
@@ -28,7 +28,7 @@ import org.snakeyaml.engine.v2.api.lowlevel.Parse;
 import org.snakeyaml.engine.v2.events.Event;
 import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
-@ScannerPlugin.Requires(FileDescriptor.class)
+@Requires(FileDescriptor.class)
 public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YMLFileDescriptor> {
     private static final Logger LOGGER = LoggerFactory.getLogger(YMLFileScannerPlugin.class);
 
@@ -37,56 +37,29 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
 
     private FilePatternMatcher filePatternMatcher;
 
-    protected FilePatternMatcher getFilePatternMatcher() {
-        return filePatternMatcher;
-    }
-
-    protected boolean isFilePatternMatcherActive() {
-        return null != getFilePatternMatcher();
-    }
-
-    /**
-     * Supported file extensions for YAML file resources.
-     */
-    public final static String YAML_FILE_EXTENSION = ".yaml";
-    public final static String YML_FILE_EXTENSION = ".yml";
-
     @Override
     protected void configure() {
-        String inclusionPattern = getStringProperty(PROPERTY_INCLUDE, null);
+        String inclusionPattern = getStringProperty(PROPERTY_INCLUDE, "*.yml, *.yaml");
         String exclusionPattern = getStringProperty(PROPERTY_EXCLUDE, null);
-
-        configure(inclusionPattern, exclusionPattern);
+        LOGGER.debug("YAML2: Including '{}' / Excluding '{}'", inclusionPattern, exclusionPattern);
+        filePatternMatcher = FilePatternMatcher.builder()
+            .include(inclusionPattern)
+            .exclude(exclusionPattern)
+            .build();
     }
 
     // Enable unit testing
-    protected void configure (final String inclusionPattern, final String exclusionPattern) {
-        LOGGER.debug("YAML2: Including '{}' / Excluding '{}'", inclusionPattern, exclusionPattern);
-
-        if (null != inclusionPattern || null != exclusionPattern) {
-            filePatternMatcher = FilePatternMatcher.builder().include(inclusionPattern).exclude(exclusionPattern).build();
-        }
-    }
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) {
-        String lowercasePath = path.toLowerCase();
-        boolean decision = true;
-
-        if (isFilePatternMatcherActive()) {
-            decision = getFilePatternMatcher().accepts(lowercasePath);
-        } else {
-            decision = lowercasePath.endsWith(YAML_FILE_EXTENSION) || lowercasePath.endsWith(YML_FILE_EXTENSION);
-        }
-        LOGGER.debug("YAML2: Checking '{}' ('{}') for acceptance: {}", path, lowercasePath, decision);
-
-        return decision;
+        return filePatternMatcher.accepts(path.toLowerCase());
     }
 
     @Override
     public YMLFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        LoadSettings settings = LoadSettings.builder().build();
+        LoadSettings settings = LoadSettings.builder()
+            .build();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         EventParser eventParser = new EventParser();
         YMLFileDescriptor yamlFileDescriptor = handleFileStart(fileDescriptor);
@@ -100,7 +73,8 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
             GraphGenerator generator = new GraphGenerator(store);
 
             Collection<YMLDocumentDescriptor> documents = generator.generate(streamNode);
-            documents.forEach(documentDescriptor -> yamlFileDescriptor.getDocuments().add(documentDescriptor));
+            documents.forEach(documentDescriptor -> yamlFileDescriptor.getDocuments()
+                .add(documentDescriptor));
 
             yamlFileDescriptor.setValid(true);
         } catch (GraphGenerationFailedException | YamlEngineException e) {
@@ -110,9 +84,8 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
         return yamlFileDescriptor;
     }
 
-
     private YMLFileDescriptor handleFileStart(FileDescriptor fileDescriptor) {
-        YMLFileDescriptor yamlFileDescriptor = getScannerContext().getStore().addDescriptorType(fileDescriptor, YMLFileDescriptor.class, YMLFileDescriptor.class);
-        return yamlFileDescriptor;
+        return getScannerContext().getStore()
+            .addDescriptorType(fileDescriptor, YMLFileDescriptor.class, YMLFileDescriptor.class);
     }
 }
