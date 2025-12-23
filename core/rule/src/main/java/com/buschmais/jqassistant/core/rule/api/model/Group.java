@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import lombok.Getter;
 
@@ -79,6 +76,12 @@ public class Group extends AbstractSeverityRule {
 
         public GroupBuilder group(String id, Severity severity) {
             rule.groups.put(id, severity);
+            return this;
+        }
+
+        public Group.GroupBuilder overrideGroups(List<String> overrideGroupIds) {
+            Group r = build();
+            r.setOverriddenIds(overrideGroupIds);
             return this;
         }
     }

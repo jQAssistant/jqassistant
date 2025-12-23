@@ -45,7 +45,7 @@ public class XmlReportPlugin implements ReportPlugin {
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.8";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.9";
 
     private static final Pattern XML_10_INVALID_CHARACTERS = Pattern.compile("[^\t\r\n -\uD7FF\uE000-�\uD800\uDC00-\uDBFF\uDFFF]");
 
@@ -144,15 +144,16 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeAttribute("id", group.getId());
             xmlStreamWriter.writeAttribute("date", XML_DATE_FORMAT.format(now));
 
-            xmlStreamWriter.writeStartElement("description");
             if (group.getDescription() != null) {
+                xmlStreamWriter.writeStartElement("description");
                 xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(group.getDescription())
                     .replaceAll(""));
+                xmlStreamWriter.writeEndElement();
             }
-            xmlStreamWriter.writeEndElement();
         });
-        this.groupBeginTime = now.getTime();
-    }
+                writeOverrides("group", group.getOverriddenIds());
+                this.groupBeginTime = now.getTime();
+            }
 
     @Override
     public void endGroup() throws ReportException {
@@ -200,6 +201,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
                 writeElementWithCharacters("description", rule.getDescription());
+                writeOverrides(elementName, ((AbstractExecutableRule) rule).getOverriddenIds()); //overrides-concept | overrides-constraint
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);
                 writeVerificationResult(result.getVerificationResult());
@@ -452,6 +454,25 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeAttribute("id", concept.getId());
                 writeStatus(entryStatusEntry.getValue());
                 xmlStreamWriter.writeEndElement();
+            }
+        }
+    }
+
+    private void writeOverrides(String elementName, List<String> overriddenIds) throws ReportException {
+        if (overriddenIds != null && !overriddenIds.isEmpty()) {
+            for (String id : overriddenIds) {
+                xml(() -> {
+                    if(elementName.equals("concept")){
+                        xmlStreamWriter.writeStartElement("overrides-concept");
+                    }
+                    else if(elementName.equals("constraint")){
+                        xmlStreamWriter.writeStartElement("overrides-constraint");
+                    } else{
+                        xmlStreamWriter.writeStartElement("overrides-group");
+                    }
+                    xmlStreamWriter.writeAttribute("id", id);
+                    xmlStreamWriter.writeEndElement();
+                });
             }
         }
     }
