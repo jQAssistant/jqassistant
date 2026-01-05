@@ -1,11 +1,10 @@
-package com.buschmais.jqassistant.plugin.java.api.annotation;
+package com.buschmais.jqassistant.plugin.java.annotation;
 
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 
 import lombok.RequiredArgsConstructor;
 
-import static com.buschmais.jqassistant.plugin.java.api.annotation.TechnicalDebt.Priority.MEDIUM;
 import static java.lang.annotation.RetentionPolicy.CLASS;
 
 /**
@@ -20,7 +19,7 @@ public @interface TechnicalDebt {
      */
     String value();
 
-    Priority priority() default MEDIUM;
+    Priority priority() default Priority.MEDIUM;
 
     /**
      * id of a linked issue (optional).
@@ -39,7 +38,7 @@ public @interface TechnicalDebt {
         LOW(2);
 
         /**
-         * Für Sortierbarkeit in Reports
+         * Used for sorting in report
          */
         private final int value;
     }
