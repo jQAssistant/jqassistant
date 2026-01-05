@@ -163,7 +163,7 @@
         <xs:complexContent>
             <xs:extension base="tns:severityRuleType">
                 <xs:sequence>
-                    <xs:element name="abstract" type="xs:boolean" minOccurs="0"/>
+                    <xs:element name="abstract" type="xs:boolean" default="false" minOccurs="0"/>
                     <xs:element name="providesConcept" type="tns:providesReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
                     <xs:group ref="tns:executableRuleType"/>

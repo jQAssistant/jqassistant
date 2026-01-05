@@ -66,8 +66,6 @@
     "sourceJSch" : { "type" : "string" },
 
     "executableRuleJSch" : {
-      "type" : "array",
-      "items" : {
         "type" : "object",
         "properties" : {
           "id" : { "$ref" : "#/$defs/idJSch" },
@@ -75,7 +73,7 @@
           "description" : { "type" : "string" },
           "report" : {
             "anyOf" : [
-              { "$ref" : "#/$defs/reportJScn" },
+              { "$ref" : "#/$defs/reportJSch" },
               { "type" : "null" }
             ]
           },
@@ -163,34 +161,13 @@
               { "required": [ "aggregation" ] },
               { "required": [ "rowCount" ] }
             ],
-
             "additionalProperties" : false
-          }
+          },
+          "additionalProperties": false
         },
-        "required" : [ "id" ],
-        "additionalProperties" : false
-      },
-      "additionalProperties" : false
+        "required" : [ "id" ]
     },
-    "conceptJSch": {
-      "type": "array",
-      "items": {
-        "allOf": [
-          { "$ref": "#/$defs/executableRuleJSch" },
-          {
-            "type": "object",
-            "properties": {
-              "abstract": {
-                "type": "boolean"
-              }
-            }
-          }
-        ],
-        "additionalProperties": false
-      },
-      "additionalProperties": false
-    },
-    "reportJScn" : {
+    "reportJSch" : {
       "type" : "object",
       "properties" : {
         "primaryColumn" : {
@@ -215,6 +192,24 @@
       },
       "required": [ "primaryColumn", "type" ],
       "additionalProperties" : false
+    },
+    "conceptJSch": {
+      "allOf": [
+        { "$ref": "#/$defs/executableRuleJSch" },
+        {
+          "type": "object",
+          "properties": {
+            "abstract": {
+              "type": "boolean"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "constraintJSch": {
+      "$ref": "#/$defs/executableRuleJSch" ,
+      "unevaluatedProperties": false
     }
   },
   "anyOf": [
@@ -222,26 +217,22 @@
       "type": "object",
       "properties": {
         "concepts": {
-          "anyOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "$ref": "#/$defs/conceptJSch"
-                }
-              }
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "$ref": "#/$defs/conceptJSch" },
+              { "type": "null" }
+            ]
+          }
         },
         "constraints": {
-          "anyOf": [
-            { "$ref": "#/$defs/executableRuleJSch" },
-            { "type": "null" }
-          ]
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "$ref": "#/$defs/constraintJSch" },
+              { "type": "null" }
+            ]
+          }
         },
         "groups": {
           "anyOf": [
