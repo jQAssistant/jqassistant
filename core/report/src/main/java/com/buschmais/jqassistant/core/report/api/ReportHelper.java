@@ -98,34 +98,46 @@ public final class ReportHelper {
             .build();
     }
 
+    /**
+     * Creates a row key for the given rule.
+     * Checks whether specific columns have been specified for key calculation ("keyColumns")
+     * and whether these columns actually exist among the result columns. If not, all result columns are used for key calculation.
+     * @param rule
+     *      The rule to create a row key for.
+     * @param columns
+     *      The columns containing the rule result.
+     * @return
+     *      The calculated rowKey.
+     */
     private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
-        StringBuilder id = new StringBuilder(rule.getClass()
-                .getName()).append("|")
-                .append(rule.getId())
-                .append("|");
-
+        List<String> columnsForKeyCalculation;
         if (rule.getReport() != null && rule.getReport()
                 .getKeyColumns() != null) {
             for (String keyColumnName : rule.getReport()
                     .getKeyColumns()) {
-                if(keyColumnName.isEmpty()){
+                if (keyColumnName.isEmpty()) {
                     throw new IllegalArgumentException(
                             MessageFormat.format("Encountered an error in rule {0}. The given keyColumn value is empty.", rule.getId()));
                 }
                 if (!columns.containsKey(keyColumnName)) {
                     throw new IllegalArgumentException(
-                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist.", rule.getId(), keyColumnName));
-                } else {
-                    id.append(keyColumnName)
-                            .append(':')
-                            .append(columns.get(keyColumnName)
-                                    .getLabel());
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist among the result columns.", rule.getId(), keyColumnName));
                 }
             }
+            columnsForKeyCalculation = rule.getReport()
+                    .getKeyColumns();
         } else {
-            columns.forEach((key, value) -> id.append(key)
+            columnsForKeyCalculation = new ArrayList<>(columns.keySet());
+        }
+        StringBuilder id = new StringBuilder(rule.getClass()
+                .getName()).append("|")
+                .append(rule.getId())
+                .append("|");
+        for (String columnName : columnsForKeyCalculation){
+            id.append(columnName)
                     .append(':')
-                    .append(value.getLabel()));
+                    .append(columns.get(columnName)
+                            .getLabel());
         }
         return DigestUtils.sha256Hex(id.toString());
     }
