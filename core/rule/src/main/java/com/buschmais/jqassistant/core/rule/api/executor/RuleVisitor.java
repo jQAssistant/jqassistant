@@ -31,7 +31,7 @@ public interface RuleVisitor<R> {
      * @param includedConcepts
      *     The included {@link Concept}s.
      */
-    void includedConcepts(List<Concept> includedConcepts);
+    void includeConcepts(List<Concept> includedConcepts);
 
     /**
      * Include {@link Group}s in the rule selection.
@@ -39,7 +39,7 @@ public interface RuleVisitor<R> {
      * @param includedGroups
      *     The included {@link Group}s.
      */
-    void includedGroups(List<Group> includedGroups);
+    void includeGroups(List<Group> includedGroups);
 
     /**
      * Include {@link Constraint}s in the rule selection.
@@ -47,7 +47,7 @@ public interface RuleVisitor<R> {
      * @param includedConstraints
      *     The included {@link Constraint}s.
      */
-    void includedConstraints(List<Constraint> includedConstraints);
+    void includeConstraints(List<Constraint> includedConstraints);
 
     /**
      * Finished processing {@link Group}s, {@link Concept}s and {@link Constraint}s.
@@ -62,7 +62,7 @@ public interface RuleVisitor<R> {
      * @param overridingConcept
      *     The {@link Concept} that overrides the {@link Concept}.
      */
-    void overriddenConcept(Concept concept, Concept overridingConcept);
+    void overrideConcept(Concept concept, Concept overridingConcept);
 
     /**
      * Visit a {@link Concept} with the given severity.
@@ -90,7 +90,7 @@ public interface RuleVisitor<R> {
      * @param requiredConcepts
      *     The required {@link Concept}s.
      */
-    void requiredConcepts(Concept concept, Set<Concept> requiredConcepts);
+    void requireConcepts(Concept concept, Set<Concept> requiredConcepts);
 
     /**
      * Provide {@link Concept}s for a given {@link Concept}.
@@ -100,7 +100,7 @@ public interface RuleVisitor<R> {
      * @param providingConcepts
      *     The providing {@link Concept}s.
      */
-    void providingConcepts(Concept concept, Set<Concept> providingConcepts);
+    void provideConcept(Concept concept, Set<Concept> providingConcepts);
 
     /**
      * Skip a {@link Concept}.
@@ -124,7 +124,7 @@ public interface RuleVisitor<R> {
      * @param overridingConstraint
      *     The {@link Constraint} that overrides the {@link Constraint}.
      */
-    void overriddenConstraint(Constraint constraint, Constraint overridingConstraint);
+    void overrideConstraint(Constraint constraint, Constraint overridingConstraint);
 
     /**
      * Visit a {@link Constraint} with the given {@link Severity}.
@@ -149,7 +149,7 @@ public interface RuleVisitor<R> {
      * @param requiredConcepts
      *     The required {@link Concept}s.
      */
-    void requiredConcepts(Constraint constraint, Set<Concept> requiredConcepts);
+    void requireConcepts(Constraint constraint, Set<Concept> requiredConcepts);
 
     /**
      * Skip a {@link Constraint}.
@@ -173,7 +173,7 @@ public interface RuleVisitor<R> {
      * @param overridingGroup
      *     The {@link Group} that overrides the {@link Group}.
      */
-    void overriddenGroup(Group group, Group overridingGroup);
+    void overrideGroup(Group group, Group overridingGroup);
 
     /**
      * Start processing a {@link Group}.
@@ -195,7 +195,7 @@ public interface RuleVisitor<R> {
      * @param includedConcepts
      *     The included {@link Concept}s.
      */
-    void includedConcepts(Group group, List<Concept> includedConcepts);
+    void includeConcepts(Group group, List<Concept> includedConcepts);
 
     /**
      * The included {@link Group}s of a {@link Group}.
@@ -205,7 +205,7 @@ public interface RuleVisitor<R> {
      * @param includedGroups
      *     The included {@link Group}s.
      */
-    void includedGroups(Group group, List<Group> includedGroups);
+    void includeGroups(Group group, List<Group> includedGroups);
 
     /**
      * The included {@link Constraint}s of a {@link Group}.
@@ -215,7 +215,7 @@ public interface RuleVisitor<R> {
      * @param includedConstraints
      *     The included {@link Constraint}s.
      */
-    void includedConstraints(Group group, List<Constraint> includedConstraints);
+    void includeConstraints(Group group, List<Constraint> includedConstraints);
 
     /**
      * Finish processing a group.

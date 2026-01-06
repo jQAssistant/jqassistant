@@ -50,26 +50,26 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void includedConcepts(List<Concept> includedConcepts) {
-        delegate.includedConcepts(includedConcepts);
-        this.includedConcepts(this.analyzeTaskDescriptor, includedConcepts);
+    public void includeConcepts(List<Concept> includedConcepts) {
+        delegate.includeConcepts(includedConcepts);
+        this.includeConcepts(this.analyzeTaskDescriptor, includedConcepts);
     }
 
     @Override
-    public void includedGroups(List<Group> groups) {
-        delegate.includedGroups(groups);
-        this.includedGroups(this.analyzeTaskDescriptor, groups);
+    public void includeGroups(List<Group> groups) {
+        delegate.includeGroups(groups);
+        this.includeGroups(this.analyzeTaskDescriptor, groups);
     }
 
     @Override
-    public void includedConstraints(List<Constraint> includedConstraints) {
-        delegate.includedConstraints(includedConstraints);
-        this.includedConstraints(this.analyzeTaskDescriptor, includedConstraints);
+    public void includeConstraints(List<Constraint> includedConstraints) {
+        delegate.includeConstraints(includedConstraints);
+        this.includeConstraints(this.analyzeTaskDescriptor, includedConstraints);
     }
 
     @Override
-    public void overriddenConcept(Concept concept, Concept overridingConcept) {
-        delegate.overriddenConcept(concept, overridingConcept);
+    public void overrideConcept(Concept concept, Concept overridingConcept) {
+        delegate.overrideConcept(concept, overridingConcept);
         store.requireTransaction(() -> {
             ConceptDescriptor conceptDescriptor = getConceptDescriptor(concept);
             getConceptDescriptor(overridingConcept).setOverridesConcept(conceptDescriptor);
@@ -89,14 +89,14 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void requiredConcepts(Concept concept, Set<Concept> requiredConcepts) {
-        delegate.requiredConcepts(concept, requiredConcepts);
-        requiredConcepts(getConceptDescriptor(concept), requiredConcepts);
+    public void requireConcepts(Concept concept, Set<Concept> requiredConcepts) {
+        delegate.requireConcepts(concept, requiredConcepts);
+        requireConcepts(getConceptDescriptor(concept), requiredConcepts);
     }
 
     @Override
-    public void providingConcepts(Concept concept, Set<Concept> providingConcepts) {
-        delegate.providingConcepts(concept, providingConcepts);
+    public void provideConcept(Concept concept, Set<Concept> providingConcepts) {
+        delegate.provideConcept(concept, providingConcepts);
         store.requireTransaction(() -> {
             ConceptDescriptor conceptDescriptor = getConceptDescriptor(concept);
             for (Concept providingConcept : providingConcepts) {
@@ -107,8 +107,8 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void overriddenGroup(Group group, Group overridingGroup) {
-        delegate.overriddenGroup(group, overridingGroup);
+    public void overrideGroup(Group group, Group overridingGroup) {
+        delegate.overrideGroup(group, overridingGroup);
         store.requireTransaction(() -> {
             GroupDescriptor groupDescriptor = getGroupDescriptor(group);
             getGroupDescriptor(overridingGroup).setOverridesGroup(groupDescriptor);
@@ -122,21 +122,21 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void includedConcepts(Group group, List<Concept> includedConcepts) {
-        delegate.includedConcepts(group, includedConcepts);
-        this.includedConcepts(getGroupDescriptor(group), includedConcepts);
+    public void includeConcepts(Group group, List<Concept> includedConcepts) {
+        delegate.includeConcepts(group, includedConcepts);
+        this.includeConcepts(getGroupDescriptor(group), includedConcepts);
     }
 
     @Override
-    public void includedGroups(Group group, List<Group> includedGroups) {
-        delegate.includedGroups(group, includedGroups);
-        this.includedGroups(getGroupDescriptor(group), includedGroups);
+    public void includeGroups(Group group, List<Group> includedGroups) {
+        delegate.includeGroups(group, includedGroups);
+        this.includeGroups(getGroupDescriptor(group), includedGroups);
     }
 
     @Override
-    public void includedConstraints(Group group, List<Constraint> includedConstraints) {
-        delegate.includedConstraints(group, includedConstraints);
-        this.includedConstraints(getGroupDescriptor(group), includedConstraints);
+    public void includeConstraints(Group group, List<Constraint> includedConstraints) {
+        delegate.includeConstraints(group, includedConstraints);
+        this.includeConstraints(getGroupDescriptor(group), includedConstraints);
     }
 
     @Override
@@ -145,8 +145,8 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void overriddenConstraint(Constraint constraint, Constraint overridingConstraint) {
-        delegate.overriddenConstraint(constraint, overridingConstraint);
+    public void overrideConstraint(Constraint constraint, Constraint overridingConstraint) {
+        delegate.overrideConstraint(constraint, overridingConstraint);
         store.requireTransaction(() -> {
             ConstraintDescriptor constraintDescriptor = getConstraintDescriptor(constraint);
             getConstraintDescriptor(overridingConstraint).setOverridesConstraint(constraintDescriptor);
@@ -166,9 +166,9 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void requiredConcepts(Constraint constraint, Set<Concept> requiredConcepts) {
-        delegate.requiredConcepts(constraint, requiredConcepts);
-        requiredConcepts(getConstraintDescriptor(constraint), requiredConcepts);
+    public void requireConcepts(Constraint constraint, Set<Concept> requiredConcepts) {
+        delegate.requireConcepts(constraint, requiredConcepts);
+        requireConcepts(getConstraintDescriptor(constraint), requiredConcepts);
     }
 
     private ConceptDescriptor getConceptDescriptor(Concept concept) {
@@ -189,7 +189,7 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
         ruleDescriptor.setTimestamp(now());
     }
 
-    private void requiredConcepts(ExecutableRuleTemplate executableRuleTemplate, Set<Concept> requiredConcepts) {
+    private void requireConcepts(ExecutableRuleTemplate executableRuleTemplate, Set<Concept> requiredConcepts) {
         store.requireTransaction(() -> {
             for (Concept requiredConcept : requiredConcepts) {
                 executableRuleTemplate.getRequiresConcepts()
@@ -198,7 +198,7 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
         });
     }
 
-    private void includedConcepts(RuleGroupTemplate ruleGroupTemplate, List<Concept> concepts) {
+    private void includeConcepts(RuleGroupTemplate ruleGroupTemplate, List<Concept> concepts) {
         store.requireTransaction(() -> {
             for (Concept concept : concepts) {
                 ruleGroupTemplate.getIncludesConcepts()
@@ -207,7 +207,7 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
         });
     }
 
-    private void includedGroups(RuleGroupTemplate ruleGroupTemplate, List<Group> groups) {
+    private void includeGroups(RuleGroupTemplate ruleGroupTemplate, List<Group> groups) {
         store.requireTransaction(() -> {
             for (Group group : groups) {
                 ruleGroupTemplate.getIncludesGroups()
@@ -216,7 +216,7 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
         });
     }
 
-    private void includedConstraints(RuleGroupTemplate ruleGroupTemplate, List<Constraint> constraints) {
+    private void includeConstraints(RuleGroupTemplate ruleGroupTemplate, List<Constraint> constraints) {
         store.requireTransaction(() -> {
             for (Constraint constraint : constraints) {
                 ruleGroupTemplate.getIncludesConstraints()

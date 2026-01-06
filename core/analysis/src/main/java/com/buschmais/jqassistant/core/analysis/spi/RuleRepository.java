@@ -12,8 +12,8 @@ import com.buschmais.xo.neo4j.api.annotation.Cypher;
 public interface RuleRepository {
 
     @ResultOf
-    @Cypher("MATCH (concept:jQAssistant:Rule:Concept{id: $id}) RETURN concept")
-    ConceptDescriptor findConcept(@Parameter("id") String id);
+    @Cypher("MATCH (concept:jQAssistant:Rule:Concept{id: $id}) WHERE concept.status is not null RETURN concept")
+    ConceptDescriptor findAppliedConcept(@Parameter("id") String id);
 
     @ResultOf
     @Cypher("MERGE (concept:jQAssistant:Rule:Concept{id: $id}) RETURN concept")

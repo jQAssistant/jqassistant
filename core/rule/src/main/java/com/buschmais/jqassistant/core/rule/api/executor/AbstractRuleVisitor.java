@@ -21,15 +21,15 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void includedConcepts(List<Concept> concepts) {
+    public void includeConcepts(List<Concept> concepts) {
     }
 
     @Override
-    public void includedGroups(List<Group> groups) {
+    public void includeGroups(List<Group> groups) {
     }
 
     @Override
-    public void includedConstraints(List<Constraint> constraints) {
+    public void includeConstraints(List<Constraint> constraints) {
     }
 
     @Override
@@ -37,7 +37,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void overriddenConcept(Concept concept, Concept overridingConcept) {
+    public void overrideConcept(Concept concept, Concept overridingConcept) {
     }
 
     @Override
@@ -47,11 +47,11 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void requiredConcepts(Concept concept, Set<Concept> requiredConcepts) {
+    public void requireConcepts(Concept concept, Set<Concept> requiredConcepts) {
     }
 
     @Override
-    public void providingConcepts(Concept concept, Set<Concept> providingConcepts) {
+    public void provideConcept(Concept concept, Set<Concept> providingConcepts) {
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void overriddenConstraint(Constraint constraint, Constraint overridingConstraint) {
+    public void overrideConstraint(Constraint constraint, Constraint overridingConstraint) {
     }
 
     @Override
@@ -69,7 +69,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void requiredConcepts(Constraint constraint, Set<Concept> concepts) {
+    public void requireConcepts(Constraint constraint, Set<Concept> concepts) {
     }
 
     @Override
@@ -78,7 +78,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void overriddenGroup(Group group, Group overridingGroup) {
+    public void overrideGroup(Group group, Group overridingGroup) {
     }
 
     @Override
@@ -86,15 +86,15 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void includedConcepts(Group group, List<Concept> concepts) {
+    public void includeConcepts(Group group, List<Concept> concepts) {
     }
 
     @Override
-    public void includedGroups(Group group, List<Group> groups) {
+    public void includeGroups(Group group, List<Group> groups) {
     }
 
     @Override
-    public void includedConstraints(Group group, List<Constraint> constraints) {
+    public void includeConstraints(Group group, List<Constraint> constraints) {
     }
 
     @Override

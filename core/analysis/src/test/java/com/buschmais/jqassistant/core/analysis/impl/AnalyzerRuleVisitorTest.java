@@ -310,7 +310,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(SUCCESS).when(conceptDescriptor)
             .getStatus();
         doReturn(conceptDescriptor).when(ruleRepository)
-            .findConcept(concept.getId());
+            .findAppliedConcept(concept.getId());
 
         assertThat(analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap())).isEqualTo(SUCCESS);
 

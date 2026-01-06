@@ -81,7 +81,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     @Override
     public Result.Status visitConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults,
         Map<Concept, Result.Status> providingConceptResults) throws RuleException {
-        ConceptDescriptor conceptDescriptor = findConcept(concept);
+        ConceptDescriptor conceptDescriptor = store.requireTransaction(() -> this.ruleRepository.findAppliedConcept(concept.getId()));
         if (conceptDescriptor == null || configuration.executeAppliedConcepts()) {
             log.info("Applying concept '{}' with severity: '{}'.", concept.getId(), effectiveSeverity.getInfo(concept.getSeverity()));
             store.requireTransaction(() -> reportPlugin.beginConcept(concept, requiredConceptResults, providingConceptResults));
@@ -231,9 +231,5 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             ruleParameters.put(parameterName, parameterValue);
         }
         return ruleParameters;
-    }
-
-    private ConceptDescriptor findConcept(Concept concept) {
-        return store.requireTransaction(() -> this.ruleRepository.findConcept(concept.getId()));
     }
 }

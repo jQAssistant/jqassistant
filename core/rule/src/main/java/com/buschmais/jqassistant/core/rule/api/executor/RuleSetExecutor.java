@@ -65,16 +65,16 @@ public class RuleSetExecutor<R> {
         try {
             for (String conceptPattern : ruleSelection.getConceptIds()) {
                 List<Concept> concepts = applyConcepts(ruleSet, conceptPattern, null, activatedConcepts);
-                this.ruleVisitor.includedConcepts(concepts);
+                this.ruleVisitor.includeConcepts(concepts);
             }
             for (String groupPattern : ruleSelection.getGroupIds()) {
                 List<Group> groups = executeGroups(ruleSet, groupPattern, ruleSelection.getExcludeConstraintIds(), null, activatedConcepts);
-                this.ruleVisitor.includedGroups(groups);
+                this.ruleVisitor.includeGroups(groups);
             }
             for (String constraintPattern : ruleSelection.getConstraintIds()) {
                 List<Constraint> constraints = validateConstraints(ruleSet, constraintPattern, ruleSelection.getExcludeConstraintIds(), null,
                     activatedConcepts);
-                this.ruleVisitor.includedConstraints(constraints);
+                this.ruleVisitor.includeConstraints(constraints);
             }
         } finally {
             this.ruleVisitor.afterRules();
@@ -105,7 +105,7 @@ public class RuleSetExecutor<R> {
             Group overridingGroup = (Group) ruleSet.getGroupsBucket()
                 .getOverridingRule(group);
             log.info("The group '{}' is overridden by '{}'.", group.getId(), overridingGroup.getId());
-            ruleVisitor.overriddenGroup(group, overridingGroup);
+            ruleVisitor.overrideGroup(group, overridingGroup);
             executeGroup(ruleSet, (Group) ruleSet.getGroupsBucket()
                 .getOverridingRule(group), excludedConstraintIds, overriddenSeverity, activatedConcepts);
         } else if (!executedGroups.contains(group)) {
@@ -115,20 +115,20 @@ public class RuleSetExecutor<R> {
                 .entrySet()) {
                 List<Concept> concepts = applyConcepts(ruleSet, conceptEntry.getKey(), getEffectiveSeverity(conceptEntry.getValue(), groupSeverity),
                     activatedConcepts);
-                this.ruleVisitor.includedConcepts(group, concepts);
+                this.ruleVisitor.includeConcepts(group, concepts);
             }
             for (Map.Entry<String, Severity> groupEntry : group.getGroups()
                 .entrySet()) {
                 Severity effectiveSeverity = getEffectiveSeverity(groupEntry.getValue(), groupSeverity);
                 List<Group> groups = executeGroups(ruleSet, groupEntry.getKey(), excludedConstraintIds, effectiveSeverity, activatedConcepts);
-                this.ruleVisitor.includedGroups(group, groups);
+                this.ruleVisitor.includeGroups(group, groups);
             }
             for (Map.Entry<String, Severity> constraintEntry : group.getConstraints()
                 .entrySet()) {
                 Severity effectiveSeverity = getEffectiveSeverity(constraintEntry.getValue(), groupSeverity);
                 List<Constraint> constraints = validateConstraints(ruleSet, constraintEntry.getKey(), excludedConstraintIds, effectiveSeverity,
                     activatedConcepts);
-                this.ruleVisitor.includedConstraints(group, constraints);
+                this.ruleVisitor.includeConstraints(group, constraints);
             }
             ruleVisitor.afterGroup(group);
             executedGroups.add(group);
@@ -224,7 +224,7 @@ public class RuleSetExecutor<R> {
             Constraint overridingConstraint = (Constraint) ruleSet.getConstraintBucket()
                 .getOverridingRule(constraint);
             log.info("The constraint '{}' is overridden by '{}'", constraint.getId(), overridingConstraint.getId());
-            ruleVisitor.overriddenConstraint(constraint, overridingConstraint);
+            ruleVisitor.overrideConstraint(constraint, overridingConstraint);
             ruleVisitor.skipConstraint(constraint, effectiveSeverity, emptyMap());
             validateConstraint(ruleSet, overridingConstraint, overriddenSeverity, activatedConcepts);
         } else if (!executedConstraints.contains(constraint)) {
@@ -235,7 +235,7 @@ public class RuleSetExecutor<R> {
             } else {
                 ruleVisitor.skipConstraint(constraint, effectiveSeverity, requiredConceptResults);
             }
-            this.ruleVisitor.requiredConcepts(constraint, requiredConceptResults.keySet()
+            this.ruleVisitor.requireConcepts(constraint, requiredConceptResults.keySet()
                 .stream()
                 .map(Map.Entry::getKey)
                 .collect(toSet()));
@@ -267,7 +267,7 @@ public class RuleSetExecutor<R> {
                 .getOverridingRule(concept);
             checkOverridesProvides(concept, overridingConcept);
             log.info("The concept '{}' is overridden by '{}'", concept.getId(), overridingConcept.getId());
-            ruleVisitor.overriddenConcept(concept, overridingConcept);
+            ruleVisitor.overrideConcept(concept, overridingConcept);
             ruleVisitor.skipConcept(concept, effectiveSeverity, emptyMap());
             return applyConcept(ruleSet, overridingConcept, overriddenSeverity, activatedConcepts, executionStack);
         }
@@ -277,14 +277,14 @@ public class RuleSetExecutor<R> {
 
             Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults = applyAllRequiredConcepts(ruleSet, concept, activatedConcepts, executionStack);
             if (requiredConceptsAreSuccessful(requiredConceptResults)) {
-                Map<Concept, R> providingConceptResults = applyProvidingConcepts(ruleSet, concept, overriddenSeverity, activatedConcepts, executionStack);
-                checkDeprecation(concept);
-                result = ruleVisitor.visitConcept(concept, effectiveSeverity, requiredConceptResults, providingConceptResults);
-                this.ruleVisitor.requiredConcepts(concept, requiredConceptResults.keySet()
+                this.ruleVisitor.requireConcepts(concept, requiredConceptResults.keySet()
                     .stream()
                     .map(Map.Entry::getKey)
                     .collect(toSet()));
-                this.ruleVisitor.providingConcepts(concept, providingConceptResults.keySet());
+                Map<Concept, R> providingConceptResults = applyProvidingConcepts(ruleSet, concept, overriddenSeverity, activatedConcepts, executionStack);
+                this.ruleVisitor.provideConcept(concept, providingConceptResults.keySet());
+                checkDeprecation(concept);
+                result = ruleVisitor.visitConcept(concept, effectiveSeverity, requiredConceptResults, providingConceptResults);
             } else {
                 ruleVisitor.skipConcept(concept, effectiveSeverity, requiredConceptResults);
             }
