@@ -45,7 +45,7 @@ public class XmlReportPlugin implements ReportPlugin {
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.8";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.9";
 
     private static final Pattern XML_10_INVALID_CHARACTERS = Pattern.compile("[^\t\r\n -\uD7FF\uE000-�\uD800\uDC00-\uDBFF\uDFFF]");
 
@@ -199,6 +199,7 @@ public class XmlReportPlugin implements ReportPlugin {
             xml(() -> {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
+                writeAbstractConcept(rule);
                 writeElementWithCharacters("description", rule.getDescription());
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);
@@ -453,6 +454,13 @@ public class XmlReportPlugin implements ReportPlugin {
                 writeStatus(entryStatusEntry.getValue());
                 xmlStreamWriter.writeEndElement();
             }
+        }
+    }
+
+    private void writeAbstractConcept(ExecutableRule<?> rule) throws XMLStreamException {
+       if(rule instanceof Concept){
+            String abstractValue = Boolean.toString(((Concept) rule).isAbstract());
+            xmlStreamWriter.writeAttribute("typeAbstract", abstractValue);
         }
     }
 

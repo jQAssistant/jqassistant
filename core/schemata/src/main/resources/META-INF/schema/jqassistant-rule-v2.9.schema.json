@@ -200,7 +200,8 @@
           "type": "object",
           "properties": {
             "abstract": {
-              "type": "boolean"
+              "type": "boolean",
+              "default": false
             }
           }
         }
@@ -217,22 +218,26 @@
       "type": "object",
       "properties": {
         "concepts": {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              { "$ref": "#/$defs/conceptJSch" },
-              { "type": "null" }
-            ]
-          }
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/conceptJSch"
+              }
+            },
+            { "type": "null" }
+          ]
         },
         "constraints": {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              { "$ref": "#/$defs/constraintJSch" },
-              { "type": "null" }
-            ]
-          }
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/constraintJSch"
+              }
+            },
+            { "type": "null" }
+          ]
         },
         "groups": {
           "anyOf": [

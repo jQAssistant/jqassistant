@@ -58,7 +58,7 @@
                                         <directory>${project.basedir}/src/main/resources/META-INF/schema</directory>
                                         <includes>
                                             <include>jqassistant-plugin-v2.4.xsd</include>
-                                            <include>jqassistant-report-v2.8.xsd</include>
+                                            <include>jqassistant-report-v2.9.xsd</include>
                                             <include>jqassistant-rule-v2.9.xsd</include>
                                             <include>jqassistant-baseline-v2.4.xsd</include>
                                         </includes>

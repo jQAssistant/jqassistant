@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.rule.api.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import io.smallrye.config.WithDefault;
 import lombok.*;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
@@ -52,7 +51,6 @@ public class Concept extends AbstractExecutableRule {
     private final Set<ProvidedConcept> providedConcepts = new LinkedHashSet<>();
 
     @Setter
-    @WithDefault("false")
     private boolean isAbstract;
 
     public static class ConceptBuilder extends AbstractExecutableRule.Builder<ConceptBuilder, Concept> {
