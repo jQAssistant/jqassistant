@@ -2,6 +2,7 @@
 :sectlinks:
 :sectnumlevels: 2
 :toclevels: 2
+:revnumber: {projectVersion}
 
 = jQAssistant User Manual
 jQAssistant <info@jqassistant.org> @jqassistant
