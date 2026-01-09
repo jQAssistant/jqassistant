@@ -6,6 +6,9 @@
 * Added configuration option `jqassistant.store.embedded.apoc-properties` for setting APOC-specific configuration properties (e.g. `apoc.export.file.enabled`).
 The properties are written to an `apoc.conf` file in the store's `conf` directory.
 * Clean existing APOC jars from plugins directory on startup to prevent version conflicts.
+* Added `exec` command (CLI and Maven goal) to execute a Cypher query against the store without starting the server.
+This enables quick operations like APOC exports.
+Configuration options: `jqassistant.exec.query`, `jqassistant.exec.query-file`, `jqassistant.exec.read-only`, `jqassistant.exec.output-format`, `jqassistant.exec.output-file`.
 
 == 2.3.0
 
