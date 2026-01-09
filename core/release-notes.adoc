@@ -1,6 +1,11 @@
 
 = Core Framework Changelog
 
+== Unreleased
+
+* Added configuration option `jqassistant.store.embedded.apoc-properties` for setting APOC-specific configuration properties (e.g. `apoc.export.file.enabled`).
+The properties are written to an `apoc.conf` file in the store's `conf` directory.
+
 == 2.3.0
 
 * Ensure that for a concept all required concepts are executed including those required by concepts which are provided

@@ -89,8 +89,11 @@ jqassistant:
       # -Djqassistant.store.embedded.http-port
       http-port: 7474
 
-      # Specifies if the apoc plugin should be activated: true|false. Deactivated by default.
-      apoc-enabled: true
+      # Specifies if the APOC plugin should be activated.
+      # When enabled, the matching APOC version is automatically resolved and loaded.
+      #
+      # -Djqassistant.store.embedded.apoc-enabled: true|false
+      apoc-enabled: false
 
       # The neo4j-version for the embedded store. The property is provided by the CLI or Maven plugin at startup and should not be overridden.
       neo4j-version:
@@ -100,6 +103,15 @@ jqassistant:
       # -Djqassistant.store.embedded.neo4j-properties.<neo4j property>
       # e.g. db.tx_log.rotation.size: 50M
       neo4j-properties:
+
+      # Properties to be written to apoc.conf for the embedded Neo4j instance.
+      # These are required for configuring APOC-specific settings like file export/import.
+      #
+      # -Djqassistant.store.embedded.apoc-properties.<apoc property>
+      # e.g. apoc.export.file.enabled: "true"
+      apoc-properties:
+        # apoc.export.file.enabled: "true"
+        # apoc.import.file.enabled: "true"
 
       # The list of Neo4j plugins to load and activate.
       neo4j-plugins:

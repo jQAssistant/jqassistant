@@ -57,4 +57,24 @@ class ApocIT {
         }
     }
 
+    @Nested
+    class WithAPOCProperties extends AbstractPluginIT {
+
+        @Override
+        protected void configure(ConfigurationBuilder configurationBuilder) {
+            configurationBuilder.with(Embedded.class, Embedded.APOC_ENABLED, "true");
+            configurationBuilder.with(Embedded.class, Embedded.APOC_PROPERTIES + ".apoc.export.file.enabled", "true");
+        }
+
+        @Test
+        void apocExportEnabled() {
+            store.beginTransaction();
+            // This would fail with "Export to files not enabled" without apoc-properties
+            Query.Result<CompositeRowObject> rows = store.executeQuery(
+                "CALL apoc.export.cypher.all(null, {stream: true}) YIELD cypherStatements RETURN cypherStatements");
+            assertThat(rows).isNotEmpty();
+            store.commitTransaction();
+        }
+    }
+
 }
