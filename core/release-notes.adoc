@@ -5,6 +5,7 @@
 
 * Added configuration option `jqassistant.store.embedded.apoc-properties` for setting APOC-specific configuration properties (e.g. `apoc.export.file.enabled`).
 The properties are written to an `apoc.conf` file in the store's `conf` directory.
+* Clean existing APOC jars from plugins directory on startup to prevent version conflicts.
 
 == 2.3.0
 

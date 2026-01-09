@@ -25,6 +25,7 @@ class ApocIT {
     void setUp() throws IOException {
         assumeThat(Runtime.version()
             .feature()).isGreaterThanOrEqualTo(17);
+        // Clean plugins directory to ensure test isolation
         deleteDirectory(new File("target/jqassistant/test-store/plugins"));
     }
 

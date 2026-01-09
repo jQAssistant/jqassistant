@@ -75,12 +75,40 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     @Override
     protected void configure(XOUnit.XOUnitBuilder builder) {
+        cleanApocPlugins();
         configureApoc();
         List<File> plugins = resolveNeo4jPlugins();
         Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(),
             this.embedded.neo4jProperties(), plugins);
         builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
+    }
+
+    /**
+     * Clean existing APOC jars from the plugins directory to prevent version conflicts.
+     */
+    private void cleanApocPlugins() {
+        if (!embedded.apocEnabled()) {
+            return;
+        }
+        String scheme = uri.getScheme();
+        if (!"file".equalsIgnoreCase(scheme)) {
+            return;
+        }
+        File storeDirectory = new File(uri);
+        File pluginsDirectory = new File(storeDirectory, "plugins");
+        if (pluginsDirectory.exists()) {
+            File[] apocJars = pluginsDirectory.listFiles((dir, name) -> name.startsWith("apoc-") && name.endsWith(".jar"));
+            if (apocJars != null && apocJars.length > 0) {
+                for (File apocJar : apocJars) {
+                    if (apocJar.delete()) {
+                        log.info("Removed existing APOC jar '{}'.", apocJar.getName());
+                    } else {
+                        log.warn("Could not remove existing APOC jar '{}'.", apocJar.getAbsolutePath());
+                    }
+                }
+            }
+        }
     }
 
     /**
