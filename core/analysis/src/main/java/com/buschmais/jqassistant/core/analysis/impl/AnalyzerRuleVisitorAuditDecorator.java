@@ -140,11 +140,6 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void afterGroup(Group group) throws RuleException {
-        delegate.afterGroup(group);
-    }
-
-    @Override
     public void overrideConstraint(Constraint constraint, Constraint overridingConstraint, Severity effectiveSeverity) {
         delegate.overrideConstraint(constraint, overridingConstraint, effectiveSeverity);
         store.requireTransaction(() -> {
