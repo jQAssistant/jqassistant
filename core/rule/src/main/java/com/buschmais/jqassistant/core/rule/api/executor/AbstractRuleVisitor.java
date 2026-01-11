@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.core.rule.api.executor;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
@@ -37,7 +36,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void overrideConcept(Concept concept, Concept overridingConcept) {
+    public void overrideConcept(Concept concept, Concept overridingConcept, Severity effectiveSeverity) {
     }
 
     @Override
@@ -47,11 +46,11 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void requireConcepts(Concept concept, Set<Concept> requiredConcepts) {
+    public void requireConcepts(Concept concept, Map<Concept, R> requiredConcepts) {
     }
 
     @Override
-    public void provideConcept(Concept concept, Set<Concept> providingConcepts) {
+    public void provideConcept(Concept concept, Map<Concept, R> providingConcepts) {
     }
 
     @Override
@@ -59,7 +58,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void overrideConstraint(Constraint constraint, Constraint overridingConstraint) {
+    public void overrideConstraint(Constraint constraint, Constraint overridingConstraint, Severity effectiveSeverity) {
     }
 
     @Override
@@ -69,7 +68,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void requireConcepts(Constraint constraint, Set<Concept> concepts) {
+    public void requireConcepts(Constraint constraint, Map<Concept, R> concepts) {
     }
 
     @Override
@@ -78,7 +77,7 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void overrideGroup(Group group, Group overridingGroup) {
+    public void overrideGroup(Group group, Group overridingGroup, Severity overriddenSeverity) {
     }
 
     @Override

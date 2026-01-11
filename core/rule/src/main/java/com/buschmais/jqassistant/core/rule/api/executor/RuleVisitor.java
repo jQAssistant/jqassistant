@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.core.rule.api.executor;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
 
@@ -61,8 +60,9 @@ public interface RuleVisitor<R> {
      *     The overridden {@link Concept}.
      * @param overridingConcept
      *     The {@link Concept} that overrides the {@link Concept}.
+     * @param effectiveSeverity
      */
-    void overrideConcept(Concept concept, Concept overridingConcept);
+    void overrideConcept(Concept concept, Concept overridingConcept, Severity effectiveSeverity);
 
     /**
      * Visit a {@link Concept} with the given severity.
@@ -90,7 +90,7 @@ public interface RuleVisitor<R> {
      * @param requiredConcepts
      *     The required {@link Concept}s.
      */
-    void requireConcepts(Concept concept, Set<Concept> requiredConcepts);
+    void requireConcepts(Concept concept, Map<Concept, R> requiredConcepts);
 
     /**
      * Provide {@link Concept}s for a given {@link Concept}.
@@ -100,7 +100,7 @@ public interface RuleVisitor<R> {
      * @param providingConcepts
      *     The providing {@link Concept}s.
      */
-    void provideConcept(Concept concept, Set<Concept> providingConcepts);
+    void provideConcept(Concept concept, Map<Concept, R> providingConcepts);
 
     /**
      * Skip a {@link Concept}.
@@ -123,8 +123,9 @@ public interface RuleVisitor<R> {
      *     The overridden {@link Constraint}.
      * @param overridingConstraint
      *     The {@link Constraint} that overrides the {@link Constraint}.
+     * @param effectiveSeverity
      */
-    void overrideConstraint(Constraint constraint, Constraint overridingConstraint);
+    void overrideConstraint(Constraint constraint, Constraint overridingConstraint, Severity effectiveSeverity);
 
     /**
      * Visit a {@link Constraint} with the given {@link Severity}.
@@ -149,7 +150,7 @@ public interface RuleVisitor<R> {
      * @param requiredConcepts
      *     The required {@link Concept}s.
      */
-    void requireConcepts(Constraint constraint, Set<Concept> requiredConcepts);
+    void requireConcepts(Constraint constraint, Map<Concept, R> requiredConcepts);
 
     /**
      * Skip a {@link Constraint}.
@@ -172,8 +173,9 @@ public interface RuleVisitor<R> {
      *     The overridden {@link Group}.
      * @param overridingGroup
      *     The {@link Group} that overrides the {@link Group}.
+     * @param overriddenSeverity
      */
-    void overrideGroup(Group group, Group overridingGroup);
+    void overrideGroup(Group group, Group overridingGroup, Severity overriddenSeverity);
 
     /**
      * Start processing a {@link Group}.

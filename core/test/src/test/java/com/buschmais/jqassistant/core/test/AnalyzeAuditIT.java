@@ -3,17 +3,15 @@ package com.buschmais.jqassistant.core.test;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor;
+import com.buschmais.jqassistant.core.analysis.api.model.*;
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 
 import org.junit.jupiter.api.Test;
 
-import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
-import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,39 +22,39 @@ public class AnalyzeAuditIT extends AbstractPluginIT {
     void auditGraph() throws RuleException {
         executeGroup("core-test-audit:Group");
         store.beginTransaction();
-        TestResult query = query(
-            "MATCH (task:jQAssistant:Task)-[:INCLUDES_GROUP]->(group)-[:INCLUDES_CONSTRAINT]->(constraint:jQAssistant:Constraint)-[:REQUIRES_CONCEPT]->(concept:jQAssistant:Concept) RETURN task, group, constraint, concept");
+        TestResult query = query("MATCH" //
+            + "  (task:jQAssistant:Task)-[:INCLUDES_GROUP]->(group), " //
+            + "  (group)-[:INCLUDES_CONSTRAINT]->(constraint:jQAssistant:Constraint)," //
+            + "  (constraint)<-[:OVERRIDES_CONSTRAINT]-(overridingConstraint)," //
+            + "  (overridingConstraint)-[:REQUIRES_CONCEPT]->(concept:jQAssistant:Concept)," //
+            + "  (concept)<-[:OVERRIDES_CONCEPT]-(overridingConcept:Concept)"  //
+            + "RETURN " + "  task, group, constraint, overridingConstraint, concept, overridingConcept");
         List<Map<String, Object>> rows = query.getRows();
         assertThat(rows).hasSize(1);
         Map<String, Object> row = rows.get(0);
 
         ConceptDescriptor concept = (ConceptDescriptor) row.get("concept");
-        assertThat(concept).isNotNull();
-        assertThat(concept.getId()).isEqualTo("core-test-audit:Concept");
-        assertThat(concept.getStatus()).isEqualTo(SUCCESS);
-        assertThat(concept.getSeverity()).isEqualTo(MINOR);
-        assertThat(concept.getEffectiveSeverity()).isEqualTo(MINOR);
-        assertThat(concept.getTimestamp()).isNotNull();
+        verify(concept, "core-test-audit:Concept", MINOR, SKIPPED);
         assertThat(concept.getRequiresConcepts()).isEmpty();
         assertThat(concept.getProvidesConcepts()).isEmpty();
 
-        List<ConceptDescriptor> providingConcepts = concept.getProvidingConcepts();
+        ConceptDescriptor overridingConcept = (ConceptDescriptor) row.get("overridingConcept");
+        verify(overridingConcept, "core-test-audit:OverridingConcept", MINOR, SUCCESS);
+        assertThat(overridingConcept.getRequiresConcepts()).isEmpty();
+        assertThat(overridingConcept.getProvidesConcepts()).isEmpty();
+
+        List<ConceptDescriptor> providingConcepts = overridingConcept.getProvidingConcepts();
         assertThat(providingConcepts).hasSize(1);
         ConceptDescriptor providingConcept = providingConcepts.get(0);
-        assertThat(providingConcept.getId()).isEqualTo("core-test-audit:ProvidingConcept");
-        assertThat(providingConcept.getStatus()).isEqualTo(SUCCESS);
-        assertThat(providingConcept.getSeverity()).isEqualTo(MINOR);
-        assertThat(providingConcept.getEffectiveSeverity()).isEqualTo(MINOR);
-        assertThat(providingConcept.getTimestamp()).isNotNull();
+        verify(providingConcept, "core-test-audit:ProvidingConcept", MINOR, SUCCESS);
 
         ConstraintDescriptor constraint = (ConstraintDescriptor) row.get("constraint");
-        assertThat(constraint).isNotNull();
-        assertThat(constraint.getId()).isEqualTo("core-test-audit:Constraint");
-        assertThat(constraint.getStatus()).isEqualTo(FAILURE);
-        assertThat(constraint.getSeverity()).isEqualTo(MAJOR);
-        assertThat(constraint.getEffectiveSeverity()).isEqualTo(MAJOR);
-        assertThat(constraint.getTimestamp()).isNotNull();
-        assertThat(constraint.getRequiresConcepts()).contains(concept);
+        verify(constraint, "core-test-audit:Constraint", MAJOR, SKIPPED);
+        assertThat(constraint.getRequiresConcepts()).isEmpty();
+
+        ConstraintDescriptor overridingConstraint = (ConstraintDescriptor) row.get("overridingConstraint");
+        verify(overridingConstraint, "core-test-audit:OverridingConstraint", MAJOR, FAILURE);
+        assertThat(overridingConstraint.getRequiresConcepts()).contains(concept);
 
         GroupDescriptor group = (GroupDescriptor) row.get("group");
         assertThat(group).isNotNull();
@@ -75,5 +73,15 @@ public class AnalyzeAuditIT extends AbstractPluginIT {
         assertThat(analyzeTask.getIncludesConcepts()).isEmpty();
         assertThat(analyzeTask.getIncludesConstraints()).isEmpty();
         store.commitTransaction();
+    }
+
+    private static <D extends RuleDescriptor & ExecutableRuleTemplate> void verify(D ruleDescriptor, String expectedId, Severity expectedSeverity,
+        Result.Status expectedStatus) {
+        assertThat(ruleDescriptor).isNotNull();
+        assertThat(ruleDescriptor.getId()).isEqualTo(expectedId);
+        assertThat(ruleDescriptor.getStatus()).isEqualTo(expectedStatus);
+        assertThat(ruleDescriptor.getSeverity()).isEqualTo(expectedSeverity);
+        assertThat(ruleDescriptor.getEffectiveSeverity()).isEqualTo(expectedSeverity);
+        assertThat(ruleDescriptor.getTimestamp()).isNotNull();
     }
 }

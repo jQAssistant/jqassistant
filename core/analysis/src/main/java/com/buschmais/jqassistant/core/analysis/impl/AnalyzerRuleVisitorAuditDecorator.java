@@ -68,10 +68,11 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void overrideConcept(Concept concept, Concept overridingConcept) {
-        delegate.overrideConcept(concept, overridingConcept);
+    public void overrideConcept(Concept concept, Concept overridingConcept, Severity effectiveSeverity) {
+        delegate.overrideConcept(concept, overridingConcept, effectiveSeverity);
         store.requireTransaction(() -> {
             ConceptDescriptor conceptDescriptor = getConceptDescriptor(concept);
+            updateRule(conceptDescriptor, concept, effectiveSeverity, Result.Status.SKIPPED);
             getConceptDescriptor(overridingConcept).setOverridesConcept(conceptDescriptor);
         });
     }
@@ -82,24 +83,23 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
         Result.Status status = delegate.visitConcept(concept, effectiveSeverity, requiredConceptResults, providingConceptResults);
         store.requireTransaction(() -> {
             ConceptDescriptor conceptDescriptor = getConceptDescriptor(concept);
-            updateRule(conceptDescriptor, concept, effectiveSeverity);
-            conceptDescriptor.setStatus(status);
+            updateRule(conceptDescriptor, concept, effectiveSeverity, status);
         });
         return status;
     }
 
     @Override
-    public void requireConcepts(Concept concept, Set<Concept> requiredConcepts) {
+    public void requireConcepts(Concept concept, Map<Concept, Result.Status> requiredConcepts) {
         delegate.requireConcepts(concept, requiredConcepts);
-        requireConcepts(getConceptDescriptor(concept), requiredConcepts);
+        requireConcepts(getConceptDescriptor(concept), requiredConcepts.keySet());
     }
 
     @Override
-    public void provideConcept(Concept concept, Set<Concept> providingConcepts) {
+    public void provideConcept(Concept concept, Map<Concept, Result.Status> providingConcepts) {
         delegate.provideConcept(concept, providingConcepts);
         store.requireTransaction(() -> {
             ConceptDescriptor conceptDescriptor = getConceptDescriptor(concept);
-            for (Concept providingConcept : providingConcepts) {
+            for (Concept providingConcept : providingConcepts.keySet()) {
                 getConceptDescriptor(providingConcept).getProvidesConcepts()
                     .add(conceptDescriptor);
             }
@@ -107,8 +107,8 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void overrideGroup(Group group, Group overridingGroup) {
-        delegate.overrideGroup(group, overridingGroup);
+    public void overrideGroup(Group group, Group overridingGroup, Severity overriddenSeverity) {
+        delegate.overrideGroup(group, overridingGroup, overriddenSeverity);
         store.requireTransaction(() -> {
             GroupDescriptor groupDescriptor = getGroupDescriptor(group);
             getGroupDescriptor(overridingGroup).setOverridesGroup(groupDescriptor);
@@ -145,10 +145,11 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void overrideConstraint(Constraint constraint, Constraint overridingConstraint) {
-        delegate.overrideConstraint(constraint, overridingConstraint);
+    public void overrideConstraint(Constraint constraint, Constraint overridingConstraint, Severity effectiveSeverity) {
+        delegate.overrideConstraint(constraint, overridingConstraint, effectiveSeverity);
         store.requireTransaction(() -> {
             ConstraintDescriptor constraintDescriptor = getConstraintDescriptor(constraint);
+            updateRule(constraintDescriptor, constraint, effectiveSeverity, Result.Status.SKIPPED);
             getConstraintDescriptor(overridingConstraint).setOverridesConstraint(constraintDescriptor);
         });
     }
@@ -166,9 +167,9 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
     }
 
     @Override
-    public void requireConcepts(Constraint constraint, Set<Concept> requiredConcepts) {
+    public void requireConcepts(Constraint constraint, Map<Concept, Result.Status> requiredConcepts) {
         delegate.requireConcepts(constraint, requiredConcepts);
-        requireConcepts(getConstraintDescriptor(constraint), requiredConcepts);
+        requireConcepts(getConstraintDescriptor(constraint), requiredConcepts.keySet());
     }
 
     private ConceptDescriptor getConceptDescriptor(Concept concept) {
@@ -181,6 +182,12 @@ public class AnalyzerRuleVisitorAuditDecorator implements RuleVisitor<Result.Sta
 
     private GroupDescriptor getGroupDescriptor(Group group) {
         return this.groups.computeIfAbsent(group.getId(), this.ruleRepository::mergeGroup);
+    }
+
+    private <D extends RuleDescriptor & ExecutableRuleTemplate> void updateRule(D ruleDescriptor, SeverityRule rule, Severity effectiveSeverity,
+        Result.Status status) {
+        updateRule(ruleDescriptor, rule, effectiveSeverity);
+        ruleDescriptor.setStatus(status);
     }
 
     private void updateRule(RuleDescriptor ruleDescriptor, SeverityRule rule, Severity effectiveSeverity) {

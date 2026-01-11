@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -74,8 +75,28 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     @Override
+    public void includeConcepts(List<Concept> concepts) {
+        store.requireTransaction(() -> reportPlugin.includeConcepts(concepts));
+    }
+
+    @Override
+    public void includeGroups(List<Group> groups) {
+        store.requireTransaction(() -> reportPlugin.includeGroups(groups));
+    }
+
+    @Override
+    public void includeConstraints(List<Constraint> constraints) {
+        store.requireTransaction(() -> reportPlugin.includeConstraints(constraints));
+    }
+
+    @Override
     public void afterRules() throws RuleException {
         store.requireTransaction(reportPlugin::end);
+    }
+
+    @Override
+    public void overrideConcept(Concept concept, Concept overridingConcept, Severity effectiveSeverity) {
+        store.requireTransaction(() -> reportPlugin.overrideConcept(concept, overridingConcept, effectiveSeverity));
     }
 
     @Override
@@ -109,13 +130,13 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     public void skipConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults)
         throws RuleException {
         store.requireTransaction(() -> reportPlugin.beginConcept(concept, requiredConceptResults, emptyMap()));
-        Result<Concept> result = Result.<Concept>builder()
-            .rule(concept)
-            .status(Result.Status.SKIPPED)
-            .severity(effectiveSeverity)
-            .build();
-        store.requireTransaction(() -> reportPlugin.setResult(result));
+        store.requireTransaction(() -> reportPlugin.setResult(skipExecutableRule(concept, effectiveSeverity)));
         store.requireTransaction(reportPlugin::endConcept);
+    }
+
+    @Override
+    public void overrideConstraint(Constraint constraint, Constraint overridingConstraint, Severity effectiveSeverity) {
+        store.requireTransaction(() -> reportPlugin.overrideConstraint(constraint, overridingConstraint, effectiveSeverity));
     }
 
     @Override
@@ -133,19 +154,34 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     public void skipConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults)
         throws RuleException {
         store.requireTransaction(() -> reportPlugin.beginConstraint(constraint, requiredConceptResults));
-        Result<Constraint> result = Result.<Constraint>builder()
-            .rule(constraint)
-            .status(Result.Status.SKIPPED)
-            .severity(effectiveSeverity)
-            .build();
-        store.requireTransaction(() -> reportPlugin.setResult(result));
+        store.requireTransaction(() -> reportPlugin.setResult(skipExecutableRule(constraint, effectiveSeverity)));
         store.requireTransaction(reportPlugin::endConstraint);
+    }
+
+    @Override
+    public void overrideGroup(Group group, Group overridingGroup, Severity effectiveSeverity) {
+        store.requireTransaction(() -> reportPlugin.overrideGroup(group, overridingGroup, effectiveSeverity));
     }
 
     @Override
     public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
         log.info("Executing group '{}'", group.getId());
         store.requireTransaction(() -> reportPlugin.beginGroup(group));
+    }
+
+    @Override
+    public void includeConcepts(Group group, List<Concept> concepts) {
+        store.requireTransaction(() -> reportPlugin.includeConcepts(group, concepts));
+    }
+
+    @Override
+    public void includeGroups(Group group, List<Group> groups) {
+        store.requireTransaction(() -> reportPlugin.includeGroups(group, groups));
+    }
+
+    @Override
+    public void includeConstraints(Group group, List<Constraint> constraints) {
+        store.requireTransaction(() -> reportPlugin.includeConstraints(group, constraints));
     }
 
     @Override
@@ -231,5 +267,17 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
             ruleParameters.put(parameterName, parameterValue);
         }
         return ruleParameters;
+    }
+
+    private static <E extends ExecutableRule<?>> Result<E> skipExecutableRule(E executableRule, Severity effectiveSeverity) {
+        Result<E> result = Result.<E>builder()
+            .rule(executableRule)
+            .status(Result.Status.SKIPPED)
+            .verificationResult(VerificationResult.builder()
+                .success(false)
+                .build())
+            .severity(effectiveSeverity)
+            .build();
+        return result;
     }
 }
