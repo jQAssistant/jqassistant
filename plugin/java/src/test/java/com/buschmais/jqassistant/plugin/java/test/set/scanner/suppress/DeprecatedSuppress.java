@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress;
 
-import com.buschmais.jqassistant.plugin.java.annotation.jQASuppress;
+import com.buschmais.jqassistant.plugin.java.api.jQASuppress;
 
 @jQASuppress(value = "test-suppress:Class", reason = "For testing this annotation")
-public class Suppress {
+public class DeprecatedSuppress {
 
     @jQASuppress({ "test-suppress:Field" })
     private String value;
