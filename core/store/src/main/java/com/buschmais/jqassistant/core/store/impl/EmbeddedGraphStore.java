@@ -85,17 +85,36 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     /**
+     * Convert the store URI to a File, handling both relative (opaque) and absolute (hierarchical) file URIs.
+     *
+     * @return The store directory as a File, or null if the URI is not a file URI.
+     */
+    private File getStoreDirectory() {
+        String scheme = uri.getScheme();
+        if (!"file".equalsIgnoreCase(scheme)) {
+            return null;
+        }
+        // Handle both relative (opaque) and absolute (hierarchical) file URIs
+        // Relative: file:target/store (opaque, getPath() returns null)
+        // Absolute: file:///path/to/store (hierarchical, getPath() returns the path)
+        if (uri.isOpaque()) {
+            return new File(uri.getSchemeSpecificPart());
+        } else {
+            return new File(uri);
+        }
+    }
+
+    /**
      * Clean existing APOC jars from the plugins directory to prevent version conflicts.
      */
     private void cleanApocPlugins() {
         if (!embedded.apocEnabled()) {
             return;
         }
-        String scheme = uri.getScheme();
-        if (!"file".equalsIgnoreCase(scheme)) {
+        File storeDirectory = getStoreDirectory();
+        if (storeDirectory == null) {
             return;
         }
-        File storeDirectory = new File(uri);
         File pluginsDirectory = new File(storeDirectory, "plugins");
         if (pluginsDirectory.exists()) {
             File[] apocJars = pluginsDirectory.listFiles((dir, name) -> name.startsWith("apoc-") && name.endsWith(".jar"));
@@ -115,12 +134,11 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
      * Configure APOC by creating a conf directory and writing apoc.conf if APOC properties are specified.
      */
     private void configureApoc() {
-        String scheme = uri.getScheme();
-        if (!"file".equalsIgnoreCase(scheme)) {
+        File storeDirectory = getStoreDirectory();
+        if (storeDirectory == null) {
             // Only configure APOC for file-based stores
             return;
         }
-        File storeDirectory = new File(uri);
         File confDirectory = new File(storeDirectory, "conf");
         if (!confDirectory.exists() && !confDirectory.mkdirs()) {
             log.warn("Could not create Neo4j conf directory: {}", confDirectory.getAbsolutePath());
