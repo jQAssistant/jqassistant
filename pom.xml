@@ -384,10 +384,10 @@
                             <configuration>
                                 <rules>
                                     <requireJavaVersion>
-                                        <version>[11,)</version>
+                                        <version>11</version>
                                     </requireJavaVersion>
                                     <requireMavenVersion>
-                                        <version>[${maven.version},)</version>
+                                        <version>${maven.version}</version>
                                     </requireMavenVersion>
                                     <requireSameVersions>
                                         <plugins>
