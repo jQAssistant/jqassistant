@@ -63,7 +63,7 @@
         <jqassistant.build.version>2.8.0</jqassistant.build.version>
         <!-- library versions -->
         <assertj.version>3.27.6</assertj.version>
-        <asm.version>9.9</asm.version>
+        <asm.version>9.9.1</asm.version>
         <caffeine.version>3.2.3</caffeine.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-codec.version>1.20.0</commons-codec.version>
@@ -82,9 +82,9 @@
         <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <json-schema-validator.version>2.0.0</json-schema-validator.version>
+        <json-schema-validator.version>2.0.1</json-schema-validator.version>
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
-        <junit.version>5.14.1</junit.version>
+        <junit.version>5.14.2</junit.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
         <lombok.version>1.18.42</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -94,7 +94,7 @@
         <model-assert.version>1.1.0</model-assert.version>
         <neo4j_4x.version>4.4.46</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
-        <neo4j_5x.version>5.26.18</neo4j_5x.version>
+        <neo4j_5x.version>5.26.19</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
@@ -107,9 +107,9 @@
         <snakeyaml-engine.version>3.0.1</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xmlunit-assertj.version>2.11.0</xmlunit-assertj.version>
-        <xo.version>2.6.4</xo.version>
+        <xo.version>2.6.5</xo.version>
         <!-- Maven plugin versions -->
-        <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
         <doxia-markdown.version>2.0.0</doxia-markdown.version>
         <maven.buildhelper.version>3.6.1</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
@@ -384,10 +384,10 @@
                             <configuration>
                                 <rules>
                                     <requireJavaVersion>
-                                        <version>[11,)</version>
+                                        <version>11</version>
                                     </requireJavaVersion>
                                     <requireMavenVersion>
-                                        <version>[${maven.version},)</version>
+                                        <version>${maven.version}</version>
                                     </requireMavenVersion>
                                     <requireSameVersions>
                                         <plugins>
