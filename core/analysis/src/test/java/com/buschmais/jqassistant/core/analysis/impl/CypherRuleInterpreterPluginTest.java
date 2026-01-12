@@ -62,8 +62,8 @@ class CypherRuleInterpreterPluginTest {
 
     @Test
     void rows() throws RuleException {
-        Constraint constraint = prepareConstraint (Map.of(PRIMARY_COLUMN, "value1_1", SECONDARY_COLUMN, "value1_2"),
-            Map.of(PRIMARY_COLUMN, "value2_1", SECONDARY_COLUMN, "value2_2"));
+        Constraint constraint = prepareConstraint(Map.of(PRIMARY_COLUMN, "value1_1", SECONDARY_COLUMN, "value1_2"),
+                Map.of(PRIMARY_COLUMN, "value2_1", SECONDARY_COLUMN, "value2_2"));
         doReturn(VerificationResult.builder()
             .success(true)
             .rowCount(2)
@@ -76,7 +76,7 @@ class CypherRuleInterpreterPluginTest {
         verify(analyzerContext, times(2)).isSuppressed(eq(constraint), eq(PRIMARY_COLUMN), any(Row.class));
     }
 
-    private Constraint prepareConstraint(Map<String, Object>... resultRows)  {
+    private Constraint prepareConstraint(Map<String, Object>... resultRows) {
         Report report = Report.builder()
             .primaryColumn(PRIMARY_COLUMN)
             .keyColumns(List.of())

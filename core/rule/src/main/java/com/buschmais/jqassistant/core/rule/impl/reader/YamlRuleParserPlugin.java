@@ -263,7 +263,7 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 };
 
                 propertiesMap.keySet()
-                        .forEach(propertyConsumer);
+                    .forEach(propertyConsumer);
 
                 reportBuilder.properties(reportProperties);
             }

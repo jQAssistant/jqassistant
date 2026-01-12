@@ -121,7 +121,8 @@ public final class ReportHelper {
                 }
                 if (!columns.containsKey(keyColumnName)) {
                     throw new IllegalArgumentException(
-                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist among the result columns.", rule.getId(), keyColumnName));
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist among the result columns.",
+                                    rule.getId(), keyColumnName));
                 }
             }
             columnsForKeyCalculation = rule.getReport()
@@ -133,7 +134,7 @@ public final class ReportHelper {
                 .getName()).append("|")
                 .append(rule.getId())
                 .append("|");
-        for (String columnName : columnsForKeyCalculation){
+        for (String columnName : columnsForKeyCalculation) {
             id.append(columnName)
                     .append(':')
                     .append(columns.get(columnName)

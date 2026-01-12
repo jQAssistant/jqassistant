@@ -232,9 +232,9 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
         if (reportType != null) {
             type = reportType.getType();
             primaryColumn = reportType.getPrimaryColumn();
-            if (reportType.getKeyColumns() != null) {
-                keyColumns = Arrays.asList(reportType.getKeyColumns()
-                        .split("\\s*,\\s*"));
+            String reportKeyColumns = reportType.getKeyColumns();
+            if (reportKeyColumns != null) {
+                keyColumns = Arrays.asList(reportKeyColumns.split("\\s*,\\s*"));
             }
             for (PropertyType propertyType : reportType.getProperty()) {
                 properties.setProperty(propertyType.getName(), propertyType.getValue());
