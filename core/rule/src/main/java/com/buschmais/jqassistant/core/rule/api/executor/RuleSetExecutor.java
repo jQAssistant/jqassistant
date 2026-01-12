@@ -95,12 +95,14 @@ public class RuleSetExecutor<R> {
      */
     private void executeGroup(RuleSet ruleSet, Group group, Set<String> excludedConstraintIds, Severity overriddenSeverity, Set<String> activatedConcepts)
         throws RuleException {
-        if (ruleSet.getGroupsBucket().isOverridden(group.getId())) {
-            Group overridingGroup = (Group) ruleSet.getGroupsBucket().getOverridingRule(group);
-            log.info("The group '{}' is overridden by '{}'." , group.getId(), overridingGroup.getId());
-            executeGroup(ruleSet, (Group) ruleSet.getGroupsBucket().getOverridingRule(group), excludedConstraintIds, overriddenSeverity, activatedConcepts);
-        } else
-        if (!executedGroups.contains(group)) {
+        if (ruleSet.getGroupsBucket()
+                .isOverridden(group.getId())) {
+            Group overridingGroup = (Group) ruleSet.getGroupsBucket()
+                    .getOverridingRule(group);
+            log.info("The group '{}' is overridden by '{}'.", group.getId(), overridingGroup.getId());
+            executeGroup(ruleSet, (Group) ruleSet.getGroupsBucket()
+                    .getOverridingRule(group), excludedConstraintIds, overriddenSeverity, activatedConcepts);
+        } else if (!executedGroups.contains(group)) {
             Severity groupSeverity = getEffectiveSeverity(overriddenSeverity, group.getSeverity());
             ruleVisitor.beforeGroup(group, groupSeverity);
             for (Map.Entry<String, Severity> conceptEntry : group.getConcepts()
@@ -235,9 +237,9 @@ public class RuleSetExecutor<R> {
             Concept overridingConcept = (Concept) ruleSet.getConceptBucket()
                     .getOverridingRule(concept);
             checkOverridesProvides(concept, overridingConcept);
-                log.info("The concept '{}' is overridden by '{}'", concept.getId(), overridingConcept.getId());
-                ruleVisitor.skipConcept(concept, effectiveSeverity, emptyMap());
-                return applyConcept(ruleSet, overridingConcept, overriddenSeverity, activatedConcepts, executionStack);
+            log.info("The concept '{}' is overridden by '{}'", concept.getId(), overridingConcept.getId());
+            ruleVisitor.skipConcept(concept, effectiveSeverity, emptyMap());
+            return applyConcept(ruleSet, overridingConcept, overriddenSeverity, activatedConcepts, executionStack);
         }
         R result = executedConcepts.get(concept);
         if (result == null) {

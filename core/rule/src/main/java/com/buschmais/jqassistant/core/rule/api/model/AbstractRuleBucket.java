@@ -24,7 +24,7 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
      * Key is the id of the overridden rule, value the overriding rule.
      */
     @Singular
-    private Map<String, AbstractSeverityRule> overrides = new HashMap<>();
+    private Map<String, AbstractRule> overrides = new HashMap<>();
 
     /**
      * Returns the number of rules of type {@code T} contained in the bucket.
@@ -63,20 +63,21 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
 
     /**
      * Checks if a rule is overridden by another rule of the same type.
+     *
      * @param refId of the rule in question
      * @return true if the rule is overridden
      */
-    public boolean isOverridden(String refId){
+    public boolean isOverridden(String refId) {
         return overrides.containsKey(refId);
     }
 
-
     /**
      * Returns the rule overriding the given rule.
+     *
      * @param rule in question
      * @return referenceId of the overriding rule
      */
-    public AbstractSeverityRule getOverridingRule(AbstractSeverityRule rule){
+    public AbstractRule getOverridingRule(AbstractRule rule) {
         return overrides.get(rule.getId());
     }
 
