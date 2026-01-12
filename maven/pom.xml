@@ -83,7 +83,7 @@
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>3.15.2</version>
                     <configuration>
-                        <requiredJavaVersion>${build.compiler.release}</requiredJavaVersion>
+                        <requiredJavaVersion>${java.release}</requiredJavaVersion>
                         <requiredMavenVersion>${maven.version}</requiredMavenVersion>
                         <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     </configuration>
