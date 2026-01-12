@@ -236,7 +236,7 @@
                         <xsl:value-of select="tns:description/text()"/>
                         <xsl:choose>
                             <xsl:when test="@typeAbstract = 'true'">
-                                <xsl:text> &lt;Abstract Concept&gt; </xsl:text>
+                                <xsl:text> &lt;abstract&gt; </xsl:text>
                             </xsl:when>
                         </xsl:choose>
                     </xsl:attribute>

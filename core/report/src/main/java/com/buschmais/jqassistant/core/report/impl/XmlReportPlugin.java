@@ -458,9 +458,9 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private void writeAbstractConcept(ExecutableRule<?> rule) throws XMLStreamException {
-       if(rule instanceof Concept){
+        if (rule instanceof Concept) {
             String abstractValue = Boolean.toString(((Concept) rule).isAbstract());
-            xmlStreamWriter.writeAttribute("typeAbstract", abstractValue);
+            xmlStreamWriter.writeAttribute("abstract", abstractValue);
         }
     }
 

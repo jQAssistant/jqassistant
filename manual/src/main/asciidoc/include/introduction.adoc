@@ -173,7 +173,7 @@ A concept can provide another concept directly:
         <cypher>
           ...
         </cypher>
-    </group>
+    </concept>
 
 </jqassistant-rules>
 ----
@@ -213,7 +213,7 @@ For cases where this is not desirable it is possible to specify an activation st
         <cypher>
           ...
         </cypher>
-    </group>
+    </concept>
 
 </jqassistant-rules>
 ----
@@ -221,6 +221,26 @@ For cases where this is not desirable it is possible to specify an activation st
 The example above activates the concept `my-rules:ConcreteConcept` only, if it is directly or indirectly required by the current configuration (e.g. by inclusion in an activated group or required by an activated constraint).
 
 NOTE: The activation strategy supports the values `if-available` (default) or `if-required`.
+
+Concepts can be marked as `abstract`. Abstract concepts ensure that relevant preconditions have already been taken into account by related
+concepts (concepts providing an abstract concept). In the future, abstract concepts will only be allowed to perform read-only queries.
+
+
+[source,xml]
+.my-rules.xml
+----
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.9 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-v2.9.xsd">
+
+    <concept id="plugin:AbstractConcept" abstract="true">
+        <cypher>
+          ...
+        </cypher>
+    </group>
+
+</jqassistant-rules>
+----
 
 ==== Severity Of Rules
 

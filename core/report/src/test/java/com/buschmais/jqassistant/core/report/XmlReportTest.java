@@ -208,19 +208,19 @@ class XmlReportTest {
 
         ConceptType requiredConceptType = (ConceptType) groupOrConceptOrConstraint.get(0);
         assertThat(requiredConceptType.getId()).isEqualTo("required-concept");
-        assertThat(requiredConceptType.isTypeAbstract()).isFalse();
+        assertThat(requiredConceptType.isAbstract()).isFalse();
         assertThat(requiredConceptType.getRequiredConcept()).isEmpty();
         assertThat(requiredConceptType.getProvidingConcept()).isEmpty();
 
         ConceptType providingConceptType = (ConceptType) groupOrConceptOrConstraint.get(1);
         assertThat(providingConceptType.getId()).isEqualTo("providing-concept");
-        assertThat(providingConceptType.isTypeAbstract()).isFalse();
+        assertThat(providingConceptType.isAbstract()).isFalse();
         assertThat(providingConceptType.getRequiredConcept()).isEmpty();
         assertThat(providingConceptType.getProvidingConcept()).isEmpty();
 
         ConceptType abstractConceptType = (ConceptType) groupOrConceptOrConstraint.get(2);
         assertThat(abstractConceptType.getId()).isEqualTo("abstract-concept");
-        assertThat(abstractConceptType.isTypeAbstract()).isTrue();
+        assertThat(abstractConceptType.isAbstract()).isTrue();
         assertThat(abstractConceptType.getRequiredConcept()).hasSize(1);
         assertThat(abstractConceptType.getRequiredConcept()
             .get(0)
