@@ -5,49 +5,12 @@
     <xsl:output method="html" version="1.0" encoding="UTF-8"
                 indent="yes"/>
     <xsl:template name="content">
-        <script type="text/javascript">
-            function toggleResult(id){ if (id.length != 0) {
-                var resultElement = getResultElement(id);
-                if(resultElement.hidden ) {
-                    resultElement.hidden = false;
-                } else {
-                    resultElement.hidden = "until-found";
-                    resultElement.setAttribute = ('hidden', 'until-found');
-                    }
-                }
-            }
-
-            function showResult(id){
-              if (id.length != 0) {
-                var resultElement = getResultElement(id);
-            resultElement.hidden = false;
-              }
-            }
-
-            function hideAll() {
-              var rows = document.getElementsByName('resultRow');
-              for (var i = 0; i &lt; rows.length; ++i){
-                rows[i].hidden = "until-found";
-              }
-            }
-
+        <script type="text/javascript" xmlns:tns="http://schema.jqassistant.org/report/v2.8">
             function getResultElement(id) {
-              return document.getElementById('resultOf' + id);
+            return document.getElementById('resultOf' + id);
             }
-
-
-            document.addEventListener('DOMContentLoaded', function() {
-                hideAll();
-            });
-
-            document.addEventListener("beforematch", event => {
-                const element = event.target;
-                if (element.tagName == "TR") {
-                element.hidden.removeAttribute('hidden');
-                }
-            });
         </script>
-        <style type="text/css" onLoad="hideAll()">
+        <style type="text/css">
             body {
                 font-family:'Open Sans', sans-serif;
                 line-height:1.5;
@@ -89,11 +52,41 @@
                 color:#747270;
             }
 
+            .report-table {
+                width:90%;
+                border-collapse:collapse;
+                background-color:#e3e3e2;
+            }
+
+            .header-row {
+                background: #f3f3f3;
+                font-weight: 600;
+                border-bottom: 1px solid #ccc;
+                background-color:#acaba9;
+                color:#fff;
+            }
+
+            .columns-grid {
+                display: grid;
+                grid-template-columns:  1Fr 7Fr 1Fr 1Fr 1Fr;
+                padding: 8px;
+            }
+
+            .groups-grid {
+                display: grid;
+                grid-template-columns:  1Fr 3Fr 4Fr 1Fr;
+                padding: 8px;
+            }
+
+            .row-separator {
+                border-bottom: 1px solid #ddd;
+            }
+
             .right {
                 text-align:right;
             }
 
-            .ruleName {
+            .rule-name {
                 cursor:pointer;
                 text-decoration:underline;
             }
@@ -128,6 +121,7 @@
                 <xsl:value-of select="text()"/>
             </div>
         </xsl:for-each>
+
         <div>
             <h3>Constraints</h3>
             <h6>
@@ -136,14 +130,15 @@
                     <li>Click on a failed constraint to open a details view.</li>
                 </ul>
             </h6>
-            <table>
-                <tr>
-                    <th style="width:5%;">#</th>
-                    <th style="width:80%;">Constraint</th>
-                    <th style="width:5%;">Status</th>
-                    <th style="width:5%;">Severity</th>
-                    <th style="width:5%;">Count</th>
-                </tr>
+
+            <section class="report-table">
+                <div class="header-row columns-grid">
+                    <div>#</div>
+                    <div>Constraint</div>
+                    <div>Status</div>
+                    <div>Severity</div>
+                    <div class="right">Count</div>
+                </div>
                 <xsl:apply-templates select="//tns:constraint[tns:status='failure']">
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
@@ -157,8 +152,9 @@
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
-            </table>
+            </section>
         </div>
+
         <div>
             <h3>Concepts</h3>
             <h6>
@@ -167,14 +163,15 @@
                     <li>Click on a concept to open a details view.</li>
                 </ul>
             </h6>
-            <table>
-                <tr>
-                    <th style="width:5%;">#</th>
-                    <th style="width:80%;">Concept</th>
-                    <th style="width:5%;">Status</th>
-                    <th style="width:5%;">Severity</th>
-                    <th style="width:5%;">Count</th>
-                </tr>
+
+            <section class="report-table">
+                <div class="header-row columns-grid">
+                    <div>#</div>
+                    <div>Constraint</div>
+                    <div>Status</div>
+                    <div>Severity</div>
+                    <div class="right">Count</div>
+                </div>
                 <xsl:apply-templates select="//tns:concept[tns:status='failure']">
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
@@ -188,82 +185,76 @@
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
-            </table>
+            </section>
         </div>
+
         <div>
             <h3>Groups</h3>
-            <table>
-                <tr>
-                    <th style="width:5%;">#</th>
-                    <th style="width:30%;">Group Name</th>
-                    <th style="width:50%;">Description</th>
-                    <th style="width:15%;">Date</th>
-                </tr>
+            <section class="report-table">
+                <div class="header-row groups-grid">
+                    <div>#</div>
+                    <div>Group</div>
+                    <div>Description</div>
+                    <div>Date</div>
+                </div>
                 <xsl:apply-templates select="//tns:group"/>
-            </table>
+            </section>
         </div>
     </xsl:template>
 
     <!-- ANALYSIS GROUP -->
     <xsl:template match="tns:group">
-        <tr>
-            <td>
-                <xsl:value-of select="position()"/>
-            </td>
-            <td>
-                <xsl:value-of select="@id"/>
-            </td>
-            <td>
-                <xsl:value-of select="tns:description/text()"/>
-            </td>
-            <td>
-                <xsl:value-of select="@date"/>
-            </td>
-        </tr>
+
+        <summary class="groups-grid">
+            <div><xsl:value-of select="position()"/></div>
+            <div><xsl:value-of select="@id"/></div>
+            <div><xsl:value-of select="tns:description/text()"/></div>
+            <div><xsl:value-of select="@date"/></div>
+        </summary>
     </xsl:template>
 
     <!-- CONSTRAINT/CONCEPT TABLE -->
     <xsl:template match="tns:constraint | tns:concept">
         <xsl:variable name="ruleId" select="@id"/>
-        <tr id="{$ruleId}">
-            <xsl:attribute name="class">
-                <xsl:choose>
-                    <xsl:when test="tns:status='failure'">failure</xsl:when>
-                    <xsl:when test="tns:status='warning'">warning</xsl:when>
-                    <xsl:when test="tns:status='success'">success</xsl:when>
-                </xsl:choose>
-            </xsl:attribute>
 
-            <td>
-                <xsl:value-of select="position()"/>
-            </td>
-            <td>
-                <span class="ruleName" title="{tns:description/text()}"
-                      onclick="javascript:toggleResult('{$ruleId}');">
-                    <xsl:value-of select="@id"/>
-                </span>
-            </td>
-            <td class="right">
-                <xsl:if test="tns:verificationResult/tns:success='false'">
-                    <span title="Result verification failed">&#127783;&#160;</span>
-                </xsl:if>
-                <span title="Result evaluation according to warn-on-severity/fail-on-severity thresholds">
+
+        <details id="{$ruleId}" class="row-separator">
+            <summary>
+                <xsl:attribute name="class">
                     <xsl:choose>
-                        <xsl:when test="tns:status='failure'">&#x2718;</xsl:when>
-                        <xsl:when test="tns:status='warning'">&#x1F785;</xsl:when>
-                        <xsl:when test="tns:status='success'">&#x2714;</xsl:when>
+                        <xsl:when test="tns:status='failure'">failure columns-grid</xsl:when>
+                        <xsl:when test="tns:status='warning'">warning columns-grid</xsl:when>
+                        <xsl:when test="tns:status='success'">success columns-grid</xsl:when>
                     </xsl:choose>
-                </span>
-            </td>
-            <td class="right">
-                <xsl:value-of select="tns:severity/text()"/>
-            </td>
-            <td class="right">
-                <xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/>
-            </td>
-        </tr>
-        <tr id="resultOf{$ruleId}" name="resultRow">
-            <td colspan="5">
+                </xsl:attribute>
+
+                <div>
+                    <xsl:value-of select="position()"/>
+                </div>
+
+                <div>
+                    <span class="rule-name" title="{tns:description/text()}">
+                    <xsl:value-of select="@id"/>
+                     </span>
+                </div>
+
+                <div>
+                    <xsl:if test="tns:verificationResult/tns:success='false'">
+                        <span title="Result verification failed">&#127783;&#160;</span>
+                    </xsl:if>
+                    <span title="Result evaluation according to warn-on-severity/fail-on-severity thresholds">
+                        <xsl:choose>
+                            <xsl:when test="tns:status='failure'">&#x2718;</xsl:when>
+                            <xsl:when test="tns:status='warning'">&#x1F785;</xsl:when>
+                            <xsl:when test="tns:status='success'">&#x2714;</xsl:when>
+                        </xsl:choose>
+                    </span>
+                </div>
+                <div class="right"><xsl:value-of select="tns:severity/text()"/></div>
+                <div class="right"><xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/></div>
+            </summary>
+
+            <div id="resultOf{$ruleId}" class="details-content" name="resultRow">
                 <p>
                     <xsl:value-of select="tns:description/text()"/>
                 </p>
@@ -296,8 +287,8 @@
                         <xsl:apply-templates select="tns:providing-concept"/>
                     </table>
                 </xsl:if>
-            </td>
-        </tr>
+            </div>
+        </details>
     </xsl:template>
 
     <!-- RESULT PART -->
