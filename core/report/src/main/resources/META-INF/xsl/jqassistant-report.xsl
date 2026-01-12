@@ -7,7 +7,17 @@
     <xsl:template name="content">
         <script type="text/javascript" xmlns:tns="http://schema.jqassistant.org/report/v2.8">
             function getResultElement(id) {
-            return document.getElementById('resultOf' + id);
+                return document.getElementById('resultOf' + id);
+            }
+
+            function showResult(ruleId) {
+                if (!ruleId) return;
+                    var details = document.getElementById(ruleId);
+                if (!details) return;
+                details.open = true;
+                details.scrollIntoView({
+                    block: "start"
+                    });
             }
         </script>
         <style type="text/css">
@@ -56,6 +66,8 @@
                 width:90%;
                 border-collapse:collapse;
                 background-color:#e3e3e2;
+                border-radius: 10px;
+                overflow: hidden;
             }
 
             .header-row {
@@ -68,14 +80,19 @@
 
             .columns-grid {
                 display: grid;
-                grid-template-columns:  1Fr 7Fr 1Fr 1Fr 1Fr;
+                grid-template-columns:  1Fr 12Fr 1Fr 1Fr 1Fr;
                 padding: 8px;
             }
 
             .groups-grid {
                 display: grid;
-                grid-template-columns:  1Fr 3Fr 4Fr 1Fr;
+                grid-template-columns:  1Fr 3Fr 4Fr 1.5Fr;
                 padding: 8px;
+            }
+
+            .details-content {
+                margin-left: 10px;
+                width:90%;
             }
 
             .row-separator {
@@ -92,7 +109,7 @@
             }
 
             .result {
-                margin:0 5px 20px 5px;
+                margin: 0px 5px 10px 5px;
                 color:#3d3a37;
             }
 
@@ -136,7 +153,7 @@
                     <div>#</div>
                     <div>Constraint</div>
                     <div>Status</div>
-                    <div>Severity</div>
+                    <div class="right">Severity</div>
                     <div class="right">Count</div>
                 </div>
                 <xsl:apply-templates select="//tns:constraint[tns:status='failure']">
@@ -169,7 +186,7 @@
                     <div>#</div>
                     <div>Constraint</div>
                     <div>Status</div>
-                    <div>Severity</div>
+                    <div class="right">Severity</div>
                     <div class="right">Count</div>
                 </div>
                 <xsl:apply-templates select="//tns:concept[tns:status='failure']">
@@ -259,14 +276,14 @@
                     <xsl:value-of select="tns:description/text()"/>
                 </p>
                 <p>
-                    Execution Time (in ms): <xsl:value-of select="tns:duration/text()"/>
+                     Execution Time (in ms): <xsl:value-of select="tns:duration/text()"/>
                 </p>
                 <xsl:choose>
                     <xsl:when test="tns:result">
                         <xsl:apply-templates select="tns:result"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        (no result)
+                        <p> (no result)</p>
                     </xsl:otherwise>
                 </xsl:choose>
                 <xsl:if test="tns:required-concept">
@@ -321,7 +338,7 @@
         <tr>
             <td>
                 <xsl:variable name="ruleId"><xsl:value-of select="@id" /></xsl:variable>
-                <span class="ruleName" onclick="javascript:showResult('{$ruleId}'); location.href='#{$ruleId}'">
+                <span class="rule-name" onclick="javascript:showResult('{$ruleId}')">
                     <xsl:value-of select="@id"/>
                 </span>
             </td>
