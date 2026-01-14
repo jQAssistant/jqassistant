@@ -234,6 +234,10 @@ public class RuleSetExecutor<R> {
             } else {
                 ruleVisitor.skipConstraint(constraint, effectiveSeverity, requiredConceptResults);
             }
+            this.ruleVisitor.requireConcepts(constraint, requiredConceptResults.entrySet()
+                .stream()
+                .collect(toMap(entry -> entry.getKey()
+                    .getKey(), Map.Entry::getValue)));
             executedConstraints.add(constraint);
         }
     }
@@ -275,7 +279,7 @@ public class RuleSetExecutor<R> {
                 this.ruleVisitor.requireConcepts(concept, requiredConceptResults.entrySet()
                     .stream()
                     .collect(toMap(entry -> entry.getKey()
-                        .getKey(), entry -> entry.getValue())));
+                        .getKey(), Map.Entry::getValue)));
                 Map<Concept, R> providingConceptResults = applyProvidingConcepts(ruleSet, concept, overriddenSeverity, activatedConcepts, executionStack);
                 this.ruleVisitor.provideConcept(concept, providingConceptResults);
                 checkDeprecation(concept);
