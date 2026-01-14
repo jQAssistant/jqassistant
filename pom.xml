@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.build</groupId>
         <artifactId>parent</artifactId>
-        <version>2.8.0</version>
+        <version>2.9.0-M3</version>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
@@ -60,10 +60,12 @@
 
     <properties>
         <!-- jQA build version -->
-        <jqassistant.build.version>2.8.0</jqassistant.build.version>
+        <jqassistant.build.version>2.9.0-M3</jqassistant.build.version>
+        <!-- The Java release version to be used as target for the compiler and Maven plugin metadata -->
+        <java.release>11</java.release>
         <!-- library versions -->
         <assertj.version>3.27.6</assertj.version>
-        <asm.version>9.9</asm.version>
+        <asm.version>9.9.1</asm.version>
         <caffeine.version>3.2.3</caffeine.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-codec.version>1.20.0</commons-codec.version>
@@ -82,19 +84,19 @@
         <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <json-schema-validator.version>2.0.0</json-schema-validator.version>
+        <json-schema-validator.version>2.0.1</json-schema-validator.version>
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
-        <junit.version>5.14.1</junit.version>
+        <junit.version>5.14.2</junit.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
         <lombok.version>1.18.42</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <maven.version>3.6.3</maven.version>
-        <mockito.version>5.20.0</mockito.version>
+        <mockito.version>5.21.0</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
         <model-assert.version>1.1.0</model-assert.version>
         <neo4j_4x.version>4.4.46</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
-        <neo4j_5x.version>5.26.18</neo4j_5x.version>
+        <neo4j_5x.version>5.26.19</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
@@ -102,14 +104,14 @@
         <neo4j-browser.version>5.24.0</neo4j-browser.version>
         <slf4j.version>2.0.17</slf4j.version>
         <smallrye-config.version>3.10.2</smallrye-config.version>
-        <maven-resolver.version>1.9.24</maven-resolver.version>
+        <maven-resolver.version>1.9.25</maven-resolver.version>
         <snakeyaml.version>2.5</snakeyaml.version>
         <snakeyaml-engine.version>3.0.1</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xmlunit-assertj.version>2.11.0</xmlunit-assertj.version>
-        <xo.version>2.6.4</xo.version>
+        <xo.version>2.6.5</xo.version>
         <!-- Maven plugin versions -->
-        <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
         <doxia-markdown.version>2.0.0</doxia-markdown.version>
         <maven.buildhelper.version>3.6.1</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
@@ -229,7 +231,7 @@
                         <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
                         <mergeUserSettings>false</mergeUserSettings>
                         <properties>
-                            <maven.compiler.release>11</maven.compiler.release>
+                            <maven.compiler.release>${java.release}</maven.compiler.release>
                         </properties>
                         <goals>
                             <goal>verify -e</goal>
@@ -298,7 +300,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <release>11</release>
+                        <release>${java.release}</release>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>
@@ -384,10 +386,10 @@
                             <configuration>
                                 <rules>
                                     <requireJavaVersion>
-                                        <version>[11,)</version>
+                                        <version>${java.release}</version>
                                     </requireJavaVersion>
                                     <requireMavenVersion>
-                                        <version>[${maven.version},)</version>
+                                        <version>${maven.version}</version>
                                     </requireMavenVersion>
                                     <requireSameVersions>
                                         <plugins>

@@ -46,7 +46,7 @@ public class XmlReportPlugin implements ReportPlugin {
 
     public static final String REPORT_FILE_HTML = "jqassistant-report.html";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.8";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.9";
 
     private static final Pattern XML_10_INVALID_CHARACTERS = Pattern.compile("[^\t\r\n -\uD7FF\uE000-�\uD800\uDC00-\uDBFF\uDFFF]");
 
@@ -170,13 +170,14 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeAttribute("id", group.getId());
             xmlStreamWriter.writeAttribute("date", XML_DATE_FORMAT.format(now));
 
-            xmlStreamWriter.writeStartElement("description");
             if (group.getDescription() != null) {
+                xmlStreamWriter.writeStartElement("description");
                 xmlStreamWriter.writeCharacters(XML_10_INVALID_CHARACTERS.matcher(group.getDescription())
                     .replaceAll(""));
+                xmlStreamWriter.writeEndElement();
             }
-            xmlStreamWriter.writeEndElement();
         });
+        writeOverrides(group);
         this.groupBeginTime = now.getTime();
     }
 
@@ -226,6 +227,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
                 writeElementWithCharacters("description", rule.getDescription());
+                writeOverrides(rule); //overrides-concept | overrides-constraint
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);
                 writeVerificationResult(result.getVerificationResult());
@@ -478,6 +480,25 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeAttribute("id", concept.getId());
                 writeStatus(entryStatusEntry.getValue());
                 xmlStreamWriter.writeEndElement();
+            }
+        }
+    }
+
+    private void writeOverrides(Rule rule) throws ReportException {
+        List<String> overriddenIds = rule.getOverriddenIds();
+        if (overriddenIds != null && !overriddenIds.isEmpty()) {
+            for (String id : overriddenIds) {
+                xml(() -> {
+                    if (rule instanceof Concept) {
+                        xmlStreamWriter.writeStartElement("overrides-concept");
+                    } else if (rule instanceof Constraint) {
+                        xmlStreamWriter.writeStartElement("overrides-constraint");
+                    } else {
+                        xmlStreamWriter.writeStartElement("overrides-group");
+                    }
+                    xmlStreamWriter.writeAttribute("id", id);
+                    xmlStreamWriter.writeEndElement();
+                });
             }
         }
     }

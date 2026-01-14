@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.rule.impl.reader;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.xml.validation.Schema;
 
@@ -27,8 +28,8 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.8";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.8.xsd";
+    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.9";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.9.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
@@ -111,6 +112,10 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .severity(severity)
             .ruleSource(ruleSource)
             .concepts(includeConcepts)
+            .overrideGroups(referencableType.getOverridesGroup()
+                    .stream()
+                    .map(ReferenceType::getRefId)
+                    .collect(Collectors.toList()))
             .providedConcepts(providedConcepts)
             .constraints(includeConstraints)
             .groups(includeGroups)
@@ -146,6 +151,10 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .parameters(parameters)
             .providedConcepts(providedConcepts)
             .requiresConcepts(requiresConcepts)
+            .overrideConcepts(conceptType.getOverridesConcept()
+                    .stream()
+                    .map(ReferenceType::getRefId)
+                    .collect(Collectors.toList()))
             .verification(verification)
             .report(report)
             .build();
@@ -170,6 +179,10 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .deprecation(deprecated)
             .executable(executable)
             .parameters(parameters)
+            .overrideConstraints(constraintType.getOverridesConstraint()
+                    .stream()
+                    .map(ReferenceType::getRefId)
+                    .collect(Collectors.toList()))
             .requiresConcepts(requiresConcepts)
             .verification(verification)
             .report(report)
