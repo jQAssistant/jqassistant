@@ -3133,6 +3133,61 @@ The first column will be used automatically if no primary column is explicitly s
 </table>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_overriding_rules"><a class="link" href="#_overriding_rules">Overriding Rules</a></h5>
+<div class="paragraph">
+<p>Groups, concepts, and constraints can override rules of the same type.
+This results in the overriding rule being executed instead of the rule that was overridden.
+However, a rule may only be overridden by one rule.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;group</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">group:OverridingGroup</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;overridesGroup</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">group:OverriddenGroup</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/group&gt;</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;concept</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">concept:OverridingConcept</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;overridesConcept</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">concept:OverriddenConcept</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;cypher&gt;</span><span class="inline-delimiter">&lt;![CDATA[</span>
+        MATCH
+          (m)-[]-&gt;(n)
+          ...
+        RETURN
+          m, n
+        <span class="inline-delimiter">]]&gt;</span><span class="tag">&lt;/cypher&gt;</span>
+<span class="tag">&lt;/concept&gt;</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Overriding concepts must provide the same concepts as the concepts being overridden.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;constraint</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">constraint:OverriddenConstraint</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;overridesConstraint</span> <span class="attribute-name">refId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">constraint:OverriddenConstraint</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;cypher&gt;</span><span class="inline-delimiter">&lt;![CDATA[</span>
+        MATCH
+          (m)-[]-&gt;(n)
+          ...
+        RETURN
+          m, n
+        <span class="inline-delimiter">]]&gt;</span><span class="tag">&lt;/cypher&gt;</span>
+<span class="tag">&lt;/constraint&gt;</span></code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_baseline_management"><a class="link" href="#_baseline_management">Baseline Management</a></h4>
@@ -12576,7 +12631,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-12 11:34:07 UTC
+Last updated 2026-01-14 17:37:56 UTC
 </div>
 </div>
 </body>
