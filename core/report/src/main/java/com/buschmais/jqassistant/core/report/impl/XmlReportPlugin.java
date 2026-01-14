@@ -151,9 +151,9 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeEndElement();
             }
         });
-                writeOverrides("group", group.getOverriddenIds());
-                this.groupBeginTime = now.getTime();
-            }
+        writeOverrides(group);
+        this.groupBeginTime = now.getTime();
+    }
 
     @Override
     public void endGroup() throws ReportException {
@@ -201,7 +201,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
                 writeElementWithCharacters("description", rule.getDescription());
-                writeOverrides(elementName, ((AbstractExecutableRule) rule).getOverriddenIds()); //overrides-concept | overrides-constraint
+                writeOverrides(rule); //overrides-concept | overrides-constraint
                 writeResult(columnNames, primaryColumn);
                 writeReports(rule);
                 writeVerificationResult(result.getVerificationResult());
@@ -458,16 +458,16 @@ public class XmlReportPlugin implements ReportPlugin {
         }
     }
 
-    private void writeOverrides(String elementName, List<String> overriddenIds) throws ReportException {
+    private void writeOverrides(Rule rule) throws ReportException {
+        List<String> overriddenIds = rule.getOverriddenIds();
         if (overriddenIds != null && !overriddenIds.isEmpty()) {
             for (String id : overriddenIds) {
                 xml(() -> {
-                    if(elementName.equals("concept")){
+                    if (rule instanceof Concept) {
                         xmlStreamWriter.writeStartElement("overrides-concept");
-                    }
-                    else if(elementName.equals("constraint")){
+                    } else if (rule instanceof Constraint) {
                         xmlStreamWriter.writeStartElement("overrides-constraint");
-                    } else{
+                    } else {
                         xmlStreamWriter.writeStartElement("overrides-group");
                     }
                     xmlStreamWriter.writeAttribute("id", id);

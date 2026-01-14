@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
+import java.util.List;
+
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 /**
@@ -26,6 +28,12 @@ public abstract class AbstractRule implements Rule {
      * The optional deprecation message.
      */
     private String deprecation;
+
+    /**
+     * IDs of rules which are overridden by this rule.
+     */
+    private List<String> overriddenIds;
+
 
     @Override
     public String getId() {
@@ -63,6 +71,15 @@ public abstract class AbstractRule implements Rule {
 
     void setDeprecation(String deprecation) {
         this.deprecation = deprecation;
+    }
+
+    @Override
+    public List<String> getOverriddenIds() {
+        return overriddenIds;
+    }
+
+    void setOverriddenIds(List<String> overriddenIds) {
+        this.overriddenIds = overriddenIds;
     }
 
 

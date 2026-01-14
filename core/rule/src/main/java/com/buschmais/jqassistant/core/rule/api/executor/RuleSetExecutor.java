@@ -234,10 +234,6 @@ public class RuleSetExecutor<R> {
             } else {
                 ruleVisitor.skipConstraint(constraint, effectiveSeverity, requiredConceptResults);
             }
-            this.ruleVisitor.requireConcepts(constraint, requiredConceptResults.entrySet()
-                .stream()
-                .collect(toMap(entry -> entry.getKey()
-                    .getKey(), entry -> entry.getValue())));
             executedConstraints.add(constraint);
         }
     }
