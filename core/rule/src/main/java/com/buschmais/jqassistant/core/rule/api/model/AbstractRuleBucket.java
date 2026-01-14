@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.rule.api.filter.RuleFilter;
 
+import lombok.Singular;
 import lombok.ToString;
 
 /**
@@ -19,6 +20,13 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
     private TreeMap<String, T> rules = new TreeMap<>();
 
     /**
+     * A map containing the id of the overridden and the overriding concept pairs.
+     * Key is the id of the overridden rule, value the overriding rule.
+     */
+    @Singular
+    private Map<String, AbstractRule> overrides = new HashMap<>();
+
+    /**
      * Returns the number of rules of type {@code T} contained in the bucket.
      *
      * @return Number of rules in the bucket.
@@ -30,9 +38,47 @@ public abstract class AbstractRuleBucket<T extends AbstractRule> {
     protected void add(T rule) throws RuleException {
         T existingRule = rules.put(rule.getId(), rule);
         if (existingRule != null) {
-            throw new RuleException("Cannot add rule with id '" + rule.getId() + "' from '" + rule.getSource().getId() + "' as it has already been defined in '"
-                    + existingRule.getSource().getId() + "'.");
+            throw new RuleException("Cannot add rule with id '" + rule.getId() + "' from '" + rule.getSource()
+                    .getId() + "' as it has already been defined in '" + existingRule.getSource()
+                    .getId() + "'.");
         }
+    }
+
+    /**
+     * Adds the overridden and the overriding rules to the overrides map for later resolving.
+     * In case there is already a rule overriding the overridden one, an exception is thrown.
+     */
+    public void updateOverrideRules(AbstractSeverityRule rule) throws RuleException {
+        if (rule.getOverriddenIds() != null && !rule.getOverriddenIds()
+                .isEmpty()) {
+            for (String overriddenId : rule.getOverriddenIds()) {
+                Rule existingOverriding = overrides.put(overriddenId, rule);
+                if (existingOverriding != null) {
+                    throw new RuleException("A rule is overridden by two different rules. The rule " + rule.getId() + " overrides the rule " + overriddenId
+                            + ", which is already overridden by rule " + existingOverriding.getId() + ".");
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if a rule is overridden by another rule of the same type.
+     *
+     * @param refId of the rule in question
+     * @return true if the rule is overridden
+     */
+    public boolean isOverridden(String refId) {
+        return overrides.containsKey(refId);
+    }
+
+    /**
+     * Returns the rule overriding the given rule.
+     *
+     * @param rule in question
+     * @return referenceId of the overriding rule
+     */
+    public AbstractRule getOverridingRule(AbstractRule rule) {
+        return overrides.get(rule.getId());
     }
 
     protected abstract String getRuleTypeName();

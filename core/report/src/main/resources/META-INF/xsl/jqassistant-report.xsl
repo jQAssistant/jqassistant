@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:tns="http://schema.jqassistant.org/report/v2.8">
+                xmlns:tns="http://schema.jqassistant.org/report/v2.9">
     <xsl:output method="html" version="1.0" encoding="UTF-8"
                 indent="yes"/>
     <xsl:template name="content">
@@ -13,6 +13,17 @@
                   resultElement.style.display = "none";
                 } else {
                   resultElement.style.display = "table-row";
+                }
+              }
+            }
+
+            function toggleDetails(id){
+              if (id.length != 0) {
+                var detailsElement = document.getElementById('detailsOf'+id);
+                if(detailsElement.style.display == "table-row") {
+                  detailsElement.style.display = "none";
+                } else {
+                  detailsElement.style.display = "table-row";
                 }
               }
             }
@@ -183,9 +194,8 @@
             <table>
                 <tr>
                     <th style="width:5%;">#</th>
-                    <th style="width:30%;">Group Name</th>
-                    <th style="width:50%;">Description</th>
-                    <th style="width:15%;">Date</th>
+                    <th style="width:85%;">Group Name</th>
+                    <th style="width:10%;">Date</th>
                 </tr>
                 <xsl:apply-templates select="//tns:group"/>
             </table>
@@ -194,18 +204,44 @@
 
     <!-- ANALYSIS GROUP -->
     <xsl:template match="tns:group">
-        <tr>
+        <xsl:variable name="groupId" select="@id"/>
+        <tr id="{$groupId}">
             <td>
                 <xsl:value-of select="position()"/>
             </td>
             <td>
-                <xsl:value-of select="@id"/>
-            </td>
-            <td>
-                <xsl:value-of select="tns:description/text()"/>
+                <xsl:choose>
+                    <xsl:when test="tns:description/text() or tns:overrides-group/@id">
+                <span class="ruleName" title="{tns:description/text()}"
+                      onclick="javascript:toggleDetails('{$groupId}');">
+                    <xsl:value-of select="@id"/>
+                </span>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </td>
             <td>
                 <xsl:value-of select="@date"/>
+            </td>
+        </tr>
+        <tr id="detailsOf{$groupId}" style="display:none;" name="detailsRow">
+            <td colspan="5">
+                <xsl:if test="tns:description">
+                    <p>
+                        <xsl:value-of select="tns:description/text()"/>
+                    </p>
+                </xsl:if>
+                <xsl:if test="tns:overrides-group">
+                    <p>
+                        <xsl:for-each select="tns:overrides-group[@id]">
+                            <xsl:if test="position() = 1">Overrides: </xsl:if>
+                            <xsl:value-of select="@id"/>
+                            <xsl:if test="position() != last()">, </xsl:if>
+                        </xsl:for-each>
+                    </p>
+                </xsl:if>
             </td>
         </tr>
     </xsl:template>
@@ -284,6 +320,22 @@
                         <xsl:apply-templates select="tns:providing-concept"/>
                     </table>
                 </xsl:if>
+                <p>
+                    <xsl:if test="tns:overrides-concept">
+                            <xsl:for-each select="tns:overrides-concept[@id]">
+                                <xsl:if test="position() = 1">Overrides: </xsl:if>
+                                <xsl:value-of select="@id"/>
+                                <xsl:if test="position() != last()">, </xsl:if>
+                            </xsl:for-each>
+                    </xsl:if>
+                    <xsl:if test="tns:overrides-constraint">
+                            <xsl:for-each select="tns:overrides-constraint[@id]">
+                                <xsl:if test="position() = 1">Overrides: </xsl:if>
+                                <xsl:value-of select="@id"/>
+                                <xsl:if test="position() != last()">, </xsl:if>
+                            </xsl:for-each>
+                    </xsl:if>
+                </p>
             </td>
         </tr>
     </xsl:template>
