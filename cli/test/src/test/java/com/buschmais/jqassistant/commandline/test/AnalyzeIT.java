@@ -149,8 +149,8 @@ class AnalyzeIT extends AbstractCLIIT {
 
         assertThat(execute(args).getExitCode()).isEqualTo(2);
 
-        assertThat(new File(getDefaultReportDirectory(),"jqassistant-report.xml")).exists();
-        assertThat(new File(getDefaultReportDirectory(),"jqsassistant-report.html")).exists();
+        assertThat(new File(getDefaultReportDirectory(), "jqassistant-report.xml")).exists();
+        assertThat(new File(getDefaultReportDirectory(), "jqsassistant-report.html")).exists();
     }
 
     @DistributionTest
@@ -189,15 +189,16 @@ class AnalyzeIT extends AbstractCLIIT {
      * @return <code>true</code> if the concept is represented in the database.
      */
     private boolean isConceptPresent(Store store, String concept) {
-        store.beginTransaction();
-        Map<String, Object> params = new HashMap<>();
-        params.put("concept", concept);
-        Result<CompositeRowObject> result = store.executeQuery("match (c:Concept) where c.id=$concept return count(c) as count", params);
-        assertThat(result.hasResult()).isTrue();
-        Long count = result.getSingleResult()
-            .get("count", Long.class);
-        store.commitTransaction();
-        return count == 1;
+        return store.requireTransaction(() -> {
+            Map<String, Object> params = new HashMap<>();
+            params.put("concept", concept);
+            try (Result<CompositeRowObject> result = store.executeQuery("match (c:Concept) where c.id=$concept return count(c) as count", params)) {
+                assertThat(result.hasResult()).isTrue();
+                long count = result.getSingleResult()
+                    .get("count", Long.class);
+                return count == 1;
+            }
+        });
     }
 
 }
