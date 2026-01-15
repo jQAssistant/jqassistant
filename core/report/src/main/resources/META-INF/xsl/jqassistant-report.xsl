@@ -97,6 +97,10 @@
                 text-decoration:underline;
             }
 
+            .abstractRule {
+                font-style: italic;
+            }
+
             .result {
                 margin:0 5px 20px 5px;
                 color:#3d3a37;
@@ -164,6 +168,7 @@
                 <ul>
                     <li>Move the mouse over a concept to view a description.</li>
                     <li>Click on a concept to open a details view.</li>
+                    <li>Abstract concepts are shown in italics. </li>
                 </ul>
             </h6>
             <table>
@@ -262,8 +267,26 @@
                 <xsl:value-of select="position()"/>
             </td>
             <td>
-                <span class="ruleName" title="{tns:description/text()}"
-                      onclick="javascript:toggleResult('{$ruleId}');">
+                <span onclick="javascript:toggleResult('{$ruleId}');">
+                    <xsl:attribute name="title">
+                        <xsl:value-of select="tns:description/text()"/>
+                        <xsl:choose>
+                            <xsl:when test="@typeAbstract = 'true'">
+                                <xsl:text> &lt;abstract&gt; </xsl:text>
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:attribute>
+
+                    <xsl:attribute name="class">
+                        <xsl:choose>
+                            <xsl:when test="@typeAbstract = 'true'">
+                                <xsl:text>abstractRule ruleName</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>ruleName</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
                     <xsl:value-of select="@id"/>
                 </span>
             </td>

@@ -116,6 +116,9 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                         .map(Object::toString)
                         .collect(Collectors.toList()));
                 builder.providedConcepts(providedConcepts);
+                if(executableRule.containsKey(ABSTRACT)) {
+                    builder.isAbstract((boolean) executableRule.get(ABSTRACT));
+                }
                 context.getBuilder()
                     .addConcept(builder.build());
             }

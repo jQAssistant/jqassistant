@@ -200,6 +200,7 @@ public class XmlReportPlugin implements ReportPlugin {
             xml(() -> {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
+                writeAbstractConcept(rule);
                 writeElementWithCharacters("description", rule.getDescription());
                 writeOverrides(rule); //overrides-concept | overrides-constraint
                 writeResult(columnNames, primaryColumn);
@@ -474,6 +475,13 @@ public class XmlReportPlugin implements ReportPlugin {
                     xmlStreamWriter.writeEndElement();
                 });
             }
+        }
+    }
+
+    private void writeAbstractConcept(ExecutableRule<?> rule) throws XMLStreamException {
+        if (rule instanceof Concept) {
+            String abstractValue = Boolean.toString(((Concept) rule).isAbstract());
+            xmlStreamWriter.writeAttribute("abstract", abstractValue);
         }
     }
 

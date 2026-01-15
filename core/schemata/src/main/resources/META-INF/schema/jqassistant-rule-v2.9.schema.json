@@ -66,8 +66,6 @@
     "sourceJSch" : { "type" : "string" },
 
     "executableRuleJSch" : {
-      "type" : "array",
-      "items" : {
         "type" : "object",
         "properties" : {
           "id" : { "$ref" : "#/$defs/idJSch" },
@@ -75,7 +73,7 @@
           "description" : { "type" : "string" },
           "report" : {
             "anyOf" : [
-              { "$ref" : "#/$defs/reportJScn" },
+              { "$ref" : "#/$defs/reportJSch" },
               { "type" : "null" }
             ]
           },
@@ -163,15 +161,12 @@
               { "required": [ "aggregation" ] },
               { "required": [ "rowCount" ] }
             ],
-
             "additionalProperties" : false
           }
         },
-        "required" : [ "id" ]
-      },
-      "additionalProperties" : false
+      "required" : [ "id" ]
     },
-    "reportJScn" : {
+    "reportJSch" : {
       "type" : "object",
       "properties" : {
         "primaryColumn" : {
@@ -199,6 +194,46 @@
       },
       "required": [ "primaryColumn", "type" ],
       "additionalProperties" : false
+    },
+    "conceptJSch": {
+      "allOf": [
+        { "$ref": "#/$defs/executableRuleJSch" },
+        {
+          "type": "object",
+          "properties": {
+            "abstract": {
+              "type": "boolean",
+              "default": false
+            },
+            "overridesConcepts": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/referenceJSch"
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "constraintJSch": {
+      "allOf": [
+        { "$ref": "#/$defs/executableRuleJSch" },
+        {
+          "type": "object",
+          "properties": {
+            "overridesConstraints": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/referenceJSch"
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
     }
   },
   "anyOf": [
@@ -208,32 +243,11 @@
         "concepts": {
           "anyOf": [
             {
-              "allOf": [
-                {"$ref": "#/$defs/executableRuleJSch"},
-                {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/$defs/executableRuleJSch/items"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "overridesConcepts": {
-                            "type": "array",
-                            "minItems": 0,
-                            "items": {
-                              "$ref": "#/$defs/referenceJSch"
-                            }
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  "additionalProperties": false
-                }
-              ]
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/conceptJSch"
+              },
+              "additionalProperties": false
             },
             { "type": "null" }
           ],
@@ -242,31 +256,11 @@
         "constraints": {
           "anyOf": [
             {
-              "allOf": [
-                {"$ref": "#/$defs/executableRuleJSch"},
-                {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/$defs/executableRuleJSch/items"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "overridesConstraints": {
-                            "type": "array",
-                            "minItems": 0,
-                            "items": {
-                              "$ref": "#/$defs/referenceJSch"
-                            }
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/constraintJSch"
+              },
+              "additionalProperties": false
             },
             { "type": "null" }
           ],

@@ -147,6 +147,7 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .ruleSource(ruleSource)
             .severity(severity)
             .deprecation(deprecated)
+            .isAbstract(conceptType.isAbstract())
             .executable(executable)
             .parameters(parameters)
             .providedConcepts(providedConcepts)
