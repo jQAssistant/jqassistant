@@ -1,0 +1,14 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8">
+
+    <group id="it">
+        <includeConcept refId="it:Concept"/>
+    </group>
+
+    <concept id="it:Concept">
+        <description>A concept which shall be executed.</description>
+        <cypher>
+            RETURN 1
+        </cypher>
+    </concept>
+
+</jqassistant-rules>
