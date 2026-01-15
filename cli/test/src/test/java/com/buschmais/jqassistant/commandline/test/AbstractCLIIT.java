@@ -209,7 +209,7 @@ public abstract class AbstractCLIIT {
             command.add("/C");
             command.add(jqaHome + "\\bin\\jqassistant.cmd");
         } else if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX) {
-            command.add(jqaHome + "/bin/jqassistant.sh");
+            command.add(jqaHome + "/bin/jqassistant");
         }
         command.addAll(asList(args));
         ProcessBuilder builder = new ProcessBuilder(command);

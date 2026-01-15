@@ -170,6 +170,7 @@ If multiple, partially overlapping configurations are provided then the followin
 * <<cli:available-scopes>>
 * <<cli:effective-configuration>>
 * <<cli:effective-rules>>
+* <<cli:exec>>
 * <<cli:report>>
 * <<cli:scan>>
 * <<cli:server>>
@@ -213,6 +214,39 @@ Print the current configuration as YAML representation on the console.
 ==== effective-rules
 
 List the rules which would be executed for an analysis and the given concepts, constraints or groups.
+
+[[cli:exec]]
+==== exec
+
+Executes a Cypher query against the store without starting a server.
+This is useful for quick database operations like APOC exports.
+
+[source]
+----
+jqassistant exec -q "MATCH (n) RETURN count(n) as count"
+jqassistant exec -qf query.cypher
+jqassistant exec -q "CALL apoc.export.cypher.all(null, {stream: true})" -Djqassistant.store.embedded.apoc-enabled=true
+----
+
+Options:
+
+* -q, --query <query>
+** The Cypher query to execute
+* -qf, --query-file <file>
+** Path to a file containing the Cypher query to execute
+
+Configuration properties:
+
+* jqassistant.exec.query
+** The Cypher query to execute
+* jqassistant.exec.query-file
+** Path to a file containing the Cypher query
+* jqassistant.exec.read-only
+** Execute in read-only mode (changes will be rolled back), default: `false`
+* jqassistant.exec.output-format
+** Output format: `table` (default), `json`, or `csv`
+* jqassistant.exec.output-file
+** Optional file path to write results to (default: stdout)
 
 [[cli:report]]
 ==== report
