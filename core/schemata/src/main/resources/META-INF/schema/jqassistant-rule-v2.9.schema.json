@@ -66,6 +66,8 @@
     "sourceJSch" : { "type" : "string" },
 
     "executableRuleJSch" : {
+      "type" : "array",
+      "items" : {
         "type" : "object",
         "properties" : {
           "id" : { "$ref" : "#/$defs/idJSch" },
@@ -166,6 +168,8 @@
           "additionalProperties": false
         },
         "required" : [ "id" ]
+      },
+      "additionalProperties" : false
     },
     "reportJSch" : {
       "type" : "object",
@@ -202,6 +206,13 @@
             "abstract": {
               "type": "boolean",
               "default": false
+            },
+            "overridesConcepts": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/referenceJSch"
+              }
             }
           }
         }
@@ -209,7 +220,21 @@
       "unevaluatedProperties": false
     },
     "constraintJSch": {
-      "$ref": "#/$defs/executableRuleJSch" ,
+      "allOf": [
+        { "$ref": "#/$defs/executableRuleJSch" },
+        {
+          "type": "object",
+          "properties": {
+            "overridesConstraints": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/referenceJSch"
+              }
+            }
+          }
+        }
+      ],
       "unevaluatedProperties": false
     }
   },
@@ -226,7 +251,8 @@
               }
             },
             { "type": "null" }
-          ]
+          ],
+          "additionalProperties": false
         },
         "constraints": {
           "anyOf": [
@@ -237,7 +263,8 @@
               }
             },
             { "type": "null" }
-          ]
+          ],
+          "additionalProperties": false
         },
         "groups": {
           "anyOf": [
@@ -266,6 +293,11 @@
                       { "$ref": "#/$defs/includedReferenceJSch" },
                       { "type": "null" }
                     ]
+                  },
+                  "overridesGroups": {
+                    "type" : "array",
+                    "minItems" : 0,
+                    "items" : { "$ref" : "#/$defs/referenceJSch" }
                   }
                 },
                 "additionalProperties": false,

@@ -491,6 +491,48 @@ in SonarQube:
 
 NOTE: The first column will be used automatically if no primary column is explicitly specified.
 
+===== Overriding Rules
+
+Groups, concepts, and constraints can override rules of the same type.
+This results in the overriding rule being executed instead of the rule that was overridden.
+However, a rule may only be overridden by one rule.
+
+[source,xml]
+----
+<group id="group:OverridingGroup">
+    <overridesGroup refId="group:OverriddenGroup"/>
+</group>
+----
+
+[source,xml]
+----
+<concept id="concept:OverridingConcept">
+    <overridesConcept refId="concept:OverriddenConcept" />
+    <cypher><![CDATA[
+        MATCH
+          (m)-[]->(n)
+          ...
+        RETURN
+          m, n
+        ]]></cypher>
+</concept>
+----
+NOTE: Overriding concepts must provide the same concepts as the concepts being overridden.
+
+[source,xml]
+----
+<constraint id="constraint:OverriddenConstraint">
+    <overridesConstraint refId="constraint:OverriddenConstraint" />
+    <cypher><![CDATA[
+        MATCH
+          (m)-[]->(n)
+          ...
+        RETURN
+          m, n
+        ]]></cypher>
+</constraint>
+----
+
 ==== Baseline Management
 
 Introducing rules to an existing codebase usually leads to a large number of existing violations.

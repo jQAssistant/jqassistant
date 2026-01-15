@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.9">
+    <build>
+        <name>Test</name>
+        <timestamp>2025-04-07T01:00:00</timestamp>
+        <properties/>
+    </build>
+    <group id="group:GroupWithoutDetails" date="13/04/2025"></group>
+    <group id="group:GroupWithDescription" date="11/04/2025">
+    <description>Just a basic group.</description>
+    </group>
+    <group id="group:GroupThatOverridesSmth" date="13/04/2025">
+        <description>This group overrides another.</description>
+        <duration>3</duration>
+        <overrides-group id="group:OverriddenGroup1"/>
+        <overrides-group id="group:OverriddenGroup2"/>
+    </group>
+    <concept id="concept:ConceptWithOverridingConcept">
+        <description>Minor Success</description>
+        <overrides-concept id="concept:OverriddenConcept1"/>
+        <overrides-concept id="concept:OverriddenConcept2"/>
+        <verificationResult>
+            <success>true</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>success</status>
+        <severity level="3">major</severity>
+        <duration>10</duration>
+    </concept>
+    <concept id="concept:NormalConcept">
+        <description>Major Warning</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>0</rowCount>
+        </verificationResult>
+        <status>warning</status>
+        <severity level="2">major</severity>
+        <duration>10</duration>
+    </concept>
+    <concept id="concept:OverriddenConcept1">
+        <description>Minor Success</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>skipped</status>
+        <duration>10</duration>
+    </concept>
+    <concept id="concept:OverriddenConcept2">
+        <description>Minor Success</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>skipped</status>
+        <duration>10</duration>
+    </concept>
+    <constraint id="constraint:ConstraintOverriding">
+        <description>Minor Success</description>
+        <overrides-constraint id="constraint:OverriddenConstraint"/>
+        <verificationResult>
+            <success>true</success>
+            <rowCount>0</rowCount>
+        </verificationResult>
+        <status>success</status>
+        <severity level="3">major</severity>
+        <duration>10</duration>
+    </constraint>
+    <constraint id="constraint:NormalConstraint">
+        <description>Major Warning</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>warning</status>
+        <severity level="2">major</severity>
+        <duration>10</duration>
+    </constraint>
+    <constraint id="constraint:OverriddenConstraint">
+        <description>Major Warning</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>skipped</status>
+        <duration>10</duration>
+    </constraint>
+</jqassistant-report>

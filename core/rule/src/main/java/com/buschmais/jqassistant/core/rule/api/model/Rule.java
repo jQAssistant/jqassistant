@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
+import java.util.List;
+
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 
 /**
@@ -34,5 +36,12 @@ public interface Rule {
      * @return The deprecation message.
      */
     String getDeprecation();
+
+    /**
+     * Return the ids of rules which are overridden by this rule.
+     *
+     * @return The deprecation message.
+     */
+    List<String> getOverriddenIds();
 
 }

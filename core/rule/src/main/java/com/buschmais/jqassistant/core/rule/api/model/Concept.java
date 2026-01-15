@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import lombok.*;
@@ -78,6 +79,12 @@ public class Concept extends AbstractExecutableRule {
         public ConceptBuilder isAbstract(boolean isAbstract) {
             Concept r = build();
             r.setAbstract(isAbstract);
+            return this;
+        }
+
+        public ConceptBuilder overrideConcepts(List<String> overrideConceptIds) {
+            Concept r = build();
+            r.setOverriddenIds(overrideConceptIds);
             return this;
         }
     }

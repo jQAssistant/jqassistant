@@ -29,17 +29,20 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder addConcept(Concept concept) throws RuleException {
         ruleSet.conceptBucket.add(concept);
+        ruleSet.conceptBucket.updateOverrideRules(concept);
         updateProvidedConcepts(concept.getProvidedConcepts());
         return this;
     }
 
     public RuleSetBuilder addConstraint(Constraint constraint) throws RuleException {
         ruleSet.constraintBucket.add(constraint);
+        ruleSet.constraintBucket.updateOverrideRules(constraint);
         return this;
     }
 
     public RuleSetBuilder addGroup(Group group) throws RuleException {
         ruleSet.groupsBucket.add(group);
+        ruleSet.groupsBucket.updateOverrideRules(group);
         for (Map.Entry<String, Set<Concept.ProvidedConcept>> entry : group.getProvidedConcepts()
             .entrySet()) {
             updateProvidedConcepts(entry.getValue());
