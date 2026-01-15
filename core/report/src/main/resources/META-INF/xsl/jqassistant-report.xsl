@@ -25,6 +25,7 @@
                 font-family:'Open Sans', sans-serif;
                 line-height:1.5;
                 color:#3d3a37;
+                background-color:#FFFCF0
             }
 
             a, a:link, a:visited, a:hover, a:focus, a:active {
@@ -39,18 +40,18 @@
             table {
                 width:90%;
                 border-collapse:collapse;
-                background-color:#e3e3e2;
+                background-color:#e0ddd1;
                 }
 
             table th {
-                background-color:#acaba9;
+            background-color:#aba9a1;
                 color:#fff;
                 }
 
             table tr td, th {
                 border-style:solid;
-                border-width:1px;
-                border-color:#fff;
+                border-width:1.5px;
+                border-color:#aba9a1;
                 padding:5px;
             }
 
@@ -65,16 +66,16 @@
             .report-table {
                 width:90%;
                 border-collapse:collapse;
-                background-color:#e3e3e2;
+                background-color:#e0ddd1;
                 border-radius: 10px;
                 overflow: hidden;
             }
 
             .header-row {
-                background: #f3f3f3;
+                background: #7a7974;
                 font-weight: 600;
                 border-bottom: 1px solid #ccc;
-                background-color:#acaba9;
+                background-color:#aba9a1;
                 color:#fff;
             }
 
