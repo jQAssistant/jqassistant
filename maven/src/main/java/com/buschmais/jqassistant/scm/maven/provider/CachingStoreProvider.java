@@ -7,9 +7,10 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
+import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
-import com.buschmais.jqassistant.scm.maven.MavenTaskContext;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -40,18 +41,21 @@ public class CachingStoreProvider implements Disposable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachingStoreProvider.class);
 
-    private final Map<StoreKey, Store> storesByKey = new HashMap<>();
+    private Map<StoreKey, Store> storesByKey = new HashMap<>();
 
-    private final Map<Store, StoreKey> keysByStore = new IdentityHashMap<>();
+    private Map<Store, StoreKey> keysByStore = new IdentityHashMap<>();
 
     /**
      * Create/open store in the given directory.
      *
+     * @param storeConfiguration
+     *     The store configuration.
+     * @param pluginRepository
+     *     The pluginRepository.
      * @return The store.
      */
-    public Store getStore(MavenTaskContext mavenTaskContext, Supplier<File> storeDirectorySupplier) {
-        com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration = mavenTaskContext.getConfiguration()
-            .store();
+    public Store getStore(com.buschmais.jqassistant.core.store.api.configuration.Store storeConfiguration, Supplier<File> storeDirectorySupplier,
+        PluginRepository pluginRepository, ArtifactProvider artifactProvider) {
         URI uri = storeConfiguration.uri()
             .orElseGet(() -> {
                 File storeDirectory = storeDirectorySupplier.get();
@@ -64,12 +68,11 @@ public class CachingStoreProvider implements Disposable {
             .uri(uri);
         storeConfiguration.remote()
             .username()
-            .ifPresent(storeKeyBuilder::username);
+            .ifPresent(username -> storeKeyBuilder.username(username));
         StoreKey key = storeKeyBuilder.build();
         Store store = storesByKey.get(key);
         if (store == null) {
-            StoreFactory storeFactory = new StoreFactory(mavenTaskContext.getPluginRepository()
-                .getStorePluginRepository(), mavenTaskContext.getArtifactProvider());
+            StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
             store = storeFactory.getStore(storeConfiguration, storeDirectorySupplier);
             store.start();
             storesByKey.put(key, store);

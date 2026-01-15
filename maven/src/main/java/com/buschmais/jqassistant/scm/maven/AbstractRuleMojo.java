@@ -13,20 +13,13 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
-import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Abstract base class for mojo using rules.
  */
-@Slf4j
-public abstract class AbstractMavenRuleTask extends AbstractMavenStoreTask {
-
-    public AbstractMavenRuleTask(CachingStoreProvider cachingStoreProvider) {
-        super(cachingStoreProvider);
-    }
+public abstract class AbstractRuleMojo extends AbstractProjectMojo {
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
@@ -35,18 +28,18 @@ public abstract class AbstractMavenRuleTask extends AbstractMavenStoreTask {
      * @throws MojoExecutionException
      *     If the rules cannot be read.
      */
-    protected final RuleSet readRules(MavenTaskContext mavenTaskContext) throws MojoExecutionException {
+    protected final RuleSet readRules(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
-        PluginRepository pluginRepository = mavenTaskContext.getPluginRepository();
+        PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
         // read rules from rules directory
-        addRuleFiles(sources, mavenTaskContext.getRuleDirectory());
+        addRuleFiles(sources, mojoExecutionContext.getRuleDirectory());
         List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository()
             .getRuleSources();
         sources.addAll(ruleSources);
         Collection<RuleParserPlugin> ruleParserPlugins;
         try {
             ruleParserPlugins = pluginRepository.getRulePluginRepository()
-                .getRuleParserPlugins(mavenTaskContext.getConfiguration()
+                .getRuleParserPlugins(mojoExecutionContext.getConfiguration()
                     .analyze()
                     .rule());
         } catch (RuleException e) {
@@ -73,7 +66,7 @@ public abstract class AbstractMavenRuleTask extends AbstractMavenStoreTask {
     private void addRuleFiles(List<RuleSource> sources, File directory) throws MojoExecutionException {
         List<RuleSource> ruleSources = readRulesDirectory(directory);
         for (RuleSource ruleSource : ruleSources) {
-            log.debug("Adding rules from file " + ruleSource);
+            getLog().debug("Adding rules from file " + ruleSource);
             sources.add(ruleSource);
         }
     }

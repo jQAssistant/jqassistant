@@ -14,7 +14,7 @@ import org.apache.maven.project.MavenProject;
  * Starts an embedded Neo4j server.
  */
 @Mojo(name = "server", threadSafe = true)
-public class ServerMojo extends AbstractMojo {
+public class ServerMojo extends AbstractProjectMojo {
 
     @Override
     protected boolean isConnectorRequired() {
@@ -22,37 +22,37 @@ public class ServerMojo extends AbstractMojo {
     }
 
     @Override
-    protected MavenTask getMavenTask() {
-        return new AbstractMavenStoreTask(cachingStoreProvider) {
+    protected void beforeProject(MojoExecutionContext mojoExecutionContext) {
+        // nothing to do here
+    }
 
-            @Override
-            public void leaveProject(MavenTaskContext mavenTaskContext) throws MojoExecutionException, MojoFailureException {
-                withStore(store -> server(mavenTaskContext, (EmbeddedGraphStore) store), mavenTaskContext);
-            }
+    @Override
+    protected void afterProject(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+        withStore(store -> server(mojoExecutionContext, (EmbeddedGraphStore) store), mojoExecutionContext);
+    }
 
-            private void server(MavenTaskContext mavenTaskContext, EmbeddedGraphStore store) throws MojoExecutionException {
-                MavenProject rootModule = mavenTaskContext.getRootModule();
-                getLog().info("Running server for module " + rootModule.getGroupId() + ":" + rootModule.getArtifactId() + ":" + rootModule.getVersion());
-                EmbeddedNeo4jServer server = store.getEmbeddedNeo4jServer();
-                server.start();
-                if (mavenTaskContext.getConfiguration()
-                    .server()
-                    .openBrowser()) {
-                    server.openBrowser();
-                }
-                if (!mavenTaskContext.getConfiguration()
-                    .server()
-                    .daemon()) {
-                    getLog().info("Press <Enter> to finish.");
-                    try {
-                        System.in.read();
-                    } catch (IOException e) {
-                        throw new MojoExecutionException("Cannot read from System.in.", e);
-                    } finally {
-                        server.stop();
-                    }
-                }
+    private void server(MojoExecutionContext mojoExecutionContext, EmbeddedGraphStore store) throws MojoExecutionException {
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
+        getLog().info("Running server for module " + rootModule.getGroupId() + ":" + rootModule.getArtifactId() + ":" + rootModule.getVersion());
+        EmbeddedGraphStore embeddedGraphStore = store;
+        EmbeddedNeo4jServer server = embeddedGraphStore.getEmbeddedNeo4jServer();
+        server.start();
+        if (mojoExecutionContext.getConfiguration()
+            .server()
+            .openBrowser()) {
+            server.openBrowser();
+        }
+        if (!mojoExecutionContext.getConfiguration()
+            .server()
+            .daemon()) {
+            getLog().info("Press <Enter> to finish.");
+            try {
+                System.in.read();
+            } catch (IOException e) {
+                throw new MojoExecutionException("Cannot read from System.in.", e);
+            } finally {
+                server.stop();
             }
-        };
+        }
     }
 }

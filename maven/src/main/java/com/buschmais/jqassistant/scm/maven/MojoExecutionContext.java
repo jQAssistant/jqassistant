@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
-import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import lombok.Getter;
@@ -21,7 +20,7 @@ import org.apache.maven.project.MavenProject;
  * Resolver for root modules in a multi-module hierarchy.
  */
 @Getter
-public final class MavenTaskContext {
+public final class MojoExecutionContext {
 
     /**
      * The name of the rules directory.
@@ -41,20 +40,17 @@ public final class MavenTaskContext {
 
     private final MojoExecution mojoExecution;
 
-    private final PluginRepository pluginRepository;
-
     private final MavenConfiguration configuration;
 
-    private final ArtifactProvider artifactProvider;
+    private final PluginRepository pluginRepository;
 
-    MavenTaskContext(MavenSession session, MavenProject currentModule, MojoExecution mojoExecution, MavenConfiguration configuration,
-        PluginRepository pluginRepository, ArtifactProvider artifactProvider) throws MojoExecutionException {
+    MojoExecutionContext(MavenSession session, MavenProject currentModule, MojoExecution mojoExecution, MavenConfiguration configuration,
+        PluginRepository pluginRepository) throws MojoExecutionException {
         this.mavenSession = session;
         this.currentModule = currentModule;
         this.mojoExecution = mojoExecution;
         this.configuration = configuration;
         this.pluginRepository = pluginRepository;
-        this.artifactProvider = artifactProvider;
         this.rootModule = getRootModule(currentModule, session.getProjects());
     }
 
@@ -72,7 +68,7 @@ public final class MavenTaskContext {
      *     If the directory cannot be resolved.
      */
     private MavenProject getRootModule(MavenProject module, List<MavenProject> reactor) throws MojoExecutionException {
-        String rootModuleContextKey = MavenTaskContext.class.getName() + "#rootModule";
+        String rootModuleContextKey = MojoExecutionContext.class.getName() + "#rootModule";
         MavenProject rootModule = (MavenProject) module.getContextValue(rootModuleContextKey);
         if (rootModule == null) {
             if (configuration.maven()
@@ -131,14 +127,16 @@ public final class MavenTaskContext {
      */
     File getRuleDirectory() {
         String directoryName = getRuleDirectoryName();
-        return getDirectory(rootModule, directoryName);
+        return getRuleDirectory(directoryName);
     }
 
-    private String getRuleDirectoryName() {
-        return configuration.analyze()
-            .rule()
-            .directory()
-            .orElse(DEFAULT_RULES_DIRECTORY);
+    /**
+     * Returns the rule directory with the given name.
+     *
+     * @return The file representing the directory.
+     */
+    File getRuleDirectory(String directoryName) {
+        return getDirectory(rootModule, directoryName);
     }
 
     /**
@@ -155,6 +153,13 @@ public final class MavenTaskContext {
     private File getDirectory(MavenProject module, String directoryName) {
         File directory = new File(directoryName);
         return directory.isAbsolute() ? directory : new File(module.getBasedir(), directoryName);
+    }
+
+    private String getRuleDirectoryName() {
+        return configuration.analyze()
+            .rule()
+            .directory()
+            .orElse(DEFAULT_RULES_DIRECTORY);
     }
 
     /**
@@ -183,4 +188,26 @@ public final class MavenTaskContext {
         directory.mkdirs();
         return directory;
     }
+
+    /**
+     * Determines a report file name.
+     *
+     * @param reportFile
+     *     The report file as specified in the pom.xml file or on the command line.
+     * @return The resolved {@link java.io.File}.
+     * @throws MojoExecutionException
+     *     If the file cannot be determined.
+     */
+    File getOutputFile(File reportFile, String defaultFile) throws MojoExecutionException {
+        File selectedXmlReportFile;
+        if (reportFile != null) {
+            selectedXmlReportFile = reportFile;
+        } else if (rootModule != null) {
+            selectedXmlReportFile = new File(getOutputDirectory() + "/" + defaultFile);
+        } else {
+            throw new MojoExecutionException("Cannot determine report file.");
+        }
+        return selectedXmlReportFile;
+    }
+
 }

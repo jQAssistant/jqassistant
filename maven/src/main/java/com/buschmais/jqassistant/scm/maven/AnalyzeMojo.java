@@ -43,7 +43,7 @@ import static java.util.Collections.emptyMap;
  * Runs analysis according to the defined rules.
  */
 @Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
-public class AnalyzeMojo extends AbstractMojo {
+public class AnalyzeMojo extends AbstractRuleMojo {
 
     public static final String JQASSISTANT_REPORT_CLASSIFIER = "jqassistant-report";
 
@@ -53,97 +53,90 @@ public class AnalyzeMojo extends AbstractMojo {
     private MavenProjectHelper mavenProjectHelper;
 
     @Override
-    protected MavenTask getMavenTask() {
-        return new AbstractMavenRuleTask(cachingStoreProvider) {
-
-            @Override
-            public void enterProject(MavenTaskContext mavenTaskContext) throws MojoExecutionException {
-                MavenProject rootModule = mavenTaskContext.getRootModule();
-                List<MavenProject> projectModules = mavenTaskContext.getProjects()
-                    .get(rootModule);
-                if (projectModules.size() > 1) {
-                    validate(mavenTaskContext);
-                }
-            }
-
-            private void validate(MavenTaskContext mavenTaskContext) throws MojoExecutionException {
-                RuleSet ruleSet = readRules(mavenTaskContext);
-                Analyze analyze = mavenTaskContext.getConfiguration()
-                    .analyze();
-                RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(),
-                    analyze.concepts());
-                RuleHelper ruleHelper = new RuleHelper();
-                try {
-                    ruleHelper.getAllRules(ruleSet, ruleSelection, analyze.rule());
-                } catch (RuleException e) {
-                    throw new MojoExecutionException("Invalid rule configuration.", e);
-                }
-            }
-
-            @Override
-            public void leaveProject(MavenTaskContext mavenTaskContext) throws MojoExecutionException, MojoFailureException {
-                withStore(store -> analyze(store, mavenTaskContext), mavenTaskContext);
-            }
-
-            private void analyze(Store store, MavenTaskContext mavenTaskContext) throws MojoExecutionException, MojoFailureException {
-                MavenProject rootModule = mavenTaskContext.getRootModule();
-                MavenConfiguration configuration = mavenTaskContext.getConfiguration();
-                RuleSet ruleSet = readRules(mavenTaskContext);
-                Analyze analyze = configuration.analyze();
-                RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(),
-                    analyze.concepts());
-                File outputDirectory = mavenTaskContext.getOutputDirectory();
-
-                getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
-                Report report = analyze.report();
-
-                PluginRepository pluginRepository = mavenTaskContext.getPluginRepository();
-                ReportContext reportContext = new ReportContextImpl(report.build(), pluginRepository.getClassLoader(), store, outputDirectory);
-                AnalyzerPluginRepository analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
-                Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(report, reportContext);
-                InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
-
-                try {
-                    Baseline baselineConfiguration = analyze.baseline();
-                    BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, mavenTaskContext.getRuleDirectory());
-                    BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
-                    Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store,
-                        analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), baselineManager, inMemoryReportPlugin);
-                    analyzer.execute(ruleSet, ruleSelection);
-                } catch (RuleException e) {
-                    throw new MojoExecutionException("Analysis failed.", e);
-                }
-                if (report.createArchive()) {
-                    attachReportArchive(mavenTaskContext, reportContext);
-                }
-                ReportHelper reportHelper = new ReportHelper(report, LOGGER);
-                store.beginTransaction();
-                try {
-                    reportHelper.verify(inMemoryReportPlugin, message -> {
-                        throw new MojoFailureException(message);
-                    });
-                } finally {
-                    store.commitTransaction();
-                }
-            }
-
-            private void attachReportArchive(MavenTaskContext mavenTaskContext, ReportContext reportContext) throws MojoExecutionException {
-                MavenProject currentModule = mavenTaskContext.getCurrentModule();
-                MavenProject rootModule = mavenTaskContext.getRootModule();
-                File reportArchive;
-                try {
-                    reportArchive = reportContext.createReportArchive();
-                } catch (ReportException e) {
-                    throw new MojoExecutionException("Cannot attach report artifact.", e);
-                }
-                LOGGER.info("Created report archive {}.", reportArchive);
-                mavenProjectHelper.attachArtifact(rootModule, "zip", JQASSISTANT_REPORT_CLASSIFIER, reportArchive);
-                if (!currentModule.equals(rootModule)) {
-                    LOGGER.info(
-                        "Report archive has been attached to module '{}:{}:{}'. Use 'installAtEnd' (maven-install-plugin) or 'deployAtEnd' (maven-deploy-plugin) to ensure deployment to local or remote repositories.",
-                        rootModule.getGroupId(), rootModule.getArtifactId(), rootModule.getVersion());
-                }
-            }
-        };
+    protected void beforeProject(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
+        List<MavenProject> projectModules = mojoExecutionContext.getProjects()
+            .get(rootModule);
+        if (projectModules.size() > 1) {
+            validate(mojoExecutionContext);
+        }
     }
+
+    private void validate(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException {
+        RuleSet ruleSet = readRules(mojoExecutionContext);
+        Analyze analyze = mojoExecutionContext.getConfiguration()
+            .analyze();
+        RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
+        RuleHelper ruleHelper = new RuleHelper();
+        try {
+            ruleHelper.getAllRules(ruleSet, ruleSelection, analyze.rule());
+        } catch (RuleException e) {
+            throw new MojoExecutionException("Invalid rule configuration.", e);
+        }
+    }
+
+    @Override
+    public void afterProject(MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+        withStore(store -> analyze(store, mojoExecutionContext), mojoExecutionContext);
+    }
+
+    private void analyze(Store store, MojoExecutionContext mojoExecutionContext) throws MojoExecutionException, MojoFailureException {
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
+        MavenConfiguration configuration = mojoExecutionContext.getConfiguration();
+        RuleSet ruleSet = readRules(mojoExecutionContext);
+        Analyze analyze = configuration.analyze();
+        RuleSelection ruleSelection = RuleSelection.select(ruleSet, analyze.groups(), analyze.constraints(), analyze.excludeConstraints(), analyze.concepts());
+        File outputDirectory = mojoExecutionContext.getOutputDirectory();
+
+        getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
+        Report report = analyze.report();
+
+        PluginRepository pluginRepository = mojoExecutionContext.getPluginRepository();
+        ReportContext reportContext = new ReportContextImpl(report.build(), pluginRepository.getClassLoader(), store, outputDirectory);
+        AnalyzerPluginRepository analyzerPluginRepository = pluginRepository.getAnalyzerPluginRepository();
+        Map<String, ReportPlugin> reportPlugins = analyzerPluginRepository.getReportPlugins(report, reportContext);
+        InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
+
+        try {
+            Baseline baselineConfiguration = analyze.baseline();
+            BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, mojoExecutionContext.getRuleDirectory());
+            BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
+            Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store,
+                analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), baselineManager, inMemoryReportPlugin);
+            analyzer.execute(ruleSet, ruleSelection);
+        } catch (RuleException e) {
+            throw new MojoExecutionException("Analysis failed.", e);
+        }
+        if (report.createArchive()) {
+            attachReportArchive(mojoExecutionContext, reportContext);
+        }
+        ReportHelper reportHelper = new ReportHelper(report, LOGGER);
+        store.beginTransaction();
+        try {
+            reportHelper.verify(inMemoryReportPlugin, message -> {
+                throw new MojoFailureException(message);
+            });
+        } finally {
+            store.commitTransaction();
+        }
+    }
+
+    private void attachReportArchive(MojoExecutionContext mojoExecutionContext, ReportContext reportContext) throws MojoExecutionException {
+        MavenProject currentModule = mojoExecutionContext.getCurrentModule();
+        MavenProject rootModule = mojoExecutionContext.getRootModule();
+        File reportArchive;
+        try {
+            reportArchive = reportContext.createReportArchive();
+        } catch (ReportException e) {
+            throw new MojoExecutionException("Cannot attach report artifact.", e);
+        }
+        LOGGER.info("Created report archive {}.", reportArchive);
+        mavenProjectHelper.attachArtifact(rootModule, "zip", JQASSISTANT_REPORT_CLASSIFIER, reportArchive);
+        if (!currentModule.equals(rootModule)) {
+            LOGGER.info(
+                "Report archive has been attached to module '{}:{}:{}'. Use 'installAtEnd' (maven-install-plugin) or 'deployAtEnd' (maven-deploy-plugin) to ensure deployment to local or remote repositories.",
+                rootModule.getGroupId(), rootModule.getArtifactId(), rootModule.getVersion());
+        }
+    }
+
 }
