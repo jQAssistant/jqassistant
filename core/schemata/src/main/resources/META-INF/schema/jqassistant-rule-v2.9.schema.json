@@ -66,8 +66,6 @@
     "sourceJSch" : { "type" : "string" },
 
     "executableRuleJSch" : {
-      "type" : "array",
-      "items" : {
         "type" : "object",
         "properties" : {
           "id" : { "$ref" : "#/$defs/idJSch" },
@@ -75,7 +73,7 @@
           "description" : { "type" : "string" },
           "report" : {
             "anyOf" : [
-              { "$ref" : "#/$defs/reportJScn" },
+              { "$ref" : "#/$defs/reportJSch" },
               { "type" : "null" }
             ]
           },
@@ -164,8 +162,7 @@
               { "required": [ "rowCount" ] }
             ],
             "additionalProperties" : false
-          },
-          "additionalProperties": false
+          }
         },
       "required" : [ "id" ]
     },
