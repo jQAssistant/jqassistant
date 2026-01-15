@@ -66,9 +66,7 @@
     "sourceJSch" : { "type" : "string" },
 
     "executableRuleJSch" : {
-      "type" : "array",
-      "items" : {
-        "type" : "object",
+      "type" : "object",
         "properties" : {
           "id" : { "$ref" : "#/$defs/idJSch" },
           "deprecated" : { "type" : "string" },
@@ -167,9 +165,7 @@
           },
           "additionalProperties": false
         },
-        "required" : [ "id" ]
-      },
-      "additionalProperties" : false
+      "required" : [ "id" ]
     },
     "reportJSch" : {
       "type" : "object",
@@ -248,7 +244,8 @@
               "type": "array",
               "items": {
                 "$ref": "#/$defs/conceptJSch"
-              }
+              },
+              "additionalProperties": false
             },
             { "type": "null" }
           ],
@@ -260,7 +257,8 @@
               "type": "array",
               "items": {
                 "$ref": "#/$defs/constraintJSch"
-              }
+              },
+              "additionalProperties": false
             },
             { "type": "null" }
           ],
