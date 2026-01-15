@@ -263,6 +263,12 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                 reportBuilder.primaryColumn(primaryColumn);
             }
 
+            if (reportBlock.containsKey(KEY_COLUMNS)) {
+                List<String> keyColumnsList = new ArrayList<>();
+                keyColumnsList = List.of(((String) reportBlock.get(KEY_COLUMNS)).split("\\s*,\\s*"));
+                reportBuilder.keyColumns(keyColumnsList);
+            }
+
             if (reportBlock.containsKey(REPORT_PROPERTIES)) {
                 Map<String, String> propertiesMap = (Map<String, String>) reportBlock.get(REPORT_PROPERTIES);
 

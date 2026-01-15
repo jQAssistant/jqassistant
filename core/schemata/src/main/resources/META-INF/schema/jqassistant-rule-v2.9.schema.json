@@ -177,6 +177,9 @@
         "primaryColumn" : {
           "type" : "string"
         },
+        "keyColumns" : {
+          "type" : "string"
+        },
         "properties" : {
           "type" : "object",
           "patternProperties" : {
@@ -227,7 +230,8 @@
                         }
                       }
                     ]
-                  }
+                  },
+                  "additionalProperties": false
                 }
               ]
             },
