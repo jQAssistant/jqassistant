@@ -3134,6 +3134,31 @@ The first column will be used automatically if no primary column is explicitly s
 </div>
 </div>
 <div class="sect4">
+<h5 id="_key_columns"><a class="link" href="#_key_columns">Key Columns</a></h5>
+<div class="paragraph">
+<p>By default the values of all columns returned by a constraint or a concept are used
+to calculate a key for each row. These keys are used to uniquely identify rows between different executions,
+for baselines or reporting to other tools, e.g. SonarQube or Teamscale.
+In case the result contains additional columns with context information,
+the columns to be used for calculating the row key can be specified separately:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;concept</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">my-rules:MyConcept</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;description&gt;</span>A human readable description of the concept.<span class="tag">&lt;/description&gt;</span>
+    <span class="tag">&lt;cypher&gt;</span><span class="inline-delimiter">&lt;![CDATA[</span>
+        MATCH
+          (m)-[]-&gt;(n), (l)-[]-&gt;(n)
+          ...
+        RETURN
+          m, n, l
+    <span class="inline-delimiter">]]&gt;</span><span class="tag">&lt;/cypher&gt;</span>
+    <span class="tag">&lt;report</span> <span class="attribute-name">keyColumns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">m, n</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;/concept&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_overriding_rules"><a class="link" href="#_overriding_rules">Overriding Rules</a></h5>
 <div class="paragraph">
 <p>Groups, concepts, and constraints can override rules of the same type.
@@ -12631,7 +12656,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-15 07:57:44 UTC
+Last updated 2026-01-15 10:56:23 UTC
 </div>
 </div>
 </body>
