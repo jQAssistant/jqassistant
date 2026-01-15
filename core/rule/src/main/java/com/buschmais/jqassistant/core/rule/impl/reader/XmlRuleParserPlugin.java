@@ -241,17 +241,23 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     private Report getReport(ReportType reportType) {
         String type = null;
         String primaryColumn = null;
+        List<String> keyColumns = new ArrayList<>();
         Properties properties = new Properties();
         if (reportType != null) {
             type = reportType.getType();
             primaryColumn = reportType.getPrimaryColumn();
+            String reportKeyColumns = reportType.getKeyColumns();
+            if (reportKeyColumns != null) {
+                keyColumns = Arrays.asList(reportKeyColumns.split("\\s*,\\s*"));
+            }
             for (PropertyType propertyType : reportType.getProperty()) {
                 properties.setProperty(propertyType.getName(), propertyType.getValue());
             }
         }
         Report.ReportBuilder reportBuilder = Report.builder()
-            .primaryColumn(primaryColumn)
-            .properties(properties);
+                .keyColumns(keyColumns)
+                .primaryColumn(primaryColumn)
+                .properties(properties);
         if (type != null) {
             reportBuilder.selectedTypes(Report.selectTypes(type));
         }

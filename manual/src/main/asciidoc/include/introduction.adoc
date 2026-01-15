@@ -491,6 +491,29 @@ in SonarQube:
 
 NOTE: The first column will be used automatically if no primary column is explicitly specified.
 
+===== Key Columns
+
+By default the values of all columns returned by a constraint or a concept are used
+to calculate a key for each row. These keys are used to uniquely identify rows between different executions,
+for baselines or reporting to other tools, e.g. SonarQube or Teamscale.
+In case the result contains additional columns with context information,
+the columns to be used for calculating the row key can be specified separately:
+
+[source,xml]
+----
+<concept id="my-rules:MyConcept">
+    <description>A human readable description of the concept.</description>
+    <cypher><![CDATA[
+        MATCH
+          (m)-[]->(n), (l)-[]->(n)
+          ...
+        RETURN
+          m, n, l
+    ]]></cypher>
+    <report keyColumns="m, n" />
+</concept>
+----
+
 ===== Overriding Rules
 
 Groups, concepts, and constraints can override rules of the same type.

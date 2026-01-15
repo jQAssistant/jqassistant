@@ -218,6 +218,7 @@
         </xs:sequence>
         <xs:attribute name="type" type="xs:string"/>
         <xs:attribute name="primaryColumn" type="xs:string"/>
+        <xs:attribute name="keyColumns" type="xs:string"/>
     </xs:complexType>
 
 </xs:schema>

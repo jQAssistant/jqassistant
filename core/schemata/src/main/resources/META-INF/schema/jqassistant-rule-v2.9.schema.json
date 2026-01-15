@@ -66,14 +66,16 @@
     "sourceJSch" : { "type" : "string" },
 
     "executableRuleJSch" : {
-      "type" : "object",
+      "type" : "array",
+      "items" : {
+        "type" : "object",
         "properties" : {
           "id" : { "$ref" : "#/$defs/idJSch" },
           "deprecated" : { "type" : "string" },
           "description" : { "type" : "string" },
           "report" : {
             "anyOf" : [
-              { "$ref" : "#/$defs/reportJSch" },
+              { "$ref" : "#/$defs/reportJScn" },
               { "type" : "null" }
             ]
           },
@@ -171,6 +173,9 @@
       "type" : "object",
       "properties" : {
         "primaryColumn" : {
+          "type" : "string"
+        },
+        "keyColumns" : {
           "type" : "string"
         },
         "properties" : {
