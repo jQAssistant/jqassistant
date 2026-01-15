@@ -37,9 +37,6 @@ class AnalyzeIT extends AbstractCLIIT {
             "jqassistant.analyze.constraints=" + TEST_CONSTRAINT };
         assertThat(execute(args).getExitCode()).isEqualTo(2);
         withStore(store -> verifyConcepts(store, TEST_CONCEPT));
-
-        assertThat(new File(getDefaultReportDirectory(),"jqassistant-report.xml")).exists();
-        assertThat(new File(getDefaultReportDirectory(),"jqassistant-report.html")).exists();
     }
 
     @DistributionTest
@@ -151,8 +148,9 @@ class AnalyzeIT extends AbstractCLIIT {
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY };
 
         assertThat(execute(args).getExitCode()).isEqualTo(2);
-        withStore(store -> verifyConcepts(store, TEST_CONCEPT));
 
+        assertThat(new File(getDefaultReportDirectory(),"jqassistant-report.xml")).exists();
+        assertThat(new File(getDefaultReportDirectory(),"jqsassistant-report.html")).exists();
     }
 
     @DistributionTest
