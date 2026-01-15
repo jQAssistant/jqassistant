@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.commandline.test;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -190,9 +189,8 @@ class AnalyzeIT extends AbstractCLIIT {
      */
     private boolean isConceptPresent(Store store, String concept) {
         return store.requireTransaction(() -> {
-            Map<String, Object> params = new HashMap<>();
-            params.put("concept", concept);
-            try (Result<CompositeRowObject> result = store.executeQuery("match (c:Concept) where c.id=$concept return count(c) as count", params)) {
+            try (Result<CompositeRowObject> result = store.executeQuery("match (c:Concept) where c.id=$concept return count(c) as count",
+                Map.of("concept", concept))) {
                 assertThat(result.hasResult()).isTrue();
                 long count = result.getSingleResult()
                     .get("count", Long.class);
