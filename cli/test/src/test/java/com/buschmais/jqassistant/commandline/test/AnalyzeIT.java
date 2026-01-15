@@ -150,7 +150,7 @@ class AnalyzeIT extends AbstractCLIIT {
         assertThat(execute(args).getExitCode()).isEqualTo(2);
 
         assertThat(new File(getDefaultReportDirectory(), "jqassistant-report.xml")).exists();
-        assertThat(new File(getDefaultReportDirectory(), "jqsassistant-report.html")).exists();
+        assertThat(new File(getDefaultReportDirectory(), "jqassistant-report.html")).exists();
     }
 
     @DistributionTest
