@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.rule.impl.reader;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.xml.validation.Schema;
 
@@ -111,6 +112,10 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .severity(severity)
             .ruleSource(ruleSource)
             .concepts(includeConcepts)
+            .overrideGroups(referencableType.getOverridesGroup()
+                    .stream()
+                    .map(ReferenceType::getRefId)
+                    .collect(Collectors.toList()))
             .providedConcepts(providedConcepts)
             .constraints(includeConstraints)
             .groups(includeGroups)
@@ -146,6 +151,10 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .parameters(parameters)
             .providedConcepts(providedConcepts)
             .requiresConcepts(requiresConcepts)
+            .overrideConcepts(conceptType.getOverridesConcept()
+                    .stream()
+                    .map(ReferenceType::getRefId)
+                    .collect(Collectors.toList()))
             .verification(verification)
             .report(report)
             .build();
@@ -170,6 +179,10 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .deprecation(deprecated)
             .executable(executable)
             .parameters(parameters)
+            .overrideConstraints(constraintType.getOverridesConstraint()
+                    .stream()
+                    .map(ReferenceType::getRefId)
+                    .collect(Collectors.toList()))
             .requiresConcepts(requiresConcepts)
             .verification(verification)
             .report(report)

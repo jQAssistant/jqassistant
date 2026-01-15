@@ -167,8 +167,7 @@
             "additionalProperties" : false
           }
         },
-        "required" : [ "id" ],
-        "additionalProperties" : false
+        "required" : [ "id" ]
       },
       "additionalProperties" : false
     },
@@ -208,15 +207,70 @@
       "properties": {
         "concepts": {
           "anyOf": [
-            { "$ref": "#/$defs/executableRuleJSch" },
+            {
+              "allOf": [
+                {"$ref": "#/$defs/executableRuleJSch"},
+                {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/executableRuleJSch/items"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "overridesConcepts": {
+                            "type": "array",
+                            "minItems": 0,
+                            "items": {
+                              "$ref": "#/$defs/referenceJSch"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
             { "type": "null" }
-          ]
+          ],
+          "additionalProperties": false
         },
         "constraints": {
           "anyOf": [
-            { "$ref": "#/$defs/executableRuleJSch" },
+            {
+              "allOf": [
+                {"$ref": "#/$defs/executableRuleJSch"},
+                {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/executableRuleJSch/items"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "overridesConstraints": {
+                            "type": "array",
+                            "minItems": 0,
+                            "items": {
+                              "$ref": "#/$defs/referenceJSch"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
             { "type": "null" }
-          ]
+          ],
+          "additionalProperties": false
         },
         "groups": {
           "anyOf": [
@@ -245,6 +299,11 @@
                       { "$ref": "#/$defs/includedReferenceJSch" },
                       { "type": "null" }
                     ]
+                  },
+                  "overridesGroups": {
+                    "type" : "array",
+                    "minItems" : 0,
+                    "items" : { "$ref" : "#/$defs/referenceJSch" }
                   }
                 },
                 "additionalProperties": false,
