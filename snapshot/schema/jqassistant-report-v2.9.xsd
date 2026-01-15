@@ -116,6 +116,7 @@
                     <xs:element name="providing-concept" type="tns:ConceptReferenceType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="overrides-concept" type="tns:OverriddenReferenceType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
+                <xs:attribute name="abstract" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

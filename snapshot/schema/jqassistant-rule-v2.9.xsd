@@ -168,6 +168,7 @@
                                 maxOccurs="unbounded"/>
                     <xs:group ref="tns:executableRuleType"/>
                 </xs:sequence>
+                <xs:attribute name="abstract" type="xs:boolean" default="false"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
