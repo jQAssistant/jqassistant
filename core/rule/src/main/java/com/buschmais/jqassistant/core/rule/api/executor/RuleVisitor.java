@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
@@ -19,26 +20,61 @@ public interface RuleVisitor<R> {
     boolean isSuccess(R result);
 
     /**
-     * Start processing groups, concepts and constraints.
+     * Start processing {@link Group}s, {@link Concept}s and {@link Constraint}s using a {@link RuleSelection}.
      */
-    void beforeRules() throws RuleException;
+    void beforeRules(RuleSelection ruleSelection) throws RuleException;
 
     /**
-     * Finished processing groups, concepts and constraints.
+     * Include {@link Concept}s in the rule selection.
+     *
+     * @param includedConcepts
+     *     The included {@link Concept}s.
+     */
+    void includeConcepts(List<Concept> includedConcepts);
+
+    /**
+     * Include {@link Group}s in the rule selection.
+     *
+     * @param includedGroups
+     *     The included {@link Group}s.
+     */
+    void includeGroups(List<Group> includedGroups);
+
+    /**
+     * Include {@link Constraint}s in the rule selection.
+     *
+     * @param includedConstraints
+     *     The included {@link Constraint}s.
+     */
+    void includeConstraints(List<Constraint> includedConstraints);
+
+    /**
+     * Finished processing {@link Group}s, {@link Concept}s and {@link Constraint}s.
      */
     void afterRules() throws RuleException;
 
     /**
-     * Visit a concept with the given severity.
+     * Override a {@link Concept}.
      *
      * @param concept
-     *     The concept.
+     *     The overridden {@link Concept}.
+     * @param overridingConcept
+     *     The {@link Concept} that overrides the {@link Concept}.
      * @param effectiveSeverity
-     *     The severity to use.
+     */
+    void overrideConcept(Concept concept, Concept overridingConcept, Severity effectiveSeverity);
+
+    /**
+     * Visit a {@link Concept} with the given severity.
+     *
+     * @param concept
+     *     The {@link Concept}.
+     * @param effectiveSeverity
+     *     The {@link Severity} to use.
      * @param requiredConceptResults
-     *     The results of required concepts.
+     *     The results of required {@link Concept}s.
      * @param providingConceptResults
-     *     The results of providing concepts.
+     *     The results of providing {@link Concept}s.
      * @return The result of the visitor.
      * @throws RuleException
      *     If an error occurred.
@@ -47,28 +83,59 @@ public interface RuleVisitor<R> {
         Map<Concept, R> providingConceptResults) throws RuleException;
 
     /**
-     * Skip a concept.
+     * Require {@link Concept}s for a given {@link Concept}.
      *
      * @param concept
-     *     The concept.
+     *     The {@link Concept}.
+     * @param requiredConcepts
+     *     The required {@link Concept}s.
+     */
+    void requireConcepts(Concept concept, Map<Concept, R> requiredConcepts);
+
+    /**
+     * Provide {@link Concept}s for a given {@link Concept}.
+     *
+     * @param concept
+     *     The provided {@link Concept}.
+     * @param providingConcepts
+     *     The providing {@link Concept}s.
+     */
+    void provideConcept(Concept concept, Map<Concept, R> providingConcepts);
+
+    /**
+     * Skip a {@link Concept}.
+     *
+     * @param concept
+     *     The {@link Concept}.
      * @param effectiveSeverity
-     *     The severity to use.
+     *     The {@link Severity} to use.
      * @param requiredConceptResults
-     *     The results of required concepts.
+     *     The results of required {@link Concept}s.
      * @throws RuleException
      *     If an error occurred.
      */
     void skipConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException;
 
     /**
-     * Visit a constraint with the given severity.
+     * Override a {@link Constraint}.
      *
      * @param constraint
-     *     The constraint.
+     *     The overridden {@link Constraint}.
+     * @param overridingConstraint
+     *     The {@link Constraint} that overrides the {@link Constraint}.
      * @param effectiveSeverity
-     *     The severity to use.
+     */
+    void overrideConstraint(Constraint constraint, Constraint overridingConstraint, Severity effectiveSeverity);
+
+    /**
+     * Visit a {@link Constraint} with the given {@link Severity}.
+     *
+     * @param constraint
+     *     The {@link Constraint}.
+     * @param effectiveSeverity
+     *     The {@link Severity} to use.
      * @param requiredConceptResults
-     *     The results of required concepts.
+     *     The results of required {@link Concept}s.
      * @return The result of the visitor.
      * @throws RuleException
      *     If an error occurred.
@@ -76,36 +143,87 @@ public interface RuleVisitor<R> {
     R visitConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException;
 
     /**
-     * Skip a constraint.
+     * Require {@link Concept}s for a given {@link Constraint}.
      *
      * @param constraint
-     *     The constraint.
+     *     The {@link Constraint}.
+     * @param requiredConcepts
+     *     The required {@link Concept}s.
+     */
+    void requireConcepts(Constraint constraint, Map<Concept, R> requiredConcepts);
+
+    /**
+     * Skip a {@link Constraint}.
+     *
+     * @param constraint
+     *     The {@link Constraint}.
      * @param effectiveSeverity
-     *     The severity to use.
+     *     The {@link Severity} to use.
      * @param requiredConceptResults
-     *     The results of required concepts.
+     *     The results of required {@link Concept}s.
      * @throws RuleException
      *     If an error occurred.
      */
     void skipConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException;
 
     /**
-     * Start processing a group.
+     * Override a {@link Group}.
      *
      * @param group
-     *     The group.
+     *     The overridden {@link Group}.
+     * @param overridingGroup
+     *     The {@link Group} that overrides the {@link Group}.
+     * @param overriddenSeverity
+     */
+    void overrideGroup(Group group, Group overridingGroup, Severity overriddenSeverity);
+
+    /**
+     * Start processing a {@link Group}.
+     *
+     * @param group
+     *     The {@link Group}.
      * @param effectiveSeverity
-     *     The severity.
+     *     The {@link Severity}.
      * @throws RuleException
      *     If an error occurred.
      */
     void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException;
 
     /**
+     * The included {@link Concept}s of a {@link Group}.
+     *
+     * @param group
+     *     The {@link Group}.
+     * @param includedConcepts
+     *     The included {@link Concept}s.
+     */
+    void includeConcepts(Group group, List<Concept> includedConcepts);
+
+    /**
+     * The included {@link Group}s of a {@link Group}.
+     *
+     * @param group
+     *     The {@link Group}.
+     * @param includedGroups
+     *     The included {@link Group}s.
+     */
+    void includeGroups(Group group, List<Group> includedGroups);
+
+    /**
+     * The included {@link Constraint}s of a {@link Group}.
+     *
+     * @param group
+     *     The {@link Group}.
+     * @param includedConstraints
+     *     The included {@link Constraint}s.
+     */
+    void includeConstraints(Group group, List<Constraint> includedConstraints);
+
+    /**
      * Finish processing a group.
      *
      * @param group
-     *     The group.
+     *     The {@link Group}.
      * @throws RuleException
      *     If an error occurred.
      */

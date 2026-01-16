@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.rule.api.executor;
 
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.rule.api.model.*;
@@ -15,11 +16,27 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
-    public void beforeRules() throws RuleException {
+    public void beforeRules(RuleSelection ruleSelection) throws RuleException {
+    }
+
+    @Override
+    public void includeConcepts(List<Concept> concepts) {
+    }
+
+    @Override
+    public void includeGroups(List<Group> groups) {
+    }
+
+    @Override
+    public void includeConstraints(List<Constraint> constraints) {
     }
 
     @Override
     public void afterRules() throws RuleException {
+    }
+
+    @Override
+    public void overrideConcept(Concept concept, Concept overridingConcept, Severity effectiveSeverity) {
     }
 
     @Override
@@ -29,7 +46,19 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
+    public void requireConcepts(Concept concept, Map<Concept, R> requiredConcepts) {
+    }
+
+    @Override
+    public void provideConcept(Concept concept, Map<Concept, R> providingConcepts) {
+    }
+
+    @Override
     public void skipConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults) throws RuleException {
+    }
+
+    @Override
+    public void overrideConstraint(Constraint constraint, Constraint overridingConstraint, Severity effectiveSeverity) {
     }
 
     @Override
@@ -39,12 +68,32 @@ public abstract class AbstractRuleVisitor<R> implements RuleVisitor<R> {
     }
 
     @Override
+    public void requireConcepts(Constraint constraint, Map<Concept, R> concepts) {
+    }
+
+    @Override
     public void skipConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, R> requiredConceptResults)
         throws RuleException {
     }
 
     @Override
+    public void overrideGroup(Group group, Group overridingGroup, Severity overriddenSeverity) {
+    }
+
+    @Override
     public void beforeGroup(Group group, Severity effectiveSeverity) throws RuleException {
+    }
+
+    @Override
+    public void includeConcepts(Group group, List<Concept> concepts) {
+    }
+
+    @Override
+    public void includeGroups(Group group, List<Group> groups) {
+    }
+
+    @Override
+    public void includeConstraints(Group group, List<Constraint> constraints) {
     }
 
     @Override

@@ -2,13 +2,11 @@ package com.buschmais.jqassistant.core.report.api;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Group;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.shared.lifecycle.ContextualConfigurableLifecycleAware;
 
 import static java.lang.annotation.ElementType.TYPE;
@@ -56,7 +54,19 @@ public interface ReportPlugin extends ContextualConfigurableLifecycleAware<Repor
     default void begin() throws ReportException {
     }
 
+    default void includeConcepts(List<Concept> concepts) {
+    }
+
+    default void includeGroups(List<Group> groups) {
+    }
+
+    default void includeConstraints(List<Constraint> constraints) {
+    }
+
     default void end() throws ReportException {
+    }
+
+    default void overrideConcept(Concept concept, Concept overridingConcept, Severity effectiveSeverity) {
     }
 
     default void beginConcept(Concept concept, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults,
@@ -70,10 +80,25 @@ public interface ReportPlugin extends ContextualConfigurableLifecycleAware<Repor
     default void endConcept() throws ReportException {
     }
 
+    default void overrideGroup(Group group, Group overridingGroup, Severity effectiveSeverity) {
+    }
+
     default void beginGroup(Group group) throws ReportException {
     }
 
+    default void includeConcepts(Group group, List<Concept> concepts) {
+    }
+
+    default void includeGroups(Group group, List<Group> groups) {
+    }
+
+    default void includeConstraints(Group group, List<Constraint> constraints) {
+    }
+
     default void endGroup() throws ReportException {
+    }
+
+    default void overrideConstraint(Constraint constraint, Constraint overridingConstraint, Severity effectiveSeverity) {
     }
 
     default void beginConstraint(Constraint constraint, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults) throws ReportException {
