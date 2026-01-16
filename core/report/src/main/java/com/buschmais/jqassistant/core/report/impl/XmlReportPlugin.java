@@ -135,12 +135,14 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private void transformToHTML() throws ReportException {
+        File file = new File(xmlReportFile.getParentFile(), REPORT_FILE_HTML);
         FileWriter writer;
         try {
-            writer = new FileWriter(new File(xmlReportFile.getParentFile(), REPORT_FILE_HTML));
+            writer = new FileWriter(file);
         } catch (IOException e) {
             throw new ReportException("Cannot create HTML report file.", e);
         }
+        log.info("Writing HTML report to '{}'.", file.getAbsolutePath());
         javax.xml.transform.Result htmlTarget = new StreamResult(writer);
         Source xmlSource = new StreamSource(xmlReportFile);
         ReportTransformer transformer = new HtmlReportTransformer();
