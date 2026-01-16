@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.report.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -12,11 +9,11 @@ import java.util.regex.Pattern;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
-import com.buschmais.jqassistant.core.report.api.LanguageHelper;
-import com.buschmais.jqassistant.core.report.api.ReportContext;
-import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.report.api.model.source.ArtifactLocation;
@@ -40,10 +37,14 @@ import static java.util.Collections.emptyMap;
 public class XmlReportPlugin implements ReportPlugin {
 
     // Properties
-    public static final String XML_REPORT_FILE = "xml.report.file";
+    public static final String PROPERTY_XML_REPORT_FILE = "xml.report.file";
+
+    public static final String PROPERTY_XML_REPORT_TRANSFORM_TO_HTML = "xml.report.transform-to-html";
 
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
+
+    public static final String REPORT_FILE_HTML = "jqassistant-report.html";
 
     public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.9";
 
@@ -56,6 +57,8 @@ public class XmlReportPlugin implements ReportPlugin {
     private ReportContext reportContext;
 
     private File xmlReportFile;
+
+    private boolean transformToHTML;
 
     private Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults;
 
@@ -77,8 +80,11 @@ public class XmlReportPlugin implements ReportPlugin {
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) {
         this.reportContext = reportContext;
-        String xmlReport = (String) properties.get(XML_REPORT_FILE);
-        this.xmlReportFile = xmlReport != null ? new File(xmlReport) : new File(reportContext.getOutputDirectory(), DEFAULT_XML_REPORT_FILE);
+        String xmlReportFileProperty = (String) properties.get(PROPERTY_XML_REPORT_FILE);
+        this.xmlReportFile =
+            xmlReportFileProperty != null ? new File(xmlReportFileProperty) : new File(reportContext.getOutputDirectory(), DEFAULT_XML_REPORT_FILE);
+        Object transformToHTMLProperty = properties.get(PROPERTY_XML_REPORT_TRANSFORM_TO_HTML);
+        this.transformToHTML = transformToHTMLProperty == null || Boolean.parseBoolean(transformToHTMLProperty.toString());
     }
 
     @Override
@@ -123,6 +129,28 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeEndDocument();
             xmlStreamWriter.close();
         });
+        if (transformToHTML) {
+            transformToHTML();
+        }
+    }
+
+    private void transformToHTML() throws ReportException {
+        File file = new File(xmlReportFile.getParentFile(), REPORT_FILE_HTML);
+        FileWriter writer;
+        try {
+            writer = new FileWriter(file);
+        } catch (IOException e) {
+            throw new ReportException("Cannot create HTML report file.", e);
+        }
+        log.info("Writing HTML report to '{}'.", file.getAbsolutePath());
+        javax.xml.transform.Result htmlTarget = new StreamResult(writer);
+        Source xmlSource = new StreamSource(xmlReportFile);
+        ReportTransformer transformer = new HtmlReportTransformer();
+        try {
+            transformer.toStandalone(xmlSource, htmlTarget);
+        } catch (ReportTransformerException e) {
+            throw new ReportException("Cannot transform report.", e);
+        }
     }
 
     @Override
