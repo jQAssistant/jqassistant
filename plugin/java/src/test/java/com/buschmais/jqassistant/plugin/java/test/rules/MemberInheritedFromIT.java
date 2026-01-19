@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.inheritance.AbstractClassType;
@@ -40,9 +39,10 @@ class MemberInheritedFromIT extends AbstractJavaPluginIT {
         assertThat(applyConcept("java:MemberInheritedFrom").getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
         TestResult result = query(
-                "MATCH (type:Type{fqn:$type})-[:DECLARES]->(:Member{signature:$signature})-[:INHERITED_FROM]->(inheritedMember:Member) RETURN inheritedMember",
-                MapBuilder.<String, Object> builder().entry("type", type.getName()).entry("signature", signature).build());
-        assertThat(result.getRows().size()).isEqualTo(memberDescriptorMatchers.size());
+            "MATCH (type:Type{fqn:$type})-[:DECLARES]->(:Member{signature:$signature})-[:INHERITED_FROM]->(inheritedMember:Member) RETURN inheritedMember",
+            Map.of("type", type.getName(), "signature", signature));
+        assertThat(result.getRows()
+            .size()).isEqualTo(memberDescriptorMatchers.size());
         for (Map<String, Object> row : result.getRows()) {
             MemberDescriptor memberDescriptor = (MemberDescriptor) row.get("inheritedMember");
             assertThat(memberDescriptor, anyOf(memberDescriptorMatchers));
@@ -51,18 +51,23 @@ class MemberInheritedFromIT extends AbstractJavaPluginIT {
     }
 
     private static Stream<Arguments> memberParameters() throws NoSuchMethodException, NoSuchFieldException {
-        return Stream.of(of(InterfaceType.class, "void method()", emptyList()), of(AbstractClassType.class, "void method()", emptyList()),
-                of(SubClassType.class, "void method()", emptyList()),
+        return Stream.of( //
+            of(SubClassType.class, "void <init>()", emptyList()), //
+            of(InterfaceType.class, "void method()", emptyList()), //
+            of(AbstractClassType.class, "void method()", emptyList()), //
+            of(SubClassType.class, "void method()", emptyList()), //
 
-                of(InterfaceType.class, "void abstractClassMethod()", emptyList()), of(AbstractClassType.class, "void abstractClassMethod()", emptyList()),
-                of(SubClassType.class, "void abstractClassMethod()", singletonList(methodDescriptor(AbstractClassType.class, "abstractClassMethod"))),
+            of(InterfaceType.class, "void abstractClassMethod()", emptyList()), //
+            of(AbstractClassType.class, "void abstractClassMethod()", emptyList()), //
+            of(SubClassType.class, "void abstractClassMethod()", singletonList(methodDescriptor(AbstractClassType.class, "abstractClassMethod"))), //
 
-                of(InterfaceType.class, "void subClassMethod()", emptyList()),
-                of(AbstractClassType.class, "void subClassMethod()", singletonList(methodDescriptor(InterfaceType.class, "subClassMethod"))),
-                of(SubClassType.class, "void subClassMethod()", emptyList()),
+            of(InterfaceType.class, "void subClassMethod()", emptyList()), //
+            of(AbstractClassType.class, "void subClassMethod()", singletonList(methodDescriptor(InterfaceType.class, "subClassMethod"))), //
+            of(SubClassType.class, "void subClassMethod()", emptyList()), //
 
-                of(SubClassType.class, "int abstractClassField", singletonList(fieldDescriptor(AbstractClassType.class, "abstractClassField"))),
-                of(SubClassType.class, "int overriddenAbstractClassField", emptyList()), of(SubClassType.class, "int subClassField", emptyList()));
+            of(SubClassType.class, "int abstractClassField", singletonList(fieldDescriptor(AbstractClassType.class, "abstractClassField"))), //
+            of(SubClassType.class, "int overriddenAbstractClassField", emptyList()),  //
+            of(SubClassType.class, "int subClassField", emptyList()));
     }
 
 }
