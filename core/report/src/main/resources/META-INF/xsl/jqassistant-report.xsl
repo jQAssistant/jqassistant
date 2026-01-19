@@ -92,6 +92,7 @@
                 white-space: normal;
                 overflow-wrap: anywhere;
                 overflow: hidden;
+                margin-right:10px;
 
             }
 
@@ -105,18 +106,19 @@
 
             .columns-grid {
                 display: grid;
-                grid-template-columns:  minmax(30px,2Fr) minmax(300px,50Fr) minmax(50px,2Fr) minmax(75px,2Fr) minmax(50px,2Fr);
+                grid-template-columns:  minmax(40px,2Fr) minmax(60px,2Fr) minmax(300px,50Fr) minmax(75px,2Fr) minmax(50px,2Fr);
                 padding: 6px;
             }
 
             .groups-grid {
                 display: grid;
-                grid-template-columns:  minmax(30px,2Fr) minmax(175px,15Fr) minmax(200px,24.5Fr) minmax(100px,2Fr);
+                grid-template-columns:  minmax(40px,2Fr) minmax(175px,15Fr) minmax(200px,24.5Fr) minmax(200px,2Fr);
                 padding: 6px;
             }
 
             .details-content {
                 margin-left: 10px;
+                margin-bottom:10px;
             }
 
             .row-separator {
@@ -138,17 +140,17 @@
             }
 
             .success {
-                background-color:#43a047;
+                background-color:#43a047; <!-- green -->
                 color:#fff;
             }
 
             .failure {
-                background-color:#ce413c;
+                background-color:#ce413c; <!-- red -->
                 color:#fff;
             }
 
             .warning {
-                background-color:#e3ad24;
+                background-color:#e3ad24; <!-- orange -->
                 color:#fff;
             }
         </style>
@@ -178,8 +180,8 @@
             <section class="report-table">
                 <div class="header-row columns-grid">
                     <div>#</div>
+                    <div>Status</div>
                     <div>Constraint</div>
-                    <div class="right">Status</div>
                     <div class="right">Severity</div>
                     <div class="right">Count</div>
                 </div>
@@ -211,8 +213,8 @@
             <section class="report-table">
                 <div class="header-row columns-grid">
                     <div>#</div>
+                    <div>Status</div>
                     <div>Constraint</div>
-                    <div class="right">Status</div>
                     <div class="right">Severity</div>
                     <div class="right">Count</div>
                 </div>
@@ -277,30 +279,47 @@
                 </div>
 
                 <div>
-                    <span class="rule-name" title="{tns:description/text()}">
-                    <xsl:value-of select="@id"/>
-                     </span>
-                </div>
-
-                <div class="right">
                     <xsl:choose>
                         <xsl:when test="tns:verificationResult/tns:success='false'">
-                            <span title="Result verification failed">&#127783;&#160;</span>
+                            <xsl:choose>
+                                <xsl:when test="self::tns:constraint">
+                                    <span title="No Violations Found">&#127783;&#160;</span>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <span title="No Matches Found">&#127783;&#160;</span>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:when>
                         <xsl:otherwise>
-                            <span title="Result verification succeeded">&#9728;&#160;</span>
+                            <xsl:choose>
+                                <xsl:when test="self::tns:constraint">
+                                    <span title="Violations Found">&#9728;&#160;</span>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <span title="Matches Found">&#9728;&#160;</span>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
-                        <xsl:choose>
-                            <xsl:when test="tns:status='failure'">
-                                <span title="Failure (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2718;</span>
-                            </xsl:when>
-                            <xsl:when test="tns:status='warning'">
-                                <span title="Warning (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x1F785;</span></xsl:when>
-                            <xsl:when test="tns:status='success'">
-                                <span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2714;</span></xsl:when>
-                        </xsl:choose>
+                    <xsl:choose>
+                        <xsl:when test="tns:status='failure'">
+                            <span title="Failure (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2718;</span>
+                        </xsl:when>
+                        <xsl:when test="tns:status='warning'">
+                            <span title="Warning (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x1F785;</span>
+                        </xsl:when>
+                        <xsl:when test="tns:status='success'">
+                            <span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2714;</span>
+                        </xsl:when>
+                    </xsl:choose>
                 </div>
+
+                <div>
+                    <span class="rule-name" title="{tns:description/text()}">
+                        <xsl:value-of select="@id"/>
+                    </span>
+                </div>
+
                 <div class="right"><xsl:value-of select="tns:severity/text()"/></div>
                 <div class="right"><xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/></div>
             </summary>
