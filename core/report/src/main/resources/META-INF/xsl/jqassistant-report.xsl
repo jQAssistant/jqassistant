@@ -283,9 +283,9 @@
                 </xsl:if>
                 <xsl:if test="tns:overrides-group">
                     <xsl:for-each select="tns:overrides-group[@id]">
-                        <xsl:if test="position() = 1">Overrides:</xsl:if>
+                        <xsl:if test="position() = 1"> Overrides: </xsl:if>
                         <xsl:value-of select="@id"/>
-                        <xsl:if test="position() != last()">,</xsl:if>
+                        <xsl:if test="position() != last()"> , </xsl:if>
                     </xsl:for-each>
                 </xsl:if>
             </div>
@@ -417,16 +417,16 @@
                 </xsl:if>
                 <xsl:if test="tns:overrides-concept">
                     <xsl:for-each select="tns:overrides-concept[@id]">
-                        <xsl:if test="position() = 1">Overrides:</xsl:if>
+                        <xsl:if test="position() = 1"> Overrides: </xsl:if>
                         <xsl:value-of select="@id"/>
-                        <xsl:if test="position() != last()">,</xsl:if>
+                        <xsl:if test="position() != last()">, </xsl:if>
                     </xsl:for-each>
                 </xsl:if>
                 <xsl:if test="tns:overrides-constraint">
                     <xsl:for-each select="tns:overrides-constraint[@id]">
-                        <xsl:if test="position() = 1">Overrides:</xsl:if>
+                        <xsl:if test="position() = 1"> Overrides: </xsl:if>
                         <xsl:value-of select="@id"/>
-                        <xsl:if test="position() != last()">,</xsl:if>
+                        <xsl:if test="position() != last()">, </xsl:if>
                     </xsl:for-each>
                 </xsl:if>
             </div>
