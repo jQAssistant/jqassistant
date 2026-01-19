@@ -26,19 +26,38 @@
                 line-height:1.5;
                 color:#3d3a37;
                 background-color:#FFFCF0
+                overflow: auto;
+                width:80%
             }
 
             a, a:link, a:visited, a:hover, a:focus, a:active {
                 color:#000;
             }
 
+            h1 {
+                margin: 0;
+            }
+
+            h5 {
+            margin: 0;
+            }
+
             h6 {
                 color:#747270;
                 font-weight:normal;
+                margin: 0;
+                margin-left: 2%;
                 }
 
+            h3 {
+                margin-bottom: 0;
+            }
+
+            ul {
+                margin-top: 0;
+            }
+
             table {
-                width:90%;
                 border-collapse:collapse;
                 background-color:#e0ddd1;
                 }
@@ -53,6 +72,7 @@
                 border-width:1.5px;
                 border-color:#aba9a1;
                 padding:5px;
+                white-space: nowrap;
             }
 
             table tr th {
@@ -64,11 +84,15 @@
             }
 
             .report-table {
-                width:90%;
+                display:inline-block;
+                width: max-content
                 border-collapse:collapse;
                 background-color:#e0ddd1;
                 border-radius: 10px;
+                white-space: normal;
+                overflow-wrap: anywhere;
                 overflow: hidden;
+
             }
 
             .header-row {
@@ -81,19 +105,18 @@
 
             .columns-grid {
                 display: grid;
-                grid-template-columns:  1Fr 12Fr 1Fr 1Fr 1Fr;
-                padding: 8px;
+                grid-template-columns:  minmax(30px,2Fr) minmax(300px,50Fr) minmax(50px,2Fr) minmax(75px,2Fr) minmax(50px,2Fr);
+                padding: 6px;
             }
 
             .groups-grid {
                 display: grid;
-                grid-template-columns:  1Fr 3Fr 4Fr 1.5Fr;
-                padding: 8px;
+                grid-template-columns:  minmax(30px,2Fr) minmax(175px,15Fr) minmax(200px,24.5Fr) minmax(100px,2Fr);
+                padding: 6px;
             }
 
             .details-content {
                 margin-left: 10px;
-                width:90%;
             }
 
             .row-separator {
@@ -115,23 +138,26 @@
             }
 
             .success {
-                background-color:green;
+                background-color:#43a047;
                 color:#fff;
             }
 
             .failure {
-                background-color:crimson;
+                background-color:#ce413c;
                 color:#fff;
             }
 
             .warning {
-                background-color:orange;
+                background-color:#e3ad24;
                 color:#fff;
             }
         </style>
         <h1 title="{/tns:jqassistant-report/tns:context/tns:build/tns:timestamp}">
             jQAssistant Report - <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:name"/>
         </h1>
+        <h5>
+            Time Stamp: <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:timestamp"/>
+        </h5>
         <!-- optional build properties -->
         <xsl:for-each select="/tns:jqassistant-report/tns:context/tns:build/tns:properties/tns:property">
             <div>
@@ -153,7 +179,7 @@
                 <div class="header-row columns-grid">
                     <div>#</div>
                     <div>Constraint</div>
-                    <div>Status</div>
+                    <div class="right">Status</div>
                     <div class="right">Severity</div>
                     <div class="right">Count</div>
                 </div>
@@ -186,7 +212,7 @@
                 <div class="header-row columns-grid">
                     <div>#</div>
                     <div>Constraint</div>
-                    <div>Status</div>
+                    <div class="right">Status</div>
                     <div class="right">Severity</div>
                     <div class="right">Count</div>
                 </div>
@@ -213,7 +239,7 @@
                     <div>#</div>
                     <div>Group</div>
                     <div>Description</div>
-                    <div>Date</div>
+                    <div class="right">Date</div>
                 </div>
                 <xsl:apply-templates select="//tns:group"/>
             </section>
@@ -227,7 +253,7 @@
             <div><xsl:value-of select="position()"/></div>
             <div><xsl:value-of select="@id"/></div>
             <div><xsl:value-of select="tns:description/text()"/></div>
-            <div><xsl:value-of select="@date"/></div>
+            <div class="right"><xsl:value-of select="@date"/></div>
         </summary>
     </xsl:template>
 
@@ -256,17 +282,24 @@
                      </span>
                 </div>
 
-                <div>
-                    <xsl:if test="tns:verificationResult/tns:success='false'">
-                        <span title="Result verification failed">&#127783;&#160;</span>
-                    </xsl:if>
-                    <span title="Result evaluation according to warn-on-severity/fail-on-severity thresholds">
+                <div class="right">
+                    <xsl:choose>
+                        <xsl:when test="tns:verificationResult/tns:success='false'">
+                            <span title="Result verification failed">&#127783;&#160;</span>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <span title="Result verification succeeded">&#9728;&#160;</span>
+                        </xsl:otherwise>
+                    </xsl:choose>
                         <xsl:choose>
-                            <xsl:when test="tns:status='failure'">&#x2718;</xsl:when>
-                            <xsl:when test="tns:status='warning'">&#x1F785;</xsl:when>
-                            <xsl:when test="tns:status='success'">&#x2714;</xsl:when>
+                            <xsl:when test="tns:status='failure'">
+                                <span title="Failure (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2718;</span>
+                            </xsl:when>
+                            <xsl:when test="tns:status='warning'">
+                                <span title="Warning (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x1F785;</span></xsl:when>
+                            <xsl:when test="tns:status='success'">
+                                <span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2714;</span></xsl:when>
                         </xsl:choose>
-                    </span>
                 </div>
                 <div class="right"><xsl:value-of select="tns:severity/text()"/></div>
                 <div class="right"><xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/></div>
@@ -275,9 +308,6 @@
             <div id="resultOf{$ruleId}" class="details-content" name="resultRow">
                 <p>
                     <xsl:value-of select="tns:description/text()"/>
-                </p>
-                <p>
-                     Execution Time (in ms): <xsl:value-of select="tns:duration/text()"/>
                 </p>
                 <xsl:choose>
                     <xsl:when test="tns:result">
