@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.rule.impl.reader;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.xml.validation.Schema;
 
@@ -27,8 +28,8 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
 
-    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.8";
-    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.8.xsd";
+    private static final String NAMESPACE_RULE = "http://schema.jqassistant.org/rule/v2.9";
+    private static final String RULES_SCHEMA_LOCATION = "/META-INF/schema/jqassistant-rule-v2.9.xsd";
 
     private static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
@@ -111,6 +112,10 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .severity(severity)
             .ruleSource(ruleSource)
             .concepts(includeConcepts)
+            .overrideGroups(referencableType.getOverridesGroup()
+                    .stream()
+                    .map(ReferenceType::getRefId)
+                    .collect(Collectors.toList()))
             .providedConcepts(providedConcepts)
             .constraints(includeConstraints)
             .groups(includeGroups)
@@ -142,10 +147,15 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .ruleSource(ruleSource)
             .severity(severity)
             .deprecation(deprecated)
+            .isAbstract(conceptType.isAbstract())
             .executable(executable)
             .parameters(parameters)
             .providedConcepts(providedConcepts)
             .requiresConcepts(requiresConcepts)
+            .overrideConcepts(conceptType.getOverridesConcept()
+                    .stream()
+                    .map(ReferenceType::getRefId)
+                    .collect(Collectors.toList()))
             .verification(verification)
             .report(report)
             .build();
@@ -170,6 +180,10 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
             .deprecation(deprecated)
             .executable(executable)
             .parameters(parameters)
+            .overrideConstraints(constraintType.getOverridesConstraint()
+                    .stream()
+                    .map(ReferenceType::getRefId)
+                    .collect(Collectors.toList()))
             .requiresConcepts(requiresConcepts)
             .verification(verification)
             .report(report)
@@ -227,17 +241,23 @@ public class XmlRuleParserPlugin extends AbstractRuleParserPlugin {
     private Report getReport(ReportType reportType) {
         String type = null;
         String primaryColumn = null;
+        List<String> keyColumns = new ArrayList<>();
         Properties properties = new Properties();
         if (reportType != null) {
             type = reportType.getType();
             primaryColumn = reportType.getPrimaryColumn();
+            String reportKeyColumns = reportType.getKeyColumns();
+            if (reportKeyColumns != null) {
+                keyColumns = Arrays.asList(reportKeyColumns.split("\\s*,\\s*"));
+            }
             for (PropertyType propertyType : reportType.getProperty()) {
                 properties.setProperty(propertyType.getName(), propertyType.getValue());
             }
         }
         Report.ReportBuilder reportBuilder = Report.builder()
-            .primaryColumn(primaryColumn)
-            .properties(properties);
+                .keyColumns(keyColumns)
+                .primaryColumn(primaryColumn)
+                .properties(properties);
         if (type != null) {
             reportBuilder.selectedTypes(Report.selectTypes(type));
         }

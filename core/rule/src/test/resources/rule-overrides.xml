@@ -1,0 +1,76 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.9">
+
+
+    <group id="test:OverriddenGroup"> </group>
+    <group id="test:OverriddenGroup2"> </group>
+
+    <group id="test:OverridingGroup">
+        <overridesGroup refId="test:OverriddenGroup"/>
+        <overridesGroup refId="test:OverriddenGroup2"/>
+    </group>
+
+
+    <constraint id="test:Constraint">
+        <overridesConstraint refId="test:OverriddenConstraint" />
+        <overridesConstraint refId="test:OverriddenConstraint2" />
+        <description>Test constraint</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:OverriddenConstraint">
+        <description>Test constraint</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="test:OverriddenConstraint2">
+        <description>Test constraint</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </constraint>
+
+    <concept id="test:OverridingConcept">
+        <overridesConcept refId="test:OverriddenConcept" />
+        <description>Overriding test concept</description>
+        <cypher><![CDATA[
+            CREATE
+                (overriding:Concept {name: 'overriding - should be there'})
+            RETURN
+                overridden
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:OverriddenConcept">
+        <description>Concept that is overridden</description>
+        <cypher><![CDATA[
+            CREATE
+                (overriding:Concept {name: 'overridden - should not be here'})
+            RETURN
+                overriding
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:AnotherConcept">
+        <providesConcept refId="test:OverriddenConcept"/>
+        <description>Concept</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+</jqassistant-rules>

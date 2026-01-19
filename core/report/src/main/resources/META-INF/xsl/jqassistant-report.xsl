@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:tns="http://schema.jqassistant.org/report/v2.8">
+                xmlns:tns="http://schema.jqassistant.org/report/v2.9">
     <xsl:output method="html" version="1.0" encoding="UTF-8"
                 indent="yes"/>
     <xsl:template name="content">
-        <script type="text/javascript" xmlns:tns="http://schema.jqassistant.org/report/v2.8">
+        <script type="text/javascript" xmlns:tns="http://schema.jqassistant.org/report/v2.9">
             function getResultElement(id) {
-                return document.getElementById('resultOf' + id);
+            return document.getElementById('resultOf' + id);
             }
 
             function showResult(ruleId) {
-                if (!ruleId) return;
-                    var details = document.getElementById(ruleId);
-                if (!details) return;
-                details.open = true;
-                details.scrollIntoView({
-                    block: "start"
-                    });
+            if (!ruleId) return;
+            var details = document.getElementById(ruleId);
+            if (!details) return;
+            details.open = true;
+            details.scrollIntoView({
+            block: "start"
+            });
             }
         </script>
         <style type="text/css">
             body {
-                font-family:'Open Sans', sans-serif;
-                line-height:1.5;
-                color:#3d3a37;
-                background-color:#FFFCF0
-                overflow: auto;
-                width:80%
+            font-family:'Open Sans', sans-serif;
+            line-height:1.5;
+            color:#3d3a37;
+            background-color:#FFFCF0
+            overflow: auto;
+            width:80%
             }
 
             a, a:link, a:visited, a:hover, a:focus, a:active {
-                color:#000;
+            color:#000;
             }
 
             h1 {
-                margin: 0;
+            margin: 0;
             }
 
             h5 {
@@ -43,122 +43,128 @@
             }
 
             h6 {
-                color:#747270;
-                font-weight:normal;
-                margin: 0;
-                margin-left: 2%;
-                }
+            color:#747270;
+            font-weight:normal;
+            margin: 0;
+            margin-left: 2%;
+            }
 
             h3 {
-                margin-bottom: 0;
+            margin-bottom: 0;
             }
 
             ul {
-                margin-top: 0;
+            margin-top: 0;
+            }
+
+            .abstractRule {
+            font-style: italic;
             }
 
             table {
-                border-collapse:collapse;
-                background-color:#e0ddd1;
-                }
+            border-collapse:collapse;
+            background-color:#e0ddd1;
+            }
 
             table th {
             background-color:#aba9a1;
-                color:#fff;
-                }
+            color:#fff;
+            }
 
             table tr td, th {
-                border-style:solid;
-                border-width:1.5px;
-                border-color:#aba9a1;
-                padding:5px;
-                white-space: nowrap;
+            border-style:solid;
+            border-width:1.5px;
+            border-color:#aba9a1;
+            padding:5px;
+            white-space: nowrap;
             }
 
             table tr th {
-                text-align:left;
+            text-align:left;
             }
 
             #footer {
-                color:#747270;
+            color:#747270;
             }
 
             .report-table {
-                display:inline-block;
-                width: max-content
-                border-collapse:collapse;
-                background-color:#e0ddd1;
-                border-radius: 10px;
-                white-space: normal;
-                overflow-wrap: anywhere;
-                overflow: hidden;
-                margin-right:10px;
+            display:inline-block;
+            width: max-content
+            border-collapse:collapse;
+            background-color:#e0ddd1;
+            border-radius: 10px;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            overflow: hidden;
+            margin-right:10px;
 
             }
 
             .header-row {
-                background: #7a7974;
-                font-weight: 600;
-                border-bottom: 1px solid #ccc;
-                background-color:#aba9a1;
-                color:#fff;
+            background: #7a7974;
+            font-weight: 600;
+            border-bottom: 1px solid #ccc;
+            background-color:#aba9a1;
+            color:#fff;
             }
 
             .columns-grid {
-                display: grid;
-                grid-template-columns:  minmax(40px,2Fr) minmax(60px,2Fr) minmax(300px,50Fr) minmax(75px,2Fr) minmax(50px,2Fr);
-                padding: 6px;
+            display: grid;
+            grid-template-columns: minmax(40px,2Fr) minmax(60px,2Fr) minmax(300px,50Fr) minmax(75px,2Fr) minmax(50px,2Fr);
+            padding: 6px;
             }
 
             .groups-grid {
-                display: grid;
-                grid-template-columns:  minmax(40px,2Fr) minmax(175px,15Fr) minmax(200px,24.5Fr) minmax(200px,2Fr);
-                padding: 6px;
+            display: grid;
+            grid-template-columns: minmax(40px,2Fr) minmax(175px,15Fr) minmax(200px,24.5Fr) minmax(200px,2Fr);
+            padding: 6px;
             }
 
             .details-content {
-                margin-left: 10px;
-                margin-bottom:10px;
+            margin-left: 10px;
+            margin-bottom:10px;
             }
 
             .row-separator {
-                border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
             }
 
             .right {
-                text-align:right;
+            text-align:right;
             }
 
             .rule-name {
-                cursor:pointer;
-                text-decoration:underline;
+            cursor:pointer;
+            text-decoration:underline;
             }
 
             .result {
-                margin: 0px 5px 10px 5px;
-                color:#3d3a37;
+            margin: 0px 5px 10px 5px;
+            color:#3d3a37;
             }
 
             .success {
-                background-color:#43a047; <!-- green -->
-                color:#fff;
+            background-color:#43a047; <!-- green -->
+            color:#fff;
             }
 
             .failure {
-                background-color:#ce413c; <!-- red -->
-                color:#fff;
+            background-color:#ce413c; <!-- red -->
+            color:#fff;
             }
 
             .warning {
-                background-color:#e3ad24; <!-- orange -->
-                color:#fff;
+            background-color:#e3ad24; <!-- orange -->
+            color:#fff;
             }
         </style>
         <h1 title="{/tns:jqassistant-report/tns:context/tns:build/tns:timestamp}">
-            jQAssistant Report - <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:name"/>
+            jQAssistant Report -
+            <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:name"/>
         </h1>
         <h5>
-            Time Stamp: <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:timestamp"/>
+            Time Stamp:
+            <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:timestamp"/>
         </h5>
         <!-- optional build properties -->
         <xsl:for-each select="/tns:jqassistant-report/tns:context/tns:build/tns:properties/tns:property">
@@ -207,6 +213,7 @@
                 <ul>
                     <li>Move the mouse over a concept to view a description.</li>
                     <li>Click on a concept to open a details view.</li>
+                    <li>Abstract concepts are shown in italics.</li>
                 </ul>
             </h6>
 
@@ -250,19 +257,52 @@
 
     <!-- ANALYSIS GROUP -->
     <xsl:template match="tns:group">
-
+        <xsl:variable name="groupId" select="@id"/>
         <summary class="groups-grid">
-            <div><xsl:value-of select="position()"/></div>
-            <div><xsl:value-of select="@id"/></div>
-            <div><xsl:value-of select="tns:description/text()"/></div>
-            <div class="right"><xsl:value-of select="@date"/></div>
+            <div>
+                <xsl:value-of select="position()"/>
+            </div>
+            <div>
+                <xsl:choose>
+                    <xsl:when test="tns:description/text() or tns:overrides-group/@id">
+                        <span class="ruleName" title="{tns:description/text()}"
+                              onclick="javascript:showResult('{$groupId}');">
+                            <xsl:value-of select="@id"/>
+                        </span>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </div>
+            <div>
+                <xsl:value-of select="@id"/>
+            </div>
+            <div>
+                <xsl:if test="tns:description">
+                    <p>
+                        <xsl:value-of select="tns:description/text()"/>
+                    </p>
+                </xsl:if>
+                <xsl:if test="tns:overrides-group">
+                    <p>
+                        <xsl:for-each select="tns:overrides-group[@id]">
+                            <xsl:if test="position() = 1">Overrides:</xsl:if>
+                            <xsl:value-of select="@id"/>
+                            <xsl:if test="position() != last()">,</xsl:if>
+                        </xsl:for-each>
+                    </p>
+                </xsl:if>
+            </div>
+            <div class="right">
+                <xsl:value-of select="@date"/>
+            </div>
         </summary>
     </xsl:template>
 
     <!-- CONSTRAINT/CONCEPT TABLE -->
     <xsl:template match="tns:constraint | tns:concept">
         <xsl:variable name="ruleId" select="@id"/>
-
 
         <details id="{$ruleId}" class="row-separator">
             <summary>
@@ -276,6 +316,30 @@
 
                 <div>
                     <xsl:value-of select="position()"/>
+                </div>
+                <div>
+                    <span onclick="javascript:showResult('{$ruleId}')">
+                        <xsl:attribute name="title">
+                            <xsl:value-of select="tns:description/text()"/>
+                            <xsl:choose>
+                                <xsl:when test="@typeAbstract = 'true'">
+                                    <xsl:text>&lt;abstract&gt;</xsl:text>
+                                </xsl:when>
+                            </xsl:choose>
+                        </xsl:attribute>
+
+                        <xsl:attribute name="class">
+                            <xsl:choose>
+                                <xsl:when test="@typeAbstract = 'true'">
+                                    <xsl:text>abstractRule ruleName</xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:text>ruleName</xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:attribute>
+                        <xsl:value-of select="@id"/>
+                    </span>
                 </div>
 
                 <div>
@@ -320,8 +384,12 @@
                     </span>
                 </div>
 
-                <div class="right"><xsl:value-of select="tns:severity/text()"/></div>
-                <div class="right"><xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/></div>
+                <div class="right">
+                    <xsl:value-of select="tns:severity/text()"/>
+                </div>
+                <div class="right">
+                    <xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/>
+                </div>
             </summary>
 
             <div id="resultOf{$ruleId}" class="details-content" name="resultRow">
@@ -333,7 +401,7 @@
                         <xsl:apply-templates select="tns:result"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <p> (no result)</p>
+                        <p>(no result)</p>
                     </xsl:otherwise>
                 </xsl:choose>
                 <xsl:if test="tns:required-concept">
@@ -354,6 +422,22 @@
                         <xsl:apply-templates select="tns:providing-concept"/>
                     </table>
                 </xsl:if>
+                <p>
+                    <xsl:if test="tns:overrides-concept">
+                        <xsl:for-each select="tns:overrides-concept[@id]">
+                            <xsl:if test="position() = 1">Overrides:</xsl:if>
+                            <xsl:value-of select="@id"/>
+                            <xsl:if test="position() != last()">,</xsl:if>
+                        </xsl:for-each>
+                    </xsl:if>
+                    <xsl:if test="tns:overrides-constraint">
+                        <xsl:for-each select="tns:overrides-constraint[@id]">
+                            <xsl:if test="position() = 1">Overrides:</xsl:if>
+                            <xsl:value-of select="@id"/>
+                            <xsl:if test="position() != last()">,</xsl:if>
+                        </xsl:for-each>
+                    </xsl:if>
+                </p>
             </div>
         </details>
     </xsl:template>
@@ -387,7 +471,9 @@
     <xsl:template match="tns:required-concept|tns:providing-concept">
         <tr>
             <td>
-                <xsl:variable name="ruleId"><xsl:value-of select="@id" /></xsl:variable>
+                <xsl:variable name="ruleId">
+                    <xsl:value-of select="@id"/>
+                </xsl:variable>
                 <span class="rule-name" onclick="javascript:showResult('{$ruleId}')">
                     <xsl:value-of select="@id"/>
                 </span>

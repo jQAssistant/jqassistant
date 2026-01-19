@@ -34,8 +34,10 @@ public final class XmlReportTestHelper {
 
     public static final String C1 = "c1";
     public static final String C2 = "c2";
+
     public static final RowCountVerification ROW_COUNT_VERIFICATION = RowCountVerification.builder()
         .build();
+
     public static final Build BUILD = new Build() {
         @Override
         public String name() {
@@ -53,16 +55,20 @@ public final class XmlReportTestHelper {
         }
     };
 
+    public static final File REPORT_DIRECTORY = new File("target/test");
+
     /**
      * Creates a test report.
      *
+     * @param properties
+     *     The report properties.
      * @return The test report.
      * @throws ReportException
      *     If the test fails.
      */
-    public File createXmlReport() throws ReportException, MalformedURLException {
+    public File createXmlReport(Map<String, Object> properties) throws ReportException, MalformedURLException {
         ReportContext reportContext = getReportContext();
-        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin(reportContext);
+        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin(reportContext, properties);
         xmlReportPlugin.begin();
         Concept concept = Concept.builder()
             .id("my:concept")
@@ -201,22 +207,83 @@ public final class XmlReportTestHelper {
         return xmlReportPlugin.getXmlReportFile();
     }
 
-    public static XmlReportPlugin getXmlReportPlugin() {
-        ReportContext reportContext = getReportContext();
-        return getXmlReportPlugin(reportContext);
+    public File createXmlReportWithKeyColumns() throws ReportException {
+        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
+        xmlReportPlugin.begin();
+
+        Constraint keyColumConstraint = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder().keyColumns(List.of(C1))
+                        .build())
+                .build();
+        Constraint normalConstraint1 = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder()
+                        .build())
+                .build();
+        Constraint normalConstraint2 = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder()
+                        .build())
+                .build();
+
+        List<Constraint> allConstraints = new ArrayList<>();
+        allConstraints.add(keyColumConstraint);
+        allConstraints.add(normalConstraint1);
+        allConstraints.add(normalConstraint2);
+
+        for(Constraint constraint : allConstraints){
+            xmlReportPlugin.beginConstraint(constraint);
+            List<Row> rows = new ArrayList<>();
+            rows.add(createRow(constraint));
+            Result<Constraint> result = Result.<Constraint>builder()
+                    .rule(constraint)
+                    .verificationResult(VerificationResult.builder()
+                            .success(false)
+                            .rowCount(rows.size())
+                            .build())
+                    .status(Result.Status.FAILURE)
+                    .severity(Severity.CRITICAL)
+                    .columnNames(Arrays.asList(C1, C2))
+                    .rows(rows)
+                    .build();
+            xmlReportPlugin.setResult(result);
+            xmlReportPlugin.endConstraint();
+        }
+        xmlReportPlugin.end();
+        return xmlReportPlugin.getXmlReportFile();
     }
 
-    private static XmlReportPlugin getXmlReportPlugin(ReportContext reportContext) {
+    public void createConstraintsWithNonExistingKeyColumn() throws ReportException {
+        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
+        xmlReportPlugin.begin();
+        Constraint constraint = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder().keyColumns(List.of("c5"))
+                        .build())
+                .build();
+
+        xmlReportPlugin.beginConstraint(constraint);
+        createRow(constraint);
+        xmlReportPlugin.endConstraint();
+        xmlReportPlugin.end();
+
+    }
+
+    public static XmlReportPlugin getXmlReportPlugin() {
+        ReportContext reportContext = getReportContext();
+        return getXmlReportPlugin(reportContext, emptyMap());
+    }
+
+    public static XmlReportPlugin getXmlReportPlugin(ReportContext reportContext, Map<String, Object> properties) {
         XmlReportPlugin xmlReportWriter = new XmlReportPlugin();
         xmlReportWriter.initialize();
-        xmlReportWriter.configure(reportContext, emptyMap());
+        xmlReportWriter.configure(reportContext, properties);
         return xmlReportWriter;
     }
 
     private static ReportContext getReportContext() {
-        File reportDirectory = new File("target/test");
-        reportDirectory.mkdirs();
-        return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), reportDirectory);
+        return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), REPORT_DIRECTORY);
     }
 
     private static Row createRow(ExecutableRule<?> rule) {

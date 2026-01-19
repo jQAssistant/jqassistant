@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.commandline.test;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -144,6 +143,16 @@ class AnalyzeIT extends AbstractCLIIT {
     }
 
     @DistributionTest
+    void xmlAndHTMLReport() {
+        String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY };
+
+        assertThat(execute(args).getExitCode()).isEqualTo(2);
+
+        assertThat(new File(getDefaultReportDirectory(), "jqassistant-report.xml")).exists();
+        assertThat(new File(getDefaultReportDirectory(), "jqassistant-report.html")).exists();
+    }
+
+    @DistributionTest
     void apoc() {
         File configFile = new File(ScanIT.class.getResource("/.jqassistant-analyze-apoc-" + getNeo4jVersion() + ".yml")
             .getFile());
@@ -179,15 +188,15 @@ class AnalyzeIT extends AbstractCLIIT {
      * @return <code>true</code> if the concept is represented in the database.
      */
     private boolean isConceptPresent(Store store, String concept) {
-        store.beginTransaction();
-        Map<String, Object> params = new HashMap<>();
-        params.put("concept", concept);
-        Result<CompositeRowObject> result = store.executeQuery("match (c:Concept) where c.id=$concept return count(c) as count", params);
-        assertThat(result.hasResult()).isTrue();
-        Long count = result.getSingleResult()
-            .get("count", Long.class);
-        store.commitTransaction();
-        return count == 1;
+        return store.requireTransaction(() -> {
+            try (Result<CompositeRowObject> result = store.executeQuery("match (c:Concept) where c.id=$concept return count(c) as count",
+                Map.of("concept", concept))) {
+                assertThat(result.hasResult()).isTrue();
+                long count = result.getSingleResult()
+                    .get("count", Long.class);
+                return count == 1;
+            }
+        });
     }
 
 }

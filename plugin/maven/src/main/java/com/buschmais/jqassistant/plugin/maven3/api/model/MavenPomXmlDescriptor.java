@@ -4,8 +4,8 @@ import com.buschmais.jqassistant.plugin.common.api.model.ValidDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.report.Maven;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 
-import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLanguageElement.PomXmlFile;
+import static com.buschmais.jqassistant.plugin.maven3.api.report.Maven.MavenLanguageElement.Pom;
 
-@Maven(PomXmlFile)
+@Maven(Pom)
 public interface MavenPomXmlDescriptor extends MavenPomDescriptor, XmlFileDescriptor, ValidDescriptor {
 }

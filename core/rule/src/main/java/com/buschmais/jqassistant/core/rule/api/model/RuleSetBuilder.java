@@ -29,17 +29,20 @@ public class RuleSetBuilder {
 
     public RuleSetBuilder addConcept(Concept concept) throws RuleException {
         ruleSet.conceptBucket.add(concept);
+        ruleSet.conceptBucket.updateOverrideRules(concept);
         updateProvidedConcepts(concept.getProvidedConcepts());
         return this;
     }
 
     public RuleSetBuilder addConstraint(Constraint constraint) throws RuleException {
         ruleSet.constraintBucket.add(constraint);
+        ruleSet.constraintBucket.updateOverrideRules(constraint);
         return this;
     }
 
     public RuleSetBuilder addGroup(Group group) throws RuleException {
         ruleSet.groupsBucket.add(group);
+        ruleSet.groupsBucket.updateOverrideRules(group);
         for (Map.Entry<String, Set<Concept.ProvidedConcept>> entry : group.getProvidedConcepts()
             .entrySet()) {
             updateProvidedConcepts(entry.getValue());
@@ -63,14 +66,14 @@ public class RuleSetBuilder {
 
     private void validate() throws RuleException {
         Set<String> conceptIds = ruleSet.getConceptBucket()
-            .getIds();
+                .getIds();
         for (Map.Entry<String, Set<Concept.ProvidedConcept>> entry : ruleSet.getProvidedConcepts()
-            .entrySet()) {
+                .entrySet()) {
             String providedConceptId = entry.getKey();
             if (!conceptIds.contains(providedConceptId)) {
                 for (Concept.ProvidedConcept providedConcept : entry.getValue()) {
-                    log.warn("Concept {} provides non-resolvable concept with id '{}'.", ruleSet.getConceptBucket()
-                        .getById(providedConcept.getProvidingConceptId()), providedConceptId);
+                    throw new RuleException(String.format("Concept '%s' provides non-resolvable concept with id '%s'.", ruleSet.getConceptBucket()
+                            .getById(providedConcept.getProvidingConceptId()), providedConceptId));
                 }
             }
         }
