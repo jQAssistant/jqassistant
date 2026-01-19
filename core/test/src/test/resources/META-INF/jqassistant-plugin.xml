@@ -1,0 +1,9 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.4"
+                    id="jqa.core.test.plugin"
+                    name="jQAssistant Core Test"
+                    version="${project.version}">
+    <description>Test plugin.</description>
+    <rules>
+        <resource>core-test-audit.xml</resource>
+    </rules>
+</jqassistant-plugin>

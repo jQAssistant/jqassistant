@@ -61,5 +61,4 @@ class HtmlReportTransformerTest {
         }
         return ruleIds;
     }
-
 }

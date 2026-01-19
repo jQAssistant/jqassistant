@@ -6,10 +6,7 @@ import java.util.*;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
-import com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor;
 import com.buschmais.jqassistant.core.analysis.spi.RuleRepository;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -95,8 +92,6 @@ class AnalyzerRuleVisitorTest {
 
     private List<String> columnNames;
 
-    private Map<String, GroupDescriptor> groupDescriptors;
-
     @SneakyThrows
     @BeforeEach
     void setUp() {
@@ -131,38 +126,6 @@ class AnalyzerRuleVisitorTest {
             .getXOManager();
         doReturn(ruleRepository).when(xoManager)
             .getRepository(RuleRepository.class);
-        doAnswer(invocation -> {
-            ConceptDescriptor conceptDescriptor = mock(ConceptDescriptor.class);
-            doReturn(invocation.getArgument(0)).when(conceptDescriptor)
-                .getId();
-            return conceptDescriptor;
-        }).when(ruleRepository)
-            .mergeConcept(anyString());
-
-        doAnswer(invocation -> {
-            ConstraintDescriptor constraintDescriptor = mock(ConstraintDescriptor.class);
-            doReturn(invocation.getArgument(0)).when(constraintDescriptor)
-                .getId();
-            return constraintDescriptor;
-        }).when(ruleRepository)
-            .mergeConstraint(anyString());
-
-        groupDescriptors = new HashMap<>();
-        doAnswer(invocation -> {
-            GroupDescriptor groupDescriptor = mock(GroupDescriptor.class);
-            String id = invocation.getArgument(0);
-            doReturn(id).when(groupDescriptor)
-                .getId();
-            doReturn(new ArrayList<>()).when(groupDescriptor)
-                .getIncludesConcepts();
-            doReturn(new ArrayList<>()).when(groupDescriptor)
-                .getIncludesConstraints();
-            doReturn(new ArrayList<>()).when(groupDescriptor)
-                .getIncludesGroups();
-            groupDescriptors.put(id, groupDescriptor);
-            return groupDescriptor;
-        }).when(ruleRepository)
-            .mergeGroup(anyString());
 
         List<RuleInterpreterPlugin> languagePlugins = new ArrayList<>();
         languagePlugins.add(new CypherRuleInterpreterPlugin());
@@ -236,7 +199,6 @@ class AnalyzerRuleVisitorTest {
         verify(analyzerContext).getStatus(verificationResult, MAJOR);
         verify(reportWriter).beginConcept(eq(concept), anyMap(), anyMap());
         verifyConceptResult(SUCCESS, MAJOR);
-        verify(ruleRepository).mergeConcept(concept.getId());
     }
 
     @Test
@@ -251,7 +213,6 @@ class AnalyzerRuleVisitorTest {
         Result<Concept> result = verifyConceptResult(SUCCESS, MAJOR);
         assertThat(result.getColumnNames()).isEmpty();
         assertThat(result.getRows()).isEmpty();
-        verify(ruleRepository).mergeConcept(abstractConcept.getId());
     }
 
     @Test
@@ -277,7 +238,6 @@ class AnalyzerRuleVisitorTest {
         verify(store, never()).executeQuery(eq(STATEMENT), anyMap());
         verify(reportWriter).beginConcept(concept, emptyMap(), emptyMap());
         verifyConceptResult(Result.Status.SKIPPED, MAJOR);
-        verify(ruleRepository, never()).mergeConcept(concept.getId());
     }
 
     private Result<Concept> verifyConceptResult(Result.Status expectedStatus, Severity expectedSeverity) throws ReportException {
@@ -311,7 +271,6 @@ class AnalyzerRuleVisitorTest {
         verify(analyzerContext).getStatus(verificationResult, BLOCKER);
         verify(reportWriter).beginConstraint(constraint, emptyMap());
         verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
-        verify(ruleRepository).mergeConstraint(constraint.getId());
     }
 
     @Test
@@ -324,7 +283,6 @@ class AnalyzerRuleVisitorTest {
         Result<?> result = verifyConstraintResult(SUCCESS, BLOCKER);
         assertThat(result.getColumnNames()).isEmpty();
         assertThat(result.getRows()).isEmpty();
-        verify(ruleRepository).mergeConstraint(constraint.getId());
     }
 
     @Test
@@ -352,7 +310,7 @@ class AnalyzerRuleVisitorTest {
         doReturn(SUCCESS).when(conceptDescriptor)
             .getStatus();
         doReturn(conceptDescriptor).when(ruleRepository)
-            .findConcept(concept.getId());
+            .findAppliedConcept(concept.getId());
 
         assertThat(analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap())).isEqualTo(SUCCESS);
 
@@ -378,22 +336,23 @@ class AnalyzerRuleVisitorTest {
 
         verify(analyzerContext).getStatus(verificationResult, MINOR);
         verify(reportWriter).beginConcept(concept, emptyMap(), emptyMap());
-        verify(ruleRepository).mergeConcept(concept.getId());
     }
 
     @Test
     void group() throws RuleException {
+        // Given
         Concept concept = Concept.builder()
             .id("concept")
             .build();
         Constraint constraint = Constraint.builder()
             .id("constraint")
             .build();
-        Group child = Group.builder()
-            .id("child")
-            .build();
         Constraint childConstraint = Constraint.builder()
             .id("childConstraint")
+            .build();
+        Group child = Group.builder()
+            .id("child")
+            .constraint("childConstraint", CRITICAL)
             .build();
         Group parent = Group.builder()
             .id("parent")
@@ -402,14 +361,11 @@ class AnalyzerRuleVisitorTest {
             .constraint("constraint", CRITICAL)
             .group("child", INFO)
             .build();
-        AnalyzeTaskDescriptor analyzeTaskDescriptor = mock(AnalyzeTaskDescriptor.class);
-        doReturn(analyzeTaskDescriptor).when(store)
-            .create(AnalyzeTaskDescriptor.class);
-        List<GroupDescriptor> rootGroups = new ArrayList<>();
-        doReturn(rootGroups).when(analyzeTaskDescriptor)
-            .getIncludesGroups();
 
-        analyzerRuleVisitor.beforeRules();
+        // When
+        analyzerRuleVisitor.beforeRules(RuleSelection.builder()
+            .groupId(parent.getId())
+            .build());
         analyzerRuleVisitor.beforeGroup(parent, BLOCKER);
         analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
         analyzerRuleVisitor.beforeGroup(child, INFO);
@@ -419,45 +375,8 @@ class AnalyzerRuleVisitorTest {
         analyzerRuleVisitor.afterGroup(parent);
         analyzerRuleVisitor.afterRules();
 
-        verify(store).create(AnalyzeTaskDescriptor.class);
-        verify(analyzeTaskDescriptor).setTimestamp(any());
-
+        // Then
         verify(reportWriter).beginGroup(parent);
-        verify(ruleRepository).mergeGroup(parent.getId());
-
-        GroupDescriptor parentGroupDescriptor = groupDescriptors.get(parent.getId());
-        assertThat(parentGroupDescriptor).isNotNull();
-        verify(parentGroupDescriptor).setSeverity(MINOR);
-        verify(parentGroupDescriptor).setEffectiveSeverity(BLOCKER);
-        assertThat(rootGroups).containsExactly(parentGroupDescriptor);
-
-        verify(ruleRepository).mergeConcept("concept");
-        List<ConceptDescriptor> includesConcepts = parentGroupDescriptor.getIncludesConcepts();
-        assertThat(includesConcepts).hasSize(1);
-        assertThat(includesConcepts.get(0)
-            .getId()).isEqualTo("concept");
-
-        verify(ruleRepository).mergeConstraint("constraint");
-        List<ConstraintDescriptor> includesConstraints = parentGroupDescriptor.getIncludesConstraints();
-        assertThat(includesConstraints).hasSize(1);
-        assertThat(includesConstraints.get(0)
-            .getId()).isEqualTo("constraint");
-
-        List<GroupDescriptor> includesGroups = parentGroupDescriptor.getIncludesGroups();
-        assertThat(includesGroups).hasSize(1);
-        assertThat(includesGroups.get(0)
-            .getId()).isEqualTo("child");
-
-        GroupDescriptor childGroupDescriptor = groupDescriptors.get(child.getId());
-        assertThat(childGroupDescriptor).isNotNull();
-        verify(childGroupDescriptor).setSeverity(null);
-        verify(childGroupDescriptor).setEffectiveSeverity(INFO);
-
-        verify(ruleRepository).mergeConstraint("childConstraint");
-        List<ConstraintDescriptor> childIncludesConstraints = childGroupDescriptor.getIncludesConstraints();
-        assertThat(childIncludesConstraints).hasSize(1);
-        assertThat(childIncludesConstraints.get(0)
-            .getId()).isEqualTo("childConstraint");
     }
 
     @Test
