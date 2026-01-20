@@ -7096,6 +7096,7 @@ RETURN
   path=shortestPath((type)-[:EXTENDS|IMPLEMENTS*]-&gt;(superType))
 WHERE
   type &lt;&gt; superType
+  and not member:Constructor
   and member.name is null
   and superMember.name is not null
   and member.signature = superMember.signature
@@ -7147,7 +7148,8 @@ WHERE
   method.signature = superMethod.signature
   and superMethod.visibility &lt;&gt; &quot;private&quot;
   and not (
-    (method)-[:INHERITED_FROM]-&gt;(:Method)
+    method:Constructor
+    or (method)-[:INHERITED_FROM]-&gt;(:Method)
     or (superMethod)-[:INHERITED_FROM]-&gt;(:Method)
   )
 WITH
@@ -7231,24 +7233,32 @@ RETURN
 <h5 id="java:VirtualInvokes"><a class="link" href="#java:VirtualInvokes">Concept <code>java:VirtualInvokes</code></a></h5>
 <div class="paragraph">
 <p>Propagates INVOKES relationships as VIRTUAL_INVOKES to non-abstract methods within the inheritance
-            hierarchy, i.e. identifying potential methods that could be invoked.</p>
+            hierarchy, i.e. identifying potential methods that could be invoked at runtime.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (method:Method)-[invokes:INVOKES]-&gt;(:Method)-[:INHERITED_FROM*0..1]-&gt;(invokedMethod:Method),
-  (invokedMethod)&lt;-[:OVERRIDES*0..]-(overridingMethod:Method)
-WHERE NOT (                                     // exclude...
-  overridingMethod.abstract is not null         // ...abstract methods
-  or (overridingMethod)-[:INHERITED_FROM]-&gt;()   // ...inherited methods
-)
+  (invokedType:Type)-[:DECLARES]-&gt;(invokedMethod:Method),
+  (method:Method)-[invokes:INVOKES]-&gt;(invokedMethod),
+  (invokedMethod)-[:INHERITED_FROM*0..1]-&gt;(inheritedMethod:Method) // the invoked method may be inherited
+WHERE NOT
+  invokedMethod:Constructor
 WITH
-  method, overridingMethod, coalesce(invokes.lineNumber, -1) as lineNumber
+  method, invokes, invokedType, invokedMethod, inheritedMethod
+MATCH
+  (virtualInvokedType:Type)-[:DECLARES]-&gt;(virtualInvokedMethod),
+  (virtualInvokedMethod)-[:OVERRIDES*0..]-&gt;(inheritedMethod), // the invoked method may be overridden
+  (virtualInvokedType)-[:ASSIGNABLE_FROM]-(invokedType)       // ensure type assignability in both directions
+WHERE                                                  // exclude...
+  virtualInvokedMethod.abstract is null                // ...abstract methods
+  and not (virtualInvokedMethod)-[:INHERITED_FROM]-&gt;() // ...inherited methods
+WITH
+  method, virtualInvokedMethod, coalesce(invokes.lineNumber, -1) as lineNumber
 CALL {
   WITH
-    method, overridingMethod, lineNumber
+    method, virtualInvokedMethod, lineNumber
   MERGE
-    (method)-[virtualInvokes:VIRTUAL_INVOKES{lineNumber:lineNumber}]-&gt;(overridingMethod)
+    (method)-[virtualInvokes:VIRTUAL_INVOKES{lineNumber:lineNumber}]-&gt;(virtualInvokedMethod)
 } IN TRANSACTIONS
 RETURN
   count(*) as VirtualInvokes</code></pre>
@@ -7259,6 +7269,9 @@ RETURN
 </div>
 <div class="ulist">
 <ul>
+<li>
+<p><a href="#java:TypeAssignableFrom">java:TypeAssignableFrom</a></p>
+</li>
 <li>
 <p><a href="#java:MethodOverrides">java:MethodOverrides</a></p>
 </li>
@@ -12676,7 +12689,7 @@ jqassistant.sh scan analyze</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-19 17:34:25 UTC
+Last updated 2026-01-20 10:16:29 UTC
 </div>
 </div>
 </body>
