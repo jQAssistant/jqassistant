@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.9">
-    <build>
-        <name>Test</name>
-        <timestamp>2025-04-07T01:00:00</timestamp>
-        <properties/>
-    </build>
+    <context>
+        <build>
+            <name>Test</name>
+            <timestamp>2025-04-07T01:00:00</timestamp>
+            <properties/>
+        </build>
+    </context>
     <group id="group:GroupOfContent" date="13/04/2025">
         <description>This is an extraordinary group containing content.</description>
         <duration>3</duration>
