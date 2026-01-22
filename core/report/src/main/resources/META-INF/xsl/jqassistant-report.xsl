@@ -279,7 +279,9 @@
             </div>
             <div>
                 <xsl:if test="tns:description">
-                    <xsl:value-of select="tns:description/text()"/>
+                    <pre style="font-family:'Open Sans', sans-serif;">
+                        <xsl:value-of select="tns:description/text()"/>
+                    </pre>
                 </xsl:if>
                 <xsl:if test="tns:overrides-group">
                     <xsl:for-each select="tns:overrides-group[@id]">
@@ -386,9 +388,9 @@
             </summary>
 
             <div id="resultOf{$ruleId}" class="details-content" name="resultRow">
-                <p>
+                <pre style="font-family:'Open Sans', sans-serif;">
                     <xsl:value-of select="tns:description/text()"/>
-                </p>
+                </pre>
                 <xsl:choose>
                     <xsl:when test="tns:result">
                         <xsl:apply-templates select="tns:result"/>
