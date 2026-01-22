@@ -77,7 +77,6 @@
                 color:#747270;
                 font-weight:normal;
                 margin: 0;
-                margin-left: 2%;
                 }
 
             h3 {
@@ -86,6 +85,8 @@
 
             ul {
                 margin-top: 0;
+                margin-left: 25px;
+                padding-left: 0;
             }
 
             .abstractRule {
@@ -141,27 +142,22 @@
 
             .columns-grid {
                 display: grid;
-                grid-template-columns:  minmax(40px,2Fr) minmax(60px,2Fr) minmax(300px,50Fr) minmax(75px,2Fr) minmax(50px,2Fr);
+                grid-template-columns:  55px 65px 80px 90px minmax(350px,1Fr);
                 padding: 6px;
             }
 
             .groups-grid {
                 display: grid;
-                grid-template-columns:  40px 260px minmax(350px,25Fr);
+                grid-template-columns:  40px 350px minmax(300px,1Fr);
                 padding: 6px;
             }
 
             .details-content {
-                margin-left: 10px;
-                margin-bottom:10px;
+                margin: 10px;
             }
 
             .row-separator {
                 border-bottom: 1px solid #ddd;
-            }
-
-            .right {
-                text-align:right;
             }
 
             .rule-name {
@@ -170,7 +166,7 @@
             }
 
             .result {
-                margin: 0px 5px 10px 5px;
+                margin-bottom: 12px;
                 color:#3d3a37;
             }
 
@@ -197,7 +193,7 @@
             jQAssistant Report - <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:name"/>
         </h1>
         <h5>
-            Time Stamp:
+            Timestamp:
             <span class="timeStamp">
                  <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:timestamp"/>
             </span>
@@ -215,7 +211,7 @@
             <h6>
                 <ul>
                     <li>Move the mouse over a constraint to view a description.</li>
-                    <li>Click on a failed constraint to open a details view.</li>
+                    <li>Click on a constraint to open a details view.</li>
                 </ul>
             </h6>
 
@@ -223,9 +219,9 @@
                 <div class="header-row columns-grid">
                     <div>#</div>
                     <div>Status</div>
+                    <div>Severity</div>
+                    <div>Count</div>
                     <div>Constraint</div>
-                    <div class="right">Severity</div>
-                    <div class="right">Count</div>
                 </div>
                 <xsl:apply-templates select="//tns:constraint[tns:status='failure']">
                     <xsl:sort select="tns:severity/@level"/>
@@ -257,9 +253,9 @@
                 <div class="header-row columns-grid">
                     <div>#</div>
                     <div>Status</div>
-                    <div>Constraint</div>
-                    <div class="right">Severity</div>
-                    <div class="right">Count</div>
+                    <div>Severity</div>
+                    <div>Count</div>
+                    <div>Concept</div>
                 </div>
                 <xsl:apply-templates select="//tns:concept[tns:status='failure']">
                     <xsl:sort select="tns:severity/@level"/>
@@ -382,9 +378,11 @@
                         <xsl:when test="tns:status='success'">
                             <span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2714;</span>
                         </xsl:when>
-
                     </xsl:choose>
                 </div>
+
+                <div><xsl:value-of select="tns:severity/text()"/></div>
+                <div><xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/></div>
 
                 <div>
                     <span>
@@ -410,9 +408,6 @@
                         <xsl:value-of select="@id"/>
                     </span>
                 </div>
-
-                <div class="right"><xsl:value-of select="tns:severity/text()"/></div>
-                <div class="right"><xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/></div>
             </summary>
 
             <div id="resultOf{$ruleId}" class="details-content" name="resultRow">
