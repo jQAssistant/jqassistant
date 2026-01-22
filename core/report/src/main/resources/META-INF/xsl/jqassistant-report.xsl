@@ -19,6 +19,37 @@
                     block: "start"
                     });
             }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".timeStamp").forEach(stamp => {
+                    const date = new Date(stamp.textContent);
+                    const options = {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                        timeZoneName: "short"
+                    }
+                    const parts = new Intl.DateTimeFormat("en-UK", options).formatToParts(date);
+                    function getValue(type) {
+                        for (var i = 0; i &lt; parts.length; i++) {
+                            if (parts[i].type === type){
+                                return parts[i].value;
+                            }
+                        }
+                        return "";
+                    }
+                    stamp.textContent =
+                        `${getValue("day")}.`
+                        +`${getValue("month")}.`
+                        +`${getValue("year")} `
+                        +`${getValue("hour")}:`
+                        +`${getValue("minute")} `
+                        +`(${getValue("timeZoneName")})`;
+                });
+            });
         </script>
         <style type="text/css">
             body {
@@ -162,11 +193,14 @@
                 background-color:#bfbdb4; <!-- grey -->
             }
         </style>
-        <h1 title="{/tns:jqassistant-report/tns:context/tns:build/tns:timestamp}">
+        <h1>
             jQAssistant Report - <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:name"/>
         </h1>
         <h5>
-            Time Stamp: <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:timestamp"/>
+            Time Stamp:
+            <span class="timeStamp">
+                 <xsl:value-of select="/tns:jqassistant-report/tns:context/tns:build/tns:timestamp"/>
+            </span>
         </h5>
         <!-- optional build properties -->
         <xsl:for-each select="/tns:jqassistant-report/tns:context/tns:build/tns:properties/tns:property">
