@@ -322,7 +322,7 @@
                                 <xsl:when test="tns:verificationResult/tns:success='false'">
                                     <xsl:choose>
                                         <xsl:when test="self::tns:constraint">
-                                            <span title="No Violations Found">&#127783;&#160;</span>
+                                            <span title="Violations Found">&#127783;&#160;</span>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <span title="No Matches Found">&#127783;&#160;</span>
@@ -332,7 +332,7 @@
                                 <xsl:otherwise>
                                     <xsl:choose>
                                         <xsl:when test="self::tns:constraint">
-                                            <span title="Violations Found">&#9728;&#160;</span>
+                                            <span title="No Violations Found">&#9728;&#160;</span>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <span title="Matches Found">&#9728;&#160;</span>
