@@ -248,6 +248,7 @@ mvn jqassistant:available-rules
 * <<effective-configuration>>
 * <<effective-rules>>
 * <<available-rules>>
+* <<exec>>
 * <<report>>
 
 [[scan]]
@@ -295,6 +296,32 @@ List the rules which would be executed for an analysis and the given concepts, c
 === jqassistant:available-rules
 
 List all available rules.
+
+[[exec]]
+=== jqassistant:exec
+
+Executes a Cypher query against the store without starting a server.
+This is useful for quick database operations like APOC exports.
+
+[source]
+----
+mvn jqassistant:exec -Djqassistant.exec.query="MATCH (n) RETURN count(n) as count"
+mvn jqassistant:exec -Djqassistant.exec.query-file=query.cypher
+mvn jqassistant:exec -Djqassistant.exec.query="CALL apoc.export.cypher.all(null, {stream: true})" -Djqassistant.store.embedded.apoc-enabled=true
+----
+
+Configuration properties:
+
+* jqassistant.exec.query
+** The Cypher query to execute
+* jqassistant.exec.query-file
+** Path to a file containing the Cypher query
+* jqassistant.exec.read-only
+** Execute in read-only mode (changes will be rolled back), default: `false`
+* jqassistant.exec.output-format
+** Output format: `table` (default), `json`, or `csv`
+* jqassistant.exec.output-file
+** Optional file path to write results to (default: stdout)
 
 [[report]]
 === jqassistant:report
