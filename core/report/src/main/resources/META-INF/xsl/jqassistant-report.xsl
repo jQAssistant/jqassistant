@@ -32,7 +32,7 @@
                         hour12: false,
                         timeZoneName: "short"
                     }
-                    const parts = new Intl.DateTimeFormat("en-UK", options).formatToParts(date);
+                    const parts = new Intl.DateTimeFormat("en-US", options).formatToParts(date);
                     function getValue(type) {
                         for (var i = 0; i &lt; parts.length; i++) {
                             if (parts[i].type === type){
@@ -147,7 +147,7 @@
 
             .groups-grid {
                 display: grid;
-                grid-template-columns:  minmax(40px,2Fr) minmax(175px,15Fr) minmax(200px,24.5Fr) minmax(200px,2Fr);
+                grid-template-columns:  40px 260px minmax(350px,25Fr);
                 padding: 6px;
             }
 
@@ -284,7 +284,6 @@
                     <div>#</div>
                     <div>Group</div>
                     <div>Description</div>
-                    <div class="right">Date</div>
                 </div>
                 <xsl:apply-templates select="//tns:group"/>
             </section>
@@ -322,9 +321,6 @@
                         <xsl:if test="position() != last()"> , </xsl:if>
                     </xsl:for-each>
                 </xsl:if>
-            </div>
-            <div class="right">
-                <xsl:value-of select="@date"/>
             </div>
         </summary>
     </xsl:template>
