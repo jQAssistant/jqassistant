@@ -64,7 +64,7 @@
         <!-- The Java release version to be used as target for the compiler and Maven plugin metadata -->
         <java.release>11</java.release>
         <!-- library versions -->
-        <assertj.version>3.27.6</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <asm.version>9.9.1</asm.version>
         <caffeine.version>3.2.3</caffeine.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
