@@ -12,7 +12,6 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
 import com.buschmais.jqassistant.core.report.api.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.*;
@@ -23,6 +22,7 @@ import com.buschmais.xo.api.CompositeObject;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
@@ -46,7 +46,7 @@ public class XmlReportPlugin implements ReportPlugin {
 
     public static final String REPORT_FILE_HTML = "jqassistant-report.html";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.9";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.10";
 
     private static final Pattern XML_10_INVALID_CHARACTERS = Pattern.compile("[^\t\r\n -\uD7FF\uE000-�\uD800\uDC00-\uDBFF\uDFFF]");
 
@@ -266,16 +266,19 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeStartElement("rows");
             List<Row> rows = result.getRows();
             xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
-            for (Row row : rows) {
-                xmlStreamWriter.writeStartElement("row");
-                xmlStreamWriter.writeAttribute("key", row.getKey());
-                for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
-                    .entrySet()) {
-                    String columnName = rowEntry.getKey();
-                    Column<?> column = rowEntry.getValue();
-                    writeColumn(columnName, column);
+            if (reportContext.showSuppressedRows()) {
+                for (Row row : rows) {
+                    xmlStreamWriter.writeStartElement("row");
+                    xmlStreamWriter.writeAttribute("key", row.getKey());
+                    writeSuppression(row);
+                    for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
+                            .entrySet()) {
+                        String columnName = rowEntry.getKey();
+                        Column<?> column = rowEntry.getValue();
+                        writeColumn(columnName, column);
+                    }
+                    xmlStreamWriter.writeEndElement();
                 }
-                xmlStreamWriter.writeEndElement();
             }
             xmlStreamWriter.writeEndElement(); // rows
             xmlStreamWriter.writeEndElement(); // result
@@ -510,6 +513,26 @@ public class XmlReportPlugin implements ReportPlugin {
         if (rule instanceof Concept) {
             String abstractValue = Boolean.toString(((Concept) rule).isAbstract());
             xmlStreamWriter.writeAttribute("abstract", abstractValue);
+        }
+    }
+
+    private void writeSuppression(Row row) throws XMLStreamException {
+        if (StringUtils.isEmpty(row.getSuppressionType()
+                .toString())) {
+            xmlStreamWriter.writeAttribute("suppressionType", row.getSuppressionType()
+                    .toString());
+            if (StringUtils.isEmpty(row.getSuppressionType()
+                    .getSupressReason())) {
+                xmlStreamWriter.writeAttribute("suppressReason", row.getSuppressionType()
+                        .getSupressReason());
+            }
+            if (StringUtils.isEmpty(row.getSuppressionType()
+                    .getSupressUntil()
+                    .toString())) {
+                xmlStreamWriter.writeAttribute("suppressUntil", row.getSuppressionType()
+                        .getSupressUntil()
+                        .toString());
+            }
         }
     }
 

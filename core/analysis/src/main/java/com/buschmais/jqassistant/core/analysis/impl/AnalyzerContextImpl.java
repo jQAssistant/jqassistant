@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.SuppressionType;
 import com.buschmais.jqassistant.core.rule.api.model.Verification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -78,6 +79,7 @@ class AnalyzerContextImpl implements AnalyzerContext {
     @Override
     public <T extends ExecutableRule<?>> boolean isSuppressed(T executableRule, String primaryColumn, Row row) {
         if (baselineManager.isExisting(executableRule, row)) {
+      //      executableRule.setSuppressionType(SuppressionType.BASELINE);
             return true;
         }
         String ruleId = executableRule.getId();
@@ -94,6 +96,7 @@ class AnalyzerContextImpl implements AnalyzerContext {
                     if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
                         for (String suppressId : suppressIds) {
                             if (ruleId.equals(suppressId)) {
+          //                      executableRule.setSuppressionType(SuppressionType.SUPPRESSION);
                                 return true;
                             }
                         }
@@ -141,5 +144,4 @@ class AnalyzerContextImpl implements AnalyzerContext {
         }
         return SUCCESS;
     }
-
 }

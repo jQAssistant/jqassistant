@@ -48,6 +48,8 @@ public class ReportContextImpl implements ReportContext {
 
     private final Map<String, List<Report<?>>> reports = new HashMap<>();
 
+    private final boolean showSuppressedRows;
+
     /**
      * Constructor.
      *
@@ -56,8 +58,8 @@ public class ReportContextImpl implements ReportContext {
      * @param outputDirectory
      *     The output directory.
      */
-    public ReportContextImpl(Build build, ClassLoader classLoader, Store store, File outputDirectory) {
-        this(build, classLoader, store, outputDirectory, new File(outputDirectory, REPORT_DIRECTORY));
+    public ReportContextImpl(Build build, ClassLoader classLoader, Store store, File outputDirectory, boolean showSuppressedRows) {
+        this(build, classLoader, store, outputDirectory, new File(outputDirectory, REPORT_DIRECTORY), showSuppressedRows);
     }
 
     @Override
@@ -87,6 +89,11 @@ public class ReportContextImpl implements ReportContext {
     @Override
     public File getOutputDirectory() {
         return outputDirectory;
+    }
+
+    @Override
+    public boolean showSuppressedRows() {
+        return this.showSuppressedRows;
     }
 
     @Override

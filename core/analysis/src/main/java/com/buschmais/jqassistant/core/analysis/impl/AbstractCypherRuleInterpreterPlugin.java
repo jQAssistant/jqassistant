@@ -56,9 +56,7 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
                 }
             }
             Row row = getColumns(executableRule, columnNames, rowObject, context);
-            if (!context.isSuppressed(executableRule, primaryColumn, row)) {
                 rows.add(row);
-            }
         }
         VerificationResult verificationResult = context.verify(executableRule, columnNames, rows);
         Status status = context.getStatus(verificationResult, severity);
