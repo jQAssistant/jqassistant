@@ -53,6 +53,8 @@ public interface ReportContext {
      */
     File getOutputDirectory();
 
+    boolean showSuppressedRows();
+
     /**
      * Add a report for a {@link ExecutableRule}.
      *

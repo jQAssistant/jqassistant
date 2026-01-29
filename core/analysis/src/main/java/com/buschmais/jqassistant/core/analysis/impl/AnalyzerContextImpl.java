@@ -12,11 +12,13 @@ import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.SuppressionType;
 import com.buschmais.jqassistant.core.rule.api.model.Verification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static java.util.stream.Collectors.toMap;
@@ -72,16 +74,21 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     @Override
     public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+        if(rule.getReport() != null){
+        SuppressionType suppressionType = checkSuppression(rule, rule.getReport().getPrimaryColumn(), columns);
+            return ReportHelper.toRow(rule, columns, suppressionType);
+        }
         return ReportHelper.toRow(rule, columns);
     }
 
     @Override
-    public <T extends ExecutableRule<?>> boolean isSuppressed(T executableRule, String primaryColumn, Row row) {
-        if (baselineManager.isExisting(executableRule, row)) {
-            return true;
+    public <T extends ExecutableRule<?>> SuppressionType checkSuppression(T executableRule, String primaryColumn, Map<String, Column<?>> columns) {
+        SuppressionType suppressionType = SuppressionType.builder()
+                .build();
+        String rowKey = ReportHelper.getRowKey(executableRule, columns);
+        if (baselineManager.isExisting(executableRule, rowKey, columns)) {
+            suppressionType.setSuppressedByBaseline(true);
         }
-        String ruleId = executableRule.getId();
-        Map<String, Column<?>> columns = row.getColumns();
         for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
             String columnName = entry.getKey();
             Column<?> column = entry.getValue();
@@ -93,15 +100,22 @@ class AnalyzerContextImpl implements AnalyzerContext {
                     String[] suppressIds = suppress.getSuppressIds();
                     if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
                         for (String suppressId : suppressIds) {
-                            if (ruleId.equals(suppressId)) {
-                                return true;
+                            if (executableRule.getId()
+                                    .equals(suppressId)) {
+                                suppressionType.setSuppressedBySuppression(true);
+                                if (StringUtils.isNotEmpty(suppress.getSuppressReason())) {
+                                    suppressionType.setSuppressReason(suppress.getSuppressReason());
+                                }
+                                if (suppress.getSuppressUntil() != null) {
+                                    suppressionType.setSuppressUntil(suppress.getSuppressUntil());
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        return false;
+        return suppressionType;
     }
 
     public boolean validateSuppressUntilDate(LocalDate until) {
@@ -141,5 +155,4 @@ class AnalyzerContextImpl implements AnalyzerContext {
         }
         return SUCCESS;
     }
-
 }

@@ -73,7 +73,7 @@ class CypherRuleInterpreterPluginTest {
         Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
 
         assertThat(result.getRows()).hasSize(2);
-        verify(analyzerContext, times(2)).isSuppressed(eq(constraint), eq(PRIMARY_COLUMN), any(Row.class));
+        verify(analyzerContext, times(2)).checkSuppression(eq(constraint), eq(PRIMARY_COLUMN), any(Row.class).getColumns());
     }
 
     private Constraint prepareConstraint(Map<String, Object>... resultRows) {

@@ -283,7 +283,7 @@ public final class XmlReportTestHelper {
     }
 
     private static ReportContext getReportContext() {
-        return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), REPORT_DIRECTORY);
+        return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), REPORT_DIRECTORY, true);
     }
 
     private static Row createRow(ExecutableRule<?> rule) {
