@@ -179,7 +179,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="SuppressionType">
+    <xs:complexType name="SuppressionType" >
         <xs:attribute name="reason" type="xs:string"/>
         <xs:attribute name="until" type="xs:date"/>
     </xs:complexType>

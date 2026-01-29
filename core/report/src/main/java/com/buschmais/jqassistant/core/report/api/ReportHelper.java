@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.SuppressionType;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
@@ -93,9 +94,17 @@ public final class ReportHelper {
 
     public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
         return Row.builder()
-            .key(getRowKey(rule, columns))
-            .columns(columns)
-            .build();
+                .key(getRowKey(rule, columns))
+                .columns(columns)
+                .build();
+    }
+
+    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, SuppressionType suppressionType) {
+        return Row.builder()
+                .key(getRowKey(rule, columns))
+                .columns(columns)
+                .suppressionType(suppressionType)
+                .build();
     }
 
     /**
@@ -109,7 +118,7 @@ public final class ReportHelper {
      * @return
      *      The calculated rowKey.
      */
-    private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+    public static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
         List<String> columnsForKeyCalculation;
         if (rule.getReport() != null && rule.getReport()
                 .getKeyColumns() != null) {

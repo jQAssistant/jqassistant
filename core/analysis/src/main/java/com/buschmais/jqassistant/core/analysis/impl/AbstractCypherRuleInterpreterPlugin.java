@@ -45,15 +45,10 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
     private <T extends ExecutableRule<?>> Result<T> getResult(T executableRule, Severity severity, AnalyzerContext context,
         Query.Result<Query.Result.CompositeRowObject> compositeRowObjects) throws RuleException {
         List<Row> rows = new LinkedList<>();
-        String primaryColumn = executableRule.getReport()
-            .getPrimaryColumn();
         List<String> columnNames = null;
         for (Query.Result.CompositeRowObject rowObject : compositeRowObjects) {
             if (columnNames == null) {
                 columnNames = unmodifiableList(rowObject.getColumns());
-                if (primaryColumn == null) {
-                    primaryColumn = columnNames.get(0);
-                }
             }
             Row row = getColumns(executableRule, columnNames, rowObject, context);
                 rows.add(row);

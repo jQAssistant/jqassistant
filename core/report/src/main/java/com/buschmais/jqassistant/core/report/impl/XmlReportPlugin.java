@@ -270,7 +270,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 for (Row row : rows) {
                     xmlStreamWriter.writeStartElement("row");
                     xmlStreamWriter.writeAttribute("key", row.getKey());
-                    writeSuppression(row);
+                    writeHidden(row);
                     for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
                             .entrySet()) {
                         String columnName = rowEntry.getKey();
@@ -516,23 +516,28 @@ public class XmlReportPlugin implements ReportPlugin {
         }
     }
 
-    private void writeSuppression(Row row) throws XMLStreamException {
-        if (StringUtils.isEmpty(row.getSuppressionType()
-                .toString())) {
-            xmlStreamWriter.writeAttribute("suppressionType", row.getSuppressionType()
-                    .toString());
-            if (StringUtils.isEmpty(row.getSuppressionType()
-                    .getSupressReason())) {
-                xmlStreamWriter.writeAttribute("suppressReason", row.getSuppressionType()
-                        .getSupressReason());
+    private void writeHidden(Row row) throws XMLStreamException {
+        if (row.isSuppressed()) {
+            xmlStreamWriter.writeStartElement("hidden");
+            if (row.getSuppressionType().isSuppressedBySuppression()) {
+                xmlStreamWriter.writeStartElement("suppression");
+                if (StringUtils.isEmpty(row.getSuppressionType()
+                        .getSuppressReason())) {
+                    xmlStreamWriter.writeAttribute("suppressReason", row.getSuppressionType()
+                            .getSuppressReason());
+                }
+                if (StringUtils.isEmpty(row.getSuppressionType()
+                        .getSuppressUntil()
+                        .toString())) {
+                    xmlStreamWriter.writeAttribute("suppressUntil", row.getSuppressionType()
+                            .getSuppressUntil()
+                            .toString());
+                }
+                xmlStreamWriter.writeEndElement(); //suppression
+            } if(row.getSuppressionType().isSuppressedByBaseline()){
+                xmlStreamWriter.writeEmptyElement("baseline");
             }
-            if (StringUtils.isEmpty(row.getSuppressionType()
-                    .getSupressUntil()
-                    .toString())) {
-                xmlStreamWriter.writeAttribute("suppressUntil", row.getSuppressionType()
-                        .getSupressUntil()
-                        .toString());
-            }
+            xmlStreamWriter.writeEndElement(); //hidden
         }
     }
 

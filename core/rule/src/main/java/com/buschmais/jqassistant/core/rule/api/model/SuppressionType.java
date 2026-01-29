@@ -2,19 +2,21 @@ package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.time.LocalDate;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+@Builder
+@Setter
 @Getter
-public enum SuppressionType {
+public class SuppressionType {
 
-    BASELINE,
-    SUPPRESSION;
+    @Builder.Default
+    private boolean suppressedByBaseline = false;
 
-    @Setter
-    private String supressReason;
+    @Builder.Default
+    private boolean suppressedBySuppression = false;
 
-    @Setter
-    private LocalDate supressUntil;
-
+    private LocalDate suppressUntil;
+    private String suppressReason;
 }

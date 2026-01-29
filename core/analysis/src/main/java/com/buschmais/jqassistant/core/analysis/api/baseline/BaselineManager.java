@@ -24,7 +24,7 @@ import static java.util.Collections.emptyList;
  *     <li>A baseline exists but does not yet contain the {@link Row}.</li>
  * </ul>
  * <p>
- * Only {@link Row}s that have been validated using {@link #isExisting(ExecutableRule, Row)} ({@link ExecutableRule}, Row)} are copied to the new baseline.
+ * Only {@link Row}s that have been validated using {@link #isExisting(ExecutableRule, String, Map<String, Column<?>>)} ({@link ExecutableRule}, String, Map<String, Column<?>>)} are copied to the new baseline.
  * <p>
  */
 @RequiredArgsConstructor
@@ -53,7 +53,7 @@ public class BaselineManager {
         }
     }
 
-    public boolean isExisting(ExecutableRule<?> executableRule, Row row) {
+    public boolean isExisting(ExecutableRule<?> executableRule, String rowKey, Map<String, Column<?>> columns) {
         if (!configuration.enabled()) {
             return false;
         }
@@ -61,23 +61,21 @@ public class BaselineManager {
             throw new IllegalStateException("Baseline manager has not been started yet");
         }
         if (executableRule instanceof Concept) {
-            return isExistingResult(executableRule, row, configuration.includeConcepts()
+            return isExistingResult(executableRule, rowKey, columns, configuration.includeConcepts()
                 .orElse(emptyList()), Baseline::getConcepts);
         } else if (executableRule instanceof Constraint) {
-            return isExistingResult(executableRule, row, configuration.includeConstraints(), Baseline::getConstraints);
+            return isExistingResult(executableRule, rowKey, columns, configuration.includeConstraints(), Baseline::getConstraints);
         }
         throw new IllegalArgumentException("Unsupported executable rule: " + executableRule);
     }
 
-    private Boolean isExistingResult(ExecutableRule<?> executableRule, Row row, List<String> ruleFilters,
+    private Boolean isExistingResult(ExecutableRule<?> executableRule, String rowKey, Map<String, Column<?>> columns, List<String> ruleFilters,
         Function<Baseline, SortedMap<String, Baseline.RuleBaseline>> rows) {
         String ruleId = executableRule.getId();
         if (ruleFilters.stream()
             .noneMatch(filter -> RuleFilter.matches(ruleId, filter))) {
             return false;
         }
-        String rowKey = row.getKey();
-        Map<String, Column<?>> columns = row.getColumns();
         return optionalOldBaseline.map(oldBaseline -> {
                 SortedMap<String, Baseline.RuleBaseline> ruleBaseline = rows.apply(oldBaseline);
                 Baseline.RuleBaseline oldRuleBaseline = ruleBaseline.get(ruleId);

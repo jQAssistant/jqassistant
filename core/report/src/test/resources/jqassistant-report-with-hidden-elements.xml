@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.10">
+    <context>
+        <build>
+            <name>Test of hidden elements due to suppression</name>
+            <timestamp>2026-01-29T08:30:00</timestamp>
+            <properties/>
+        </build>
+    </context>
+    <concept id="test-concept:ConceptWithHiddenRows">
+        <description>Test with hidden rows.</description>
+        <result>
+            <columns count="2" primary="Type">
+                <column>Column1</column>
+                <column>Column2</column>
+            </columns>
+            <rows count="5">
+                <row key="77dfe54028ba3a8aeceab58442b0333d1ff3e3026cc99af926d6a0cd0499e029">
+                    <column name="Type">
+                        <element language="Java">Type</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>Value</value>
+                    </column>
+                    <column name="Method">
+                        <element language="Java">Method</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java" startLine="14" endLine="18">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>Value0</value>
+                    </column>
+                </row>
+                <row key="ko0s4v37dfa2e3cf7f328a1253e9d61b39c259e8ne6bb96185a7f5747d70b928">
+                    <column name="Type">
+                        <element language="Java">Type</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>Value1</value>
+                    </column>
+                    <column name="Method">
+                        <element language="Java">Method</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java" startLine="1" endLine="12">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>Value2</value>
+                    </column>
+                </row>
+                <row key="1b655c51133cym9a8a00d934f5ck2e85de2cc23c99fb243f0674431ek94816c">
+                    <column name="Type">
+                        <element language="Java">Type</element>
+                        <source fileName="/org/jqassistant/path/Class.java">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>Value3</value>
+                    </column>
+                    <column name="Method">
+                        <element language="Java">Method</element>
+                        <source fileName="/org/jqassistant/path/Class.java" startLine="12" endLine="27">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>Value4</value>
+                    </column>
+                </row>
+                <row key="hf7383c34bd6b345dc5f9bee56c568a56d44409170465d39v73dd62c0e7h2f1a">
+                    <column name="Type">
+                        <element language="Java">Type</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>Value5</value>
+                    </column>
+                    <column name="Method">
+                        <element language="Java">Method</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java" startLine="4" endLine="15">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>Value6</value>
+                    </column>
+                </row>
+                <row key="8433h0d4ga77r26jc43jfe8f6eah29cb5d1045fc612a3fh35k344e91c3058">
+                    <column name="Type">
+                        <element language="Java">Type</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>Value7</value>
+                    </column>
+                    <column name="Method">
+                        <element language="Java">Method</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java" startLine="2" endLine="8">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>void delete(long)</value>
+                    </column>
+                </row>
+            </rows>
+        </result>
+        <verificationResult>
+            <success>true</success>
+            <rowCount>5</rowCount>
+        </verificationResult>
+        <status>success</status>
+        <severity level="4">info</severity>
+        <duration>55</duration>
+    </concept>
+    <concept id="concept:SuccessWithMinorSeverity">
+        <description>Minor Success</description>
+        <verificationResult>
+            <success>true</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>success</status>
+        <severity level="3">major</severity>
+        <duration>10</duration>
+    </concept>
+    <concept id="concept:WarningWithMajorSeverity">
+        <description>Major Warning</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>0</rowCount>
+        </verificationResult>
+        <status>warning</status>
+        <severity level="2">major</severity>
+        <duration>10</duration>
+    </concept>
+    <constraint id="constraint:WarningWithMajorSeverity">
+        <description>Major Warning</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>warning</status>
+        <severity level="2">major</severity>
+        <duration>10</duration>
+    </constraint>
+    <constraint id="constraint:FailureCriticalMajorSeverity">
+        <description>Critical Failure</description>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>failure</status>
+        <severity level="1">critical</severity>
+        <duration>10</duration>
+    </constraint>
+</jqassistant-report>

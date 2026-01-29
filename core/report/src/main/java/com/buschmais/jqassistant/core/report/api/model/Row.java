@@ -9,7 +9,6 @@ import lombok.*;
 @Builder
 @Getter
 @ToString
-@RequiredArgsConstructor
 public class Row {
 
     @NonNull
@@ -18,7 +17,16 @@ public class Row {
     @NonNull
     private final Map<String, Column<?>> columns;
 
-    @Setter
     private SuppressionType suppressionType;
+
+
+    public boolean isSuppressed() {
+        if (getSuppressionType() != null) {
+            return (this.getSuppressionType()
+                    .isSuppressedByBaseline() || this.getSuppressionType()
+                    .isSuppressedBySuppression());
+        }
+        return false;
+    }
 
 }
