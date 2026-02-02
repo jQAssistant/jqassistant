@@ -68,7 +68,7 @@
         <asm.version>9.9.1</asm.version>
         <caffeine.version>3.2.3</caffeine.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
-        <commons-codec.version>1.20.0</commons-codec.version>
+        <commons-codec.version>1.21.0</commons-codec.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-digester.version>2.1</commons-digester.version>
         <commons-io.version>2.21.0</commons-io.version>
@@ -94,7 +94,7 @@
         <mockito.version>5.21.0</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
         <model-assert.version>1.1.0</model-assert.version>
-        <neo4j_4x.version>4.4.46</neo4j_4x.version>
+        <neo4j_4x.version>4.4.47</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
         <neo4j_5x.version>5.26.20</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
