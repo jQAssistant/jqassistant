@@ -8,7 +8,6 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.Report;
@@ -73,7 +72,7 @@ class CypherRuleInterpreterPluginTest {
         Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
 
         assertThat(result.getRows()).hasSize(2);
-        verify(analyzerContext, times(2)).checkSuppression(eq(constraint), eq(PRIMARY_COLUMN), any(Row.class).getColumns());
+        verify(analyzerContext, times(2)).toRow(eq(constraint), anyMap());
     }
 
     private Constraint prepareConstraint(Map<String, Object>... resultRows) {

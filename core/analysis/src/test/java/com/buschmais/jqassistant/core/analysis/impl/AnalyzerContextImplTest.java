@@ -9,10 +9,12 @@ import java.util.stream.Stream;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
@@ -30,6 +32,7 @@ import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AnalyzerContextImplTest {
@@ -101,7 +104,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value1_1"), SECONDARY_COLUMN, analyzerContext.toColumn("value1_2")));
 
-        assertThat(analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns()).isSuppressedBySuppression()).isFalse();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isFalse();
     }
 
     @Test
@@ -112,7 +115,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
-        assertThat(analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns()).isSuppressedBySuppression()).isTrue();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isTrue();
         assertThat(row.getSuppressionType().isSuppressedByBaseline()).isFalse();
     }
 
@@ -124,7 +127,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value"), SECONDARY_COLUMN, analyzerContext.toColumn(suppressedValue)));
 
-        assertThat(analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns()).isSuppressedBySuppression()).isTrue();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isTrue();
     }
 
     @Test
@@ -134,7 +137,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
-        assertThat(analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns()).isSuppressedBySuppression()).isFalse();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isFalse();
     }
 
     @Test
@@ -144,7 +147,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
-        assertThat(analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns()).isSuppressedBySuppression()).isTrue();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isTrue();
     }
 
     @Test
@@ -154,7 +157,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
-        assertThat(analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns()).isSuppressedBySuppression()).isFalse();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isFalse();
     }
 
     @Test
@@ -164,7 +167,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
                 Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
-        analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns());
+        analyzerContext.toRow(constraint, row.getColumns());
         assertThat(row.isSuppressed()).isTrue();
         assertThat(row.getSuppressionType().isSuppressedBySuppression()).isTrue();
         assertThat(row.getSuppressionType().isSuppressedByBaseline()).isFalse();
@@ -172,6 +175,22 @@ class AnalyzerContextImplTest {
         assertThat(row.getSuppressionType().getSuppressReason()).isEqualTo("This is the reason of suppression.");
     }
 
+    @Test
+    void suppressByBaseline() {
+        ExecutableRule<?> rule = getConstraint();
+        Map<String, Column<?>> columns = Map.of("c1", Column.builder()
+                .label("2")
+                .build());
+        String key = ReportHelper.getRowKey(rule, columns);
+        Row row = Row.builder()
+                .key(key)
+                .columns(columns)
+                .build();
+        when(baselineManager.isExisting(rule, key, row.getColumns())).thenReturn(true);
+        Row suppressedRow = analyzerContext.toRow(rule, row.getColumns());
+        assertThat(suppressedRow.isSuppressed()).isTrue();
+        assertThat(suppressedRow.getSuppressionType().isSuppressedByBaseline()).isTrue();
+    }
 
     @Test
     void getStatus() {

@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.model.SuppressionType;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
@@ -45,6 +44,7 @@ public interface AnalyzerContext {
 
     /**
      * Create a result {@link Row} from a map of columns.
+     * Checks for suppression and sets the according values.
      *
      * @param rule
      * @param columns
@@ -52,22 +52,6 @@ public interface AnalyzerContext {
      * @return The {@link Row}
      */
     Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns);
-
-    /**
-     * Verifies if the Row shall be suppressed.
-     * <p>
-     * The primary column is checked if it contains a suppression that matches the
-     * current rule id.
-     *
-     * @param executableRule
-     *         The {@link ExecutableRule}.
-     * @param primaryColumn
-     *         String name of the primary column.
-     * @param columns
-     *         The {@link Column}.
-     * @return <code>true</code> if the row shall be suppressed.
-     */
-    <T extends ExecutableRule<?>> SuppressionType checkSuppression (T executableRule, String primaryColumn, Map<String, Column<?>>  columns);
 
     /**
      * Verifies the rows returned by a cypher query for an executable.

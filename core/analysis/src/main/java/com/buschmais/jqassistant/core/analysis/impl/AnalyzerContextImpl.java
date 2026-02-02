@@ -74,48 +74,46 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     @Override
     public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
-        if(rule.getReport() != null){
-        SuppressionType suppressionType = checkSuppression(rule, rule.getReport().getPrimaryColumn(), columns);
-            return ReportHelper.toRow(rule, columns, suppressionType);
-        }
-        return ReportHelper.toRow(rule, columns);
-    }
-
-    @Override
-    public <T extends ExecutableRule<?>> SuppressionType checkSuppression(T executableRule, String primaryColumn, Map<String, Column<?>> columns) {
-        SuppressionType suppressionType = SuppressionType.builder()
-                .build();
-        String rowKey = ReportHelper.getRowKey(executableRule, columns);
-        if (baselineManager.isExisting(executableRule, rowKey, columns)) {
-            suppressionType.setSuppressedByBaseline(true);
-        }
-        for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
-            String columnName = entry.getKey();
-            Column<?> column = entry.getValue();
-            Object columnValue = column.getValue();
-            if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
-                Suppress suppress = (Suppress) columnValue;
-                String suppressColumn = suppress.getSuppressColumn();
-                if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
-                    String[] suppressIds = suppress.getSuppressIds();
-                    if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
-                        for (String suppressId : suppressIds) {
-                            if (executableRule.getId()
-                                    .equals(suppressId)) {
-                                suppressionType.setSuppressedBySuppression(true);
-                                if (StringUtils.isNotEmpty(suppress.getSuppressReason())) {
-                                    suppressionType.setSuppressReason(suppress.getSuppressReason());
-                                }
-                                if (suppress.getSuppressUntil() != null) {
-                                    suppressionType.setSuppressUntil(suppress.getSuppressUntil());
+        if (rule.getReport() != null) {
+            SuppressionType suppressionType = SuppressionType.builder()
+                    .build();
+            String rowKey = ReportHelper.getRowKey(rule, columns);
+            if (baselineManager.isExisting(rule, rowKey, columns)) {
+                suppressionType.setSuppressedByBaseline(true);
+            }
+            for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
+                String columnName = entry.getKey();
+                Column<?> column = entry.getValue();
+                Object columnValue = column.getValue();
+                if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
+                    Suppress suppress = (Suppress) columnValue;
+                    String suppressColumn = suppress.getSuppressColumn();
+                    if ((suppressColumn != null && suppressColumn.equals(columnName)) || rule.getReport()
+                            .getPrimaryColumn()
+                            .equals(columnName)) {
+                        String[] suppressIds = suppress.getSuppressIds();
+                        if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
+                            for (String suppressId : suppressIds) {
+                                if (rule.getId()
+                                        .equals(suppressId)) {
+                                    suppressionType.setSuppressedBySuppression(true);
+                                    if (StringUtils.isNotEmpty(suppress.getSuppressReason())) {
+                                        suppressionType.setSuppressReason(suppress.getSuppressReason());
+                                    }
+                                    if (suppress.getSuppressUntil() != null) {
+                                        suppressionType.setSuppressUntil(suppress.getSuppressUntil());
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+            if (suppressionType.isSuppressedBySuppression() || suppressionType.isSuppressedByBaseline()) {
+                return ReportHelper.toRow(rule, columns, suppressionType);
+            }
         }
-        return suppressionType;
+        return ReportHelper.toRow(rule, columns);
     }
 
     public boolean validateSuppressUntilDate(LocalDate until) {
