@@ -145,8 +145,6 @@ class AnalyzerContextImplTest {
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
         assertThat(analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns()).isSuppressedBySuppression()).isTrue();
-        assertThat(row.getSuppressionType().getSuppressUntil()).isEqualTo(LocalDate.parse("2065-06-01"));
-        assertThat(row.getSuppressionType().getSuppressReason()).isEqualTo("This is the reason of suppression.");
     }
 
     @Test
@@ -158,6 +156,22 @@ class AnalyzerContextImplTest {
 
         assertThat(analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns()).isSuppressedBySuppression()).isFalse();
     }
+
+    @Test
+    void suppressBySuppression() {
+        Suppress suppressedValue = createSuppressedValue(empty(), of(VALID_DATE), of(REASON) , CONSTRAINT_ID);
+        Constraint constraint = getConstraint();
+        Row row = analyzerContext.toRow(constraint,
+                Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
+
+        analyzerContext.checkSuppression(constraint, PRIMARY_COLUMN, row.getColumns());
+        assertThat(row.isSuppressed()).isTrue();
+        assertThat(row.getSuppressionType().isSuppressedBySuppression()).isTrue();
+        assertThat(row.getSuppressionType().isSuppressedByBaseline()).isFalse();
+        assertThat(row.getSuppressionType().getSuppressUntil()).isEqualTo(LocalDate.parse("2065-06-01"));
+        assertThat(row.getSuppressionType().getSuppressReason()).isEqualTo("This is the reason of suppression.");
+    }
+
 
     @Test
     void getStatus() {

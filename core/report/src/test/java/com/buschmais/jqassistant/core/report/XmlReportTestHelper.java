@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.report;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -284,6 +285,87 @@ public final class XmlReportTestHelper {
 
     private static ReportContext getReportContext() {
         return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), REPORT_DIRECTORY, true);
+    }
+
+    public static File createXmlWithHiddenRows() throws ReportException {
+        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
+        xmlReportPlugin.begin();
+
+        Constraint constraint = Constraint.builder()
+                .id("my:Constraint")
+                .description("This constraint contains hidden rows.")
+                .severity(Severity.MAJOR)
+                .executable(new CypherExecutable("match..."))
+                .verification(ROW_COUNT_VERIFICATION)
+                .report(Report.builder()
+                        .primaryColumn("c1")
+                        .build())
+                .build();
+
+        xmlReportPlugin.beginConstraint(constraint);
+        List<Row> rows = new ArrayList<>();
+        SuppressionType suppression = SuppressionType.builder()
+                .build();
+        suppression.setSuppressedBySuppression(true);
+        suppression.setSuppressReason("Reason for suppressing");
+        suppression.setSuppressUntil(LocalDate.of(2067, 3, 15));
+
+        SuppressionType baseline = SuppressionType.builder()
+                .build();
+        baseline.setSuppressedByBaseline(true);
+        SuppressionType bothSuppressionTypes = SuppressionType.builder()
+                .build();
+        bothSuppressionTypes.setSuppressedByBaseline(true);
+        bothSuppressionTypes.setSuppressedBySuppression(true);
+
+        rows.add(Row.builder()
+                .key("0")
+                .columns(Map.of("c1", Column.builder()
+                        .value("suppression")
+                        .label("suppression")
+                        .build()))
+                .suppressionType(suppression)
+                .build());
+        rows.add(Row.builder()
+                .key("1")
+                .columns(Map.of("c1", Column.builder()
+                        .value("baseline")
+                        .label("baseline")
+                        .build()))
+                .suppressionType(baseline)
+                .build());
+        rows.add(Row.builder()
+                .key("2")
+                .columns(Map.of("c1", Column.builder()
+                        .value("bothSuppressionTypes")
+                        .label("bothSuppressionTypes")
+                        .build()))
+                .suppressionType(bothSuppressionTypes)
+                .build());
+        rows.add(Row.builder()
+                .key("3")
+                .columns(Map.of("c1", Column.builder()
+                        .value("nothing")
+                        .label("nothing")
+                        .build()))
+                .build());
+
+        Result<Constraint> result = Result.<Constraint>builder()
+                .rule(constraint)
+                .verificationResult(VerificationResult.builder()
+                        .success(true)
+                        .rowCount(rows.size())
+                        .build())
+                .status(Result.Status.SUCCESS)
+                .severity(Severity.CRITICAL)
+                .columnNames(Arrays.asList(C1, C2))
+                .rows(rows)
+                .build();
+
+        xmlReportPlugin.setResult(result);
+        xmlReportPlugin.endConstraint();
+        xmlReportPlugin.end();
+        return xmlReportPlugin.getXmlReportFile();
     }
 
     private static Row createRow(ExecutableRule<?> rule) {

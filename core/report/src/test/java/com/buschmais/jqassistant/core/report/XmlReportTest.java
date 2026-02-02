@@ -438,4 +438,57 @@ class XmlReportTest {
         return REPORT_READER.read(xmlReport);
     }
 
+    @Test
+    void reportWithSuppressedRows() throws ReportException {
+        File xmlReport = XmlReportTestHelper.createXmlWithHiddenRows();
+        JqassistantReport report = readReport(xmlReport);
+        assertThat(report).isNotNull();
+
+        List<ReferencableRuleType> groupOrConceptOrConstraint = report.getGroupOrConceptOrConstraint();
+        assertThat(groupOrConceptOrConstraint).hasSize(1);
+        ExecutableRuleType ruleType = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
+                .get(0);
+
+        RowType row0 = ruleType.getResult()
+                .getRows()
+                .getRow()
+                .get(0);
+        RowType row1 = ruleType.getResult()
+                .getRows()
+                .getRow()
+                .get(1);
+        RowType row2 = ruleType.getResult()
+                .getRows()
+                .getRow()
+                .get(2);
+
+        assertThat(row0.getHidden()
+                .getSuppression()).isNotNull();
+        assertThat(row0.getHidden()
+                .getBaseline()).isNull();
+        assertThat(row0.getHidden()
+                .getSuppression()
+                .getReason()).isEqualTo("Reason for suppressing");
+        assertThat(row0.getHidden()
+                .getSuppression()
+                .getUntil()
+                .toString()).isEqualTo("2067-03-15");
+
+        assertThat(row1.getHidden()
+                .getSuppression()).isNull();
+        assertThat(row1.getHidden()
+                .getBaseline()).isNotNull();
+
+        assertThat(row2.getHidden()
+                .getSuppression()).isNotNull();
+        assertThat(row2.getHidden()
+                .getBaseline()).isNotNull();
+
+        assertThat(ruleType.getResult()
+                .getRows()
+                .getRow()
+                .get(3)
+                .getHidden()).isNull();
+    }
+
 }
