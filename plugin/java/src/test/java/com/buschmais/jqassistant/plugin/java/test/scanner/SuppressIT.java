@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress.Suppress;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -90,7 +91,7 @@ class SuppressIT extends AbstractJavaPluginIT {
 
     private void verifySuppress(Class<?> classToScan, String constraintId, String conceptId, String column) throws RuleException {
         scanClasses(classToScan);
-        assertThat(validateConstraint(constraintId).getStatus()).isEqualTo(SUCCESS);
+        assertThat(validateConstraint(constraintId).getStatus()).isEqualTo(FAILURE);
         Result<Concept> supressedItems = applyConcept(conceptId);
         assertThat(supressedItems.getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();

@@ -451,37 +451,42 @@ class XmlReportTest {
 
         RowType row0 = ruleType.getResult()
                 .getRows()
-                .getRow()
-                .get(0);
+                .getRow().get(0);
         RowType row1 = ruleType.getResult()
                 .getRows()
-                .getRow()
-                .get(1);
+                .getRow().get(1);
         RowType row2 = ruleType.getResult()
                 .getRows()
-                .getRow()
-                .get(2);
+                .getRow().get(2);
 
-        assertThat(row0.getHidden()
+        assertThat(row0
+                .getHidden()
                 .getSuppression()).isNotNull();
-        assertThat(row0.getHidden()
+        assertThat(row0
+                .getHidden()
                 .getBaseline()).isNull();
-        assertThat(row0.getHidden()
+        assertThat(row0
+                .getHidden()
                 .getSuppression()
                 .getReason()).isEqualTo("Reason for suppressing");
-        assertThat(row0.getHidden()
+        assertThat(row0
+                .getHidden()
                 .getSuppression()
                 .getUntil()
                 .toString()).isEqualTo("2067-03-15");
 
-        assertThat(row1.getHidden()
+        assertThat(row1
+                .getHidden()
                 .getSuppression()).isNull();
-        assertThat(row1.getHidden()
+        assertThat(row1
+                .getHidden()
                 .getBaseline()).isNotNull();
 
-        assertThat(row2.getHidden()
+        assertThat(row2
+                .getHidden()
                 .getSuppression()).isNotNull();
-        assertThat(row2.getHidden()
+        assertThat(row2
+                .getHidden()
                 .getBaseline()).isNotNull();
 
         assertThat(ruleType.getResult()

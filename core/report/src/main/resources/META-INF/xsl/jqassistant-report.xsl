@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:tns="http://schema.jqassistant.org/report/v2.9">
+                xmlns:tns="http://schema.jqassistant.org/report/v2.10">
     <xsl:output method="html" version="1.0" encoding="UTF-8"
                 indent="yes"/>
     <xsl:template name="content">
-        <script type="text/javascript" xmlns:tns="http://schema.jqassistant.org/report/v2.9">
+        <script type="text/javascript" xmlns:tns="http://schema.jqassistant.org/report/v2.10">
             function getResultElement(id) {
                 return document.getElementById('resultOf' + id);
             }
@@ -463,6 +463,31 @@
     <!-- RESULT PART -->
     <xsl:template match="tns:result">
         <div class="result">
+
+            <table>
+                <tr>
+                    <xsl:for-each select="tns:columns/tns:column">
+                        <th>
+                            <xsl:value-of select="text()"/>
+                        </th>
+                    </xsl:for-each>
+                </tr>
+
+                <xsl:for-each select="tns:rows/tns:row">
+                    <xsl:if test="not(tns:hidden != '')">
+                        <xsl:variable name="row" select="position()"/>
+                        <tr>
+                            <xsl:for-each select="../../tns:columns/tns:column">
+                                <xsl:variable name="col" select="text()"/>
+                                <td>
+                                    <xsl:value-of select="../../tns:rows/tns:row[$row]/tns:column[@name=$col]/tns:value"/>
+                                </td>
+                            </xsl:for-each>
+                        </tr>
+                    </xsl:if>
+                </xsl:for-each>
+            </table>
+            <p/>
             <table>
                 <tr>
                     <xsl:for-each select="tns:columns/tns:column">
@@ -473,6 +498,7 @@
                 </tr>
                 <xsl:for-each select="tns:rows/tns:row">
                     <xsl:variable name="row" select="position()"/>
+                    <xsl:if test="tns:hidden/tns:baseline != ''">
                     <tr>
                         <xsl:for-each select="../../tns:columns/tns:column">
                             <xsl:variable name="col" select="text()"/>
@@ -481,8 +507,33 @@
                             </td>
                         </xsl:for-each>
                     </tr>
+                    </xsl:if>
                 </xsl:for-each>
             </table>
+            <p/>
+            <table>
+                <tr>
+                    <xsl:for-each select="tns:columns/tns:column">
+                        <th>
+                            <xsl:value-of select="text()"/>
+                        </th>
+                    </xsl:for-each>
+                </tr>
+                <xsl:for-each select="tns:rows/tns:row">
+                    <xsl:variable name="row" select="position()"/>
+                    <xsl:if test="tns:hidden/tns:suppression != ''">
+                        <tr>
+                            <xsl:for-each select="../../tns:columns/tns:column">
+                                <xsl:variable name="col" select="text()"/>
+                                <td>
+                                    <xsl:value-of select="../../tns:rows/tns:row[$row]/tns:column[@name=$col]/tns:value"/>
+                                </td>
+                            </xsl:for-each>
+                        </tr>
+                    </xsl:if>
+                </xsl:for-each>
+            </table>
+
         </div>
     </xsl:template>
 

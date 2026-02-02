@@ -88,8 +88,12 @@ class AnalyzerContextImpl implements AnalyzerContext {
                 if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
                     Suppress suppress = (Suppress) columnValue;
                     String suppressColumn = suppress.getSuppressColumn();
-                    if ((suppressColumn != null && suppressColumn.equals(columnName)) || rule.getReport()
-                            .getPrimaryColumn()
+                    String primaryColumn = rule.getReport()
+                            .getPrimaryColumn();
+                    if (primaryColumn == null) {
+                        primaryColumn = columns.keySet().iterator().next();
+                    }
+                    if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn
                             .equals(columnName)) {
                         String[] suppressIds = suppress.getSuppressIds();
                         if (validateSuppressUntilDate(suppress.getSuppressUntil())) {

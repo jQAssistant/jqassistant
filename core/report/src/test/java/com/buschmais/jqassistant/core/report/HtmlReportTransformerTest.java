@@ -52,6 +52,15 @@ class HtmlReportTransformerTest {
                 "resultOfconcept:OverriddenConcept1", "resultOfconcept:OverriddenConcept2", "resultOfconstraint:OverriddenConstraint");
     }
 
+    @Test
+    void reportWithHiddenRows() throws ReportTransformerException, IOException {
+        HtmlReportTransformer transformer = new HtmlReportTransformer();
+        Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-hidden-elements.xml"));
+        StringWriter htmlWriter = new StringWriter();
+        javax.xml.transform.Result htmlTarget = new StreamResult(htmlWriter);
+        transformer.toEmbedded(xmlSource, htmlTarget);
+    }
+
     private static Set<String> getRuleIds(String html, String rulePattern) {
         Matcher matcher = Pattern.compile(rulePattern)
             .matcher(html);
