@@ -53,12 +53,24 @@ class HtmlReportTransformerTest {
     }
 
     @Test
-    void reportWithHiddenRows() throws ReportTransformerException, IOException {
+    void reportWithHiddenRows() throws ReportTransformerException {
         HtmlReportTransformer transformer = new HtmlReportTransformer();
         Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-hidden-elements.xml"));
         StringWriter htmlWriter = new StringWriter();
         javax.xml.transform.Result htmlTarget = new StreamResult(htmlWriter);
         transformer.toEmbedded(xmlSource, htmlTarget);
+        String html = htmlWriter.toString();
+
+        assertThat(getRuleIds(html, "concept:([A-Za-z0-9]*)HiddenRows")).containsExactlyInAnyOrder("concept:ConceptWithHiddenRows");
+        assertThat(getRuleIds(html, "constraint:([A-Za-z0-9]*)HiddenRows")).containsExactlyInAnyOrder("constraint:ConstraintWithHiddenRows");
+        assertThat(html.contains("suppressed by baseline")).isTrue();
+        assertThat(html.contains("suppressed by suppression")).isTrue();
+        assertThat(html.contains("Description for the reason of this suppression.")).isTrue();
+        assertThat(html.contains("2065-11-11")).isTrue();
+        assertThat(html.contains("Second description for the reason of this suppression.")).isTrue();
+        assertThat(html.contains("2075-02-04")).isTrue();
+        assertThat(html.contains("suppressed by baseline and suppression")).isTrue();
+
     }
 
     private static Set<String> getRuleIds(String html, String rulePattern) {

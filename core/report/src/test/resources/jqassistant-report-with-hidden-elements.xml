@@ -7,7 +7,7 @@
             <properties/>
         </build>
     </context>
-    <concept id="test-concept:ConceptWithHiddenRows">
+    <concept id="concept:ConceptWithHiddenRows">
         <description>Test with hidden rows.</description>
         <result>
             <columns count="2" primary="Type">
@@ -50,7 +50,7 @@
                         <value>suppressed by suppression.</value>
                     </column>
                     <hidden>
-                        <suppression reason="Description for the reason of this suppression."></suppression>
+                        <suppression reason="Description for the reason of this suppression." until="2075-02-04"></suppression>
                     </hidden>
                 </row>
                 <row key="1b655c51133cym4a8a00d934f5ck2e85de2cc23c99fb243f0674431ek94816c">
@@ -119,7 +119,7 @@
         <severity level="3">major</severity>
         <duration>10</duration>
     </constraint>
-    <constraint id="test-constraint:ConstraintWithHiddenRows">
+    <constraint id="constraint:ConstraintWithHiddenRows">
         <description>Critical Failure</description>
         <result>
             <columns count="2" primary="Type">
@@ -162,7 +162,7 @@
                         <value>suppressed by suppression.</value>
                     </column>
                     <hidden>
-                        <suppression reason="Description for the reason of this suppression."></suppression>
+                        <suppression reason="Second description for the reason of this suppression." until="2065-11-11"></suppression>
                     </hidden>
                 </row>
                 <row key="1b655c51733cym9a8a00d934f5ck2e85de2cc23c99fb913f0674431ek94816c">
@@ -178,7 +178,23 @@
                         <source fileName="/org/jqassistant/path/Class.java" startLine="12" endLine="27">
                             <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
                         </source>
-                        <value>normal row.</value>
+                        <value>normal row containing content.</value>
+                    </column>
+                </row>
+                <row key="1b655c51924cym9a8a00d134f5ck2e45de2ac23c99fb913f0674431ek94816c">
+                    <column name="Type">
+                        <element language="Java">Type</element>
+                        <source fileName="/org/jqassistant/path/Class.java">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>That is a</value>
+                    </column>
+                    <column name="Method">
+                        <element language="Java">Method</element>
+                        <source fileName="/org/jqassistant/path/Class.java" startLine="12" endLine="27">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>second normal row containing content. </value>
                     </column>
                 </row>
                 <row key="8433h0d4ga74r26jc43jfe8f6eah29cb5d1045fc612a3fh35k344e91c3141">
