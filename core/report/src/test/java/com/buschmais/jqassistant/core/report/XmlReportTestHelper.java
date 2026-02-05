@@ -284,7 +284,7 @@ public final class XmlReportTestHelper {
     }
 
     private static ReportContext getReportContext() {
-        return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), REPORT_DIRECTORY, true);
+        return new ReportContextImpl(BUILD, XmlReportTestHelper.class.getClassLoader(), mock(Store.class), REPORT_DIRECTORY);
     }
 
     public static File createXmlWithHiddenRows() throws ReportException {
@@ -304,19 +304,23 @@ public final class XmlReportTestHelper {
 
         xmlReportPlugin.beginConstraint(constraint);
         List<Row> rows = new ArrayList<>();
-        SuppressionType suppression = SuppressionType.builder()
+        Hidden hiddenBySuppression = Hidden.builder()
                 .build();
-        suppression.setSuppressedBySuppression(true);
+        Hidden hiddenByBaseline = Hidden.builder()
+                .build();
+        Hidden.Suppression suppression = Hidden.Suppression.builder()
+                .build();
         suppression.setSuppressReason("Reason for suppressing");
         suppression.setSuppressUntil(LocalDate.of(2067, 3, 15));
+        hiddenBySuppression.setSuppression(Optional.of(suppression));
 
-        SuppressionType baseline = SuppressionType.builder()
+        Hidden.Baseline baseline = Hidden.Baseline.builder()
                 .build();
-        baseline.setSuppressedByBaseline(true);
-        SuppressionType bothSuppressionTypes = SuppressionType.builder()
+        hiddenByBaseline.setBaseline(Optional.of(baseline));
+        Hidden bothSuppressionTypes = Hidden.builder()
                 .build();
-        bothSuppressionTypes.setSuppressedByBaseline(true);
-        bothSuppressionTypes.setSuppressedBySuppression(true);
+        bothSuppressionTypes.setBaseline(Optional.of(baseline));
+        bothSuppressionTypes.setSuppression(Optional.of(suppression));
 
         rows.add(Row.builder()
                 .key("0")
@@ -324,7 +328,7 @@ public final class XmlReportTestHelper {
                         .value("suppression")
                         .label("suppression")
                         .build()))
-                .suppressionType(suppression)
+                .hidden(Optional.of(hiddenBySuppression))
                 .build());
         rows.add(Row.builder()
                 .key("1")
@@ -332,7 +336,7 @@ public final class XmlReportTestHelper {
                         .value("baseline")
                         .label("baseline")
                         .build()))
-                .suppressionType(baseline)
+                .hidden(Optional.of(hiddenByBaseline))
                 .build());
         rows.add(Row.builder()
                 .key("2")
@@ -340,7 +344,7 @@ public final class XmlReportTestHelper {
                         .value("bothSuppressionTypes")
                         .label("bothSuppressionTypes")
                         .build()))
-                .suppressionType(bothSuppressionTypes)
+                .hidden(Optional.of(bothSuppressionTypes))
                 .build());
         rows.add(Row.builder()
                 .key("3")

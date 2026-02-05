@@ -40,6 +40,8 @@ public class XmlReportPlugin implements ReportPlugin {
     // Properties
     public static final String PROPERTY_XML_REPORT_FILE = "xml.report.file";
 
+    public static final String PROPERTY_XML_REPORT_INCLUDE_HIDDEN_ROWS = "xml.report.include-hidden-rows";
+
     public static final String PROPERTY_XML_REPORT_TRANSFORM_TO_HTML = "xml.report.transform-to-html";
 
     // Default values
@@ -60,6 +62,8 @@ public class XmlReportPlugin implements ReportPlugin {
     private File xmlReportFile;
 
     private boolean transformToHTML;
+
+    private boolean includeHiddenRows;
 
     private Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults;
 
@@ -86,6 +90,8 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlReportFileProperty != null ? new File(xmlReportFileProperty) : new File(reportContext.getOutputDirectory(), DEFAULT_XML_REPORT_FILE);
         Object transformToHTMLProperty = properties.get(PROPERTY_XML_REPORT_TRANSFORM_TO_HTML);
         this.transformToHTML = transformToHTMLProperty == null || Boolean.parseBoolean(transformToHTMLProperty.toString());
+        Object includeHiddenRows = properties.get(PROPERTY_XML_REPORT_INCLUDE_HIDDEN_ROWS);
+        this.includeHiddenRows = includeHiddenRows == null || Boolean.parseBoolean((includeHiddenRows).toString());
     }
 
     @Override
@@ -267,7 +273,7 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeStartElement("rows");
             List<Row> rows = result.getRows();
             xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
-            if (reportContext.showSuppressedRows()) {
+            if (this.includeHiddenRows) {
                 for (Row row : rows) {
                     xmlStreamWriter.writeStartElement("row");
                     xmlStreamWriter.writeAttribute("key", row.getKey());
@@ -518,28 +524,34 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private void writeHidden(Row row) throws XMLStreamException {
-        if (row.isSuppressed()) {
+        if (row.getHidden()
+                .isPresent()) {
             xmlStreamWriter.writeStartElement("hidden");
-            if (row.getSuppressionType()
-                    .isSuppressedBySuppression()) {
+            Optional<Hidden.Suppression> suppression = row.getHidden()
+                    .get()
+                    .getSuppression();
+            if (suppression.isPresent()) {
                 xmlStreamWriter.writeStartElement("suppression");
-                if (StringUtils.isNotEmpty(row.getSuppressionType()
-                        .getSuppressReason())) {
-                    xmlStreamWriter.writeAttribute("reason", row.getSuppressionType()
+                if (!suppression.get()
+                        .getSuppressReason()
+                        .isEmpty()) {
+                    xmlStreamWriter.writeAttribute("reason", suppression.get()
                             .getSuppressReason());
                 }
-                if (row.getSuppressionType()
-                        .getSuppressUntil() != null && StringUtils.isNotEmpty(row.getSuppressionType()
+                if (suppression.get()
+                        .getSuppressUntil() != null && StringUtils.isNotEmpty(suppression.get()
                         .getSuppressUntil()
                         .toString())) {
-                    xmlStreamWriter.writeAttribute("until", row.getSuppressionType()
+                    xmlStreamWriter.writeAttribute("until", suppression.get()
                             .getSuppressUntil()
                             .toString());
                 }
                 xmlStreamWriter.writeEndElement(); //suppression
             }
-            if (row.getSuppressionType()
-                    .isSuppressedByBaseline()) {
+            if (row.getHidden()
+                    .get()
+                    .getBaseline()
+                    .isPresent()) {
                 xmlStreamWriter.writeEmptyElement("baseline");
             }
             xmlStreamWriter.writeEndElement(); //hidden

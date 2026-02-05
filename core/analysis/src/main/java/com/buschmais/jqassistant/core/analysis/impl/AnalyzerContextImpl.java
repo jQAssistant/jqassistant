@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
@@ -12,7 +13,7 @@ import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.model.SuppressionType;
+import com.buschmais.jqassistant.core.rule.api.model.Hidden;
 import com.buschmais.jqassistant.core.rule.api.model.Verification;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -75,11 +76,12 @@ class AnalyzerContextImpl implements AnalyzerContext {
     @Override
     public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
         if (rule.getReport() != null) {
-            SuppressionType suppressionType = SuppressionType.builder()
+            Hidden hidden = Hidden.builder()
                     .build();
             String rowKey = ReportHelper.getRowKey(rule, columns);
             if (baselineManager.isExisting(rule, rowKey, columns)) {
-                suppressionType.setSuppressedByBaseline(true);
+                hidden.setBaseline(Optional.of(Hidden.Baseline.builder()
+                        .build()));
             }
             for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
                 String columnName = entry.getKey();
@@ -93,28 +95,31 @@ class AnalyzerContextImpl implements AnalyzerContext {
                     if (primaryColumn == null) {
                         primaryColumn = columns.keySet().iterator().next();
                     }
-                    if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn
-                            .equals(columnName)) {
+                    if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
                         String[] suppressIds = suppress.getSuppressIds();
                         if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
                             for (String suppressId : suppressIds) {
                                 if (rule.getId()
                                         .equals(suppressId)) {
-                                    suppressionType.setSuppressedBySuppression(true);
+                                    Hidden.Suppression suppression = Hidden.Suppression.builder()
+                                            .build();
                                     if (StringUtils.isNotEmpty(suppress.getSuppressReason())) {
-                                        suppressionType.setSuppressReason(suppress.getSuppressReason());
+                                        suppression.setSuppressReason(suppress.getSuppressReason());
                                     }
                                     if (suppress.getSuppressUntil() != null) {
-                                        suppressionType.setSuppressUntil(suppress.getSuppressUntil());
+                                        suppression.setSuppressUntil(suppress.getSuppressUntil());
                                     }
+                                    hidden.setSuppression(Optional.of(suppression));
                                 }
                             }
                         }
                     }
                 }
             }
-            if (suppressionType.isSuppressedBySuppression() || suppressionType.isSuppressedByBaseline()) {
-                return ReportHelper.toRow(rule, columns, suppressionType);
+            if (hidden.getSuppression()
+                    .isPresent() || hidden.getBaseline()
+                    .isPresent()) {
+                return ReportHelper.toRow(rule, columns, hidden);
             }
         }
         return ReportHelper.toRow(rule, columns);

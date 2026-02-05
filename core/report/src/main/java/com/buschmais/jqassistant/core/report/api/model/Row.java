@@ -1,8 +1,9 @@
 package com.buschmais.jqassistant.core.report.api.model;
 
 import java.util.Map;
+import java.util.Optional;
 
-import com.buschmais.jqassistant.core.rule.api.model.SuppressionType;
+import com.buschmais.jqassistant.core.rule.api.model.Hidden;
 
 import lombok.*;
 
@@ -17,16 +18,9 @@ public class Row {
     @NonNull
     private final Map<String, Column<?>> columns;
 
-    private SuppressionType suppressionType;
-
+    private Optional<Hidden> hidden;
 
     public boolean isSuppressed() {
-        if (getSuppressionType() != null) {
-            return (this.getSuppressionType()
-                    .isSuppressedByBaseline() || this.getSuppressionType()
-                    .isSuppressedBySuppression());
-        }
-        return false;
+        return (this.hidden.isPresent());
     }
-
 }

@@ -199,7 +199,7 @@ public abstract class AbstractPluginIT {
     private void initializeReportPlugin(Configuration configuration) {
         ReportContext reportContext = new ReportContextImpl(configuration.analyze()
             .report()
-            .build(), pluginRepository.getClassLoader(), store, OUTPUT_DIRECTORY, true);
+            .build(), pluginRepository.getClassLoader(), store, OUTPUT_DIRECTORY);
         Map<String, ReportPlugin> reportPlugins = pluginRepository.getAnalyzerPluginRepository()
             .getReportPlugins(configuration.analyze()
                 .report(), reportContext);

@@ -48,10 +48,4 @@ public interface Report {
     @Description("Create an archive containing all generated reports.")
     @WithDefault("false")
     boolean createArchive();
-
-    String SHOW_SUPPRESSED_ROWS = "show-suppressed-rows";
-
-    @Description("Determines if the report should contain suppressed rows.")
-    @WithDefault("true")
-    boolean showSuppressedRows();
 }

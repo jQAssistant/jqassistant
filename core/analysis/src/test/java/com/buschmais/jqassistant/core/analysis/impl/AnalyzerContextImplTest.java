@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.Hidden;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
@@ -116,7 +117,8 @@ class AnalyzerContextImplTest {
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
         assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isTrue();
-        assertThat(row.getSuppressionType().isSuppressedByBaseline()).isFalse();
+        assertThat(row.getHidden().isPresent()).isTrue();
+        assertThat(row.getHidden().get().getBaseline().isPresent()).isFalse();
     }
 
     @Test
@@ -169,10 +171,12 @@ class AnalyzerContextImplTest {
 
         analyzerContext.toRow(constraint, row.getColumns());
         assertThat(row.isSuppressed()).isTrue();
-        assertThat(row.getSuppressionType().isSuppressedBySuppression()).isTrue();
-        assertThat(row.getSuppressionType().isSuppressedByBaseline()).isFalse();
-        assertThat(row.getSuppressionType().getSuppressUntil()).isEqualTo(LocalDate.parse("2065-06-01"));
-        assertThat(row.getSuppressionType().getSuppressReason()).isEqualTo("This is the reason of suppression.");
+        assertThat(row.getHidden().isPresent()).isTrue();
+        Hidden hidden = row.getHidden().get();
+        assertThat(hidden.getSuppression().isPresent()).isTrue();
+        assertThat(hidden.getBaseline().isPresent()).isFalse();
+        assertThat(hidden.getSuppression().get().getSuppressUntil()).isEqualTo(LocalDate.parse("2065-06-01"));
+        assertThat(hidden.getSuppression().get().getSuppressReason()).isEqualTo("This is the reason of suppression.");
     }
 
     @Test
@@ -189,7 +193,9 @@ class AnalyzerContextImplTest {
         when(baselineManager.isExisting(rule, key, row.getColumns())).thenReturn(true);
         Row suppressedRow = analyzerContext.toRow(rule, row.getColumns());
         assertThat(suppressedRow.isSuppressed()).isTrue();
-        assertThat(suppressedRow.getSuppressionType().isSuppressedByBaseline()).isTrue();
+        assertThat(row.getHidden().isPresent()).isTrue();
+        Hidden hidden = row.getHidden().get();
+        assertThat(hidden.getBaseline().isPresent()).isTrue();
     }
 
     @Test

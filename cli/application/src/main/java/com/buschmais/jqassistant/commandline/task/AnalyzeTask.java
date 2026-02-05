@@ -48,8 +48,7 @@ public class AnalyzeTask extends AbstractRuleTask {
             LOGGER.info("Executing analysis.");
             File reportDirectory = new File(report.directory()
                 .orElse(DEFAULT_REPORT_DIRECTORY));
-            ReportContext reportContext = new ReportContextImpl(report.build(), pluginRepository.getClassLoader(), store, reportDirectory, reportDirectory,
-                    report.showSuppressedRows());
+            ReportContext reportContext = new ReportContextImpl(report.build(), pluginRepository.getClassLoader(), store, reportDirectory, reportDirectory);
             Map<String, ReportPlugin> reportPlugins = getReportPlugins(analyze.report(), reportContext);
             InMemoryReportPlugin inMemoryReportPlugin = new InMemoryReportPlugin(new CompositeReportPlugin(reportPlugins));
             try {

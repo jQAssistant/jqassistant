@@ -28,7 +28,7 @@ class ReportContextImplTest {
         // given
         File reportDirectory = new File("target/report");
         ReportContext reportContext = new ReportContextImpl(mock(Build.class), ReportContextImplTest.class.getClassLoader(), mock(Store.class), reportDirectory,
-            reportDirectory, true);
+            reportDirectory);
         File file = new File(reportContext.getReportDirectory("test-plugin"), "test-report.txt");
         try (FileWriter fileWriter = new FileWriter(file)) {
             IOUtils.write("Test", fileWriter);

@@ -13,9 +13,9 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.Hidden;
 import com.buschmais.jqassistant.core.rule.api.model.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.model.SuppressionType;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
@@ -99,11 +99,11 @@ public final class ReportHelper {
                 .build();
     }
 
-    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, SuppressionType suppressionType) {
+    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Hidden hidden) {
         return Row.builder()
                 .key(getRowKey(rule, columns))
                 .columns(columns)
-                .suppressionType(suppressionType)
+                .hidden(Optional.of(hidden))
                 .build();
     }
 
