@@ -116,7 +116,7 @@ class AnalyzerContextImpl implements AnalyzerContext {
                     }
                 }
             }
-            if (hidden.getSuppression() != null || hidden.getBaseline() != null) {
+            if (hidden.getSuppression().isPresent() || hidden.getBaseline().isPresent()) {
                 return ReportHelper.toRow(rule, columns, hidden);
             }
         }

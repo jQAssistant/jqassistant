@@ -96,6 +96,7 @@ public final class ReportHelper {
         return Row.builder()
                 .key(getRowKey(rule, columns))
                 .columns(columns)
+                .hidden(Optional.empty())
                 .build();
     }
 

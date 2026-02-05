@@ -193,8 +193,8 @@ class AnalyzerContextImplTest {
         when(baselineManager.isExisting(rule, key, row.getColumns())).thenReturn(true);
         Row suppressedRow = analyzerContext.toRow(rule, row.getColumns());
         assertThat(suppressedRow.isSuppressed()).isTrue();
-        assertThat(row.getHidden().isPresent()).isTrue();
-        Hidden hidden = row.getHidden().get();
+        assertThat(suppressedRow.getHidden().isPresent()).isTrue();
+        Hidden hidden = suppressedRow.getHidden().get();
         assertThat(hidden.getBaseline().isPresent()).isTrue();
     }
 
