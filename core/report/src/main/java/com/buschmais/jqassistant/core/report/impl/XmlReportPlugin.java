@@ -23,6 +23,7 @@ import com.buschmais.xo.api.CompositeObject;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
@@ -39,6 +40,8 @@ public class XmlReportPlugin implements ReportPlugin {
     // Properties
     public static final String PROPERTY_XML_REPORT_FILE = "xml.report.file";
 
+    public static final String PROPERTY_XML_REPORT_INCLUDE_HIDDEN_ROWS = "xml.report.include-hidden-rows";
+
     public static final String PROPERTY_XML_REPORT_TRANSFORM_TO_HTML = "xml.report.transform-to-html";
 
     // Default values
@@ -46,7 +49,7 @@ public class XmlReportPlugin implements ReportPlugin {
 
     public static final String REPORT_FILE_HTML = "jqassistant-report.html";
 
-    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.9";
+    public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.10";
 
     private static final Pattern XML_10_INVALID_CHARACTERS = Pattern.compile("[^\t\r\n -\uD7FF\uE000-�\uD800\uDC00-\uDBFF\uDFFF]");
 
@@ -59,6 +62,8 @@ public class XmlReportPlugin implements ReportPlugin {
     private File xmlReportFile;
 
     private boolean transformToHTML;
+
+    private boolean includeHiddenRows;
 
     private Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults;
 
@@ -85,6 +90,8 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlReportFileProperty != null ? new File(xmlReportFileProperty) : new File(reportContext.getOutputDirectory(), DEFAULT_XML_REPORT_FILE);
         Object transformToHTMLProperty = properties.get(PROPERTY_XML_REPORT_TRANSFORM_TO_HTML);
         this.transformToHTML = transformToHTMLProperty == null || Boolean.parseBoolean(transformToHTMLProperty.toString());
+        Object includeHiddenRows = properties.get(PROPERTY_XML_REPORT_INCLUDE_HIDDEN_ROWS);
+        this.includeHiddenRows = includeHiddenRows == null || Boolean.parseBoolean((includeHiddenRows).toString());
     }
 
     @Override
@@ -266,16 +273,19 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeStartElement("rows");
             List<Row> rows = result.getRows();
             xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
-            for (Row row : rows) {
-                xmlStreamWriter.writeStartElement("row");
-                xmlStreamWriter.writeAttribute("key", row.getKey());
-                for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
-                    .entrySet()) {
-                    String columnName = rowEntry.getKey();
-                    Column<?> column = rowEntry.getValue();
-                    writeColumn(columnName, column);
+            if (this.includeHiddenRows) {
+                for (Row row : rows) {
+                    xmlStreamWriter.writeStartElement("row");
+                    xmlStreamWriter.writeAttribute("key", row.getKey());
+                    writeHidden(row);
+                    for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
+                            .entrySet()) {
+                        String columnName = rowEntry.getKey();
+                        Column<?> column = rowEntry.getValue();
+                        writeColumn(columnName, column);
+                    }
+                    xmlStreamWriter.writeEndElement();
                 }
-                xmlStreamWriter.writeEndElement();
             }
             xmlStreamWriter.writeEndElement(); // rows
             xmlStreamWriter.writeEndElement(); // result
@@ -510,6 +520,44 @@ public class XmlReportPlugin implements ReportPlugin {
         if (rule instanceof Concept) {
             String abstractValue = Boolean.toString(((Concept) rule).isAbstract());
             xmlStreamWriter.writeAttribute("abstract", abstractValue);
+        }
+    }
+
+    private void writeHidden(Row row) throws XMLStreamException {
+        if (row.getHidden() != null && row.getHidden()
+                .isPresent()) {
+            xmlStreamWriter.writeStartElement("hidden");
+            Optional<Hidden.Suppression> suppression = row.getHidden()
+                    .get()
+                    .getSuppression();
+            if (suppression.isPresent()) {
+                xmlStreamWriter.writeStartElement("suppression");
+                if (StringUtils.isNotEmpty(suppression.get()
+                        .getSuppressReason())) {
+                    xmlStreamWriter.writeStartElement("reason");
+                    xmlStreamWriter.writeCharacters(suppression.get()
+                            .getSuppressReason());
+                    xmlStreamWriter.writeEndElement();
+                }
+                if (suppression.get()
+                        .getSuppressUntil() != null && StringUtils.isNotEmpty(suppression.get()
+                        .getSuppressUntil()
+                        .toString())) {
+                    xmlStreamWriter.writeStartElement("until");
+                    xmlStreamWriter.writeCharacters(suppression.get()
+                            .getSuppressUntil()
+                            .toString());
+                    xmlStreamWriter.writeEndElement();
+                }
+                xmlStreamWriter.writeEndElement(); //suppression
+            }
+            if (row.getHidden()
+                    .get()
+                    .getBaseline()
+                    .isPresent()) {
+                xmlStreamWriter.writeEmptyElement("baseline");
+            }
+            xmlStreamWriter.writeEndElement(); //hidden
         }
     }
 
