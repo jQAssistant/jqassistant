@@ -12,9 +12,11 @@ import lombok.Setter;
 @Getter
 public class Hidden {
 
-    private Optional<Suppression> suppression;
+    @Builder.Default
+    private Optional<Suppression> suppression = Optional.empty();
 
-    private Optional<Baseline> baseline;
+    @Builder.Default
+    private Optional<Baseline> baseline = Optional.empty();
 
     @Setter
     @Getter

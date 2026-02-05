@@ -532,9 +532,8 @@ public class XmlReportPlugin implements ReportPlugin {
                     .getSuppression();
             if (suppression.isPresent()) {
                 xmlStreamWriter.writeStartElement("suppression");
-                if (!suppression.get()
-                        .getSuppressReason()
-                        .isEmpty()) {
+                if (StringUtils.isNotEmpty(suppression.get()
+                        .getSuppressReason())) {
                     xmlStreamWriter.writeAttribute("reason", suppression.get()
                             .getSuppressReason());
                 }

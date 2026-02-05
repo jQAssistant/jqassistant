@@ -18,9 +18,13 @@ public class Row {
     @NonNull
     private final Map<String, Column<?>> columns;
 
-    private Optional<Hidden> hidden;
+    @Builder.Default
+    private Optional<Hidden> hidden = Optional.empty();
 
     public boolean isSuppressed() {
-        return (this.hidden.isPresent());
+        return hidden.filter(value -> (value.getSuppression()
+                        .isPresent() || value.getBaseline()
+                        .isPresent()))
+                .isPresent();
     }
 }
