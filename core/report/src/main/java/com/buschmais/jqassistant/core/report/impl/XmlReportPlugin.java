@@ -524,7 +524,7 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private void writeHidden(Row row) throws XMLStreamException {
-        if (row.getHidden()
+        if (row.getHidden() != null && row.getHidden()
                 .isPresent()) {
             xmlStreamWriter.writeStartElement("hidden");
             Optional<Hidden.Suppression> suppression = row.getHidden()
