@@ -34,6 +34,25 @@
                         <baseline/>
                     </hidden>
                 </row>
+                <row key="77dfe54068ba3a8aecfab88442b0333d1ff3e3426cc99af926b6a0cd0499e029">
+                    <column name="Type">
+                        <element language="Java">Type</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>This row is</value>
+                    </column>
+                    <column name="Method">
+                        <element language="Java">Method</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java" startLine="14" endLine="18">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>suppressed by baseline.</value>
+                    </column>
+                    <hidden>
+                        <baseline/>
+                    </hidden>
+                </row>
                 <row key="ko0s4v37dfa2e3cf7f328a1253e9d61b39c259e8ne6bb96185a7f5747d70b928">
                     <column name="Type">
                         <element language="Java">Type</element>
@@ -120,7 +139,7 @@
         <duration>10</duration>
     </constraint>
     <constraint id="constraint:ConstraintWithHiddenRows">
-        <description>Critical Failure</description>
+        <description>Constraint with hidden rows.</description>
         <result>
             <columns count="2" primary="Type">
                 <column>Type</column>
@@ -128,6 +147,25 @@
             </columns>
             <rows count="5">
                 <row key="77dfe54028ba3b8aeceab58442b0333d1ff3e3026cc99af926d6a0ed0399e029">
+                    <column name="Type">
+                        <element language="Java">Type</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>This row is</value>
+                    </column>
+                    <column name="Method">
+                        <element language="Java">Method</element>
+                        <source fileName="/org/jqassistant/test/TestClass.java" startLine="14" endLine="18">
+                            <parent fileName="/home/path/jqassistant/test/1.0.0-SNAPSHOT.jar"  name="test" type="jar" version="1.6.0-SNAPSHOT"></parent>
+                        </source>
+                        <value>suppressed by baseline.</value>
+                    </column>
+                    <hidden>
+                        <baseline/>
+                    </hidden>
+                </row>
+                <row key="77dfe54028ba3b8aeceab24442b0343d1ff3e3026cc79af926d6a0ed0399e029">
                     <column name="Type">
                         <element language="Java">Type</element>
                         <source fileName="/org/jqassistant/test/TestClass.java">

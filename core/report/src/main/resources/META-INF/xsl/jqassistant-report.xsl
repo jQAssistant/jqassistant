@@ -169,6 +169,13 @@
                 text-decoration:underline;
             }
 
+            .hidden-header {
+                cursor:pointer;
+                text-decoration:underline;
+                margin-right: 0;
+                display: inline;
+            }
+
             .result {
                 margin-bottom: 12px;
                 color:#3d3a37;
@@ -492,64 +499,78 @@
                 </xsl:for-each>
             </table>
             <p/>
+
             <xsl:if test="boolean(tns:rows/tns:row/tns:hidden/tns:baseline)">
-                <h4>Rows Hidden by Baseline</h4>
-                <table>
-                    <tr>
-                        <xsl:for-each select="tns:columns/tns:column">
-                            <th>
-                                <xsl:value-of select="text()"/>
-                            </th>
+                <details>
+                    <summary>
+                        <xsl:variable name="rowCount" select="count(tns:rows/tns:row[tns:hidden/tns:baseline=true()])"/>
+                        <h4 class="hidden-header">Baseline (<xsl:value-of select="$rowCount"/>)</h4>
+                    </summary>
+                    <p/>
+                    <table>
+                        <tr>
+                            <xsl:for-each select="tns:columns/tns:column">
+                                <th>
+                                    <xsl:value-of select="text()"/>
+                                </th>
+                            </xsl:for-each>
+                        </tr>
+                        <xsl:for-each select="tns:rows/tns:row">
+                            <xsl:variable name="row" select="position()"/>
+                            <xsl:if test="tns:hidden/tns:baseline">
+                                <tr>
+                                    <xsl:for-each select="../../tns:columns/tns:column">
+                                        <xsl:variable name="col" select="text()"/>
+                                        <td>
+                                            <xsl:value-of select="../../tns:rows/tns:row[$row]/tns:column[@name=$col]/tns:value"/>
+                                        </td>
+                                    </xsl:for-each>
+                                </tr>
+                            </xsl:if>
                         </xsl:for-each>
-                    </tr>
-                    <xsl:for-each select="tns:rows/tns:row">
-                        <xsl:variable name="row" select="position()"/>
-                        <xsl:if test="tns:hidden/tns:baseline">
-                            <tr>
-                                <xsl:for-each select="../../tns:columns/tns:column">
-                                    <xsl:variable name="col" select="text()"/>
-                                    <td>
-                                        <xsl:value-of select="../../tns:rows/tns:row[$row]/tns:column[@name=$col]/tns:value"/>
-                                    </td>
-                                </xsl:for-each>
-                            </tr>
-                        </xsl:if>
-                    </xsl:for-each>
-                </table>
+                    </table>
+                </details>
                 <p/>
             </xsl:if>
+
             <xsl:if test="boolean(tns:rows/tns:row/tns:hidden/tns:suppression)">
-                <h4>Suppressed Rows</h4>
-                <table>
-                    <tr>
-                        <xsl:for-each select="tns:columns/tns:column">
-                            <th>
-                                <xsl:value-of select="text()"/>
-                            </th>
-                        </xsl:for-each>
-                        <th>Reason</th>
-                        <th>Until</th>
-                    </tr>
-                    <xsl:for-each select="tns:rows/tns:row">
-                        <xsl:variable name="row" select="position()"/>
-                        <xsl:if test="tns:hidden/tns:suppression">
-                            <tr>
-                                <xsl:for-each select="../../tns:columns/tns:column">
-                                    <xsl:variable name="col" select="text()"/>
+                <details>
+                    <summary>
+                        <xsl:variable name="rowCount" select="count(tns:rows/tns:row[tns:hidden/tns:suppression=true()])"/>
+                        <h4 class="hidden-header">Suppressions (<xsl:value-of select="$rowCount"/>)</h4>
+                    </summary>
+                    <p/>
+                    <table>
+                        <tr>
+                            <xsl:for-each select="tns:columns/tns:column">
+                                <th>
+                                    <xsl:value-of select="text()"/>
+                                </th>
+                            </xsl:for-each>
+                            <th>Reason</th>
+                            <th>Until</th>
+                        </tr>
+                        <xsl:for-each select="tns:rows/tns:row">
+                            <xsl:variable name="row" select="position()"/>
+                            <xsl:if test="tns:hidden/tns:suppression">
+                                <tr>
+                                    <xsl:for-each select="../../tns:columns/tns:column">
+                                        <xsl:variable name="col" select="text()"/>
+                                        <td>
+                                            <xsl:value-of select="../../tns:rows/tns:row[$row]/tns:column[@name=$col]/tns:value"/>
+                                        </td>
+                                    </xsl:for-each>
                                     <td>
-                                        <xsl:value-of select="../../tns:rows/tns:row[$row]/tns:column[@name=$col]/tns:value"/>
+                                        <xsl:value-of select="tns:hidden/tns:suppression/@reason"/>
                                     </td>
-                                </xsl:for-each>
-                                <td>
-                                    <xsl:value-of select="tns:hidden/tns:suppression/@reason"/>
-                                </td>
-                                <td>
-                                    <xsl:value-of select="tns:hidden/tns:suppression/@until"/>
-                                </td>
-                            </tr>
-                        </xsl:if>
-                    </xsl:for-each>
-                </table>
+                                    <td>
+                                        <xsl:value-of select="tns:hidden/tns:suppression/@until"/>
+                                    </td>
+                                </tr>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </table>
+                </details>
             </xsl:if>
         </div>
     </xsl:template>
