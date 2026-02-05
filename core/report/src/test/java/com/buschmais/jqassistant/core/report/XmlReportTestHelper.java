@@ -352,6 +352,7 @@ public final class XmlReportTestHelper {
                         .value("nothing")
                         .label("nothing")
                         .build()))
+                        .hidden(Optional.empty())
                 .build());
 
         Result<Constraint> result = Result.<Constraint>builder()
