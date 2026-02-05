@@ -534,16 +534,20 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeStartElement("suppression");
                 if (StringUtils.isNotEmpty(suppression.get()
                         .getSuppressReason())) {
-                    xmlStreamWriter.writeAttribute("reason", suppression.get()
+                    xmlStreamWriter.writeStartElement("reason");
+                    xmlStreamWriter.writeCharacters(suppression.get()
                             .getSuppressReason());
+                    xmlStreamWriter.writeEndElement();
                 }
                 if (suppression.get()
                         .getSuppressUntil() != null && StringUtils.isNotEmpty(suppression.get()
                         .getSuppressUntil()
                         .toString())) {
-                    xmlStreamWriter.writeAttribute("until", suppression.get()
+                    xmlStreamWriter.writeStartElement("until");
+                    xmlStreamWriter.writeCharacters(suppression.get()
                             .getSuppressUntil()
                             .toString());
+                    xmlStreamWriter.writeEndElement();
                 }
                 xmlStreamWriter.writeEndElement(); //suppression
             }

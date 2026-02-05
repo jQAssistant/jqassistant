@@ -179,9 +179,11 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="SuppressionType" >
-        <xs:attribute name="reason" type="xs:string"/>
-        <xs:attribute name="until" type="xs:date"/>
+    <xs:complexType name="SuppressionType">
+        <xs:sequence>
+            <xs:element name="reason" type="xs:string" minOccurs="0"/>
+            <xs:element name="until" type="xs:date" minOccurs="0"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="ColumnType">
