@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.report.api.model.Column;
@@ -74,7 +75,7 @@ public class YamlRuleInterpreterPluginTest {
                 Map<String, Column<?>> columns = new HashMap<>();
                 columns.put("Property", toColumn(entry.getKey()));
                 columns.put("Value", toColumn(entry.getValue()));
-                rows.add(toRow(executableRule, columns));
+                rows.add(toRow(executableRule, columns, Optional.empty()));
             }
             return Result.<T>builder()
                 .rule(executableRule)

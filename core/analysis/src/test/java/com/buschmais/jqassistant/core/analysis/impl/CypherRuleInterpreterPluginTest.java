@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.model.Result;
-import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.Report;
@@ -54,7 +54,7 @@ class CypherRuleInterpreterPluginTest {
             .getStore();
         doAnswer(invocation -> ((Transactional.TransactionalSupplier<?, ?>) invocation.getArgument(0)).execute()).when(store)
             .requireTransaction(any(Transactional.TransactionalSupplier.class));
-        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1))).when(analyzerContext)
+        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1), Optional.empty())).when(analyzerContext)
             .toRow(any(), anyMap());
         doAnswer(invocation -> ReportHelper.toColumn(invocation.getArgument(0))).when(analyzerContext)
             .toColumn(any());
@@ -73,7 +73,7 @@ class CypherRuleInterpreterPluginTest {
         Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
 
         assertThat(result.getRows()).hasSize(2);
-        verify(analyzerContext, times(2)).isSuppressed(eq(constraint), eq(PRIMARY_COLUMN), any(Row.class));
+        verify(analyzerContext, times(2)).toRow(eq(constraint), anyMap());
     }
 
     private Constraint prepareConstraint(Map<String, Object>... resultRows) {

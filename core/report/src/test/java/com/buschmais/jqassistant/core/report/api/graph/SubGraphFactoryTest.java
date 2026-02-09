@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.report.api.graph;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -52,7 +53,7 @@ public class SubGraphFactoryTest {
             .entry("relationshipKey", "value")
             .build();
         builder.entry("relation", toColumn(getNeo4jRelationship(1l, relationshipProperties, "TEST")));
-        Row row = toRow(concept, builder.build());
+        Row row = toRow(concept, builder.build(), Optional.empty());
         Result<ExecutableRule> result = Result.builder()
             .row(row)
             .build();
@@ -84,7 +85,7 @@ public class SubGraphFactoryTest {
 
         builder.entry("nodes", toColumn(asList(asList(getNeo4jNode(1l), getNeo4jNode(2l)))));
         builder.entry("relations", toColumn(asList(asList(getNeo4jRelationship(1l, "TEST"), getNeo4jRelationship(2l, "TEST")))));
-        Row row = toRow(concept, builder.build());
+        Row row = toRow(concept, builder.build(), Optional.empty());
         Result<ExecutableRule> result = Result.builder()
             .row(row)
             .build();
@@ -123,7 +124,7 @@ public class SubGraphFactoryTest {
             .build();
         MapBuilder<String, Column<?>> builder = MapBuilder.builder();
         builder.entry("nodes", toColumn(singletonList(virtualNode)));
-        Row row = toRow(concept, builder.build());
+        Row row = toRow(concept, builder.build(), Optional.empty());
         Result<ExecutableRule> result = Result.builder()
             .row(row)
             .build();
@@ -155,7 +156,7 @@ public class SubGraphFactoryTest {
             .build();
         MapBuilder<String, Column<?>> builder = MapBuilder.builder();
         builder.entry("relationships", toColumn(singletonList(virtualNode)));
-        Row row = toRow(concept, builder.build());
+        Row row = toRow(concept, builder.build(), Optional.empty());
         Result<ExecutableRule> result = Result.builder()
             .row(row)
             .build();
@@ -191,7 +192,7 @@ public class SubGraphFactoryTest {
         Map<String, Column<?>> columns = MapBuilder.<String, Column<?>>builder()
             .entry("graph", toColumn(virtualGraph))
             .build();
-        Row row = toRow(concept, columns);
+        Row row = toRow(concept, columns, Optional.empty());
 
         Result<ExecutableRule> result = Result.builder()
             .row(row)
@@ -231,7 +232,7 @@ public class SubGraphFactoryTest {
             .getDelegate();
         MapBuilder<String, Column<?>> builder = MapBuilder.builder();
         builder.entry("nodes", toColumn(singletonList(compositeObject)));
-        Row row = toRow(concept, builder.build());
+        Row row = toRow(concept, builder.build(), Optional.empty());
         Result<ExecutableRule> result = Result.builder()
             .row(row)
             .build();

@@ -44,6 +44,7 @@ public interface AnalyzerContext {
 
     /**
      * Create a result {@link Row} from a map of columns.
+     * Checks for suppression and sets the according values.
      *
      * @param rule
      * @param columns
@@ -51,22 +52,6 @@ public interface AnalyzerContext {
      * @return The {@link Row}
      */
     Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns);
-
-    /**
-     * Verifies if the Row shall be suppressed.
-     * <p>
-     * The primary column is checked if it contains a suppression that matches the
-     * current rule id.
-     *
-     * @param executableRule
-     *     The {@link ExecutableRule}.
-     * @param primaryColumn
-     *     The name of the primary column.
-     * @param row
-     *     The {@link Row}.
-     * @return <code>true</code> if the row shall be suppressed.
-     */
-    <T extends ExecutableRule<?>> boolean isSuppressed(T executableRule, String primaryColumn, Row row);
 
     /**
      * Verifies the rows returned by a cypher query for an executable.

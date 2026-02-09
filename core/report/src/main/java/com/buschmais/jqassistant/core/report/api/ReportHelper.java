@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.Hidden;
 import com.buschmais.jqassistant.core.rule.api.model.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.xo.api.CompositeObject;
@@ -91,11 +92,12 @@ public final class ReportHelper {
             .build();
     }
 
-    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<Hidden> hidden) {
         return Row.builder()
-            .key(getRowKey(rule, columns))
-            .columns(columns)
-            .build();
+                .key(getRowKey(rule, columns))
+                .columns(columns)
+                .hidden(hidden)
+                .build();
     }
 
     /**
@@ -109,7 +111,7 @@ public final class ReportHelper {
      * @return
      *      The calculated rowKey.
      */
-    private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+    public static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
         List<String> columnsForKeyCalculation;
         if (rule.getReport() != null && rule.getReport()
                 .getKeyColumns() != null) {

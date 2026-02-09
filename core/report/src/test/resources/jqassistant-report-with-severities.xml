@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.9">
+<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.10">
     <context>
         <build>
             <name>Test</name>
