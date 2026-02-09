@@ -23,7 +23,7 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
 
     @Override
     public <T extends ExecutableRule> VerificationResult verify(T executable, AggregationVerification verification, List<String> columnNames, List<Row> rows)
-            throws RuleException {
+        throws RuleException {
         LOGGER.debug("Verifying result of {}", executable);
         if (rows.isEmpty()) {
             return getStatus(executable, 0, verification.getMin(), verification.getMax());
@@ -39,7 +39,7 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
         int aggregatedValue = 0;
         for (Row row : rows) {
             Column<?> column = row.getColumns()
-                    .get(columnName);
+                .get(columnName);
             if (column == null) {
                 throw new RuleException("The result does not contain a column '" + columnName);
             }
