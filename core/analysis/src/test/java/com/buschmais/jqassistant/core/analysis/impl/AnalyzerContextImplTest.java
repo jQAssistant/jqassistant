@@ -105,7 +105,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value1_1"), SECONDARY_COLUMN, analyzerContext.toColumn("value1_2")));
 
-        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isFalse();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isHidden()).isFalse();
     }
 
     @Test
@@ -116,7 +116,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
-        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isTrue();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isHidden()).isTrue();
         assertThat(row.getHidden().isPresent()).isTrue();
         assertThat(row.getHidden().get().getBaseline().isPresent()).isFalse();
     }
@@ -129,7 +129,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value"), SECONDARY_COLUMN, analyzerContext.toColumn(suppressedValue)));
 
-        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isTrue();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isHidden()).isTrue();
     }
 
     @Test
@@ -139,7 +139,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
-        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isFalse();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isHidden()).isFalse();
     }
 
     @Test
@@ -149,7 +149,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
-        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isTrue();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isHidden()).isTrue();
     }
 
     @Test
@@ -159,7 +159,7 @@ class AnalyzerContextImplTest {
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
-        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isSuppressed()).isFalse();
+        assertThat(analyzerContext.toRow(constraint, row.getColumns()).isHidden()).isFalse();
     }
 
     @Test
@@ -170,7 +170,7 @@ class AnalyzerContextImplTest {
                 Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
 
         analyzerContext.toRow(constraint, row.getColumns());
-        assertThat(row.isSuppressed()).isTrue();
+        assertThat(row.isHidden()).isTrue();
         assertThat(row.getHidden().isPresent()).isTrue();
         Hidden hidden = row.getHidden().get();
         assertThat(hidden.getSuppression().isPresent()).isTrue();
@@ -192,7 +192,7 @@ class AnalyzerContextImplTest {
                 .build();
         when(baselineManager.isExisting(rule, key, row.getColumns())).thenReturn(true);
         Row suppressedRow = analyzerContext.toRow(rule, row.getColumns());
-        assertThat(suppressedRow.isSuppressed()).isTrue();
+        assertThat(suppressedRow.isHidden()).isTrue();
         assertThat(suppressedRow.getHidden().isPresent()).isTrue();
         Hidden hidden = suppressedRow.getHidden().get();
         assertThat(hidden.getBaseline().isPresent()).isTrue();

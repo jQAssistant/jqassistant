@@ -92,19 +92,11 @@ public final class ReportHelper {
             .build();
     }
 
-    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<Hidden> hidden) {
         return Row.builder()
                 .key(getRowKey(rule, columns))
                 .columns(columns)
-                .hidden(Optional.empty())
-                .build();
-    }
-
-    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Hidden hidden) {
-        return Row.builder()
-                .key(getRowKey(rule, columns))
-                .columns(columns)
-                .hidden(Optional.of(hidden))
+                .hidden(hidden)
                 .build();
     }
 

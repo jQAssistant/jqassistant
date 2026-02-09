@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Row;
@@ -195,6 +196,6 @@ class AggregationVerificationStrategyTest {
         for (int i = 0; i < values.length; i++) {
             columns.put("c" + i, toColumn(values[i]));
         }
-        return toRow(rule, columns);
+        return toRow(rule, columns, Optional.empty());
     }
 }

@@ -439,7 +439,7 @@ class XmlReportTest {
     }
 
     @Test
-    void reportWithSuppressedRows() throws ReportException {
+    void reportWithHiddenRows() throws ReportException {
         File xmlReport = XmlReportTestHelper.createXmlWithHiddenRows();
         JqassistantReport report = readReport(xmlReport);
         assertThat(report).isNotNull();

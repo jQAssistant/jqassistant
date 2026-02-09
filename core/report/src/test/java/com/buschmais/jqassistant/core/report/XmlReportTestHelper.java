@@ -398,6 +398,6 @@ public final class XmlReportTestHelper {
             }
         };
         columns.put(C2, toColumn(testDescriptor));
-        return toRow(rule, columns);
+        return toRow(rule, columns, Optional.empty());
     }
 }

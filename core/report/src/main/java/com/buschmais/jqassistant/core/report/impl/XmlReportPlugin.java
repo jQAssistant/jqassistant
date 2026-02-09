@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.report.impl;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -273,8 +274,9 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeStartElement("rows");
             List<Row> rows = result.getRows();
             xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
-            if (this.includeHiddenRows) {
-                for (Row row : rows) {
+
+            for (Row row : rows) {
+                if (!row.isHidden() || this.includeHiddenRows) {
                     xmlStreamWriter.writeStartElement("row");
                     xmlStreamWriter.writeAttribute("key", row.getKey());
                     writeHidden(row);
@@ -524,10 +526,11 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private void writeHidden(Row row) throws XMLStreamException {
-        if (row.getHidden() != null && row.getHidden()
+        Optional<Hidden> hidden = row.getHidden();
+        if (hidden != null && hidden
                 .isPresent()) {
             xmlStreamWriter.writeStartElement("hidden");
-            Optional<Hidden.Suppression> suppression = row.getHidden()
+            Optional<Hidden.Suppression> suppression = hidden
                     .get()
                     .getSuppression();
             if (suppression.isPresent()) {
@@ -545,13 +548,12 @@ public class XmlReportPlugin implements ReportPlugin {
                         .toString())) {
                     xmlStreamWriter.writeStartElement("until");
                     xmlStreamWriter.writeCharacters(suppression.get()
-                            .getSuppressUntil()
-                            .toString());
+                            .getSuppressUntil().format(DateTimeFormatter.ISO_LOCAL_DATE));
                     xmlStreamWriter.writeEndElement();
                 }
                 xmlStreamWriter.writeEndElement(); //suppression
             }
-            if (row.getHidden()
+            if (hidden
                     .get()
                     .getBaseline()
                     .isPresent()) {

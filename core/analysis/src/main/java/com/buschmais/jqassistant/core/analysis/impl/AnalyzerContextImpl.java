@@ -117,10 +117,10 @@ class AnalyzerContextImpl implements AnalyzerContext {
                 }
             }
             if (hidden.getSuppression().isPresent() || hidden.getBaseline().isPresent()) {
-                return ReportHelper.toRow(rule, columns, hidden);
+                return ReportHelper.toRow(rule, columns, Optional.of(hidden));
             }
         }
-        return ReportHelper.toRow(rule, columns);
+        return ReportHelper.toRow(rule, columns, Optional.empty());
     }
 
     public boolean validateSuppressUntilDate(LocalDate until) {

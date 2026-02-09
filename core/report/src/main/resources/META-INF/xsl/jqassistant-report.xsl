@@ -561,10 +561,10 @@
                                         </td>
                                     </xsl:for-each>
                                     <td>
-                                        <xsl:value-of select="tns:hidden/tns:suppression/@reason"/>
+                                        <xsl:value-of select="tns:hidden/tns:suppression/tns:reason"/>
                                     </td>
                                     <td>
-                                        <xsl:value-of select="tns:hidden/tns:suppression/@until"/>
+                                        <xsl:value-of select="tns:hidden/tns:suppression/tns:until"/>
                                     </td>
                                 </tr>
                             </xsl:if>

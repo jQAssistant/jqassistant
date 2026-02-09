@@ -131,7 +131,7 @@ class AnalyzerRuleVisitorTest {
         languagePlugins.add(new CypherRuleInterpreterPlugin());
         ruleInterpreterPlugins.put("cypher", languagePlugins);
 
-        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1))).when(analyzerContext)
+        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1), Optional.empty())).when(analyzerContext)
             .toRow(any(), anyMap());
         doAnswer(invocation -> ReportHelper.toColumn(invocation.getArgument(0))).when(analyzerContext)
             .toColumn(any());
@@ -155,7 +155,7 @@ class AnalyzerRuleVisitorTest {
         doAnswer(i -> {
             ExecutableRule<?> rule = i.getArgument(0);
             Map<String, Column<?>> columns = i.getArgument(1);
-            return toRow(rule, columns);
+            return toRow(rule, columns, Optional.empty());
         }).when(analyzerContext)
             .toRow(any(ExecutableRule.class), anyMap());
 
