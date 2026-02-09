@@ -23,7 +23,7 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
 
     @Override
     public <T extends ExecutableRule> VerificationResult verify(T executable, AggregationVerification verification, List<String> columnNames, List<Row> rows)
-        throws RuleException {
+            throws RuleException {
         LOGGER.debug("Verifying result of {}", executable);
         if (rows.isEmpty()) {
             return getStatus(executable, 0, verification.getMin(), verification.getMax());
@@ -38,18 +38,16 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
         }
         int aggregatedValue = 0;
         for (Row row : rows) {
-            if (!row.isHidden()) {
-                Column<?> column = row.getColumns()
-                        .get(columnName);
-                if (column == null) {
-                    throw new RuleException("The result does not contain a column '" + columnName);
-                }
-                Object value = column.getValue();
-                if (!Number.class.isAssignableFrom(value.getClass())) {
-                    throw new RuleException("The value in column '" + columnName + "' must be a numeric value but was '" + value + "'");
-                }
-                aggregatedValue = aggregatedValue + ((Number) value).intValue();
+            Column<?> column = row.getColumns()
+                    .get(columnName);
+            if (column == null) {
+                throw new RuleException("The result does not contain a column '" + columnName);
             }
+            Object value = column.getValue();
+            if (!Number.class.isAssignableFrom(value.getClass())) {
+                throw new RuleException("The value in column '" + columnName + "' must be a numeric value but was '" + value + "'");
+            }
+            aggregatedValue = aggregatedValue + ((Number) value).intValue();
         }
         return getStatus(executable, aggregatedValue, verification.getMin(), verification.getMax());
     }

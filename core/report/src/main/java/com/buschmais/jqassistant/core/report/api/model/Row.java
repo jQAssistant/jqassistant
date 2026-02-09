@@ -18,10 +18,11 @@ public class Row {
     @NonNull
     private final Map<String, Column<?>> columns;
 
-    private Optional<Hidden> hidden;
+    @Builder.Default
+    private Optional<Hidden> hidden = Optional.empty();
 
     public boolean isHidden() {
-        if (hidden == null) {
+        if (hidden.isEmpty()){
             return false;
         }
         return hidden.filter(value -> (value.getSuppression()
