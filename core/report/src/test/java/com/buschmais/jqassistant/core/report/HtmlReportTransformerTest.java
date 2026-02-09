@@ -55,7 +55,7 @@ class HtmlReportTransformerTest {
     @Test
     void reportWithHiddenRows() throws ReportTransformerException {
         HtmlReportTransformer transformer = new HtmlReportTransformer();
-        Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-hidden-elements.xml"));
+        Source xmlSource = new StreamSource(HtmlReportTransformerTest.class.getResourceAsStream("/jqassistant-report-with-hidden-rows.xml"));
         StringWriter htmlWriter = new StringWriter();
         javax.xml.transform.Result htmlTarget = new StreamResult(htmlWriter);
         transformer.toEmbedded(xmlSource, htmlTarget);
