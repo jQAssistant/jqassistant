@@ -38,16 +38,18 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
         }
         int aggregatedValue = 0;
         for (Row row : rows) {
-            Column<?> column = row.getColumns()
-                .get(columnName);
-            if (column == null) {
-                throw new RuleException("The result does not contain a column '" + columnName);
+            if (!row.isHidden()) {
+                Column<?> column = row.getColumns()
+                        .get(columnName);
+                if (column == null) {
+                    throw new RuleException("The result does not contain a column '" + columnName);
+                }
+                Object value = column.getValue();
+                if (!Number.class.isAssignableFrom(value.getClass())) {
+                    throw new RuleException("The value in column '" + columnName + "' must be a numeric value but was '" + value + "'");
+                }
+                aggregatedValue = aggregatedValue + ((Number) value).intValue();
             }
-            Object value = column.getValue();
-            if (!Number.class.isAssignableFrom(value.getClass())) {
-                throw new RuleException("The value in column '" + columnName + "' must be a numeric value but was '" + value + "'");
-            }
-            aggregatedValue = aggregatedValue + ((Number) value).intValue();
         }
         return getStatus(executable, aggregatedValue, verification.getMin(), verification.getMax());
     }

@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
@@ -53,7 +54,10 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
             Row row = getColumns(executableRule, columnNames, rowObject, context);
                 rows.add(row);
         }
-        VerificationResult verificationResult = context.verify(executableRule, columnNames, rows);
+        List<Row> filteredRows = rows.stream()
+                .filter(row -> !row.isHidden())
+                .collect(Collectors.toList());
+        VerificationResult verificationResult = context.verify(executableRule, columnNames, filteredRows);
         Status status = context.getStatus(verificationResult, severity);
         return Result.<T>builder()
             .rule(executableRule)

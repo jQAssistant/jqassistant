@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
@@ -144,7 +145,10 @@ class AnalyzerContextImpl implements AnalyzerContext {
             throw new RuleException("Result verification not supported: " + verification.getClass()
                 .getName());
         }
-        return strategy.verify(executable, verification, columnNames, rows);
+        List<Row> filteredRows = rows.stream()
+                .filter(row -> !row.isHidden())
+                .collect(Collectors.toList());
+        return strategy.verify(executable, verification, columnNames, filteredRows);
     }
 
     @Override
