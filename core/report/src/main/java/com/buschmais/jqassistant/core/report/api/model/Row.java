@@ -21,7 +21,9 @@ public class Row {
     private Optional<Hidden> hidden;
 
     public boolean isHidden() {
-        if(hidden == null) return false;
+        if (hidden == null) {
+            return false;
+        }
         return hidden.filter(value -> (value.getSuppression()
                         .isPresent() || value.getBaseline()
                         .isPresent()))
