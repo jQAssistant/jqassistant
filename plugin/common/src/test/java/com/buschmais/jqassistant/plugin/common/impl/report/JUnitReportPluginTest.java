@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.model.Column;
@@ -154,7 +155,7 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
             .severity(rule.getSeverity())
             .status(status)
             .columnNames(asList("c"))
-            .rows(asList(toRow(rule, columns1), toRow(rule, columns2)))
+            .rows(asList(toRow(rule, columns1, Optional.empty()), toRow(rule, columns2, Optional.empty())))
             .build();
     }
 

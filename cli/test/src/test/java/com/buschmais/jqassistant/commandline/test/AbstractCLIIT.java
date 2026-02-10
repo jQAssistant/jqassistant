@@ -38,6 +38,8 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.joining;
 import static lombok.AccessLevel.PRIVATE;
@@ -56,11 +58,14 @@ public abstract class AbstractCLIIT {
     @RequiredArgsConstructor
     private enum DISTRIBUTION {
 
-        NEO4JV4(Runtime.Version.parse("11"), Runtime.Version.parse("17")),
-        NEO4JV5(Runtime.Version.parse("17"), Runtime.Version.parse("21"));
+        NEO4JV4(Runtime.Version.parse("11")
+            .feature(), of(Runtime.Version.parse("17")
+            .feature())),
+        NEO4JV5(Runtime.Version.parse("17")
+            .feature(), empty());
 
-        private final Runtime.Version minRuntimeVersion;
-        private final Runtime.Version maxRuntimeVersion;
+        private final int minRuntimeVersion;
+        private final Optional<Integer> maxRuntimeVersion;
     }
 
     /**
@@ -158,8 +163,8 @@ public abstract class AbstractCLIIT {
     public void before(DISTRIBUTION distribution) throws IOException {
         assumeThat(Runtime.version()
             .feature()).describedAs("Java runtime version")
-            .isGreaterThanOrEqualTo(distribution.minRuntimeVersion.feature())
-            .isLessThanOrEqualTo(distribution.maxRuntimeVersion.feature());
+            .isGreaterThanOrEqualTo(distribution.minRuntimeVersion)
+            .isLessThanOrEqualTo(distribution.maxRuntimeVersion.orElse(Integer.MAX_VALUE));
         this.neo4jVersion = distribution.name()
             .toLowerCase(Locale.getDefault());
         this.jqaHome = getjQAHomeDirectory(neo4jVersion);
@@ -209,7 +214,7 @@ public abstract class AbstractCLIIT {
             command.add("/C");
             command.add(jqaHome + "\\bin\\jqassistant.cmd");
         } else if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX) {
-            command.add(jqaHome + "/bin/jqassistant.sh");
+            command.add(jqaHome + "/bin/jqassistant");
         }
         command.addAll(asList(args));
         ProcessBuilder builder = new ProcessBuilder(command);

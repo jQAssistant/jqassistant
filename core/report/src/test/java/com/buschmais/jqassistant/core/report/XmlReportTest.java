@@ -23,6 +23,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class XmlReportTest {
 
@@ -162,6 +163,28 @@ class XmlReportTest {
     }
 
     @Test
+    void testReportWithKeyColumns() throws ReportException {
+        File xmlReport = xmlReportTestHelper.createXmlReportWithKeyColumns();
+        JqassistantReport report = readReport(xmlReport);
+        ExecutableRuleType ruleType1 = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
+                .get(0);
+        ExecutableRuleType ruleType2 = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
+                .get(1);
+        ExecutableRuleType ruleType3 = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
+                .get(2);
+       String rowKey1 = ruleType1.getResult().getRows().getRow().get(0).getKey();
+       String rowKey2 = ruleType2.getResult().getRows().getRow().get(0).getKey();
+       String rowKey3 = ruleType3.getResult().getRows().getRow().get(0).getKey();
+       assertThat(rowKey1).isNotEqualTo(rowKey2);
+       assertThat(rowKey2).isEqualTo(rowKey3);
+    }
+
+    @Test
+    void nonExistingKeyColumnThrowsException() {
+        assertThatThrownBy(xmlReportTestHelper::createConstraintsWithNonExistingKeyColumn).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void reportWithRequiredAndProvidedConcepts() throws ReportException {
         XmlReportPlugin xmlReportPlugin = XmlReportTestHelper.getXmlReportPlugin();
         Concept requiredConcept = Concept.builder()
@@ -186,6 +209,7 @@ class XmlReportTest {
             .id("abstract-concept")
             .description("abstract concept")
             .severity(Severity.MINOR)
+            .isAbstract(true)
             .verification(ROW_COUNT_VERIFICATION)
             .report(Report.builder()
                 .build())
@@ -229,16 +253,19 @@ class XmlReportTest {
 
         ConceptType requiredConceptType = (ConceptType) groupOrConceptOrConstraint.get(0);
         assertThat(requiredConceptType.getId()).isEqualTo("required-concept");
+        assertThat(requiredConceptType.isAbstract()).isFalse();
         assertThat(requiredConceptType.getRequiredConcept()).isEmpty();
         assertThat(requiredConceptType.getProvidingConcept()).isEmpty();
 
         ConceptType providingConceptType = (ConceptType) groupOrConceptOrConstraint.get(1);
         assertThat(providingConceptType.getId()).isEqualTo("providing-concept");
+        assertThat(providingConceptType.isAbstract()).isFalse();
         assertThat(providingConceptType.getRequiredConcept()).isEmpty();
         assertThat(providingConceptType.getProvidingConcept()).isEmpty();
 
         ConceptType abstractConceptType = (ConceptType) groupOrConceptOrConstraint.get(2);
         assertThat(abstractConceptType.getId()).isEqualTo("abstract-concept");
+        assertThat(abstractConceptType.isAbstract()).isTrue();
         assertThat(abstractConceptType.getRequiredConcept()).hasSize(1);
         assertThat(abstractConceptType.getRequiredConcept()
             .get(0)
@@ -409,6 +436,64 @@ class XmlReportTest {
 
     private JqassistantReport readReport(File xmlReport) {
         return REPORT_READER.read(xmlReport);
+    }
+
+    @Test
+    void reportWithHiddenRows() throws ReportException {
+        File xmlReport = XmlReportTestHelper.createXmlWithHiddenRows();
+        JqassistantReport report = readReport(xmlReport);
+        assertThat(report).isNotNull();
+
+        List<ReferencableRuleType> groupOrConceptOrConstraint = report.getGroupOrConceptOrConstraint();
+        assertThat(groupOrConceptOrConstraint).hasSize(1);
+        ExecutableRuleType ruleType = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
+                .get(0);
+
+        RowType row0 = ruleType.getResult()
+                .getRows()
+                .getRow().get(0);
+        RowType row1 = ruleType.getResult()
+                .getRows()
+                .getRow().get(1);
+        RowType row2 = ruleType.getResult()
+                .getRows()
+                .getRow().get(2);
+
+        assertThat(row0
+                .getHidden()
+                .getSuppression()).isNotNull();
+        assertThat(row0
+                .getHidden()
+                .getBaseline()).isNull();
+        assertThat(row0
+                .getHidden()
+                .getSuppression()
+                .getReason()).isEqualTo("Reason for suppressing");
+        assertThat(row0
+                .getHidden()
+                .getSuppression()
+                .getUntil()
+                .toString()).isEqualTo("2067-03-15");
+
+        assertThat(row1
+                .getHidden()
+                .getSuppression()).isNull();
+        assertThat(row1
+                .getHidden()
+                .getBaseline()).isNotNull();
+
+        assertThat(row2
+                .getHidden()
+                .getSuppression()).isNotNull();
+        assertThat(row2
+                .getHidden()
+                .getBaseline()).isNotNull();
+
+        assertThat(ruleType.getResult()
+                .getRows()
+                .getRow()
+                .get(3)
+                .getHidden()).isNull();
     }
 
 }

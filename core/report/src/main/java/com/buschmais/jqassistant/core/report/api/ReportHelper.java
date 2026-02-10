@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.report.api;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -9,10 +10,16 @@ import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.model.*;
+import com.buschmais.jqassistant.core.rule.api.model.Concept;
+import com.buschmais.jqassistant.core.rule.api.model.Constraint;
+import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
+import com.buschmais.jqassistant.core.rule.api.model.Hidden;
+import com.buschmais.jqassistant.core.rule.api.model.Rule;
+import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -23,6 +30,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Provides utility functionality for creating reports.
  */
+@Slf4j
 public final class ReportHelper {
 
     public interface FailAction<E extends Exception> {
@@ -84,23 +92,56 @@ public final class ReportHelper {
             .build();
     }
 
-    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<Hidden> hidden) {
         return Row.builder()
-            .key(getRowKey(rule, columns))
-            .columns(columns)
-            .build();
+                .key(getRowKey(rule, columns))
+                .columns(columns)
+                .hidden(hidden)
+                .build();
     }
 
-    private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+    /**
+     * Creates a row key for the given rule.
+     * Checks whether specific columns have been specified for key calculation ("keyColumns")
+     * and whether these columns actually exist among the result columns. If not, all result columns are used for key calculation.
+     * @param rule
+     *      The rule to create a row key for.
+     * @param columns
+     *      The columns containing the rule result.
+     * @return
+     *      The calculated rowKey.
+     */
+    public static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+        List<String> columnsForKeyCalculation;
+        if (rule.getReport() != null && rule.getReport()
+                .getKeyColumns() != null) {
+            for (String keyColumnName : rule.getReport()
+                    .getKeyColumns()) {
+                if (keyColumnName.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn value is empty.", rule.getId()));
+                }
+                if (!columns.containsKey(keyColumnName)) {
+                    throw new IllegalArgumentException(
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist among the result columns.",
+                                    rule.getId(), keyColumnName));
+                }
+            }
+            columnsForKeyCalculation = rule.getReport()
+                    .getKeyColumns();
+        } else {
+            columnsForKeyCalculation = new ArrayList<>(columns.keySet());
+        }
         StringBuilder id = new StringBuilder(rule.getClass()
-            .getName()).append("|")
-            .append(rule.getId())
-            .append("|");
-        columns.entrySet()
-            .forEach(entry -> id.append(entry.getKey())
-                .append(':')
-                .append(entry.getValue()
-                    .getLabel()));
+                .getName()).append("|")
+                .append(rule.getId())
+                .append("|");
+        for (String columnName : columnsForKeyCalculation) {
+            id.append(columnName)
+                    .append(':')
+                    .append(columns.get(columnName)
+                            .getLabel());
+        }
         return DigestUtils.sha256Hex(id.toString());
     }
 

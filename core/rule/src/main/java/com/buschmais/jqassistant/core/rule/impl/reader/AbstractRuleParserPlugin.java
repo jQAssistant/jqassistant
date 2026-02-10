@@ -55,6 +55,7 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String REPORT = "report";
     protected static final String REPORT_TYPE = "type";
     protected static final String PRIMARY_COLUMN = "primaryColumn";
+    protected static final String KEY_COLUMNS = "keyColumns";
     protected static final String REPORT_PROPERTIES = "properties";
     protected static final String VERIFY = "verify";
     protected static final String SOURCE = "source";
@@ -65,6 +66,7 @@ public abstract class AbstractRuleParserPlugin implements RuleParserPlugin {
     protected static final String ID = "id";
     protected static final String REF_ID = "refId";
     protected static final String ACTIVATION = "activation";
+    protected static final String ABSTRACT = "abstract";
 
     @Override
     public void parse(RuleSource ruleSource, RuleSetBuilder ruleSetBuilder) throws RuleException {

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.9">
-    <build>
-        <name>Test</name>
-        <timestamp>2025-04-07T01:00:00</timestamp>
-        <properties/>
-    </build>
+<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.10">
+    <context>
+        <build>
+            <name>Test</name>
+            <timestamp>2025-04-07T01:00:00</timestamp>
+            <properties/>
+        </build>
+    </context>
     <group id="group:GroupWithoutDetails" date="13/04/2025"></group>
     <group id="group:GroupWithDescription" date="11/04/2025">
     <description>Just a basic group.</description>

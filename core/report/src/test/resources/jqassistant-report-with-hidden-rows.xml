@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.10">
+    <context>
+        <build>
+            <name>Test of hidden elements due to suppression</name>
+            <timestamp>2026-01-29T08:30:00</timestamp>
+            <properties/>
+        </build>
+    </context>
+    <concept id="concept:ConceptWithHiddenRows">
+        <description>Test with hidden rows.</description>
+        <result>
+            <columns count="2" primary="Type">
+                <column>Type</column>
+                <column>Method</column>
+            </columns>
+            <rows count="5">
+                <row key="77dfe54068ba3a8aecfab88442b0333d1ff3e3426cc99af926b6a0cd0499e029">
+                    <column name="Type">
+                        <value>This row is</value>
+                    </column>
+                    <column name="Method">
+                        <value>suppressed by baseline.</value>
+                    </column>
+                    <hidden>
+                        <baseline/>
+                    </hidden>
+                </row>
+                <row key="ko0s4v37dfa2e3cf7f328a1253e9d61b39c259e8ne6bb96185a7f5747d70b928">
+                    <column name="Type">
+                        <value>This row is</value>
+                    </column>
+                    <column name="Method">
+                        <value>suppressed by suppression.</value>
+                    </column>
+                    <hidden>
+                        <suppression>
+                            <reason>Description for the reason of this suppression.</reason>
+                            <until>2075-02-04</until>
+                        </suppression>
+                    </hidden>
+                </row>
+                <row key="8433h0d4ga77r26jc43jfe8f6eah29cb5d1045fc612a3fh35k344e91c3058">
+                    <column name="Type">
+                        <value>This row is</value>
+                    </column>
+                    <column name="Method">
+                        <value>suppressed by baseline and suppression.</value>
+                    </column>
+                    <hidden>
+                        <baseline/>
+                        <suppression></suppression>
+                    </hidden>
+                </row>
+            </rows>
+        </result>
+        <verificationResult>
+            <success>true</success>
+            <rowCount>5</rowCount>
+        </verificationResult>
+        <status>success</status>
+        <severity level="4">info</severity>
+        <duration>55</duration>
+    </concept>
+    <constraint id="constraint:ConstraintWithHiddenRows">
+        <description>Constraint with hidden rows.</description>
+        <result>
+            <columns count="2" primary="Type">
+                <column>Type</column>
+                <column>Method</column>
+            </columns>
+            <rows count="5">
+                <row key="77dfe54028ba3b8aeceab58442b0333d1ff3e3026cc99af926d6a0ed0399e029">
+                    <column name="Type">
+                        <value>This row is</value>
+                    </column>
+                    <column name="Method">
+                        <value>suppressed by baseline.</value>
+                    </column>
+                    <hidden>
+                        <baseline/>
+                    </hidden>
+                </row>
+                <row key="ko0s4v32dfa2e3cf7f328a1253e9d61b39c259e8ne6bb96825a7f5747d70b928">
+                    <column name="Type">
+                        <value>This row is</value>
+                    </column>
+                    <column name="Method">
+                        <value>suppressed by suppression.</value>
+                    </column>
+                    <hidden>
+                        <suppression>
+                            <reason>Second description for the reason of this suppression.</reason>
+                            <until>2065-11-11</until>
+                        </suppression>
+                    </hidden>
+                </row>
+                <row key="8433h0d4ga74r26jc43jfe8f6eah29cb5d1045fc612a3fh35k344e91c3141">
+                    <column name="Type">
+                        <value>This row is</value>
+                    </column>
+                    <column name="Method">
+                        <value>suppressed by baseline and suppression.</value>
+                    </column>
+                    <hidden>
+                        <baseline/>
+                        <suppression></suppression>
+                    </hidden>
+                </row>
+            </rows>
+        </result>
+        <verificationResult>
+            <success>false</success>
+            <rowCount>1</rowCount>
+        </verificationResult>
+        <status>success</status>
+        <severity level="1">critical</severity>
+        <duration>10</duration>
+    </constraint>
+</jqassistant-report>

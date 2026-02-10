@@ -64,7 +64,8 @@ public class AnalyzerImpl implements Analyzer {
         AnalyzerContext analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store, baselineManager);
         baselineManager.start();
         AnalyzerRuleVisitor visitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportPlugin);
-        RuleSetExecutor<Result.Status> executor = new RuleSetExecutor<>(visitor, configuration.rule());
+        AnalyzerRuleVisitorAuditDecorator visitorDelegate = new AnalyzerRuleVisitorAuditDecorator(visitor, store);
+        RuleSetExecutor<Result.Status> executor = new RuleSetExecutor<>(visitorDelegate, configuration.rule());
         executor.execute(ruleSet, ruleSelection);
         baselineManager.stop();
     }

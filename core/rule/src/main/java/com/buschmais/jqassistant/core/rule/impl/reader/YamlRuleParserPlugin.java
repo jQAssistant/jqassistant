@@ -116,6 +116,9 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
                         .map(Object::toString)
                         .collect(Collectors.toList()));
                 builder.providedConcepts(providedConcepts);
+                if(executableRule.containsKey(ABSTRACT)) {
+                    builder.isAbstract((boolean) executableRule.get(ABSTRACT));
+                }
                 context.getBuilder()
                     .addConcept(builder.build());
             }
@@ -261,6 +264,12 @@ public class YamlRuleParserPlugin extends AbstractRuleParserPlugin {
             if (reportBlock.containsKey(PRIMARY_COLUMN)) {
                 String primaryColumn = (String) reportBlock.get(PRIMARY_COLUMN);
                 reportBuilder.primaryColumn(primaryColumn);
+            }
+
+            if (reportBlock.containsKey(KEY_COLUMNS)) {
+                List<String> keyColumnsList = new ArrayList<>();
+                keyColumnsList = List.of(((String) reportBlock.get(KEY_COLUMNS)).split("\\s*,\\s*"));
+                reportBuilder.keyColumns(keyColumnsList);
             }
 
             if (reportBlock.containsKey(REPORT_PROPERTIES)) {

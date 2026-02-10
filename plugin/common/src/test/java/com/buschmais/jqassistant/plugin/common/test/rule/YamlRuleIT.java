@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.common.test.rule;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -48,7 +49,7 @@ public class YamlRuleIT extends AbstractPluginIT {
                         .rule(executableRule)
                         .severity(severity)
                         .columnNames(singletonList("Property"))
-                        .rows(singletonList(ReportHelper.toRow(executableRule, columns)))
+                        .rows(singletonList(ReportHelper.toRow(executableRule, columns, Optional.empty())))
                         .verificationResult(VerificationResult.builder()
                             .success(true)
                             .rowCount(1)

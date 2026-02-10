@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -137,7 +138,7 @@ public class CSVReportPluginTest extends AbstractReportPluginTest {
                 }
             }));
             columns.put("EscapedString", toColumn("\"'"));
-            Row row = toRow(rule, columns);
+            Row row = toRow(rule, columns, Optional.empty());
             return Result.<T>builder()
                 .rule(rule)
                 .severity(rule.getSeverity())

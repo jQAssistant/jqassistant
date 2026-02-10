@@ -68,7 +68,7 @@ class BaselineManagerTest {
             .build();
 
         baselineManager.start();
-        assertThat(baselineManager.isExisting(executableRule, row)).isFalse();
+        assertThat(baselineManager.isExisting(executableRule, row.getKey(), row.getColumns())).isFalse();
         baselineManager.stop();
 
         verify(baselineRepository, never()).read();
@@ -89,7 +89,7 @@ class BaselineManagerTest {
             .build();
 
         baselineManager.start();
-        assertThat(baselineManager.isExisting(executableRule, row)).isFalse();
+        assertThat(baselineManager.isExisting(executableRule, row.getKey(), row.getColumns())).isFalse();
         baselineManager.stop();
 
         verifyNewBaseline(executableRule, "1");
@@ -110,7 +110,7 @@ class BaselineManagerTest {
             .build();
 
         baselineManager.start();
-        assertThat(baselineManager.isExisting(executableRule, row)).isTrue();
+        assertThat(baselineManager.isExisting(executableRule, row.getKey(), row.getColumns())).isTrue();
         baselineManager.stop();
 
         verify(baselineRepository, never()).write(any(Baseline.class));
@@ -137,8 +137,8 @@ class BaselineManagerTest {
             .read();
 
         baselineManager.start();
-        assertThat(baselineManager.isExisting(executableRule, oldRow)).isTrue();
-        assertThat(baselineManager.isExisting(executableRule, newRow)).isFalse();
+        assertThat(baselineManager.isExisting(executableRule, oldRow.getKey(), oldRow.getColumns())).isTrue();
+        assertThat(baselineManager.isExisting(executableRule, newRow.getKey(), newRow.getColumns())).isFalse();
         baselineManager.stop();
 
         verify(baselineRepository, never()).write(any(Baseline.class));
@@ -159,7 +159,7 @@ class BaselineManagerTest {
             .read();
 
         baselineManager.start();
-        assertThat(baselineManager.isExisting(executableRule, row)).isTrue();
+        assertThat(baselineManager.isExisting(executableRule, row.getKey(), row.getColumns())).isTrue();
         baselineManager.stop();
 
         verifyNewBaseline(executableRule, "1");
@@ -184,7 +184,7 @@ class BaselineManagerTest {
         baselineManager.start();
         assertThat(baselineManager.isExisting(Concept.builder()
             .id("non-matching")
-            .build(), row)).isFalse();
+            .build(), row.getKey(), row.getColumns())).isFalse();
         baselineManager.stop();
 
         verify(baselineRepository).write(baselineArgumentCaptor.capture());
@@ -211,7 +211,7 @@ class BaselineManagerTest {
         baselineManager.start();
         assertThat(baselineManager.isExisting(Constraint.builder()
             .id("non-matching")
-            .build(), row)).isFalse();
+            .build(), row.getKey(), row.getColumns())).isFalse();
         baselineManager.stop();
 
         verify(baselineRepository).write(baselineArgumentCaptor.capture());

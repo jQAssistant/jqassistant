@@ -1,10 +1,10 @@
 "%test-store":
   jqassistant:
     store:
-      uri: "file://${project.build.directory}/test-store"
+      uri: "file:target/test-store"
 "%activeByDefault":
   jqassistant:
     store:
-      uri: "file://${project.build.directory}/active-by-default-store"
+      uri: "file:target/active-by-default-store"
 
 
