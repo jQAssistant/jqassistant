@@ -55,4 +55,9 @@ public interface Embedded {
 
     Optional<String> neo4jVersion();
 
+    String APOC_PROPERTIES = "apoc-properties";
+
+    @Description("Properties to be written to apoc.conf for the embedded Neo4j instance (e.g., apoc.export.file.enabled=true).")
+    Map<String, String> apocProperties();
+
 }

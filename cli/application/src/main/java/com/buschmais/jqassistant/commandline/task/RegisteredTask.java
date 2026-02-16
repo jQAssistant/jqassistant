@@ -97,6 +97,16 @@ public enum RegisteredTask {
     },
 
     /**
+     * Exec.
+     */
+    EXEC {
+        @Override
+        public Task getTask() {
+            return new ExecTask();
+        }
+    },
+
+    /**
      * Report.
      */
     REPORT {

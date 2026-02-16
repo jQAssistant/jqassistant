@@ -1,8 +1,11 @@
 package com.buschmais.jqassistant.core.store.impl;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -72,11 +75,91 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     @Override
     protected void configure(XOUnit.XOUnitBuilder builder) {
+        cleanApocPlugins();
+        configureApoc();
         List<File> plugins = resolveNeo4jPlugins();
         Properties properties = serverFactory.getProperties(this.embedded.connectorEnabled(), this.embedded.listenAddress(), this.embedded.boltPort(),
             this.embedded.neo4jProperties(), plugins);
         builder.properties(properties);
         builder.provider(EmbeddedNeo4jXOProvider.class);
+    }
+
+    /**
+     * Convert the store URI to a File, handling both relative (opaque) and absolute (hierarchical) file URIs.
+     *
+     * @return The store directory as a File, or null if the URI is not a file URI.
+     */
+    private File getStoreDirectory() {
+        String scheme = uri.getScheme();
+        if (!"file".equalsIgnoreCase(scheme)) {
+            return null;
+        }
+        // Handle both relative (opaque) and absolute (hierarchical) file URIs
+        // Relative: file:target/store (opaque, getPath() returns null)
+        // Absolute: file:///path/to/store (hierarchical, getPath() returns the path)
+        if (uri.isOpaque()) {
+            return new File(uri.getSchemeSpecificPart());
+        } else {
+            return new File(uri);
+        }
+    }
+
+    /**
+     * Clean existing APOC jars from the plugins directory to prevent version conflicts.
+     */
+    private void cleanApocPlugins() {
+        if (!embedded.apocEnabled()) {
+            return;
+        }
+        File storeDirectory = getStoreDirectory();
+        if (storeDirectory == null) {
+            return;
+        }
+        File pluginsDirectory = new File(storeDirectory, "plugins");
+        if (pluginsDirectory.exists()) {
+            File[] apocJars = pluginsDirectory.listFiles((dir, name) -> name.startsWith("apoc-") && name.endsWith(".jar"));
+            if (apocJars != null && apocJars.length > 0) {
+                for (File apocJar : apocJars) {
+                    if (apocJar.delete()) {
+                        log.info("Removed existing APOC jar '{}'.", apocJar.getName());
+                    } else {
+                        log.warn("Could not remove existing APOC jar '{}'.", apocJar.getAbsolutePath());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Configure APOC by creating a conf directory and writing apoc.conf if APOC properties are specified.
+     */
+    private void configureApoc() {
+        File storeDirectory = getStoreDirectory();
+        if (storeDirectory == null) {
+            // Only configure APOC for file-based stores
+            return;
+        }
+        File confDirectory = new File(storeDirectory, "conf");
+        if (!confDirectory.exists() && !confDirectory.mkdirs()) {
+            log.warn("Could not create Neo4j conf directory: {}", confDirectory.getAbsolutePath());
+            return;
+        }
+        // Set NEO4J_CONF system property so APOC can find apoc.conf
+        System.setProperty("NEO4J_CONF", confDirectory.getAbsolutePath());
+        log.info("Set NEO4J_CONF to '{}'.", confDirectory.getAbsolutePath());
+
+        Map<String, String> apocProperties = embedded.apocProperties();
+        if (!apocProperties.isEmpty()) {
+            File apocConfFile = new File(confDirectory, "apoc.conf");
+            try (FileWriter writer = new FileWriter(apocConfFile)) {
+                for (Map.Entry<String, String> entry : apocProperties.entrySet()) {
+                    writer.write(entry.getKey() + "=" + entry.getValue() + "\n");
+                }
+                log.info("Created APOC configuration file '{}' with {} properties.", apocConfFile.getAbsolutePath(), apocProperties.size());
+            } catch (IOException e) {
+                log.warn("Could not write APOC configuration file: {}", apocConfFile.getAbsolutePath(), e);
+            }
+        }
     }
 
     private List<File> resolveNeo4jPlugins() {

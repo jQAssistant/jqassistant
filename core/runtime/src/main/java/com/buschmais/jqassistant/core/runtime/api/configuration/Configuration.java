@@ -66,4 +66,11 @@ public interface Configuration {
      * @return The {@link Server} configuration.
      */
     Server server();
+
+    /**
+     * The {@link Exec} configuration.
+     *
+     * @return The {@link Exec} configuration.
+     */
+    Exec exec();
 }
