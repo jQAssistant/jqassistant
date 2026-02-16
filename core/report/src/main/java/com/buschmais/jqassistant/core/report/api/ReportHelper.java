@@ -10,11 +10,7 @@ import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Rule;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
@@ -102,45 +98,48 @@ public final class ReportHelper {
      * Creates a row key for the given rule.
      * Checks whether specific columns have been specified for key calculation ("keyColumns")
      * and whether these columns actually exist among the result columns. If not, all result columns are used for key calculation.
+     *
      * @param rule
-     *      The rule to create a row key for.
+     *     The rule to create a row key for.
      * @param columns
-     *      The columns containing the rule result.
-     * @return
-     *      The calculated rowKey.
+     *     The columns containing the rule result.
+     * @return The calculated rowKey.
      */
-    private static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
-        List<String> columnsForKeyCalculation;
-        if (rule.getReport() != null && rule.getReport()
-                .getKeyColumns() != null) {
-            for (String keyColumnName : rule.getReport()
-                    .getKeyColumns()) {
-                if (keyColumnName.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn value is empty.", rule.getId()));
-                }
-                if (!columns.containsKey(keyColumnName)) {
-                    throw new IllegalArgumentException(
-                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist among the result columns.",
-                                    rule.getId(), keyColumnName));
-                }
-            }
-            columnsForKeyCalculation = rule.getReport()
-                    .getKeyColumns();
-        } else {
-            columnsForKeyCalculation = new ArrayList<>(columns.keySet());
-        }
+    public static String getRowKey(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+        List<String> columnsForKeyCalculation = getKeyColumns(rule, columns);
         StringBuilder id = new StringBuilder(rule.getClass()
-                .getName()).append("|")
-                .append(rule.getId())
-                .append("|");
+            .getName()).append("|")
+            .append(rule.getId())
+            .append("|");
         for (String columnName : columnsForKeyCalculation) {
             id.append(columnName)
-                    .append(':')
-                    .append(columns.get(columnName)
-                            .getLabel());
+                .append(':')
+                .append(columns.get(columnName)
+                    .getLabel());
         }
         return DigestUtils.sha256Hex(id.toString());
+    }
+
+    private static List<String> getKeyColumns(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+        com.buschmais.jqassistant.core.rule.api.model.Report report = rule.getReport();
+        if (report != null) {
+            List<String> keyColumns = report.getKeyColumns();
+            if (!(keyColumns == null || keyColumns.isEmpty())) {
+                for (String keyColumnName : keyColumns) {
+                    if (keyColumnName.isEmpty()) {
+                        throw new IllegalArgumentException(
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn value is empty.", rule.getId()));
+                    }
+                    if (!columns.containsKey(keyColumnName)) {
+                        throw new IllegalArgumentException(
+                            MessageFormat.format("Encountered an error in rule {0}. The given keyColumn {1} does not exist among the result columns.",
+                                rule.getId(), keyColumnName));
+                    }
+                }
+                return keyColumns;
+            }
+        }
+        return new ArrayList<>(columns.keySet());
     }
 
     /**
