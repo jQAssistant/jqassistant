@@ -3,11 +3,15 @@ name: CI
 
 on:
   push:
+    branches:
+      - "master"
+      - "bugfix/*"
     tags-ignore:
       - "*"
   pull_request:
     branches:
-      - master
+      - "master"
+      - "bugfix/*"
   workflow_dispatch: {}
 
 concurrency:
