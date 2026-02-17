@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -18,7 +19,6 @@ import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.Hidden;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.BLOCKER;
+import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
@@ -80,23 +81,40 @@ class AnalyzerContextImplTest {
             .id("id2")
             .build();
 
-        Row row1_1 = analyzerContext.toRow(concept1, MapBuilder.<String, Column<?>>builder()
-            .entry("c1", analyzerContext.toColumn("v1"))
-            .entry("c2", analyzerContext.toColumn("v2"))
-            .build());
-        Row row1_2 = analyzerContext.toRow(concept1, MapBuilder.<String, Column<?>>builder()
-            .entry("c1", analyzerContext.toColumn("v1"))
-            .entry("c2", analyzerContext.toColumn("v3"))
-            .build());
-        Row row2_1 = analyzerContext.toRow(concept2, MapBuilder.<String, Column<?>>builder()
-            .entry("c1", analyzerContext.toColumn("v1"))
-            .entry("c2", analyzerContext.toColumn("v2"))
-            .build());
+        Row row1_1 = analyzerContext.toRow(concept1, Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v2")));
+        Row row1_2 = analyzerContext.toRow(concept1, Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v3")));
+        Row row2_1 = analyzerContext.toRow(concept2, Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v2")));
 
         Set<String> rowKeys = Stream.of(row1_1, row1_2, row2_1)
             .map(Row::getKey)
             .collect(toSet());
         assertThat(rowKeys).hasSize(3);
+    }
+
+    @Test
+    void rowKeysCoversAllColumnsByDefault() {
+        Map<String, Column<?>> columns = Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v2"));
+        Row rowUsingNoKeyColumns = analyzerContext.toRow(Concept.builder()
+            .id("id")
+            .report(com.buschmais.jqassistant.core.rule.api.model.Report.builder()
+                .keyColumns(null)
+                .build())
+            .build(), columns);
+        Row rowUsingEmptyKeyColumns = analyzerContext.toRow(Concept.builder()
+            .id("id")
+            .report(com.buschmais.jqassistant.core.rule.api.model.Report.builder()
+                .keyColumns(emptyList())
+                .build())
+            .build(), columns);
+        Row rowUsingExplicitKeyColumns = analyzerContext.toRow(Concept.builder()
+            .id("id")
+            .report(com.buschmais.jqassistant.core.rule.api.model.Report.builder()
+                .keyColumns(new ArrayList<>(columns.keySet()))
+                .build())
+            .build(), columns);
+
+        assertThat(rowUsingNoKeyColumns.getKey()).isEqualTo(rowUsingExplicitKeyColumns.getKey());
+        assertThat(rowUsingEmptyKeyColumns.getKey()).isEqualTo(rowUsingExplicitKeyColumns.getKey());
     }
 
     @Test
@@ -110,7 +128,7 @@ class AnalyzerContextImplTest {
 
     @Test
     void suppressByPrimaryColumn() {
-        Suppress suppressedValue = createSuppressedValue(empty(), empty(), empty(),CONSTRAINT_ID);
+        Suppress suppressedValue = createSuppressedValue(empty(), empty(), empty(), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
 
         Row row = analyzerContext.toRow(constraint,
@@ -154,7 +172,7 @@ class AnalyzerContextImplTest {
 
     @Test
     void expiredSuppressUntil() {
-        Suppress suppressedValue = createSuppressedValue(empty(), of(INVALID_DATE), empty(),CONSTRAINT_ID);
+        Suppress suppressedValue = createSuppressedValue(empty(), of(INVALID_DATE), empty(), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
             Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")));
