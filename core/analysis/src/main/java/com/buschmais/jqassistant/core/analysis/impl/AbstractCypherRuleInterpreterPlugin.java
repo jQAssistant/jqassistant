@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
@@ -20,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Optional.empty;
 
 /**
  * Abstract base class for {@link RuleInterpreterPlugin}s executing cypher
@@ -46,12 +44,13 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
         Query.Result<Query.Result.CompositeRowObject> compositeRowObjects) throws RuleException {
         List<Row> rows = new LinkedList<>();
         List<String> columnNames = null;
+        Optional<String> primaryColumn = empty();
         for (Query.Result.CompositeRowObject rowObject : compositeRowObjects) {
             if (columnNames == null) {
                 columnNames = unmodifiableList(rowObject.getColumns());
+                primaryColumn = context.getPrimaryColumn(executableRule, columnNames);
             }
-            Row row = getColumns(executableRule, columnNames, rowObject, context);
-                rows.add(row);
+            rows.add(getRow(executableRule, columnNames, primaryColumn, rowObject, context));
         }
         VerificationResult verificationResult = context.verify(executableRule, columnNames, rows);
         Status status = context.getStatus(verificationResult, severity);
@@ -61,17 +60,19 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
             .status(status)
             .severity(severity)
             .columnNames(columnNames)
+            .primaryColumn(primaryColumn)
             .rows(rows)
             .build();
     }
 
-    private Row getColumns(ExecutableRule<?> rule, List<String> columnNames, Query.Result.CompositeRowObject rowObject, AnalyzerContext context) {
+    private Row getRow(ExecutableRule<?> rule, List<String> columnNames, Optional<String> primaryColumn, Query.Result.CompositeRowObject rowObject,
+        AnalyzerContext context) {
         Map<String, Column<?>> columns = new LinkedHashMap<>();
         for (String columnName : columnNames) {
             Object columnValue = rowObject.get(columnName, Object.class);
             columns.put(columnName, context.toColumn(columnValue));
         }
-        return context.toRow(rule, columns);
+        return context.toRow(rule, columns, primaryColumn);
     }
 
 }

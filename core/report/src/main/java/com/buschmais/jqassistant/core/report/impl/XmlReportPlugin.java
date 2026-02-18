@@ -19,6 +19,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.report.api.model.source.ArtifactLocation;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
+import com.buschmais.jqassistant.core.report.api.model.source.SourceLocation;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 
@@ -232,7 +233,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 throw new ReportException("Cannot write report for unsupported rule " + rule);
             }
             final List<String> columnNames = result.getColumnNames();
-            final String primaryColumn = getPrimaryColumn(rule, columnNames);
+            final Optional<String> primaryColumn = result.getPrimaryColumn();
             xml(() -> {
                 xmlStreamWriter.writeStartElement(elementName);
                 xmlStreamWriter.writeAttribute("id", rule.getId());
@@ -259,12 +260,14 @@ public class XmlReportPlugin implements ReportPlugin {
         xmlStreamWriter.writeEndElement(); // verificationResult
     }
 
-    private void writeResult(List<String> columnNames, String primaryColumn) throws XMLStreamException {
+    private void writeResult(List<String> columnNames, Optional<String> primaryColumn) throws XMLStreamException {
         if (!result.isEmpty()) {
             xmlStreamWriter.writeStartElement("result");
             xmlStreamWriter.writeStartElement("columns");
             xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
-            xmlStreamWriter.writeAttribute("primary", primaryColumn);
+            if (primaryColumn.isPresent()) {
+                xmlStreamWriter.writeAttribute("primary", primaryColumn.get());
+            }
             for (String column : columnNames) {
                 xmlStreamWriter.writeStartElement("column");
                 xmlStreamWriter.writeCharacters(column);
@@ -281,7 +284,7 @@ public class XmlReportPlugin implements ReportPlugin {
                     xmlStreamWriter.writeAttribute("key", row.getKey());
                     writeHidden(row);
                     for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
-                            .entrySet()) {
+                        .entrySet()) {
                         String columnName = rowEntry.getKey();
                         Column<?> column = rowEntry.getValue();
                         writeColumn(columnName, column);
@@ -326,35 +329,6 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     /**
-     * Determine the primary column for a rule, i.e. the colum used by tools like
-     * SonarQube to attach issues.
-     *
-     * @param rule
-     *     The {@link ExecutableRule}.
-     * @param columnNames
-     *     The column names returned by the executed rule.
-     * @return The name of the primary column.
-     */
-    private String getPrimaryColumn(ExecutableRule<?> rule, List<String> columnNames) {
-        if (columnNames == null || columnNames.isEmpty()) {
-            return null;
-        }
-        String primaryColumn = rule.getReport()
-            .getPrimaryColumn();
-        String firstColumn = columnNames.get(0);
-        if (primaryColumn == null) {
-            // primary column not explicitly specifed by the rule, so take the first column by default.
-            return firstColumn;
-        }
-        if (!columnNames.contains(primaryColumn)) {
-            log.warn("Rule '{}' defines primary column '{}' which is not provided by the result (available columns: {}). Falling back to '{}'.", rule,
-                primaryColumn, columnNames, firstColumn);
-            primaryColumn = firstColumn;
-        }
-        return primaryColumn;
-    }
-
-    /**
      * Write the status of the current result.
      *
      * @throws XMLStreamException
@@ -389,8 +363,7 @@ public class XmlReportPlugin implements ReportPlugin {
                 xmlStreamWriter.writeAttribute("language", elementValue.getLanguage());
                 xmlStreamWriter.writeCharacters(elementValue.name());
                 xmlStreamWriter.writeEndElement(); // element
-                Optional<FileLocation> sourceLocation = elementValue.getSourceProvider()
-                    .getSourceLocation(descriptor);
+                Optional<SourceLocation<?>> sourceLocation = column.getSourceLocation();
                 if (sourceLocation.isPresent()) {
                     xmlStreamWriter.writeStartElement("source");
                     writeSourceLocation(sourceLocation.get());
@@ -402,24 +375,24 @@ public class XmlReportPlugin implements ReportPlugin {
         xmlStreamWriter.writeEndElement(); // column
     }
 
-    private void writeSourceLocation(FileLocation sourceLocation) throws XMLStreamException {
+    private <P extends SourceLocation> void writeSourceLocation(SourceLocation<? extends SourceLocation<?>> sourceLocation) throws XMLStreamException {
         xmlStreamWriter.writeAttribute("fileName", sourceLocation.getFileName());
-        writeOptionalIntegerAttribute("startLine", sourceLocation.getStartLine());
-        writeOptionalIntegerAttribute("endLine", sourceLocation.getEndLine());
-        writeParentLocation(sourceLocation.getParent());
-    }
-
-    private void writeParentLocation(Optional<ArtifactLocation> optionalArtifactLocation) throws XMLStreamException {
-        if (optionalArtifactLocation.isPresent()) {
-            ArtifactLocation artifactLocation = optionalArtifactLocation.get();
-            xmlStreamWriter.writeStartElement("parent");
-            xmlStreamWriter.writeAttribute("fileName", artifactLocation.getFileName());
+        if (sourceLocation instanceof FileLocation) {
+            FileLocation fileLocation = (FileLocation) sourceLocation;
+            writeOptionalIntegerAttribute("startLine", fileLocation.getStartLine());
+            writeOptionalIntegerAttribute("endLine", fileLocation.getEndLine());
+        } else if (sourceLocation instanceof ArtifactLocation) {
+            ArtifactLocation artifactLocation = (ArtifactLocation) sourceLocation;
             writeOptionalStringAttribute("group", artifactLocation.getGroup());
             writeOptionalStringAttribute("name", artifactLocation.getName());
             writeOptionalStringAttribute("type", artifactLocation.getType());
             writeOptionalStringAttribute("version", artifactLocation.getVersion());
             writeOptionalStringAttribute("classifier", artifactLocation.getClassifier());
-            writeParentLocation(artifactLocation.getParent());
+        }
+        Optional<? extends SourceLocation<?>> parentLocation = sourceLocation.getParent();
+        if (parentLocation.isPresent()) {
+            xmlStreamWriter.writeStartElement("parent");
+            writeSourceLocation(parentLocation.get());
             xmlStreamWriter.writeEndElement();
         }
     }
@@ -527,36 +500,34 @@ public class XmlReportPlugin implements ReportPlugin {
 
     private void writeHidden(Row row) throws XMLStreamException {
         Optional<Hidden> hidden = row.getHidden();
-        if (hidden != null && hidden
-                .isPresent()) {
+        if (hidden != null && hidden.isPresent()) {
             xmlStreamWriter.writeStartElement("hidden");
-            Optional<Hidden.Suppression> suppression = hidden
-                    .get()
-                    .getSuppression();
+            Optional<Hidden.Suppression> suppression = hidden.get()
+                .getSuppression();
             if (suppression.isPresent()) {
                 xmlStreamWriter.writeStartElement("suppression");
                 if (StringUtils.isNotEmpty(suppression.get()
-                        .getSuppressReason())) {
+                    .getSuppressReason())) {
                     xmlStreamWriter.writeStartElement("reason");
                     xmlStreamWriter.writeCharacters(suppression.get()
-                            .getSuppressReason());
+                        .getSuppressReason());
                     xmlStreamWriter.writeEndElement();
                 }
                 if (suppression.get()
-                        .getSuppressUntil() != null && StringUtils.isNotEmpty(suppression.get()
-                        .getSuppressUntil()
-                        .toString())) {
+                    .getSuppressUntil() != null && StringUtils.isNotEmpty(suppression.get()
+                    .getSuppressUntil()
+                    .toString())) {
                     xmlStreamWriter.writeStartElement("until");
                     xmlStreamWriter.writeCharacters(suppression.get()
-                            .getSuppressUntil().format(DateTimeFormatter.ISO_LOCAL_DATE));
+                        .getSuppressUntil()
+                        .format(DateTimeFormatter.ISO_LOCAL_DATE));
                     xmlStreamWriter.writeEndElement();
                 }
                 xmlStreamWriter.writeEndElement(); //suppression
             }
-            if (hidden
-                    .get()
-                    .getBaseline()
-                    .isPresent()) {
+            if (hidden.get()
+                .getBaseline()
+                .isPresent()) {
                 xmlStreamWriter.writeEmptyElement("baseline");
             }
             xmlStreamWriter.writeEndElement(); //hidden

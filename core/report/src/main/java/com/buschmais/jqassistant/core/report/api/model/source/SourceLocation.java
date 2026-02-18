@@ -14,13 +14,13 @@ import static lombok.AccessLevel.PROTECTED;
  * Abstract base class for source locations.
  *
  * @param <P>
- *            The parent type.
+ *     The parent type.
  */
 @Getter
 @SuperBuilder
 @RequiredArgsConstructor(access = PROTECTED)
 @ToString
-public abstract class AbstractLocation<P extends AbstractLocation> {
+public abstract class SourceLocation<P extends SourceLocation<?>> {
 
     /**
      * The optional parent containing the file.

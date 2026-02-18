@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @ToString
-public class ArtifactLocation extends AbstractLocation<ArtifactLocation> {
+public class ArtifactLocation extends SourceLocation<ArtifactLocation> {
 
     private Optional<String> group;
 

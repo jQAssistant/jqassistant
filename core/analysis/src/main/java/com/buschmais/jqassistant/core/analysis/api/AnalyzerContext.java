@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.analysis.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -40,18 +41,21 @@ public interface AnalyzerContext {
      *     The value type.
      * @return The {@link Column}.
      */
-    <T> Column toColumn(T value);
+    <T> Column<?> toColumn(T value);
 
     /**
      * Create a result {@link Row} from a map of columns.
      * Checks for suppression and sets the according values.
      *
      * @param rule
+     *     The {@link ExecutableRule}
      * @param columns
      *     The columns.
+     * @param primaryColumn
+     *     The name of the primary column
      * @return The {@link Row}
      */
-    Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns);
+    Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn);
 
     /**
      * Verifies the rows returned by a cypher query for an executable.
@@ -70,5 +74,25 @@ public interface AnalyzerContext {
      */
     <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException;
 
+    /**
+     * Get the status of an executed rule.
+     *
+     * @param verificationResult
+     *     The {@link VerificationResult}.
+     * @param severity
+     *     The {@link Severity}.
+     * @return The {@link com.buschmais.jqassistant.core.report.api.model.Result.Status}.
+     */
     Result.Status getStatus(VerificationResult verificationResult, Severity severity);
+
+    /**
+     * Identify the primary column of an executed rule.
+     *
+     * @param rule
+     *     The rule.
+     * @param columnNames
+     *     The column names from the rule result.
+     * @return The optional primary columns name.
+     */
+    Optional<String> getPrimaryColumn(ExecutableRule<?> rule, List<String> columnNames);
 }

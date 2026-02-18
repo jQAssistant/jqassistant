@@ -15,7 +15,7 @@ import static java.util.Optional.empty;
 @Getter
 @SuperBuilder
 @ToString
-public class FileLocation extends AbstractLocation<ArtifactLocation> {
+public class FileLocation extends SourceLocation<ArtifactLocation> {
 
     @Default
     private final Optional<Integer> startLine = empty();

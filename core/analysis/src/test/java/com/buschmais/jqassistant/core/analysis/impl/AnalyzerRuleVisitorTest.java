@@ -25,6 +25,7 @@ import com.buschmais.xo.api.ResultIterator;
 import com.buschmais.xo.api.XOManager;
 
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +46,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -132,7 +133,7 @@ class AnalyzerRuleVisitorTest {
         ruleInterpreterPlugins.put("cypher", languagePlugins);
 
         doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1), Optional.empty())).when(analyzerContext)
-            .toRow(any(), anyMap());
+            .toRow(any(), anyMap(), any());
         doAnswer(invocation -> ReportHelper.toColumn(invocation.getArgument(0))).when(analyzerContext)
             .toColumn(any());
 
@@ -157,13 +158,13 @@ class AnalyzerRuleVisitorTest {
             Map<String, Column<?>> columns = i.getArgument(1);
             return toRow(rule, columns, Optional.empty());
         }).when(analyzerContext)
-            .toRow(any(ExecutableRule.class), anyMap());
+            .toRow(any(ExecutableRule.class), anyMap(), any());
 
         analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
 
         ArgumentCaptor<Result<Concept>> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
-        verify(analyzerContext).toRow(any(ExecutableRule.class), anyMap());
+        verify(analyzerContext).toRow(any(ExecutableRule.class), anyMap(), any());
         Result<Concept> capturedResult = resultCaptor.getValue();
         assertThat(capturedResult.getColumnNames()).as("The reported column names must match the given column names.")
             .isEqualTo(columnNames);

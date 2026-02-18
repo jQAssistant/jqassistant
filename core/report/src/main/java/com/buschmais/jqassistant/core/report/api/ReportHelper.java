@@ -9,13 +9,9 @@ import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.source.SourceLocation;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportPlugin;
-import com.buschmais.jqassistant.core.rule.api.model.Concept;
-import com.buschmais.jqassistant.core.rule.api.model.Constraint;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Hidden;
-import com.buschmais.jqassistant.core.rule.api.model.Rule;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.xo.api.CompositeObject;
 import com.buschmais.xo.neo4j.api.model.Neo4jPropertyContainer;
 
@@ -25,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -89,15 +86,30 @@ public final class ReportHelper {
         return Column.<T>builder()
             .value(value)
             .label(getLabel(value))
+            .sourceLocation(getSourceLocation(value))
             .build();
+    }
+
+    private static <T> Optional<SourceLocation<?>> getSourceLocation(T value) {
+        if (value instanceof CompositeObject) {
+            CompositeObject descriptor = (CompositeObject) value;
+            Optional<LanguageElement> languageElement = LanguageHelper.getLanguageElement(descriptor);
+            if (languageElement.isPresent()) {
+                LanguageElement elementValue = languageElement.get();
+                return elementValue.getSourceProvider()
+                    .getSourceLocation(descriptor)
+                    .map(fileLocation -> fileLocation);
+            }
+        }
+        return empty();
     }
 
     public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<Hidden> hidden) {
         return Row.builder()
-                .key(getRowKey(rule, columns))
-                .columns(columns)
-                .hidden(hidden)
-                .build();
+            .key(getRowKey(rule, columns))
+            .columns(columns)
+            .hidden(hidden)
+            .build();
     }
 
     /**

@@ -26,6 +26,7 @@ import static com.buschmais.jqassistant.core.report.api.ReportContext.ReportType
 import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
 import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static java.util.Collections.emptyMap;
+import static java.util.Optional.of;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -78,7 +79,7 @@ public final class XmlReportTestHelper {
             .executable(new CypherExecutable("match..."))
             .verification(ROW_COUNT_VERIFICATION)
             .report(Report.builder()
-                .primaryColumn("c2")
+                .primaryColumn(C2)
                 .build())
             .build();
         Map<String, Severity> concepts = new HashMap<>();
@@ -101,6 +102,7 @@ public final class XmlReportTestHelper {
             .status(Result.Status.SUCCESS)
             .severity(Severity.CRITICAL)
             .columnNames(Arrays.asList(C1, C2))
+            .primaryColumn(of(C2))
             .rows(rows)
             .build();
         xmlReportPlugin.setResult(result);
@@ -122,7 +124,7 @@ public final class XmlReportTestHelper {
             .executable(new CypherExecutable("match..."))
             .verification(ROW_COUNT_VERIFICATION)
             .report(Report.builder()
-                .primaryColumn("c1")
+                .primaryColumn(C1)
                 .build())
             .build();
         Map<String, Severity> concepts = new HashMap<>();
@@ -137,7 +139,7 @@ public final class XmlReportTestHelper {
         List<Row> rows = new ArrayList<>();
         rows.add(Row.builder()
             .key("0")
-            .columns(Map.of("C1", Column.builder()
+            .columns(Map.of(C1, Column.builder()
                 .value(value)
                 .label(value)
                 .build()))
@@ -151,6 +153,7 @@ public final class XmlReportTestHelper {
             .status(Result.Status.SUCCESS)
             .severity(Severity.CRITICAL)
             .columnNames(Arrays.asList(C1, C2))
+            .primaryColumn(of(C1))
             .rows(rows)
             .build();
         xmlReportPlugin.setResult(result);
@@ -199,6 +202,7 @@ public final class XmlReportTestHelper {
             .status(Result.Status.FAILURE)
             .severity(Severity.CRITICAL)
             .columnNames(Arrays.asList(C1, C2))
+            .primaryColumn(of(C1))
             .rows(rows)
             .build();
         xmlReportPlugin.setResult(result);
@@ -213,41 +217,43 @@ public final class XmlReportTestHelper {
         xmlReportPlugin.begin();
 
         Constraint keyColumConstraint = Constraint.builder()
-                .id("my:Constraint")
-                .report(Report.builder().keyColumns(List.of(C1))
-                        .build())
-                .build();
+            .id("my:Constraint")
+            .report(Report.builder()
+                .keyColumns(List.of(C1))
+                .build())
+            .build();
         Constraint normalConstraint1 = Constraint.builder()
-                .id("my:Constraint")
-                .report(Report.builder()
-                        .build())
-                .build();
+            .id("my:Constraint")
+            .report(Report.builder()
+                .build())
+            .build();
         Constraint normalConstraint2 = Constraint.builder()
-                .id("my:Constraint")
-                .report(Report.builder()
-                        .build())
-                .build();
+            .id("my:Constraint")
+            .report(Report.builder()
+                .build())
+            .build();
 
         List<Constraint> allConstraints = new ArrayList<>();
         allConstraints.add(keyColumConstraint);
         allConstraints.add(normalConstraint1);
         allConstraints.add(normalConstraint2);
 
-        for(Constraint constraint : allConstraints){
+        for (Constraint constraint : allConstraints) {
             xmlReportPlugin.beginConstraint(constraint);
             List<Row> rows = new ArrayList<>();
             rows.add(createRow(constraint));
             Result<Constraint> result = Result.<Constraint>builder()
-                    .rule(constraint)
-                    .verificationResult(VerificationResult.builder()
-                            .success(false)
-                            .rowCount(rows.size())
-                            .build())
-                    .status(Result.Status.FAILURE)
-                    .severity(Severity.CRITICAL)
-                    .columnNames(Arrays.asList(C1, C2))
-                    .rows(rows)
-                    .build();
+                .rule(constraint)
+                .verificationResult(VerificationResult.builder()
+                    .success(false)
+                    .rowCount(rows.size())
+                    .build())
+                .status(Result.Status.FAILURE)
+                .severity(Severity.CRITICAL)
+                .columnNames(Arrays.asList(C1, C2))
+                .primaryColumn(of(C1))
+                .rows(rows)
+                .build();
             xmlReportPlugin.setResult(result);
             xmlReportPlugin.endConstraint();
         }
@@ -259,10 +265,11 @@ public final class XmlReportTestHelper {
         XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
         xmlReportPlugin.begin();
         Constraint constraint = Constraint.builder()
-                .id("my:Constraint")
-                .report(Report.builder().keyColumns(List.of("c5"))
-                        .build())
-                .build();
+            .id("my:Constraint")
+            .report(Report.builder()
+                .keyColumns(List.of("c5"))
+                .build())
+            .build();
 
         xmlReportPlugin.beginConstraint(constraint);
         createRow(constraint);
@@ -292,80 +299,81 @@ public final class XmlReportTestHelper {
         xmlReportPlugin.begin();
 
         Constraint constraint = Constraint.builder()
-                .id("my:Constraint")
-                .description("This constraint contains hidden rows.")
-                .severity(Severity.MAJOR)
-                .executable(new CypherExecutable("match..."))
-                .verification(ROW_COUNT_VERIFICATION)
-                .report(Report.builder()
-                        .primaryColumn("c1")
-                        .build())
-                .build();
+            .id("my:Constraint")
+            .description("This constraint contains hidden rows.")
+            .severity(Severity.MAJOR)
+            .executable(new CypherExecutable("match..."))
+            .verification(ROW_COUNT_VERIFICATION)
+            .report(Report.builder()
+                .primaryColumn(C1)
+                .build())
+            .build();
 
         xmlReportPlugin.beginConstraint(constraint);
         List<Row> rows = new ArrayList<>();
         Hidden hiddenBySuppression = Hidden.builder()
-                .build();
+            .build();
         Hidden hiddenByBaseline = Hidden.builder()
-                .build();
+            .build();
         Hidden.Suppression suppression = Hidden.Suppression.builder()
-                .build();
+            .build();
         suppression.setSuppressReason("Reason for suppressing");
         suppression.setSuppressUntil(LocalDate.of(2067, 3, 15));
-        hiddenBySuppression.setSuppression(Optional.of(suppression));
+        hiddenBySuppression.setSuppression(of(suppression));
 
         Hidden.Baseline baseline = Hidden.Baseline.builder()
-                .build();
-        hiddenByBaseline.setBaseline(Optional.of(baseline));
+            .build();
+        hiddenByBaseline.setBaseline(of(baseline));
         Hidden bothSuppressionTypes = Hidden.builder()
-                .build();
-        bothSuppressionTypes.setBaseline(Optional.of(baseline));
-        bothSuppressionTypes.setSuppression(Optional.of(suppression));
+            .build();
+        bothSuppressionTypes.setBaseline(of(baseline));
+        bothSuppressionTypes.setSuppression(of(suppression));
 
         rows.add(Row.builder()
-                .key("0")
-                .columns(Map.of("c1", Column.builder()
-                        .value("suppression")
-                        .label("suppression")
-                        .build()))
-                .hidden(Optional.of(hiddenBySuppression))
-                .build());
+            .key("0")
+            .columns(Map.of(C1, Column.builder()
+                .value("suppression")
+                .label("suppression")
+                .build()))
+            .hidden(of(hiddenBySuppression))
+            .build());
         rows.add(Row.builder()
-                .key("1")
-                .columns(Map.of("c1", Column.builder()
-                        .value("baseline")
-                        .label("baseline")
-                        .build()))
-                .hidden(Optional.of(hiddenByBaseline))
-                .build());
+            .key("1")
+            .columns(Map.of(C1, Column.builder()
+                .value("baseline")
+                .label("baseline")
+                .build()))
+            .hidden(of(hiddenByBaseline))
+            .build());
         rows.add(Row.builder()
-                .key("2")
-                .columns(Map.of("c1", Column.builder()
-                        .value("bothSuppressionTypes")
-                        .label("bothSuppressionTypes")
-                        .build()))
-                .hidden(Optional.of(bothSuppressionTypes))
-                .build());
+            .key("2")
+            .columns(Map.of(C1, Column.builder()
+                .value("bothSuppressionTypes")
+                .label("bothSuppressionTypes")
+                .build()))
+            .hidden(of(bothSuppressionTypes))
+            .build());
         rows.add(Row.builder()
-                .key("3")
-                .columns(Map.of("c1", Column.builder()
-                        .value("nothing")
-                        .label("nothing")
-                        .build()))
-                        .hidden(Optional.empty())
-                .build());
+            .key("3")
+            .columns(Map.of(C1, Column.builder()
+                .value("nothing")
+                .label("nothing")
+                .build()))
+            .hidden(Optional.empty())
+            .build());
 
         Result<Constraint> result = Result.<Constraint>builder()
-                .rule(constraint)
-                .verificationResult(VerificationResult.builder()
-                        .success(true)
-                        .rowCount(rows.size())
-                        .build())
-                .status(Result.Status.SUCCESS)
-                .severity(Severity.CRITICAL)
-                .columnNames(Arrays.asList(C1, C2))
-                .rows(rows)
-                .build();
+            .rule(constraint)
+            .verificationResult(VerificationResult.builder()
+                .success(true)
+                .rowCount(rows.size())
+                .build())
+            .status(Result.Status.SUCCESS)
+            .severity(Severity.CRITICAL)
+            .columnNames(Arrays.asList(C1, C2))
+            .primaryColumn(of(C1))
+            .rows(rows)
+            .build();
 
         xmlReportPlugin.setResult(result);
         xmlReportPlugin.endConstraint();
