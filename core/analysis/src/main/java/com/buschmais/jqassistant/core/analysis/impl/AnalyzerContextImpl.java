@@ -11,11 +11,7 @@ import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.configuration.Analyze;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.model.*;
-import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.jqassistant.core.rule.api.model.Hidden;
-import com.buschmais.jqassistant.core.rule.api.model.RuleException;
-import com.buschmais.jqassistant.core.rule.api.model.Severity;
-import com.buschmais.jqassistant.core.rule.api.model.Verification;
+import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -23,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
+import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Stream.of;
 
@@ -75,14 +72,14 @@ class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+    public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn) {
         if (rule.getReport() != null) {
             Hidden hidden = Hidden.builder()
-                    .build();
+                .build();
             String rowKey = ReportHelper.getRowKey(rule, columns);
             if (baselineManager.isExisting(rule, rowKey, columns)) {
                 hidden.setBaseline(Optional.of(Hidden.Baseline.builder()
-                        .build()));
+                    .build()));
             }
             for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
                 String columnName = entry.getKey();
@@ -91,19 +88,15 @@ class AnalyzerContextImpl implements AnalyzerContext {
                 if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
                     Suppress suppress = (Suppress) columnValue;
                     String suppressColumn = suppress.getSuppressColumn();
-                    String primaryColumn = rule.getReport()
-                            .getPrimaryColumn();
-                    if (primaryColumn == null) {
-                        primaryColumn = columns.keySet().iterator().next();
-                    }
-                    if ((suppressColumn != null && suppressColumn.equals(columnName)) || primaryColumn.equals(columnName)) {
+                    if ((suppressColumn != null && suppressColumn.equals(columnName)) || (primaryColumn.isPresent() && primaryColumn.get()
+                        .equals(columnName))) {
                         String[] suppressIds = suppress.getSuppressIds();
                         if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
                             for (String suppressId : suppressIds) {
                                 if (rule.getId()
-                                        .equals(suppressId)) {
+                                    .equals(suppressId)) {
                                     Hidden.Suppression suppression = Hidden.Suppression.builder()
-                                            .build();
+                                        .build();
                                     if (StringUtils.isNotEmpty(suppress.getSuppressReason())) {
                                         suppression.setSuppressReason(suppress.getSuppressReason());
                                     }
@@ -117,11 +110,13 @@ class AnalyzerContextImpl implements AnalyzerContext {
                     }
                 }
             }
-            if (hidden.getSuppression().isPresent() || hidden.getBaseline().isPresent()) {
+            if (hidden.getSuppression()
+                .isPresent() || hidden.getBaseline()
+                .isPresent()) {
                 return ReportHelper.toRow(rule, columns, Optional.of(hidden));
             }
         }
-        return ReportHelper.toRow(rule, columns, Optional.empty());
+        return ReportHelper.toRow(rule, columns, empty());
     }
 
     public boolean validateSuppressUntilDate(LocalDate until) {
@@ -146,8 +141,8 @@ class AnalyzerContextImpl implements AnalyzerContext {
                 .getName());
         }
         List<Row> filteredRows = rows.stream()
-                .filter(row -> !row.isHidden())
-                .collect(Collectors.toList());
+            .filter(row -> !row.isHidden())
+            .collect(Collectors.toList());
         return strategy.verify(executable, verification, columnNames, filteredRows);
     }
 
@@ -164,4 +159,35 @@ class AnalyzerContextImpl implements AnalyzerContext {
         }
         return SUCCESS;
     }
+
+    /**
+     * Determine the primary column for a rule, i.e. the colum used by tools like
+     * SonarQube to attach issues.
+     *
+     * @param rule
+     *     The {@link ExecutableRule}.
+     * @param columnNames
+     *     The column names returned by the executed rule.
+     * @return The name of the primary column.
+     */
+    @Override
+    public Optional<String> getPrimaryColumn(ExecutableRule<?> rule, List<String> columnNames) {
+        if (columnNames == null || columnNames.isEmpty()) {
+            return empty();
+        }
+        String primaryColumn = rule.getReport()
+            .getPrimaryColumn();
+        String firstColumn = columnNames.get(0);
+        if (primaryColumn == null) {
+            // primary column not explicitly specifed by the rule, so take the first column by default.
+            return Optional.of(firstColumn);
+        }
+        if (!columnNames.contains(primaryColumn)) {
+            log.warn("Rule '{}' defines primary column '{}' which is not provided by the result (available columns: {}). Falling back to '{}'.", rule,
+                primaryColumn, columnNames, firstColumn);
+            primaryColumn = firstColumn;
+        }
+        return Optional.of(primaryColumn);
+    }
+
 }

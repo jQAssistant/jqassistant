@@ -55,7 +55,7 @@ class CypherRuleInterpreterPluginTest {
         doAnswer(invocation -> ((Transactional.TransactionalSupplier<?, ?>) invocation.getArgument(0)).execute()).when(store)
             .requireTransaction(any(Transactional.TransactionalSupplier.class));
         doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1), Optional.empty())).when(analyzerContext)
-            .toRow(any(), anyMap());
+            .toRow(any(), anyMap(), any());
         doAnswer(invocation -> ReportHelper.toColumn(invocation.getArgument(0))).when(analyzerContext)
             .toColumn(any());
     }
@@ -73,7 +73,7 @@ class CypherRuleInterpreterPluginTest {
         Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
 
         assertThat(result.getRows()).hasSize(2);
-        verify(analyzerContext, times(2)).toRow(eq(constraint), anyMap());
+        verify(analyzerContext, times(2)).toRow(eq(constraint), anyMap(), any());
     }
 
     private Constraint prepareConstraint(Map<String, Object>... resultRows) {

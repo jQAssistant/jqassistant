@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.report.api.model;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.Rule;
@@ -53,30 +54,15 @@ public class Result<T extends ExecutableRule> {
     private final List<String> columnNames;
 
     /**
+     * The primary column;
+     */
+    private final Optional<String> primaryColumn;
+
+    /**
      * The returned rows.
      */
     @Singular
     private final List<Row> rows;
-
-    /**
-     * @deprecated Use provided {@link #builder()}.
-     */
-    @Deprecated(since = "2.6.0")
-    public Result(T rule, Status status, Severity severity, List<String> columnNames, List<Row> rows) {
-        this(rule, VerificationResult.builder()
-            .success(Status.SUCCESS.equals(status))
-            .rowCount(rows.size())
-            .build(), status, severity, columnNames, rows);
-    }
-
-    private Result(T rule, VerificationResult verificationResult, Status status, Severity severity, List<String> columnNames, List<Row> rows) {
-        this.rule = rule;
-        this.verificationResult = verificationResult;
-        this.status = status;
-        this.severity = severity;
-        this.columnNames = columnNames;
-        this.rows = rows;
-    }
 
     public boolean isEmpty() {
         return rows.isEmpty();
