@@ -25,7 +25,6 @@ import com.buschmais.xo.api.ResultIterator;
 import com.buschmais.xo.api.XOManager;
 
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
