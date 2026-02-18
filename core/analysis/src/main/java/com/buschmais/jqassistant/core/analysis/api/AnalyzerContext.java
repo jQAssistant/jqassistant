@@ -13,6 +13,8 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import static java.util.Optional.empty;
+
 /**
  * Provides access to infrastructure for analysis..
  */
@@ -42,6 +44,21 @@ public interface AnalyzerContext {
      * @return The {@link Column}.
      */
     <T> Column<?> toColumn(T value);
+
+    /**
+     * Create a result {@link Row} from a map of columns.
+     * Checks for suppression and sets the according values.
+     *
+     * @param rule
+     *     The {@link ExecutableRule}
+     * @param columns
+     *     The columns.
+     * @return The {@link Row}
+     */
+    @Deprecated
+    default Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
+        return toRow(rule, columns, empty());
+    }
 
     /**
      * Create a result {@link Row} from a map of columns.

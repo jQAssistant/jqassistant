@@ -337,7 +337,16 @@ Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be use
         store.commitTransaction()
         // Return the result
         var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
-        new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
+        verificationResult = context.verify(rule, columnNames, rows);
+        com.buschmais.jqassistant.core.report.api.model.Result.builder()
+          .rule(rule)
+          .verificationResult(verificationResult)
+          .status(status)
+          .severity(severity)
+          .columnNames(columnNames)
+          .primaryColumn(java.util.Optional.of("Type"))
+          .rows(rows)
+          .build();
     </script>
 </constraint>
 ----

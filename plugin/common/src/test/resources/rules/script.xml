@@ -16,7 +16,16 @@
            // return the result
            var status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
            store. commitTransaction()
-           new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
+           verificationResult = context.verify(rule, columnNames, rows);
+           com.buschmais.jqassistant.core.report.api.model.Result.builder()
+             .rule(rule)
+             .verificationResult(verificationResult)
+             .status(status)
+             .severity(severity)
+             .columnNames(columnNames)
+             .primaryColumn(java.util.Optional.of("test"))
+             .rows(rows)
+             .build();
        </script>
     </concept>
 
@@ -34,7 +43,16 @@
             var rows = java.util.Arrays.asList(context.toRow(rule, row));
             var status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
             store.commitTransaction()
-            new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
+            verificationResult = context.verify(rule, columnNames, rows);
+            com.buschmais.jqassistant.core.report.api.model.Result.builder()
+              .rule(rule)
+              .verificationResult(verificationResult)
+              .status(status)
+              .severity(severity)
+              .columnNames(columnNames)
+              .primaryColumn(java.util.Optional.of("test"))
+              .rows(rows)
+              .build();
         </script>
     </constraint>
 
@@ -54,7 +72,16 @@
             // return the result
             def status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
             store.commitTransaction()
-            new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
+            verificationResult = context.verify(rule, columnNames, rows);
+            com.buschmais.jqassistant.core.report.api.model.Result.builder()
+              .rule(rule)
+              .verificationResult(verificationResult)
+              .status(status)
+              .severity(severity)
+              .columnNames(columnNames)
+              .primaryColumn(java.util.Optional.of("test"))
+              .rows(rows)
+              .build();
         </script>
     </concept>
 
@@ -72,7 +99,16 @@
             def rows = java.util.Arrays.asList(context.toRow(rule, row));
             def status = com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
             store.commitTransaction()
-            new com.buschmais.jqassistant.core.report.api.model.Result(rule, status, severity, columnNames, rows);
+            verificationResult = context.verify(rule, columnNames, rows);
+            com.buschmais.jqassistant.core.report.api.model.Result.builder()
+              .rule(rule)
+              .verificationResult(verificationResult)
+              .status(status)
+              .severity(severity)
+              .columnNames(columnNames)
+              .primaryColumn(java.util.Optional.of("test"))
+              .rows(rows)
+              .build();
         </script>
     </constraint>
 
@@ -93,7 +129,16 @@
             # return the result
             status = com.buschmais.jqassistant.core.report.api.model.Result::Status::SUCCESS
             store.commitTransaction
-            com.buschmais.jqassistant.core.report.api.model.Result.new rule,status,severity,columnNames,rows
+            verificationResult = context.verify(rule, columnNames, rows);
+            com.buschmais.jqassistant.core.report.api.model.Result.builder()
+              .rule(rule)
+              .verificationResult(verificationResult)
+              .status(status)
+              .severity(severity)
+              .columnNames(columnNames)
+              .primaryColumn(java.util.Optional.of("test"))
+              .rows(rows)
+              .build();
         </script>
     </concept>
 
@@ -113,7 +158,16 @@
             rows = java.util.Arrays.asList row
             status = com.buschmais.jqassistant.core.report.api.model.Result::Status::FAILURE
             store.commitTransaction
-            com.buschmais.jqassistant.core.report.api.model.Result.new rule,status,severity,columnNames,rows
+            verificationResult = context.verify(rule, columnNames, rows);
+            com.buschmais.jqassistant.core.report.api.model.Result.builder()
+              .rule(rule)
+              .verificationResult(verificationResult)
+              .status(status)
+              .severity(severity)
+              .columnNames(columnNames)
+              .primaryColumn(java.util.Optional.of("test"))
+              .rows(rows)
+              .build();
         </script>
     </constraint>
 

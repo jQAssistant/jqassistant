@@ -49,6 +49,7 @@ public class YamlRuleIT extends AbstractPluginIT {
                         .rule(executableRule)
                         .severity(severity)
                         .columnNames(singletonList("Property"))
+                        .primaryColumn(Optional.of("Property"))
                         .rows(singletonList(ReportHelper.toRow(executableRule, columns, Optional.empty())))
                         .verificationResult(VerificationResult.builder()
                             .success(true)
