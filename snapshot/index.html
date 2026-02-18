@@ -2921,7 +2921,16 @@ If violations are exported to dashboards (e.g. SonarQube, Teamscale) then <code>
         store.commitTransaction()
         <span class="comment">// Return the result</span>
         <span class="keyword">var</span> status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
-        <span class="keyword">new</span> com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);</span>
+        verificationResult = context.verify(rule, columnNames, rows);
+        com.buschmais.jqassistant.core.report.api.model.Result.builder()
+          .rule(rule)
+          .verificationResult(verificationResult)
+          .status(status)
+          .severity(severity)
+          .columnNames(columnNames)
+          .primaryColumn(java.util.Optional.of(<span class="string"><span class="delimiter">&quot;</span><span class="content">Type</span><span class="delimiter">&quot;</span></span>))
+          .rows(rows)
+          .build();</span>
     <span class="tag">&lt;/script&gt;</span>
 <span class="tag">&lt;/constraint&gt;</span></code></pre>
 </div>
@@ -12691,7 +12700,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-02-18 07:33:22 UTC
+Last updated 2026-02-18 17:49:47 UTC
 </div>
 </div>
 </body>
