@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.ReportException;
-import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.shared.xml.JAXBHelper;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
@@ -27,6 +27,7 @@ import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,17 +38,50 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
 
     private JAXBHelper<Testsuite> unmarshaller = new JAXBHelper(Testsuite.class);
 
-    private Group testGroup = Group.builder().id("test:Group").description("testGroup").build();
-    private Concept concept = Concept.builder().id("test:Concept").description("testConcept").severity(Severity.MINOR).build();
-    private Concept majorConcept = Concept.builder().id("test:MajorConcept").description("testMajorConcept").severity(Severity.MAJOR).build();
-    private Concept blockerConcept = Concept.builder().id("test:BlockerConcept").description("testBlockerConcept").severity(Severity.BLOCKER).build();
-    private Concept criticalConcept = Concept.builder().id("test:CriticalConcept").description("testCriticalConcept").severity(Severity.CRITICAL).build();
-    private Constraint constraint = Constraint.builder().id("test:Constraint").description("testConstraint").severity(Severity.MINOR).build();
-    private Constraint majorConstraint = Constraint.builder().id("test:MajorConstraint").description("testMajorConstraint").severity(Severity.MAJOR).build();
-    private Constraint blockerConstraint = Constraint.builder().id("test:BlockerConstraint").description("testBlockerConstraint").severity(Severity.BLOCKER)
-            .build();
-    private Constraint criticalConstraint = Constraint.builder().id("test:CriticalConstraint").description("testCriticalConstraint").severity(Severity.CRITICAL)
-            .build();
+    private Group testGroup = Group.builder()
+        .id("test:Group")
+        .description("testGroup")
+        .build();
+    private Concept concept = Concept.builder()
+        .id("test:Concept")
+        .description("testConcept")
+        .severity(Severity.MINOR)
+        .build();
+    private Concept majorConcept = Concept.builder()
+        .id("test:MajorConcept")
+        .description("testMajorConcept")
+        .severity(Severity.MAJOR)
+        .build();
+    private Concept blockerConcept = Concept.builder()
+        .id("test:BlockerConcept")
+        .description("testBlockerConcept")
+        .severity(Severity.BLOCKER)
+        .build();
+    private Concept criticalConcept = Concept.builder()
+        .id("test:CriticalConcept")
+        .description("testCriticalConcept")
+        .severity(Severity.CRITICAL)
+        .build();
+    private Constraint constraint = Constraint.builder()
+        .id("test:Constraint")
+        .description("testConstraint")
+        .severity(Severity.MINOR)
+        .build();
+    private Constraint majorConstraint = Constraint.builder()
+        .id("test:MajorConstraint")
+        .description("testMajorConstraint")
+        .severity(Severity.MAJOR)
+        .build();
+    private Constraint blockerConstraint = Constraint.builder()
+        .id("test:BlockerConstraint")
+        .description("testBlockerConstraint")
+        .severity(Severity.BLOCKER)
+        .build();
+    private Constraint criticalConstraint = Constraint.builder()
+        .id("test:CriticalConstraint")
+        .description("testCriticalConstraint")
+        .severity(Severity.CRITICAL)
+        .build();
 
     public JUnitReportPluginTest() {
         super(new JUnitReportPlugin());
@@ -96,14 +130,17 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
     }
 
     private Map<String, Testcase> getTestCases(Testsuite rootTestSuite) {
-        return rootTestSuite.getTestcase().stream().collect(toMap(testCase -> testCase.getName(), testCase -> testCase));
+        return rootTestSuite.getTestcase()
+            .stream()
+            .collect(toMap(testCase -> testCase.getName(), testCase -> testCase));
     }
 
     private void verifyTestSuite(Testsuite testSuite, int expectedTests, int expectedFailures, int expectedErrors) {
         assertThat(testSuite.getTests()).isEqualTo(Integer.toString(expectedTests));
         assertThat(testSuite.getFailures()).isEqualTo(Integer.toString(expectedFailures));
         assertThat(testSuite.getErrors()).isEqualTo(Integer.toString(expectedErrors));
-        assertThat(testSuite.getTestcase().size()).isEqualTo(expectedTests);
+        assertThat(testSuite.getTestcase()
+            .size()).isEqualTo(expectedTests);
         assertThat(Double.valueOf(testSuite.getTime())).isGreaterThanOrEqualTo(0.0);
     }
 
@@ -115,15 +152,18 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
 
     private void verifyTestCaseSuccess(Testcase testCase, String expectedClassName) {
         verifyTestCase(testCase, expectedClassName);
-        assertThat(testCase.getFailure().size()).isEqualTo(0);
-        assertThat(testCase.getError().size()).isEqualTo(0);
+        assertThat(testCase.getFailure()
+            .size()).isEqualTo(0);
+        assertThat(testCase.getError()
+            .size()).isEqualTo(0);
     }
 
     private void verifyTestCaseFailure(Testcase testCase, String expectedClassName, String expectedMessage) {
         verifyTestCase(testCase, expectedClassName);
         List<Failure> failures = testCase.getFailure();
         assertThat(failures.size()).isEqualTo(1);
-        assertThat(testCase.getError().size()).isEqualTo(0);
+        assertThat(testCase.getError()
+            .size()).isEqualTo(0);
         Failure failure = failures.get(0);
         assertThat(failure.getMessage()).isEqualTo(expectedMessage);
         assertThat(failure.getContent()).isEqualTo(EXPECTED_CONTENT);
@@ -131,9 +171,12 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
 
     private void verifyTestCaseError(Testcase testCase, String expectedClassName, String expectedMessage) {
         verifyTestCase(testCase, expectedClassName);
-        assertThat(testCase.getFailure().size()).isEqualTo(0);
-        assertThat(testCase.getError().size()).isEqualTo(1);
-        Error error = testCase.getError().get(0);
+        assertThat(testCase.getFailure()
+            .size()).isEqualTo(0);
+        assertThat(testCase.getError()
+            .size()).isEqualTo(1);
+        Error error = testCase.getError()
+            .get(0);
         assertThat(error.getMessage()).isEqualTo(expectedMessage);
         assertThat(error.getContent()).isEqualTo(EXPECTED_CONTENT);
     }
@@ -146,16 +189,18 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
 
     @Override
     protected <T extends ExecutableRule<?>> Result<T> getResult(T rule, Result.Status status) {
-        Map<String, Column<?>> columns1 = new HashMap<>();
-        columns1.put("c", toColumn("foo"));
-        Map<String, Column<?>> columns2 = new HashMap<>();
-        columns2.put("c", toColumn("bar"));
+        Row r1 = toRow(rule, Map.of("c", toColumn("foo")), Optional.empty());
+        Row r2 = toRow(rule, Map.of("c", toColumn("bar")), Optional.empty());
+        Row r3 = toRow(rule, Map.of("c", toColumn("woo")), of(Hidden.builder()
+            .baseline(of(Hidden.Baseline.builder()
+                .build()))
+            .build()));
         return Result.<T>builder()
             .rule(rule)
             .severity(rule.getSeverity())
             .status(status)
             .columnNames(asList("c"))
-            .rows(asList(toRow(rule, columns1, Optional.empty()), toRow(rule, columns2, Optional.empty())))
+            .rows(asList(r1, r2, r3))
             .build();
     }
 

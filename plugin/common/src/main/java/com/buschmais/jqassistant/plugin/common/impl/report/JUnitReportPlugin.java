@@ -150,15 +150,18 @@ public class JUnitReportPlugin implements ReportPlugin {
             if (Result.Status.FAILURE.equals(result.getStatus())) {
                 StringBuilder sb = new StringBuilder();
                 for (Row row : rows) {
-                    Map<String, Column<?>> columns = row.getColumns();
-                    if (sb.length() > 0) {
-                        sb.append("---\n");
-                    }
-                    for (Map.Entry<String, Column<?>> columnEntry : columns.entrySet()) {
-                        sb.append(columnEntry.getKey());
-                        sb.append(" = ");
-                        sb.append(columnEntry.getValue().getLabel());
-                        sb.append('\n');
+                    if (!row.isHidden()) {
+                        Map<String, Column<?>> columns = row.getColumns();
+                        if (sb.length() > 0) {
+                            sb.append("---\n");
+                        }
+                        for (Map.Entry<String, Column<?>> columnEntry : columns.entrySet()) {
+                            sb.append(columnEntry.getKey());
+                            sb.append(" = ");
+                            sb.append(columnEntry.getValue()
+                                .getLabel());
+                            sb.append('\n');
+                        }
                     }
                 }
                 String content = sb.toString();

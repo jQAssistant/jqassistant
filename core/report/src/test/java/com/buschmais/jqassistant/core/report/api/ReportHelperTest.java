@@ -36,6 +36,7 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -206,6 +207,35 @@ class ReportHelperTest {
         inOrder.verify(logger, times(expectedLoggedRowsPerRule))
             .warn(anyString());
         inOrder.verify(logger, times(expectedLoggedRowsPerRule))
+            .error(anyString());
+    }
+
+    @Test
+    void hiddenConstraint() {
+        Row visibleRow = Row.builder()
+            .key("1")
+            .columns(Map.of("C", toColumn("Visible")))
+            .build();
+        Row hiddenRow = Row.builder()
+            .key("2")
+            .columns(Map.of("C", toColumn("Hidden")))
+            .hidden(empty())
+            .build();
+        Result<Constraint> result = mockResult("test:Constraint", Constraint.class, FAILURE, MAJOR, List.of(visibleRow, hiddenRow));
+        Map<String, Result<Constraint>> constraintResults = Map.of("test:minorConstraint", result);
+        when(inMemoryReportWriter.getConstraintResults()).thenReturn(constraintResults);
+
+        int violations = reportHelper.verifyConstraintResults(inMemoryReportWriter);
+
+        assertThat(violations).isEqualTo(1);
+        verifyMessages(errorMessages, ReportHelper.CONSTRAINT_VIOLATION_HEADER, "Constraint: test:Constraint", "Severity: MAJOR", "C=Visible");
+
+        InOrder inOrder = inOrder(logger);
+        inOrder.verify(logger, never())
+            .debug(anyString());
+        inOrder.verify(logger, never())
+            .warn(anyString());
+        inOrder.verify(logger, times(13))
             .error(anyString());
     }
 
