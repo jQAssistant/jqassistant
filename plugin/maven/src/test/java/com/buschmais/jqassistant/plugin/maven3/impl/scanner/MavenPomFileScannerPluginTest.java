@@ -1,20 +1,27 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
 
+import org.apache.maven.model.Model;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 class MavenPomFileScannerPluginTest {
     private static final Answer NOT_MOCKED_ANSWER = new MethodNotMockedAnswer();
@@ -104,6 +111,56 @@ class MavenPomFileScannerPluginTest {
         boolean result = plugin.accepts(fileResource, path, DUMMY_SCOPE);
 
         assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    void scanReturnsResultWhenScannerReturnsDescriptor() throws Exception {
+        MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
+        plugin.initialize();
+
+        FileResource fileResource = mock(FileResource.class);
+        InputStream stream = new ByteArrayInputStream("<project/>".getBytes(StandardCharsets.UTF_8));
+        doReturn(stream).when(fileResource).createStream();
+        doReturn(new File("pom.xml")).when(fileResource).getFile();
+
+        MavenPomXmlDescriptor inputDescriptor = mock(MavenPomXmlDescriptor.class);
+        MavenPomXmlDescriptor scannedDescriptor = mock(MavenPomXmlDescriptor.class);
+
+        Scanner scanner = mock(Scanner.class);
+        ScannerContext context = mock(ScannerContext.class);
+        when(scanner.getContext()).thenReturn(context);
+        when(context.peekOrDefault(eq(PomModelBuilder.class), isNull())).thenReturn(null);
+        when(scanner.scan(any(Model.class), anyString(), any(Scope.class))).thenReturn(scannedDescriptor);
+
+        MavenPomXmlDescriptor result = plugin.scan(fileResource, inputDescriptor, "/pom.xml", DUMMY_SCOPE, scanner);
+
+        assertThat(result).isSameAs(scannedDescriptor);
+        verify(scannedDescriptor).setValid(true);
+        verify(inputDescriptor, never()).setValid(anyBoolean());
+    }
+
+    @Test
+    void scanReturnsInputDescriptorWhenScannerReturnsNull() throws Exception {
+        MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
+        plugin.initialize();
+
+        FileResource fileResource = mock(FileResource.class);
+        InputStream stream = new ByteArrayInputStream("<project/>".getBytes(StandardCharsets.UTF_8));
+        doReturn(stream).when(fileResource).createStream();
+        doReturn(new File("pom.xml")).when(fileResource).getFile();
+
+        MavenPomXmlDescriptor inputDescriptor = mock(MavenPomXmlDescriptor.class);
+
+        Scanner scanner = mock(Scanner.class);
+        ScannerContext context = mock(ScannerContext.class);
+        when(scanner.getContext()).thenReturn(context);
+        when(context.peekOrDefault(eq(PomModelBuilder.class), isNull())).thenReturn(null);
+        when(scanner.scan(any(Model.class), anyString(), any(Scope.class))).thenReturn(null);
+
+        MavenPomXmlDescriptor result = plugin.scan(fileResource, inputDescriptor, "/pom.xml", DUMMY_SCOPE, scanner);
+
+        assertThat(result).isSameAs(inputDescriptor);
+        verify(inputDescriptor).setValid(false);
     }
 
     private static class MethodNotMockedAnswer implements Answer {

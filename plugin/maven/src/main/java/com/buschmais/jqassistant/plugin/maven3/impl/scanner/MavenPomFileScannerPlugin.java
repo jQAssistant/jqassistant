@@ -60,8 +60,13 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
             scanner.getContext().push(MavenPomDescriptor.class, mavenPomXmlDescriptor);
             try {
                 MavenPomXmlDescriptor result = scanner.scan(model, path, scope);
-                result.setValid(true);
-                return result;
+                if (result != null) {
+                    result.setValid(true);
+                    return result;
+                } else {
+                    mavenPomXmlDescriptor.setValid(false);
+                    return mavenPomXmlDescriptor;
+                }
             } finally {
                 scanner.getContext().pop(MavenPomDescriptor.class);
             }
