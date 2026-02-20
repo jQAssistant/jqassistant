@@ -17,9 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Maven4ModelHelperTest {
 
     @Test
-    void maven4NotAvailableOnMaven3() {
-        // When running tests with Maven 3 dependencies, Maven 4 should not be detected
-        assertThat(Maven4ModelHelper.isMaven4Available()).isFalse();
+    void resolveApiDelegateReturnsNullOnMaven3() {
+        // Maven 3 Model has no getDelegate() method
+        Model model = new Model();
+        assertThat(Maven4ModelHelper.resolveApiDelegate(model, 3)).isNull();
     }
 
     @Test

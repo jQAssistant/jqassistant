@@ -18,33 +18,55 @@ import org.slf4j.LoggerFactory;
  * which are only available in the Maven 4 compat model classes (requires Java 17+).
  * Since jQAssistant targets Java 11, this helper uses reflection to access these methods
  * at runtime when running under Maven 4, and gracefully returns null/empty when not available.
+ *
+ * Note: Detection is performed on the actual runtime class of each model instance
+ * (not on the statically-loaded Model.class) because jQAssistant scanner plugins run
+ * in their own classloader where the bundled maven-model dependency may differ from
+ * the Maven runtime version.
+ *
+ * The helper traverses the {@code getDelegate()} chain to reach the Maven 4 API model
+ * object, which may be wrapped by jQAssistant's {@code EffectiveModel} and/or
+ * Maven 4's compat layer.
  */
 final class Maven4ModelHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Maven4ModelHelper.class);
 
-    private static final boolean MAVEN4_AVAILABLE;
-
-    static {
-        boolean available = false;
-        try {
-            Model.class.getMethod("getDelegate");
-            available = true;
-            LOGGER.debug("Maven 4 compat API detected.");
-        } catch (NoSuchMethodException e) {
-            LOGGER.debug("Maven 4 compat API not available, Maven 4.x specific elements will be skipped.");
-        }
-        MAVEN4_AVAILABLE = available;
-    }
-
     private Maven4ModelHelper() {
     }
 
     /**
-     * @return true if the Maven 4 compat API is available at runtime.
+     * Traverse the {@code getDelegate()} chain on a model object to reach the
+     * Maven 4 API model. This handles multiple wrapper layers:
+     * <ol>
+     *   <li>jQAssistant's {@code EffectiveModel.getDelegate()} → Maven 4 compat Model</li>
+     *   <li>Maven 4 compat {@code Model.getDelegate()} → Maven 4 API Model</li>
+     * </ol>
+     *
+     * @param object the starting model object
+     * @param maxDepth maximum number of delegate levels to traverse
+     * @return the deepest delegate object, or null if no {@code getDelegate()} is available
      */
-    static boolean isMaven4Available() {
-        return MAVEN4_AVAILABLE;
+    static Object resolveApiDelegate(Object object, int maxDepth) {
+        Object current = object;
+        for (int i = 0; i < maxDepth; i++) {
+            try {
+                Method method = current.getClass().getMethod("getDelegate");
+                Object delegate = method.invoke(current);
+                if (delegate == null) {
+                    return null;
+                }
+                current = delegate;
+            } catch (NoSuchMethodException e) {
+                // No more delegate levels — current is the deepest
+                break;
+            } catch (Exception e) {
+                LOGGER.debug("Failed to invoke getDelegate() at depth {}.", i, e);
+                return null;
+            }
+        }
+        // If we never called getDelegate(), no Maven 4 API is available
+        return current == object ? null : current;
     }
 
     /**
@@ -54,12 +76,13 @@ final class Maven4ModelHelper {
      * @return the root flag, or null if Maven 4 is not available
      */
     static Boolean isRoot(Model model) {
-        if (!MAVEN4_AVAILABLE) {
+        Object apiModel = resolveApiDelegate(model, 3);
+        if (apiModel == null) {
             return null;
         }
         try {
-            Object delegate = invokeMethod(model, "getDelegate");
-            return (Boolean) invokeMethod(delegate, "isRoot");
+            Object result = invokeMethod(apiModel, "isRoot");
+            return (Boolean) result;
         } catch (Exception e) {
             LOGGER.debug("Failed to get root flag from Maven 4 model.", e);
             return null;
@@ -74,12 +97,12 @@ final class Maven4ModelHelper {
      */
     @SuppressWarnings("unchecked")
     static List<String> getSubprojects(Model model) {
-        if (!MAVEN4_AVAILABLE) {
+        Object apiModel = resolveApiDelegate(model, 3);
+        if (apiModel == null) {
             return Collections.emptyList();
         }
         try {
-            Object delegate = invokeMethod(model, "getDelegate");
-            return (List<String>) invokeMethod(delegate, "getSubprojects");
+            return (List<String>) invokeMethod(apiModel, "getSubprojects");
         } catch (Exception e) {
             LOGGER.debug("Failed to get subprojects from Maven 4 model.", e);
             return Collections.emptyList();
@@ -93,12 +116,12 @@ final class Maven4ModelHelper {
      * @return the condition string, or null if Maven 4 is not available
      */
     static String getCondition(Activation activation) {
-        if (!MAVEN4_AVAILABLE) {
+        Object apiModel = resolveApiDelegate(activation, 3);
+        if (apiModel == null) {
             return null;
         }
         try {
-            Object delegate = invokeMethod(activation, "getDelegate");
-            return (String) invokeMethod(delegate, "getCondition");
+            return (String) invokeMethod(apiModel, "getCondition");
         } catch (Exception e) {
             LOGGER.debug("Failed to get condition from Maven 4 activation.", e);
             return null;
@@ -112,13 +135,13 @@ final class Maven4ModelHelper {
      * @return the priority, or null if Maven 4 is not available
      */
     static Integer getPriority(PluginExecution pluginExecution) {
-        if (!MAVEN4_AVAILABLE) {
+        Object apiModel = resolveApiDelegate(pluginExecution, 3);
+        if (apiModel == null) {
             return null;
         }
         try {
-            // Priority is available directly on the compat PluginExecution in Maven 4
-            Method method = pluginExecution.getClass().getMethod("getPriority");
-            return (Integer) method.invoke(pluginExecution);
+            Method method = apiModel.getClass().getMethod("getPriority");
+            return (Integer) method.invoke(apiModel);
         } catch (Exception e) {
             LOGGER.debug("Failed to get priority from Maven 4 plugin execution.", e);
             return null;
@@ -133,12 +156,12 @@ final class Maven4ModelHelper {
      * @return the list of source objects (API model), or empty list if Maven 4 is not available
      */
     static List<?> getSources(BuildBase build) {
-        if (!MAVEN4_AVAILABLE) {
+        Object apiModel = resolveApiDelegate(build, 3);
+        if (apiModel == null) {
             return Collections.emptyList();
         }
         try {
-            Object delegate = invokeMethod(build, "getDelegate");
-            Object sources = invokeMethod(delegate, "getSources");
+            Object sources = invokeMethod(apiModel, "getSources");
             return sources instanceof List ? (List<?>) sources : Collections.emptyList();
         } catch (Exception e) {
             LOGGER.debug("Failed to get sources from Maven 4 build.", e);
