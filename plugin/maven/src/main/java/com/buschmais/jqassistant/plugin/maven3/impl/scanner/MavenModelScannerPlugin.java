@@ -94,8 +94,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
         if (null != mavenOrganization) {
             MavenOrganizationDescriptor organization = store.create(MavenOrganizationDescriptor.class);
-            organization.setName(mavenOrganization.getName());
-            organization.setUrl(mavenOrganization.getUrl());
+            ofNullable(mavenOrganization.getName()).ifPresent(organization::setName);
+            ofNullable(mavenOrganization.getUrl()).ifPresent(organization::setUrl);
 
             pomDescriptor.setOrganization(organization);
         }
@@ -114,13 +114,12 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     }
 
     private void addCommonParticipantAttributes(MavenProjectParticipantDescriptor participant, Contributor contributor, Store store) {
-        participant.setName(contributor.getName());
-
-        participant.setEmail(contributor.getEmail());
-        participant.setUrl(contributor.getUrl());
-        participant.setOrganization(contributor.getOrganization());
-        participant.setOrganizationUrl(contributor.getOrganizationUrl());
-        participant.setTimezone(contributor.getTimezone());
+        ofNullable(contributor.getName()).ifPresent(participant::setName);
+        ofNullable(contributor.getEmail()).ifPresent(participant::setEmail);
+        ofNullable(contributor.getUrl()).ifPresent(participant::setUrl);
+        ofNullable(contributor.getOrganization()).ifPresent(participant::setOrganization);
+        ofNullable(contributor.getOrganizationUrl()).ifPresent(participant::setOrganizationUrl);
+        ofNullable(contributor.getTimezone()).ifPresent(participant::setTimezone);
 
         if (contributor.getRoles() != null) {
             for (String role : contributor.getRoles()) {
@@ -144,13 +143,13 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     protected MavenPomDescriptor createMavenPomDescriptor(Model model, Scanner scanner) {
         ScannerContext context = scanner.getContext();
         MavenPomDescriptor pomDescriptor = context.peek(MavenPomDescriptor.class);
-        pomDescriptor.setName(model.getName());
-        pomDescriptor.setGroupId(model.getGroupId());
+        ofNullable(model.getName()).ifPresent(pomDescriptor::setName);
+        ofNullable(model.getGroupId()).ifPresent(pomDescriptor::setGroupId);
         pomDescriptor.setArtifactId(model.getArtifactId());
         pomDescriptor.setPackaging(model.getPackaging());
-        pomDescriptor.setVersion(model.getVersion());
-        pomDescriptor.setUrl(model.getUrl());
-        pomDescriptor.setDescription(model.getDescription());
+        ofNullable(model.getVersion()).ifPresent(pomDescriptor::setVersion);
+        ofNullable(model.getUrl()).ifPresent(pomDescriptor::setUrl);
+        ofNullable(model.getDescription()).ifPresent(pomDescriptor::setDescription);
         Coordinates artifactCoordinates = new ModelCoordinates(model);
         MavenArtifactDescriptor artifact = context.peek(ArtifactResolver.class).resolve(artifactCoordinates, context);
         pomDescriptor.getDescribes().add(artifact);
@@ -177,31 +176,31 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         MavenProfileActivationDescriptor profileActivationDescriptor = store.create(MavenProfileActivationDescriptor.class);
         mavenProfileDescriptor.setActivation(profileActivationDescriptor);
 
-        profileActivationDescriptor.setJdk(activation.getJdk());
+        ofNullable(activation.getJdk()).ifPresent(profileActivationDescriptor::setJdk);
         profileActivationDescriptor.setActiveByDefault(activation.isActiveByDefault());
 
         ActivationFile activationFile = activation.getFile();
         if (null != activationFile) {
             MavenActivationFileDescriptor activationFileDescriptor = store.create(MavenActivationFileDescriptor.class);
             profileActivationDescriptor.setActivationFile(activationFileDescriptor);
-            activationFileDescriptor.setExists(activationFile.getExists());
-            activationFileDescriptor.setMissing(activationFile.getMissing());
+            ofNullable(activationFile.getExists()).ifPresent(activationFileDescriptor::setExists);
+            ofNullable(activationFile.getMissing()).ifPresent(activationFileDescriptor::setMissing);
         }
         ActivationOS os = activation.getOs();
         if (null != os) {
             MavenActivationOSDescriptor osDescriptor = store.create(MavenActivationOSDescriptor.class);
             profileActivationDescriptor.setActivationOS(osDescriptor);
-            osDescriptor.setArch(os.getArch());
-            osDescriptor.setFamily(os.getFamily());
-            osDescriptor.setName(os.getName());
-            osDescriptor.setVersion(os.getVersion());
+            ofNullable(os.getArch()).ifPresent(osDescriptor::setArch);
+            ofNullable(os.getFamily()).ifPresent(osDescriptor::setFamily);
+            ofNullable(os.getName()).ifPresent(osDescriptor::setName);
+            ofNullable(os.getVersion()).ifPresent(osDescriptor::setVersion);
         }
         ActivationProperty property = activation.getProperty();
         if (null != property) {
             PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
             profileActivationDescriptor.setProperty(propertyDescriptor);
-            propertyDescriptor.setName(property.getName());
-            propertyDescriptor.setValue(property.getValue());
+            ofNullable(property.getName()).ifPresent(propertyDescriptor::setName);
+            ofNullable(property.getValue()).ifPresent(propertyDescriptor::setValue);
         }
     }
 
@@ -312,10 +311,10 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         List<License> licenses = model.getLicenses();
         for (License license : licenses) {
             MavenLicenseDescriptor licenseDescriptor = store.create(MavenLicenseDescriptor.class);
-            licenseDescriptor.setUrl(license.getUrl());
-            licenseDescriptor.setComments(license.getComments());
-            licenseDescriptor.setName(license.getName());
-            licenseDescriptor.setDistribution(license.getDistribution());
+            ofNullable(license.getUrl()).ifPresent(licenseDescriptor::setUrl);
+            ofNullable(license.getComments()).ifPresent(licenseDescriptor::setComments);
+            ofNullable(license.getName()).ifPresent(licenseDescriptor::setName);
+            ofNullable(license.getDistribution()).ifPresent(licenseDescriptor::setDistribution);
 
             pomDescriptor.getLicenses().add(licenseDescriptor);
         }
@@ -335,7 +334,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         List<Developer> developers = model.getDevelopers();
         for (Developer developer : developers) {
             MavenDeveloperDescriptor developerDescriptor = store.create(MavenDeveloperDescriptor.class);
-            developerDescriptor.setId(developer.getId());
+            ofNullable(developer.getId()).ifPresent(developerDescriptor::setId);
 
             addCommonParticipantAttributes(developerDescriptor, developer, store);
 
@@ -459,7 +458,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         for (PluginExecution pluginExecution : executions) {
             MavenPluginExecutionDescriptor executionDescriptor = store.create(MavenPluginExecutionDescriptor.class);
             executionDescriptor.setId(pluginExecution.getId());
-            executionDescriptor.setPhase(pluginExecution.getPhase());
+            ofNullable(pluginExecution.getPhase()).ifPresent(executionDescriptor::setPhase);
             executionDescriptor.setInherited(pluginExecution.isInherited());
             mavenPluginDescriptor.getExecutions().add(executionDescriptor);
             addExecutionGoals(executionDescriptor, pluginExecution, store);
@@ -519,8 +518,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         for (Repository repo : repositories) {
             MavenRepositoryDescriptor repoDescriptor = MavenRepositoryResolver.resolve(store, repo.getUrl());
 
-            repoDescriptor.setName(repo.getName());
-            repoDescriptor.setId(repo.getId());
+            ofNullable(repo.getName()).ifPresent(repoDescriptor::setName);
+            ofNullable(repo.getId()).ifPresent(repoDescriptor::setId);
             repoDescriptor.setLayout(repo.getLayout() != null ? repo.getLayout() : "default");
 
             WrappedPolicy relPolicy = new WrappedPolicy(repo.getReleases());
@@ -588,7 +587,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         if (children.length == 0) {
             PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
             propertyDescriptor.setName(node.getName());
-            propertyDescriptor.setValue(node.getValue());
+            ofNullable(node.getValue()).ifPresent(propertyDescriptor::setValue);
             return propertyDescriptor;
         }
         ArrayValueDescriptor childDescriptor = store.create(ArrayValueDescriptor.class);
