@@ -117,6 +117,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
+        if (cachedType == null) {
+            return null;
+        }
         cachedType.getTypeDescriptor()
             .setStatic(true);
         cachedType.getTypeDescriptor()
@@ -126,6 +129,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
+        if (cachedType == null) {
+            return null;
+        }
         final FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(cachedType, SignatureHelper.getFieldSignature(name, desc));
         fieldDescriptor.setName(name);
         fieldDescriptor.setVolatile(visitorHelper.hasFlag(access, Opcodes.ACC_VOLATILE));
@@ -158,6 +164,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public org.objectweb.asm.MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
         final String[] exceptions) {
+        if (cachedType == null) {
+            return null;
+        }
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
         MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedType, methodSignature);
         if (isLambda(name, access)) {
@@ -249,6 +258,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitInnerClass(final String name, final String outerName, final String innerName, final int access) {
+        if (cachedType == null) {
+            return;
+        }
         String fullQualifiedName = cachedType.getTypeDescriptor()
             .getFullQualifiedName();
         // innerName always represents the name of the inner class
@@ -268,6 +280,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitOuterClass(final String owner, final String name, final String desc) {
+        if (cachedType == null) {
+            return;
+        }
         String outerTypeName = SignatureHelper.getObjectType(owner);
         TypeCache.CachedType<?> cachedOuterType = visitorHelper.resolveType(outerTypeName, this.cachedType);
         TypeDescriptor innerType = this.cachedType.getTypeDescriptor();
@@ -286,6 +301,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+        if (cachedType == null) {
+            return null;
+        }
         return visitorHelper.addAnnotation(cachedType, cachedType.getTypeDescriptor(), SignatureHelper.getType(desc));
     }
 

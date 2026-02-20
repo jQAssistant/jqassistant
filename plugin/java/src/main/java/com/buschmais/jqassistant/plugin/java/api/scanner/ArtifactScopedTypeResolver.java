@@ -73,8 +73,10 @@ public class ArtifactScopedTypeResolver implements TypeResolver {
             if (typeDescriptor == null) {
                 String requiredFileName = "/" + fullQualifiedName.replace(".", "/") + ".class";
                 typeDescriptor = require(requiredFileName, ClassFileDescriptor.class, context);
-                setTypeProperties(typeDescriptor, fullQualifiedName);
-                artifactTypes.put(fullQualifiedName, typeDescriptor);
+                if (typeDescriptor != null) {
+                    setTypeProperties(typeDescriptor, fullQualifiedName);
+                    artifactTypes.put(fullQualifiedName, typeDescriptor);
+                }
             }
             cachedType = getCachedType(fullQualifiedName, typeDescriptor);
         }
