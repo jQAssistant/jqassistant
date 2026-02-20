@@ -1,0 +1,41 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="default">
+        <includeConcept refId="test:ProjectHasModel"/>
+        <includeConcept refId="test:PomHasRootFlag"/>
+        <includeConcept refId="test:ProfileHasConditionActivation"/>
+    </group>
+
+    <concept id="test:ProjectHasModel" severity="critical">
+        <description>Verify that a POM model exists.</description>
+        <cypher>
+            MATCH
+            (:Maven:Project)-[:HAS_MODEL]->(pom:Maven:Pom:File)
+            RETURN
+            pom
+        </cypher>
+    </concept>
+
+    <concept id="test:PomHasRootFlag" severity="critical">
+        <description>Verify that the POM has the root flag set (Maven 4.1.0).</description>
+        <cypher>
+            MATCH
+            (pom:Maven:Pom)
+            WHERE pom.root = true
+            RETURN
+            pom
+        </cypher>
+    </concept>
+
+    <concept id="test:ProfileHasConditionActivation" severity="critical">
+        <description>Verify that a profile activation with condition exists (Maven 4.1.0).</description>
+        <cypher>
+            MATCH
+            (pom:Maven:Pom)-[:HAS_PROFILE]->(profile:Maven:Profile)-[:HAS_ACTIVATION]->(activation:Maven:ProfileActivation)
+            WHERE activation.condition IS NOT NULL
+            RETURN
+            activation.condition AS condition
+        </cypher>
+    </concept>
+
+</jqa:jqassistant-rules>
