@@ -73,6 +73,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         addOrganization(pomDescriptor, model, store);
         addRepository(of(pomDescriptor), model.getRepositories(), store);
         addScmInformation(pomDescriptor, model.getScm(), store);
+        addSources(pomDescriptor, model.getBuild(), store);
         return pomDescriptor;
     }
 
@@ -150,6 +151,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         ofNullable(model.getVersion()).ifPresent(pomDescriptor::setVersion);
         ofNullable(model.getUrl()).ifPresent(pomDescriptor::setUrl);
         ofNullable(model.getDescription()).ifPresent(pomDescriptor::setDescription);
+        ofNullable(Maven4ModelHelper.isRoot(model)).ifPresent(pomDescriptor::setRoot);
         Coordinates artifactCoordinates = new ModelCoordinates(model);
         MavenArtifactDescriptor artifact = context.peek(ArtifactResolver.class).resolve(artifactCoordinates, context);
         pomDescriptor.getDescribes().add(artifact);
@@ -202,6 +204,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             ofNullable(property.getName()).ifPresent(propertyDescriptor::setName);
             ofNullable(property.getValue()).ifPresent(propertyDescriptor::setValue);
         }
+        ofNullable(Maven4ModelHelper.getCondition(activation)).ifPresent(profileActivationDescriptor::setCondition);
     }
 
     /**
@@ -421,7 +424,29 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             moduleDescriptor.setName(module);
             pomDescriptor.getModules().add(moduleDescriptor);
         }
+    }
 
+    /**
+     * Adds source definitions from Maven 4.1.0 builds.
+     *
+     * @param descriptor
+     *            The descriptor for the current POM or profile.
+     * @param build
+     *            The build information.
+     * @param store
+     *            The database.
+     */
+    private void addSources(BaseProfileDescriptor descriptor, BuildBase build, Store store) {
+        if (build == null) {
+            return;
+        }
+        for (Object source : Maven4ModelHelper.getSources(build)) {
+            MavenSourceDescriptor sourceDescriptor = store.create(MavenSourceDescriptor.class);
+            ofNullable(Maven4ModelHelper.getSourceStringProperty(source, "getGlob")).ifPresent(sourceDescriptor::setGlob);
+            ofNullable(Maven4ModelHelper.getSourceStringProperty(source, "getDirectory")).ifPresent(sourceDescriptor::setDirectory);
+            ofNullable(Maven4ModelHelper.getSourceBooleanProperty(source, "isEnabled")).ifPresent(sourceDescriptor::setEnabled);
+            descriptor.getSources().add(sourceDescriptor);
+        }
     }
 
     /**
@@ -460,6 +485,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             executionDescriptor.setId(pluginExecution.getId());
             ofNullable(pluginExecution.getPhase()).ifPresent(executionDescriptor::setPhase);
             executionDescriptor.setInherited(pluginExecution.isInherited());
+            ofNullable(Maven4ModelHelper.getPriority(pluginExecution)).ifPresent(executionDescriptor::setPriority);
             mavenPluginDescriptor.getExecutions().add(executionDescriptor);
             addExecutionGoals(executionDescriptor, pluginExecution, store);
             addConfiguration(executionDescriptor, (Xpp3Dom) pluginExecution.getConfiguration(), store);
@@ -511,6 +537,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
                     scannerContext);
             addActivation(mavenProfileDescriptor, profile.getActivation(), store);
             addRepository(of(mavenProfileDescriptor), profile.getRepositories(), store);
+            addSources(mavenProfileDescriptor, profile.getBuild(), store);
         }
     }
 

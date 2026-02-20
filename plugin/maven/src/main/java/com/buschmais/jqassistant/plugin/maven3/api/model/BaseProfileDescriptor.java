@@ -50,4 +50,12 @@ public interface BaseProfileDescriptor extends Descriptor {
      */
     @Relation("MANAGES_PLUGIN")
     List<MavenPluginDescriptor> getManagedPlugins();
+
+    /**
+     * Get source definitions (Maven 4.1.0).
+     *
+     * @return The sources.
+     */
+    @Relation("HAS_SOURCE")
+    List<MavenSourceDescriptor> getSources();
 }

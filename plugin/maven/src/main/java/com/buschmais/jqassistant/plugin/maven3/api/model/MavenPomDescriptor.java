@@ -144,4 +144,20 @@ public interface MavenPomDescriptor extends MavenDescriptor, BaseProfileDescript
      *            the description of the POM.
      */
     void setDescription(String description);
+
+    /**
+     * Returns whether this POM is a root project (Maven 4.1.0).
+     *
+     * @return true if this is a root project, null if not set.
+     */
+    @Property("root")
+    Boolean isRoot();
+
+    /**
+     * Sets whether this POM is a root project (Maven 4.1.0).
+     *
+     * @param root
+     *            true if this is a root project.
+     */
+    void setRoot(Boolean root);
 }
