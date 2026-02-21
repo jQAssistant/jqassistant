@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Collections.emptyMap;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -76,6 +77,30 @@ class MavenModelScannerPluginTest {
         doAnswer(a -> a.getArgument(0)).when(store).addDescriptorType(any(MavenPomDescriptor.class), eq(EffectiveDescriptor.class), eq(MavenPomDescriptor.class));
         MavenPomDescriptor mavenPomDescriptor = verifyModel(model);
         verify(store).addDescriptorType(mavenPomDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
+    }
+
+    @Test
+    void modelWithNullFields() {
+        Model model = mock(Model.class);
+        // Only artifactId and packaging are non-null, all other fields return null
+        doReturn("test").when(model).getArtifactId();
+        doReturn("jar").when(model).getPackaging();
+        doReturn(new Properties()).when(model).getProperties();
+
+        MavenPomDescriptor mavenPomDescriptor = mock(MavenPomDescriptor.class);
+        doReturn(mavenPomDescriptor).when(context).peek(MavenPomDescriptor.class);
+        MavenArtifactDescriptor artifactDescriptor = mock(MavenArtifactDescriptor.class);
+        doReturn(artifactDescriptor).when(artifactResolver).resolve(any(Coordinates.class), eq(context));
+
+        plugin.scan(model, "/pom.xml", MavenScope.PROJECT, scanner);
+
+        verify(mavenPomDescriptor).setArtifactId("test");
+        verify(mavenPomDescriptor).setPackaging("jar");
+        verify(mavenPomDescriptor, never()).setName(any());
+        verify(mavenPomDescriptor, never()).setGroupId(any());
+        verify(mavenPomDescriptor, never()).setVersion(any());
+        verify(mavenPomDescriptor, never()).setUrl(any());
+        verify(mavenPomDescriptor, never()).setDescription(any());
     }
 
     private Model stubModel() {
