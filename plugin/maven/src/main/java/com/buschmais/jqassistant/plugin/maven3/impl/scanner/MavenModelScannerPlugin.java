@@ -442,8 +442,13 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         }
         for (Object source : Maven4ModelHelper.getSources(build)) {
             MavenSourceDescriptor sourceDescriptor = store.create(MavenSourceDescriptor.class);
-            ofNullable(Maven4ModelHelper.getSourceStringProperty(source, "getGlob")).ifPresent(sourceDescriptor::setGlob);
+            ofNullable(Maven4ModelHelper.getSourceStringProperty(source, "getScope")).ifPresent(sourceDescriptor::setScope);
+            ofNullable(Maven4ModelHelper.getSourceStringProperty(source, "getLang")).ifPresent(sourceDescriptor::setLang);
+            ofNullable(Maven4ModelHelper.getSourceStringProperty(source, "getModule")).ifPresent(sourceDescriptor::setModule);
             ofNullable(Maven4ModelHelper.getSourceStringProperty(source, "getDirectory")).ifPresent(sourceDescriptor::setDirectory);
+            ofNullable(Maven4ModelHelper.getSourceStringProperty(source, "getTargetVersion")).ifPresent(sourceDescriptor::setTargetVersion);
+            ofNullable(Maven4ModelHelper.getSourceStringProperty(source, "getTargetPath")).ifPresent(sourceDescriptor::setTargetPath);
+            ofNullable(Maven4ModelHelper.getSourceBooleanProperty(source, "isStringFiltering")).ifPresent(sourceDescriptor::setStringFiltering);
             ofNullable(Maven4ModelHelper.getSourceBooleanProperty(source, "isEnabled")).ifPresent(sourceDescriptor::setEnabled);
             descriptor.getSources().add(sourceDescriptor);
         }
