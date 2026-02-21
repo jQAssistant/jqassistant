@@ -351,23 +351,25 @@ public final class ReportHelper {
         List<String> rows = new ArrayList<>();
         if (logResult) {
             for (Row row : result.getRows()) {
-                StringBuilder value = new StringBuilder();
-                for (Map.Entry<String, Column<?>> entry : row.getColumns()
-                    .entrySet()) {
-                    if (value.length() > 0) {
-                        value.append(", ");
+                if (!row.isHidden()) {
+                    StringBuilder value = new StringBuilder();
+                    for (Map.Entry<String, Column<?>> entry : row.getColumns()
+                        .entrySet()) {
+                        if (value.length() > 0) {
+                            value.append(", ");
+                        }
+                        value.append(entry.getKey());
+                        value.append('=');
+                        Column<?> column = entry.getValue();
+                        String stringValue = column.getLabel();
+                        value.append(stringValue);
+                        Object columnValue = column.getValue();
+                        if (columnValue instanceof CompositeObject) {
+                            appendLineNumbers((CompositeObject) columnValue, value);
+                        }
                     }
-                    value.append(entry.getKey());
-                    value.append('=');
-                    Column<?> column = entry.getValue();
-                    String stringValue = column.getLabel();
-                    value.append(stringValue);
-                    Object columnValue = column.getValue();
-                    if (columnValue instanceof CompositeObject) {
-                        appendLineNumbers((CompositeObject) columnValue, value);
-                    }
+                    rows.add(value.toString());
                 }
-                rows.add(value.toString());
             }
         }
         return rows;
