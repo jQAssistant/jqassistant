@@ -90,8 +90,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
                 TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), cachedType)
                     .getTypeDescriptor();
                 classFileDescriptor.setSuperClass(superClassType);
-                for (int i = 0; i < interfaces.length; i++) {
-                    TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(interfaces[i]), cachedType)
+                for (String anInterface : interfaces) {
+                    TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(anInterface), cachedType)
                         .getTypeDescriptor();
                     classFileDescriptor.getInterfaces()
                         .add(interfaceType);
@@ -249,17 +249,16 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitInnerClass(final String name, final String outerName, final String innerName, final int access) {
-        // set relation only if outerName is current class
-        if (outerName != null) {
+        if (outerName != null && cachedType != null) {
+            String innerTypeName = SignatureHelper.getObjectType(name);
+            // resolve inner type against outer cached type to add dependencies
+            TypeDescriptor innerType = visitorHelper.resolveType(innerTypeName, cachedType)
+                .getTypeDescriptor();
             String outerTypeName = SignatureHelper.getObjectType(outerName);
-            String fullQualifiedName = SignatureHelper.getObjectType(name);
-            if (fullQualifiedName.equals(outerTypeName)) {
-                // innerName always represents the name of the inner class
-                String innerTypeName = SignatureHelper.getObjectType(name);
-                TypeDescriptor innerType = visitorHelper.resolveType(innerTypeName, cachedType)
-                    .getTypeDescriptor();
-                cachedType.getTypeDescriptor()
-                    .getDeclaredInnerClasses()
+            ClassFileDescriptor outerTypeDescriptor = cachedType.getTypeDescriptor();
+            // set relation from outer to inner class only if outer type is the currently visited class
+            if (outerTypeName.equals(outerTypeDescriptor.getFullQualifiedName())) {
+                outerTypeDescriptor.getDeclaredInnerClasses()
                     .add(innerType);
             }
         }
