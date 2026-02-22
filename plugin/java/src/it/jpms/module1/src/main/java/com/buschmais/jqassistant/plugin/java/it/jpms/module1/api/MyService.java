@@ -4,4 +4,8 @@ public interface MyService {
 
     void run();
 
+    interface InnerService {
+        void run();
+    }
+
 }

@@ -8,4 +8,5 @@ module java.it.jpms.module1 {
     opens com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl to java.it.jpms.module2;
 
     provides com.buschmais.jqassistant.plugin.java.it.jpms.module1.api.MyService with com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl.MyServiceImpl;
+    provides com.buschmais.jqassistant.plugin.java.it.jpms.module1.api.MyService.InnerService with com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl.MyServiceImpl.InnerServiceImpl;
 }

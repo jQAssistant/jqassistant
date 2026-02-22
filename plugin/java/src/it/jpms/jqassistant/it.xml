@@ -108,6 +108,24 @@
         </verify>
     </concept>
 
+    <concept id="it:Module1ProvidesInnerService">
+        <cypher><![CDATA[
+            MATCH
+              (artifact1:Artifact{name:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(module1:Java:Module{fqn:"java.it.jpms.module1"}),
+              (artifact1)-[:CONTAINS]->(serviceType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.api.MyService$InnerService"}),
+              (artifact1)-[:CONTAINS]->(providerType:Java:Type{fqn:"com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl.MyServiceImpl$InnerServiceImpl"}),
+              (module1)-[:PROVIDES]->(providedService:Java:ProvidedService),
+              (providedService)-[:OF_TYPE]->(serviceType),
+              (providedService)-[:WITH_PROVIDER]->(providerType)
+            RETURN
+              *
+        ]]></cypher>
+        <verify>
+            <rowCount min="1" max="1"/>
+        </verify>
+    </concept>
+
     <concept id="it:Module2UsesService">
         <cypher><![CDATA[
             MATCH

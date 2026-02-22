@@ -7,4 +7,12 @@ public class MyServiceImpl implements MyService {
     public void run() {
     }
 
+    public static class InnerServiceImpl implements MyService.InnerService {
+
+        @Override
+        public void run() {
+        }
+
+    }
+
 }
