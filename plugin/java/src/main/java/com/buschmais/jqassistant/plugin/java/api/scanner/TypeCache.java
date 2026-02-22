@@ -154,5 +154,10 @@ public class TypeCache {
         public int hashCode() {
             return typeDescriptor.hashCode();
         }
+
+        @Override
+        public String toString() {
+            return typeDescriptor.getFullQualifiedName();
+        }
     }
 }
