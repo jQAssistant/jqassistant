@@ -52,6 +52,31 @@
                                 <include>singlemodule/*/pom.xml</include>
                                 <include>yaml/*/pom.xml</include>
                             </pomIncludes>
+                            <pomExcludes>
+                                <!-- Maven 4.1.0 POM test requires Maven 4, run via maven4-IT profile -->
+                                <exclude>singlemodule/maven4-pom/pom.xml</exclude>
+                            </pomExcludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Runs Maven 4.1.0 POM invoker test using a Maven 4 installation.
+                 Usage: mvn verify -Pmaven4-IT -Dmaven4.home=/path/to/maven4 -pl maven
+                 Requires JDK 17+ and Maven 4.0.0-rc-5 or later. -->
+            <id>maven4-IT</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <configuration>
+                            <settingsFile>src/it/settings.xml</settingsFile>
+                            <mavenHome>${maven4.home}</mavenHome>
+                            <pomIncludes>
+                                <include>singlemodule/maven4-pom/pom.xml</include>
+                            </pomIncludes>
                         </configuration>
                     </plugin>
                 </plugins>
