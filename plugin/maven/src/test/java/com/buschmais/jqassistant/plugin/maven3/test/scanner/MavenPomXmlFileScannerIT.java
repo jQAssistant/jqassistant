@@ -368,6 +368,21 @@ class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies that a dependency declared by a pom is resolved to a
+     * {@link MavenDependencyDescriptor} providing {@link MavenExcludesDescriptor}.
+     */
+    @Test
+    void maven4Model() {
+        scanClassPathResource(DefaultScope.NONE, "/maven4/pom.xml");
+        store.beginTransaction();
+        MavenPomXmlDescriptor pomXmlDescriptor = store
+            .executeQuery("MATCH (pom:Maven:Pom:Xml:File) RETURN pom")
+            .getSingleResult().get("pom", MavenPomXmlDescriptor.class);
+        assertThat(pomXmlDescriptor).isNotNull();
+        store.commitTransaction();
+    }
+
+    /**
      * Validates child pom.
      */
     private void validateChildPom() {
