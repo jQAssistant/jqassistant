@@ -13,7 +13,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenRepositoryResolver;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
@@ -153,9 +152,6 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         Coordinates artifactCoordinates = new ModelCoordinates(model);
         MavenArtifactDescriptor artifact = context.peek(ArtifactResolver.class).resolve(artifactCoordinates, context);
         pomDescriptor.getDescribes().add(artifact);
-        if (model instanceof EffectiveModel) {
-            return context.getStore().addDescriptorType(pomDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
-        }
         return pomDescriptor;
     }
 

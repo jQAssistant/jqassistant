@@ -25,7 +25,6 @@ import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescripto
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.DependencyScanner;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.GraphResolver;
@@ -33,7 +32,6 @@ import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.GraphReso
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Model;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -335,15 +333,17 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         FileDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
         projectDescriptor.setModel(mavenPomXmlDescriptor);
         // Effective model
-        MavenPomDescriptor effectiveModelDescriptor = scanner.getContext()
+        MavenPomDescriptor mavenPomDescriptor = scanner.getContext()
             .getStore()
             .create(MavenPomDescriptor.class);
-        Model model = new EffectiveModel(project.getModel());
         scanner.getContext()
-            .push(MavenPomDescriptor.class, effectiveModelDescriptor);
-        scanner.scan(model, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+            .push(MavenPomDescriptor.class, mavenPomDescriptor);
+        scanner.scan(project.getModel(), pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
         scanner.getContext()
             .pop(MavenPomDescriptor.class);
+        MavenPomDescriptor effectiveModelDescriptor = scanner.getContext()
+            .getStore()
+            .addDescriptorType(mavenPomDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
         projectDescriptor.setEffectiveModel(effectiveModelDescriptor);
     }
 
