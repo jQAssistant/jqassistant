@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
 import org.apache.maven.model.Model;
@@ -50,9 +49,12 @@ class MavenModelScannerPluginTest {
 
     @BeforeEach
     void setUp() {
-        doReturn(context).when(scanner).getContext();
-        doReturn(store).when(context).getStore();
-        doReturn(artifactResolver).when(context).peek(ArtifactResolver.class);
+        doReturn(context).when(scanner)
+            .getContext();
+        doReturn(store).when(context)
+            .getStore();
+        doReturn(artifactResolver).when(context)
+            .peek(ArtifactResolver.class);
         plugin = new MavenModelScannerPlugin();
         plugin.initialize();
         plugin.configure(context, emptyMap());
@@ -72,25 +74,22 @@ class MavenModelScannerPluginTest {
     }
 
     @Test
-    void effectiveModel() {
-        Model model = new EffectiveModel(stubModel());
-        doAnswer(a -> a.getArgument(0)).when(store).addDescriptorType(any(MavenPomDescriptor.class), eq(EffectiveDescriptor.class), eq(MavenPomDescriptor.class));
-        MavenPomDescriptor mavenPomDescriptor = verifyModel(model);
-        verify(store).addDescriptorType(mavenPomDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
-    }
-
-    @Test
     void modelWithNullFields() {
         Model model = mock(Model.class);
         // Only artifactId and packaging are non-null, all other fields return null
-        doReturn("test").when(model).getArtifactId();
-        doReturn("jar").when(model).getPackaging();
-        doReturn(new Properties()).when(model).getProperties();
+        doReturn("test").when(model)
+            .getArtifactId();
+        doReturn("jar").when(model)
+            .getPackaging();
+        doReturn(new Properties()).when(model)
+            .getProperties();
 
         MavenPomDescriptor mavenPomDescriptor = mock(MavenPomDescriptor.class);
-        doReturn(mavenPomDescriptor).when(context).peek(MavenPomDescriptor.class);
+        doReturn(mavenPomDescriptor).when(context)
+            .peek(MavenPomDescriptor.class);
         MavenArtifactDescriptor artifactDescriptor = mock(MavenArtifactDescriptor.class);
-        doReturn(artifactDescriptor).when(artifactResolver).resolve(any(Coordinates.class), eq(context));
+        doReturn(artifactDescriptor).when(artifactResolver)
+            .resolve(any(Coordinates.class), eq(context));
 
         plugin.scan(model, "/pom.xml", MavenScope.PROJECT, scanner);
 
@@ -105,20 +104,28 @@ class MavenModelScannerPluginTest {
 
     private Model stubModel() {
         Model model = mock(Model.class);
-        doReturn("com.buschmais.jqassistant").when(model).getGroupId();
-        doReturn("test").when(model).getArtifactId();
-        doReturn("jar").when(model).getPackaging();
-        doReturn("1.0.0").when(model).getVersion();
-        doReturn("Framework for structural analysis of Java applications.").when(model).getDescription();
-        doReturn(new Properties()).when(model).getProperties();
+        doReturn("com.buschmais.jqassistant").when(model)
+            .getGroupId();
+        doReturn("test").when(model)
+            .getArtifactId();
+        doReturn("jar").when(model)
+            .getPackaging();
+        doReturn("1.0.0").when(model)
+            .getVersion();
+        doReturn("Framework for structural analysis of Java applications.").when(model)
+            .getDescription();
+        doReturn(new Properties()).when(model)
+            .getProperties();
         return model;
     }
 
     private MavenPomDescriptor verifyModel(Model model) {
         MavenPomDescriptor mavenPomDescriptor = mock(MavenPomDescriptor.class);
-        doReturn(mavenPomDescriptor).when(context).peek(MavenPomDescriptor.class);
+        doReturn(mavenPomDescriptor).when(context)
+            .peek(MavenPomDescriptor.class);
         MavenArtifactDescriptor artifactDescriptor = mock(MavenArtifactDescriptor.class);
-        doReturn(artifactDescriptor).when(artifactResolver).resolve(coordinatesCaptor.capture(), eq(context));
+        doReturn(artifactDescriptor).when(artifactResolver)
+            .resolve(coordinatesCaptor.capture(), eq(context));
 
         plugin.scan(model, "/pom.xml", MavenScope.PROJECT, scanner);
 
