@@ -84,7 +84,7 @@
                     <version>3.15.2</version>
                     <configuration>
                         <requiredJavaVersion>${java.release}</requiredJavaVersion>
-                        <requiredMavenVersion>${maven.version}</requiredMavenVersion>
+                        <requiredMavenVersion>${maven-api.version}</requiredMavenVersion>
                         <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     </configuration>
                 </plugin>
@@ -245,7 +245,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>${maven.version}</version>
+            <version>${maven-api.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -258,7 +258,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
-            <version>${maven.version}</version>
+            <version>${maven-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -268,7 +268,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>${maven.version}</version>
+            <version>${maven-api.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -280,7 +280,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
-            <version>${maven.version}</version>
+            <version>${maven-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
