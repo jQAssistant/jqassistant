@@ -20,7 +20,6 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactFilter;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.EffectiveModel;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.DependencyScanner;
 
@@ -87,7 +86,7 @@ class MavenProjectScannerPluginTest {
     private DependencyGraphBuilder dependencyGraphBuilder;
 
     @Captor
-    private ArgumentCaptor<EffectiveModel> effectiveModelCaptor;
+    private ArgumentCaptor<Model> effectiveModelCaptor;
 
     @Captor
     private ArgumentCaptor<ArtifactFilter> artifactFilterCaptor;
@@ -166,13 +165,15 @@ class MavenProjectScannerPluginTest {
         when(scanner.scan(pomXml, pomXml.getAbsolutePath(), MavenScope.PROJECT)).thenReturn(pomXmlDescriptor);
 
         // Effective effective model
-        MavenPomDescriptor effectiveModelDescriptor = mock(MavenPomDescriptor.class);
-        doReturn(effectiveModelDescriptor).when(store)
+        MavenPomDescriptor modelDescriptor = mock(MavenPomDescriptor.class);
+        doReturn(modelDescriptor).when(store)
             .create(MavenPomDescriptor.class);
         Model effectiveModel = mock(Model.class);
         when(project.getModel()).thenReturn(effectiveModel);
-        doReturn(effectiveModelDescriptor).when(scanner)
+        doReturn(modelDescriptor).when(scanner)
             .scan(any(Model.class), eq(pomXml.getAbsolutePath()), eq(MavenScope.PROJECT));
+        doReturn(modelDescriptor).when(store)
+            .addDescriptorType(modelDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
 
         // Store and cache
         when(scannerContext.getStore()).thenReturn(store);
@@ -263,12 +264,12 @@ class MavenProjectScannerPluginTest {
         verify(projectDescriptor).setModel(pomXmlDescriptor);
         // Effective model
         verify(store).create(MavenPomDescriptor.class);
-        verify(scannerContext).push(MavenPomDescriptor.class, effectiveModelDescriptor);
+        verify(scannerContext).push(MavenPomDescriptor.class, modelDescriptor);
         verify(scanner, atLeastOnce()).scan(effectiveModelCaptor.capture(), eq(pomXml.getAbsolutePath()), eq(MavenScope.PROJECT));
-        assertThat(effectiveModelCaptor.getValue()
-            .getDelegate()).isEqualTo(effectiveModel);
+        assertThat(effectiveModelCaptor.getValue()).isEqualTo(effectiveModel);
         verify(scannerContext).pop(MavenPomDescriptor.class);
-        verify(projectDescriptor).setEffectiveModel(effectiveModelDescriptor);
+        verify(store).addDescriptorType(modelDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
+        verify(projectDescriptor).setEffectiveModel(modelDescriptor);
         verify(artifactCache).get(argThat(fqn -> fqn.contains(":jar:")), any());
         verify(store).addDescriptorType(mainArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
         verify(artifactCache).get(argThat(fqn -> fqn.contains(":test-jar:tests:")), any());
