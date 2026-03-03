@@ -73,4 +73,20 @@ public interface MavenProfileActivationDescriptor extends MavenDescriptor {
     PropertyDescriptor getProperty();
 
     void setProperty(PropertyDescriptor propertyDescriptor);
+
+    /**
+     * Get the condition expression for profile activation (Maven 4.1.0).
+     *
+     * @return the condition expression, or null if not set.
+     */
+    @Property("condition")
+    String getCondition();
+
+    /**
+     * Set the condition expression for profile activation (Maven 4.1.0).
+     *
+     * @param condition
+     *            the condition expression.
+     */
+    void setCondition(String condition);
 }

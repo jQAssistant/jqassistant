@@ -81,7 +81,14 @@ NOTE: The artifact is further labeled with `:Main` representing the main artifac
 
 [[MavenPomScanner]]
 == Scanner for Maven POMs
-Imports information from Maven POMs (e.g. `pom.xml`) files.
+Imports information from Maven POMs (e.g. `pom.xml`) files including Maven 4.1.0 POM format.
+
+[NOTE]
+====
+When running under Maven 4, additional properties introduced in Maven 4.1.0 are detected via reflection and stored in the graph.
+These include `root` on `:Maven:Pom`, `condition` on `:Maven:ProfileActivation`, `priority` on `:Maven:PluginExecution`, and `:Maven:Source` nodes.
+When running under Maven 3, these properties are gracefully skipped.
+====
 
 [[:Maven:Scm]]
 === Nodes labeled with `:Maven:Scm`
@@ -109,6 +116,7 @@ A POM describing a Maven project.
 | classifier | The classifier (optional)
 | url        | The URL of the project home
 | version    | The version
+| root       | `true` if this is the root project (Maven 4.1.0, optional)
 |====
 
 .Relations of `:Maven:Pom`
@@ -292,6 +300,7 @@ A maven profile
 | USES_PLUGIN         | <<:Maven:Plugin>>            | 0..n        | References a plugin that is used during maven lifecycle
 | HAS_ACTIVATION      | <<:Maven:ProfileActivation>> | 0..1        | References the conditions which will trigger the profile.
 | HAS_REPOSITORY      | <<:Maven:Repository>>        | 0..1        | References a repository declared for this profile.
+| HAS_SOURCE          | <<:Maven:Source>>             | 0..n        | References a source definition (Maven 4.1.0, optional)
 |====
 
 [[:Maven:ProfileActivation]]
@@ -304,6 +313,7 @@ A maven profile activation
 | Name            | Description
 | activeByDefault | Specifies if the profile is activated by default
 | jdk             | Specifies jdk needed to activate the profile
+| condition       | A condition expression for profile activation (Maven 4.1.0, optional)
 |====
 
 .Relations of `:Maven:ProfileActivation`
@@ -401,6 +411,7 @@ A plugin execution
 | id        | The plugin id
 | inherited | Whether any configuration should be propagated to child POMs.
 | phase     | The build lifecycle phase to bind the goals in this execution to.
+| priority  | The execution priority (Maven 4.1.0, optional)
 |====
 
 .Relations of `:Maven:PluginExecution`
@@ -431,4 +442,23 @@ A goal for plugin executions
 |====
 | Name | Description
 | name | The name of the goal
+|====
+
+[[:Maven:Source]]
+=== Nodes labeled with `:Maven:Source`
+A source definition in a Maven 4.1.0 build.
+Only available when running under Maven 4.
+
+.Properties of `:Maven:Source`
+[options="header"]
+|====
+| Name            | Description
+| scope           | Context where source files are used, typically `main` or `test`
+| lang            | Language of source files, typically `java` or `resources`
+| module          | Name of the Java module being built (for multi-module projects)
+| directory       | Directory where sources are stored (relative to POM)
+| targetVersion   | Target platform version (e.g. compiler `--release` option for Java)
+| targetPath      | Explicit target path, overriding the default value
+| stringFiltering | Whether to filter tokens with parameterized values
+| enabled         | Whether this source definition is included in the build
 |====

@@ -97,6 +97,42 @@ class MavenPomFileScannerPluginTest {
     }
 
     @Test
+    void acceptAcceptsXmlWithMaven400Namespace() throws Exception {
+        MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
+
+        InputStream inputStream = new ByteArrayInputStream(
+                "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"><a></a></project>".getBytes(StandardCharsets.UTF_8));
+
+        FileResource fileResource = Mockito.mock(FileResource.class, NOT_MOCKED_ANSWER);
+
+        doReturn(inputStream).when(fileResource).createStream();
+
+        String path = "/a/b/c/d.xml";
+
+        boolean result = plugin.accepts(fileResource, path, DUMMY_SCOPE);
+
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    void acceptAcceptsXmlWithMaven410Namespace() throws Exception {
+        MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
+
+        InputStream inputStream = new ByteArrayInputStream(
+                "<project xmlns=\"http://maven.apache.org/POM/4.1.0\"><a></a></project>".getBytes(StandardCharsets.UTF_8));
+
+        FileResource fileResource = Mockito.mock(FileResource.class, NOT_MOCKED_ANSWER);
+
+        doReturn(inputStream).when(fileResource).createStream();
+
+        String path = "/a/b/c/d.xml";
+
+        boolean result = plugin.accepts(fileResource, path, DUMMY_SCOPE);
+
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test
     void acceptChecksRefusesWithDifferentRootTagfExtensionIsXMLAndNonStandardName() throws Exception {
         MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
 
