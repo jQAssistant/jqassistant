@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.plugin.maven.api.artifact;
 
 
-import org.apache.maven.model.Model;
+import org.apache.maven.api.model.Model;
 
 public final class ModelCoordinates implements Coordinates {
 
-    private Model model;
+    private final Model model;
 
     public ModelCoordinates(Model model) {
         this.model = model;

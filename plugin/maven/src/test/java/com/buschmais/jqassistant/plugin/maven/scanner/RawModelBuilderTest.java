@@ -6,14 +6,14 @@ import java.net.URL;
 
 import com.buschmais.jqassistant.plugin.maven.api.scanner.RawModelBuilder;
 
-import org.apache.maven.model.Model;
+import org.apache.maven.api.model.Model;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RawModelBuilderTest {
 
-    private RawModelBuilder rawModelBuilder = new RawModelBuilder();
+    private final RawModelBuilder rawModelBuilder = new RawModelBuilder();
 
     @Test
     public void validModel() throws IOException {

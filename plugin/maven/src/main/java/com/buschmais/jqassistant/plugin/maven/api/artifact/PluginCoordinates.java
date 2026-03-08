@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.plugin.maven.api.artifact;
 
-import org.apache.maven.model.Plugin;
+import org.apache.maven.api.model.Plugin;
 
 public final class PluginCoordinates implements Coordinates {
 
-    private Plugin plugin;
+    private final Plugin plugin;
 
     public PluginCoordinates(Plugin plugin) {
         this.plugin = plugin;

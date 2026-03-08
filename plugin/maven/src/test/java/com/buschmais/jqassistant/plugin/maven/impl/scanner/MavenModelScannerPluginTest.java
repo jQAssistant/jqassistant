@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.maven.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven.api.model.MavenPomDescriptor;
 import com.buschmais.jqassistant.plugin.maven.api.scanner.MavenScope;
 
-import org.apache.maven.model.Model;
+import org.apache.maven.api.model.Model;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

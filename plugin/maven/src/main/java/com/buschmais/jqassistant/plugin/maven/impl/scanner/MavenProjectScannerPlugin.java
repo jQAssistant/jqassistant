@@ -338,7 +338,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             .create(MavenPomDescriptor.class);
         scanner.getContext()
             .push(MavenPomDescriptor.class, mavenPomDescriptor);
-        scanner.scan(project.getModel(), pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        scanner.scan(project.getModel().getDelegate(), pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
         scanner.getContext()
             .pop(MavenPomDescriptor.class);
         MavenPomDescriptor effectiveModelDescriptor = scanner.getContext()
@@ -418,14 +418,14 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * @param scanner
      *     The {@link Scanner}.
      */
-    private JavaArtifactFileDescriptor scanArtifact(ArtifactDescriptor artifactDescriptor, File file, String path, Scanner scanner) {
+    private void scanArtifact(ArtifactDescriptor artifactDescriptor, File file, String path, Scanner scanner) {
         JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext()
             .getStore()
             .addDescriptorType(artifactDescriptor, JavaClassesDirectoryDescriptor.class);
         ScannerContext context = scanner.getContext();
         context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
         try {
-            return scanFile(file, path, CLASSPATH, scanner);
+            scanFile(file, path, CLASSPATH, scanner);
         } finally {
             context.pop(JavaArtifactFileDescriptor.class);
         }

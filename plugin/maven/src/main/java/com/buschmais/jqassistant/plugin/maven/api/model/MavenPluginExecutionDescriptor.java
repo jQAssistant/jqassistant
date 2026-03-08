@@ -71,6 +71,22 @@ public interface MavenPluginExecutionDescriptor extends MavenDescriptor, Configu
     void setPhase(String phase);
 
     /**
+     * Get the execution priority (Maven 4.1.0).
+     *
+     * @return the priority, or null if not set.
+     */
+    @Property("priority")
+    Integer getPriority();
+
+    /**
+     * Set the execution priority (Maven 4.1.0).
+     *
+     * @param priority
+     *            the priority.
+     */
+    void setPriority(Integer priority);
+
+    /**
      * Returns execution goals.
      *
      * @return The goals.

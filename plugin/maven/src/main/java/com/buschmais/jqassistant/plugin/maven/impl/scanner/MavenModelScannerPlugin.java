@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.plugin.maven.impl.scanner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -15,8 +18,9 @@ import com.buschmais.jqassistant.plugin.maven.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven.api.model.*;
 import com.buschmais.jqassistant.plugin.maven.api.scanner.MavenRepositoryResolver;
 import com.buschmais.jqassistant.plugin.maven.impl.scanner.artifact.MavenArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenSourceDescriptor;
 
-import org.apache.maven.model.*;
+import org.apache.maven.api.model.*;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
@@ -25,7 +29,7 @@ import static java.util.stream.Collectors.toMap;
 
 /**
  * Scans Maven model instances.
- *
+ * <p>
  * This plugin requires an instance of {@link MavenPomDescriptor} in the scanner
  * context which will be enriched.
  *
@@ -53,7 +57,9 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         return true;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MavenPomDescriptor scan(Model model, String path, Scope scope, Scanner scanner) {
         MavenPomDescriptor pomDescriptor = createMavenPomDescriptor(model, scanner);
@@ -108,7 +114,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
             addCommonParticipantAttributes(contributorDescriptor, contributor, store);
 
-            pomDescriptor.getContributors().add(contributorDescriptor);
+            pomDescriptor.getContributors()
+                .add(contributorDescriptor);
         }
     }
 
@@ -124,7 +131,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             for (String role : contributor.getRoles()) {
                 MavenParticipantRoleDescriptor developerRoleDescriptor = store.create(MavenParticipantRoleDescriptor.class);
                 developerRoleDescriptor.setName(role);
-                participant.getRoles().add(developerRoleDescriptor);
+                participant.getRoles()
+                    .add(developerRoleDescriptor);
             }
         }
 
@@ -134,9 +142,9 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Create the descriptor and set base information.
      *
      * @param model
-     *            The model.
+     *     The model.
      * @param scanner
-     *            The scanner.
+     *     The scanner.
      * @return The descriptor.
      */
     protected MavenPomDescriptor createMavenPomDescriptor(Model model, Scanner scanner) {
@@ -149,9 +157,12 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         ofNullable(model.getVersion()).ifPresent(pomDescriptor::setVersion);
         ofNullable(model.getUrl()).ifPresent(pomDescriptor::setUrl);
         ofNullable(model.getDescription()).ifPresent(pomDescriptor::setDescription);
+        pomDescriptor.setRoot(model.isRoot());
         Coordinates artifactCoordinates = new ModelCoordinates(model);
-        MavenArtifactDescriptor artifact = context.peek(ArtifactResolver.class).resolve(artifactCoordinates, context);
-        pomDescriptor.getDescribes().add(artifact);
+        MavenArtifactDescriptor artifact = context.peek(ArtifactResolver.class)
+            .resolve(artifactCoordinates, context);
+        pomDescriptor.getDescribes()
+            .add(artifact);
         return pomDescriptor;
     }
 
@@ -159,11 +170,11 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds activation information for the given profile.
      *
      * @param mavenProfileDescriptor
-     *            The profile descriptor.
+     *     The profile descriptor.
      * @param activation
-     *            The activation information.
+     *     The activation information.
      * @param store
-     *            The database.
+     *     The database.
      */
     private void addActivation(MavenProfileDescriptor mavenProfileDescriptor, Activation activation, Store store) {
         if (null == activation) {
@@ -198,18 +209,19 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             ofNullable(property.getName()).ifPresent(propertyDescriptor::setName);
             ofNullable(property.getValue()).ifPresent(propertyDescriptor::setValue);
         }
+        ofNullable(activation.getCondition()).ifPresent(profileActivationDescriptor::setCondition);
     }
 
     /**
      * Adds configuration information.
      *
      * @param configurableDescriptor
-     *            The descriptor for the configured element (Plugin,
-     *            PluginExecution).
+     *     The descriptor for the configured element (Plugin,
+     *     PluginExecution).
      * @param config
-     *            The configuration information.
+     *     The configuration information.
      * @param store
-     *            The database.
+     *     The database.
      */
     private void addConfiguration(ConfigurableDescriptor configurableDescriptor, Xpp3Dom config, Store store) {
         if (null == config) {
@@ -219,7 +231,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         configurableDescriptor.setConfiguration(configDescriptor);
         Xpp3Dom[] children = config.getChildren();
         for (Xpp3Dom child : children) {
-            configDescriptor.getValues().add(getConfigChildNodes(child, store));
+            configDescriptor.getValues()
+                .add(getConfigChildNodes(child, store));
         }
     }
 
@@ -228,26 +241,26 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * {@link MavenDependentDescriptor}.
      *
      * @param dependentDescriptor
-     *            The {@link MavenDependentDescriptor}.
+     *     The {@link MavenDependentDescriptor}.
      * @param model
-     *            The {@link ModelBase} providing the dependencies.
+     *     The {@link ModelBase} providing the dependencies.
      * @param scannerContext
-     *            The scanner context.
+     *     The scanner context.
      */
     private void addDependencies(MavenDependentDescriptor dependentDescriptor, ModelBase model, ScannerContext scannerContext) {
         dependentDescriptor.getDeclaresDependencies()
-                .addAll(getDependencies(model.getDependencies(), scannerContext));
+            .addAll(getDependencies(model.getDependencies(), scannerContext));
         dependentDescriptor.getManagesDependencies()
-                .addAll(addManagedDependencies(model.getDependencyManagement(), scannerContext));
+            .addAll(addManagedDependencies(model.getDependencyManagement(), scannerContext));
     }
 
     /**
      * Adds information about artifact dependencies.
      *
      * @param dependencies
-     *            The dependencies information.
+     *     The dependencies information.
      * @param scannerContext
-     *            The scanner context
+     *     The scanner context
      * @return The list of {@link MavenDependencyDescriptor}s.
      */
     private List<MavenDependencyDescriptor> getDependencies(List<Dependency> dependencies, ScannerContext scannerContext) {
@@ -255,7 +268,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         List<MavenDependencyDescriptor> dependencyDescriptors = new ArrayList<>(dependencies.size());
         // initially collect all artifact descriptors (avoid write flushes to datastore)
         Map<Dependency, MavenArtifactDescriptor> mavenArtifactDescriptors = dependencies.stream()
-                .collect(toMap(dependency -> dependency, dependency -> getMavenArtifactDescriptor(dependency, scannerContext)));
+            .collect(toMap(dependency -> dependency, dependency -> getMavenArtifactDescriptor(dependency, scannerContext)));
         for (Dependency dependency : dependencies) {
             MavenArtifactDescriptor dependencyArtifactDescriptor = mavenArtifactDescriptors.get(dependency);
             // New graph structure supporting exclusions
@@ -267,7 +280,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
                 MavenExcludesDescriptor mavenExcludesDescriptor = store.create(MavenExcludesDescriptor.class);
                 mavenExcludesDescriptor.setGroupId(exclusion.getGroupId());
                 mavenExcludesDescriptor.setArtifactId(exclusion.getArtifactId());
-                dependencyDescriptor.getExclusions().add(mavenExcludesDescriptor);
+                dependencyDescriptor.getExclusions()
+                    .add(mavenExcludesDescriptor);
             }
             dependencyDescriptors.add(dependencyDescriptor);
         }
@@ -278,18 +292,19 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds information about execution goals.
      *
      * @param executionDescriptor
-     *            The descriptor for the execution.
+     *     The descriptor for the execution.
      * @param pluginExecution
-     *            The PluginExecution.
+     *     The PluginExecution.
      * @param store
-     *            The database.
+     *     The database.
      */
     private void addExecutionGoals(MavenPluginExecutionDescriptor executionDescriptor, PluginExecution pluginExecution, Store store) {
         List<String> goals = pluginExecution.getGoals();
         for (String goal : goals) {
             MavenExecutionGoalDescriptor goalDescriptor = store.create(MavenExecutionGoalDescriptor.class);
             goalDescriptor.setName(goal);
-            executionDescriptor.getGoals().add(goalDescriptor);
+            executionDescriptor.getGoals()
+                .add(goalDescriptor);
         }
     }
 
@@ -297,11 +312,11 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds information about references licenses.
      *
      * @param pomDescriptor
-     *            The descriptor for the current POM.
+     *     The descriptor for the current POM.
      * @param model
-     *            The Maven Model.
+     *     The Maven Model.
      * @param store
-     *            The database.
+     *     The database.
      */
     private void addLicenses(MavenPomDescriptor pomDescriptor, Model model, Store store) {
         List<License> licenses = model.getLicenses();
@@ -312,7 +327,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             ofNullable(license.getName()).ifPresent(licenseDescriptor::setName);
             ofNullable(license.getDistribution()).ifPresent(licenseDescriptor::setDistribution);
 
-            pomDescriptor.getLicenses().add(licenseDescriptor);
+            pomDescriptor.getLicenses()
+                .add(licenseDescriptor);
         }
     }
 
@@ -320,11 +336,11 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds information about developers.
      *
      * @param pomDescriptor
-     *            The descriptor for the current POM.
+     *     The descriptor for the current POM.
      * @param model
-     *            The Maven Model.
+     *     The Maven Model.
      * @param store
-     *            The database.
+     *     The database.
      */
     private void addDevelopers(MavenPomDescriptor pomDescriptor, Model model, Store store) {
         List<Developer> developers = model.getDevelopers();
@@ -334,7 +350,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
             addCommonParticipantAttributes(developerDescriptor, developer, store);
 
-            pomDescriptor.getDevelopers().add(developerDescriptor);
+            pomDescriptor.getDevelopers()
+                .add(developerDescriptor);
         }
     }
 
@@ -342,7 +359,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds dependency management information.
      *
      * @param dependencyManagement
-     *            The dependency management information.
+     *     The dependency management information.
      * @param scannerContext
      */
     private List<MavenDependencyDescriptor> addManagedDependencies(DependencyManagement dependencyManagement, ScannerContext scannerContext) {
@@ -357,11 +374,11 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds information about managed plugins.
      *
      * @param pomDescriptor
-     *            The descriptor for the current POM.
+     *     The descriptor for the current POM.
      * @param build
-     *            Information required to build the project.
+     *     Information required to build the project.
      * @param scannerContext
-     *            The scanner context.
+     *     The scanner context.
      */
     private void addManagedPlugins(BaseProfileDescriptor pomDescriptor, BuildBase build, ScannerContext scannerContext) {
         if (null == build) {
@@ -372,16 +389,17 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             return;
         }
         List<MavenPluginDescriptor> pluginDescriptors = createMavenPluginDescriptors(pluginManagement.getPlugins(), scannerContext);
-        pomDescriptor.getManagedPlugins().addAll(pluginDescriptors);
+        pomDescriptor.getManagedPlugins()
+            .addAll(pluginDescriptors);
     }
 
     /**
      * Create plugin descriptors for the given plugins.
      *
      * @param plugins
-     *            The plugins.
+     *     The plugins.
      * @param context
-     *            The scanner context.
+     *     The scanner context.
      * @return The plugin descriptors.
      */
     private List<MavenPluginDescriptor> createMavenPluginDescriptors(List<Plugin> plugins, ScannerContext context) {
@@ -389,11 +407,12 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         List<MavenPluginDescriptor> pluginDescriptors = new ArrayList<>();
         for (Plugin plugin : plugins) {
             MavenPluginDescriptor mavenPluginDescriptor = store.create(MavenPluginDescriptor.class);
-            MavenArtifactDescriptor artifactDescriptor = context.peek(ArtifactResolver.class).resolve(new PluginCoordinates(plugin), context);
+            MavenArtifactDescriptor artifactDescriptor = context.peek(ArtifactResolver.class)
+                .resolve(new PluginCoordinates(plugin), context);
             mavenPluginDescriptor.setArtifact(artifactDescriptor);
             mavenPluginDescriptor.setInherited(plugin.isInherited());
             mavenPluginDescriptor.getDeclaresDependencies()
-                    .addAll(getDependencies(plugin.getDependencies(), context));
+                .addAll(getDependencies(plugin.getDependencies(), context));
             addPluginExecutions(mavenPluginDescriptor, plugin, store);
             addConfiguration(mavenPluginDescriptor, (Xpp3Dom) plugin.getConfiguration(), store);
             pluginDescriptors.add(mavenPluginDescriptor);
@@ -405,30 +424,60 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds information about referenced modules.
      *
      * @param pomDescriptor
-     *            The descriptor for the current POM.
+     *     The descriptor for the current POM.
      * @param modules
-     *            The modules.
+     *     The modules.
      * @param store
-     *            The database.
+     *     The database.
      */
     private void addModules(BaseProfileDescriptor pomDescriptor, List<String> modules, Store store) {
         for (String module : modules) {
             MavenModuleDescriptor moduleDescriptor = store.create(MavenModuleDescriptor.class);
             moduleDescriptor.setName(module);
-            pomDescriptor.getModules().add(moduleDescriptor);
+            pomDescriptor.getModules()
+                .add(moduleDescriptor);
         }
+    }
 
+    /**
+     * Adds source definitions from Maven 4.1.0 builds.
+     *
+     * @param descriptor
+     *     The descriptor for the current POM or profile.
+     * @param buildBase
+     *     The build information.
+     * @param store
+     *     The database.
+     */
+    private void addSources(BaseProfileDescriptor descriptor, BuildBase buildBase, Store store) {
+        if (!(buildBase instanceof Build)) {
+            return;
+        }
+        Build build = (Build) buildBase;
+        for (Source source : build.getSources()) {
+            MavenSourceDescriptor sourceDescriptor = store.create(MavenSourceDescriptor.class);
+            ofNullable(source.getScope()).ifPresent(sourceDescriptor::setScope);
+            ofNullable(source.getLang()).ifPresent(sourceDescriptor::setLang);
+            ofNullable(source.getModule()).ifPresent(sourceDescriptor::setModule);
+            ofNullable(source.getDirectory()).ifPresent(sourceDescriptor::setDirectory);
+            ofNullable(source.getTargetVersion()).ifPresent(sourceDescriptor::setTargetVersion);
+            ofNullable(source.getTargetPath()).ifPresent(sourceDescriptor::setTargetPath);
+            ofNullable(source.isStringFiltering()).ifPresent(sourceDescriptor::setStringFiltering);
+            ofNullable(source.isEnabled()).ifPresent(sourceDescriptor::setEnabled);
+            descriptor.getSources()
+                .add(sourceDescriptor);
+        }
     }
 
     /**
      * Adds information about parent POM.
      *
      * @param pomDescriptor
-     *            The descriptor for the current POM.
+     *     The descriptor for the current POM.
      * @param model
-     *            The Maven Model.
+     *     The Maven Model.
      * @param context
-     *            The scanner context.
+     *     The scanner context.
      */
     private void addParent(MavenPomDescriptor pomDescriptor, Model model, ScannerContext context) {
         Parent parent = model.getParent();
@@ -443,11 +492,11 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds information about plugin executions.
      *
      * @param mavenPluginDescriptor
-     *            The descriptor for the plugin.
+     *     The descriptor for the plugin.
      * @param plugin
-     *            The Plugin.
+     *     The Plugin.
      * @param store
-     *            The database.
+     *     The database.
      */
     private void addPluginExecutions(MavenPluginDescriptor mavenPluginDescriptor, Plugin plugin, Store store) {
         List<PluginExecution> executions = plugin.getExecutions();
@@ -456,7 +505,9 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             executionDescriptor.setId(pluginExecution.getId());
             ofNullable(pluginExecution.getPhase()).ifPresent(executionDescriptor::setPhase);
             executionDescriptor.setInherited(pluginExecution.isInherited());
-            mavenPluginDescriptor.getExecutions().add(executionDescriptor);
+            ofNullable(pluginExecution.getPriority()).ifPresent(executionDescriptor::setPriority);
+            mavenPluginDescriptor.getExecutions()
+                .add(executionDescriptor);
             addExecutionGoals(executionDescriptor, pluginExecution, store);
             addConfiguration(executionDescriptor, (Xpp3Dom) pluginExecution.getConfiguration(), store);
         }
@@ -467,11 +518,11 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds information about plugins.
      *
      * @param pomDescriptor
-     *            The descriptor for the current POM.
+     *     The descriptor for the current POM.
      * @param build
-     *            Information required to build the project.
+     *     Information required to build the project.
      * @param scannerContext
-     *            The scanner context.
+     *     The scanner context.
      */
     private void addPlugins(BaseProfileDescriptor pomDescriptor, BuildBase build, ScannerContext scannerContext) {
         if (null == build) {
@@ -479,34 +530,36 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         }
         List<Plugin> plugins = build.getPlugins();
         List<MavenPluginDescriptor> pluginDescriptors = createMavenPluginDescriptors(plugins, scannerContext);
-        pomDescriptor.getPlugins().addAll(pluginDescriptors);
+        pomDescriptor.getPlugins()
+            .addAll(pluginDescriptors);
     }
 
     /**
      * Adds information about defined profile.
      *
      * @param pomDescriptor
-     *            The descriptor for the current POM.
+     *     The descriptor for the current POM.
      * @param model
-     *            The Maven Model.
+     *     The Maven Model.
      * @param scannerContext
-     *            The scanner context.
+     *     The scanner context.
      */
     private void addProfiles(MavenPomDescriptor pomDescriptor, Model model, ScannerContext scannerContext) {
         List<Profile> profiles = model.getProfiles();
         Store store = scannerContext.getStore();
         for (Profile profile : profiles) {
             MavenProfileDescriptor mavenProfileDescriptor = store.create(MavenProfileDescriptor.class);
-            pomDescriptor.getProfiles().add(mavenProfileDescriptor);
+            pomDescriptor.getProfiles()
+                .add(mavenProfileDescriptor);
             mavenProfileDescriptor.setId(profile.getId());
             addProperties(mavenProfileDescriptor, profile.getProperties(), store);
             addModules(mavenProfileDescriptor, profile.getModules(), store);
             addPlugins(mavenProfileDescriptor, profile.getBuild(), scannerContext);
             addManagedPlugins(mavenProfileDescriptor, profile.getBuild(), scannerContext);
-            addDependencies(mavenProfileDescriptor, profile,
-                    scannerContext);
+            addDependencies(mavenProfileDescriptor, profile, scannerContext);
             addActivation(mavenProfileDescriptor, profile.getActivation(), store);
             addRepository(of(mavenProfileDescriptor), profile.getRepositories(), store);
+            addSources(mavenProfileDescriptor, profile.getBuild(), store);
         }
     }
 
@@ -529,7 +582,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             repoDescriptor.setSnapshotsUpdatePolicy(snapPolicy.getUpdatePolicy());
             repoDescriptor.setSnapshotsEnabled(snapPolicy.isEnabled());
 
-            holder.getRepositories().add(repoDescriptor);
+            holder.getRepositories()
+                .add(repoDescriptor);
         }
     }
 
@@ -537,19 +591,21 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * Adds information about defined properties.
      *
      * @param pomDescriptor
-     *            The descriptor for the current POM.
+     *     The descriptor for the current POM.
      * @param properties
-     *            The properties information.
+     *     The properties information.
      * @param store
-     *            The database.
+     *     The database.
      */
-    private void addProperties(BaseProfileDescriptor pomDescriptor, Properties properties, Store store) {
-        Set<Entry<Object, Object>> entrySet = properties.entrySet();
-        for (Entry<Object, Object> entry : entrySet) {
+    private void addProperties(BaseProfileDescriptor pomDescriptor, Map<String, String> properties, Store store) {
+        for (Entry<String, String> entry : properties.entrySet()) {
             PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
-            propertyDescriptor.setName(entry.getKey().toString());
-            propertyDescriptor.setValue(entry.getValue().toString());
-            pomDescriptor.getProperties().add(propertyDescriptor);
+            propertyDescriptor.setName(entry.getKey()
+                .toString());
+            propertyDescriptor.setValue(entry.getValue()
+                .toString());
+            pomDescriptor.getProperties()
+                .add(propertyDescriptor);
         }
 
     }
@@ -559,23 +615,24 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * given dependency.
      *
      * @param dependency
-     *            Dependency.
+     *     Dependency.
      * @param context
-     *            The scanner context.
+     *     The scanner context.
      * @return The MavenArtifactDescriptor.
      */
     private MavenArtifactDescriptor getMavenArtifactDescriptor(Dependency dependency, ScannerContext context) {
         DependencyCoordinates coordinates = new DependencyCoordinates(dependency);
-        return context.peek(ArtifactResolver.class).resolve(coordinates, context);
+        return context.peek(ArtifactResolver.class)
+            .resolve(coordinates, context);
     }
 
     /**
      * Returns information about child config entries.
      *
      * @param node
-     *            Current config node.
+     *     Current config node.
      * @param store
-     *            The database.
+     *     The database.
      * @return Child config information.
      */
     private ValueDescriptor<?> getConfigChildNodes(Xpp3Dom node, Store store) {
@@ -589,27 +646,18 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         ArrayValueDescriptor childDescriptor = store.create(ArrayValueDescriptor.class);
         childDescriptor.setName(node.getName());
         for (Xpp3Dom child : children) {
-            childDescriptor.getValue().add(getConfigChildNodes(child, store));
+            childDescriptor.getValue()
+                .add(getConfigChildNodes(child, store));
         }
         return childDescriptor;
     }
 
     private static RepositoryHolder of(final MavenProfileDescriptor profileDescriptor) {
-        return new RepositoryHolder() {
-            @Override
-            public List<MavenRepositoryDescriptor> getRepositories() {
-                return profileDescriptor.getRepositories();
-            }
-        };
+        return () -> profileDescriptor.getRepositories();
     }
 
     private static RepositoryHolder of(final MavenPomDescriptor pomDescriptor) {
-        return new RepositoryHolder() {
-            @Override
-            public List<MavenRepositoryDescriptor> getRepositories() {
-                return pomDescriptor.getRepositories();
-            }
-        };
+        return () -> pomDescriptor.getRepositories();
     }
 
     protected interface RepositoryHolder {

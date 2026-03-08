@@ -5,9 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.maven.api.model.Model;
+import org.apache.maven.model.v4.MavenStaxReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,18 +20,25 @@ public class RawModelBuilder implements PomModelBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RawModelBuilder.class);
 
-    private MavenXpp3Reader mavenXpp3Reader;
+    private final MavenStaxReader mavenStaxReader;
 
     public RawModelBuilder() {
-        this.mavenXpp3Reader = new MavenXpp3Reader();
+        this.mavenStaxReader = new MavenStaxReader();
     }
 
     @Override
     public Model getModel(File pomFile) throws IOException {
         try (InputStream stream = new FileInputStream(pomFile)) {
-            return mavenXpp3Reader.read(stream, false); // non-strict mode
-        } catch (XmlPullParserException e) {
-            LOGGER.debug("Cannot read POM descriptor from " + pomFile.getAbsolutePath() + ".", e);
+            return getModel(stream, pomFile.getAbsolutePath());
+        }
+    }
+
+    @Override
+    public Model getModel(InputStream stream, String path) {
+        try {
+            return mavenStaxReader.read(stream);
+        } catch (XMLStreamException e) {
+            LOGGER.warn("Cannot read POM descriptor from {}.", path, e);
             return null;
         }
     }

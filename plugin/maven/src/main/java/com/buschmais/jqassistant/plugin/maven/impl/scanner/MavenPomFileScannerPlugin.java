@@ -9,14 +9,11 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.maven.api.model.MavenPomDescriptor;
 import com.buschmais.jqassistant.plugin.maven.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven.api.scanner.PomModelBuilder;
+import com.buschmais.jqassistant.plugin.maven.api.scanner.RawModelBuilder;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XMLFileFilter;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.maven.api.model.Model;
 
 /**
  * Scans pom.xml files.
@@ -25,25 +22,24 @@ import org.slf4j.LoggerFactory;
  */
 public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<MavenPomXmlDescriptor> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenPomFileScannerPlugin.class);
-
-    private MavenXpp3Reader mavenXpp3Reader;
-
-    @Override
-    public void initialize() {
-        mavenXpp3Reader = new MavenXpp3Reader();
-    }
+    private final RawModelBuilder rawModelBuilder = new RawModelBuilder();
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        boolean hasXMLExtension = path.toLowerCase().endsWith(".xml");
-        boolean isPomXML = path.toLowerCase().endsWith("pom.xml");
-        boolean hasPomExtension = path.toLowerCase().endsWith(".pom");
+        boolean hasXMLExtension = path.toLowerCase()
+            .endsWith(".xml");
+        boolean isPomXML = path.toLowerCase()
+            .endsWith("pom.xml");
+        boolean hasPomExtension = path.toLowerCase()
+            .endsWith(".pom");
         boolean identifiedByExtension = isPomXML || hasPomExtension;
 
         boolean isMavenPOM;
         if (!identifiedByExtension && hasXMLExtension) {
-            isMavenPOM = XMLFileFilter.rootElementMatches(item, path, "project", "http://maven.apache.org/POM/4.0.0");
+            // Maven 4.1.0 uses namespace http://maven.apache.org/POM/4.1.0 (root element remains "project")
+            isMavenPOM = XMLFileFilter.rootElementMatches(item, path,
+                rootElement -> "project".equals(rootElement.getLocalPart()) && rootElement.getNamespaceURI()
+                    .startsWith("http://maven.apache.org/POM/"));
         } else {
             isMavenPOM = identifiedByExtension;
         }
@@ -51,13 +47,16 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
         return isMavenPOM;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MavenPomXmlDescriptor scan(FileResource item, MavenPomXmlDescriptor mavenPomXmlDescriptor, String path, Scope scope, Scanner scanner)
-            throws IOException {
-        Model model = getModel(item, scanner);
+        throws IOException {
+        Model model = getModel(item, path, scanner);
         if (model != null) {
-            scanner.getContext().push(MavenPomDescriptor.class, mavenPomXmlDescriptor);
+            scanner.getContext()
+                .push(MavenPomDescriptor.class, mavenPomXmlDescriptor);
             try {
                 MavenPomXmlDescriptor result = scanner.scan(model, path, scope);
                 if (result != null) {
@@ -68,7 +67,8 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
                     return mavenPomXmlDescriptor;
                 }
             } finally {
-                scanner.getContext().pop(MavenPomDescriptor.class);
+                scanner.getContext()
+                    .pop(MavenPomDescriptor.class);
             }
         } else {
             mavenPomXmlDescriptor.setValid(false);
@@ -80,27 +80,24 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
      * Build the POM model from the given file resource (i.e. a pom.xml).
      *
      * @param item
-     *            The file resource.
+     *     The file resource.
+     * @param path
+     *     the resource path.
      * @param scanner
-     *            The scanner.
+     *     The scanner.
      * @return The model.
      * @throws IOException
-     *             If the model cannot be read.
+     *     If the model cannot be read.
      */
-    private Model getModel(FileResource item, Scanner scanner) throws IOException {
-        PomModelBuilder pomModelBuilder = scanner.getContext().peekOrDefault(PomModelBuilder.class, null);
-        if (pomModelBuilder != null) {
-            return pomModelBuilder.getModel(item.getFile());
-        }
-        Model model = null;
+    private Model getModel(FileResource item, String path, Scanner scanner) throws IOException {
         try (InputStream stream = item.createStream()) {
-            model = mavenXpp3Reader.read(stream);
-        } catch (XmlPullParserException e) {
-            String msg = "Cannot read POM descriptor from " + item.getFile().getAbsolutePath() + ".";
-
-            LOGGER.warn(msg, e);
+            PomModelBuilder pomModelBuilder = scanner.getContext()
+                .peekOrDefault(PomModelBuilder.class, null);
+            if (pomModelBuilder != null) {
+                return pomModelBuilder.getModel(stream, path);
+            }
+            return rawModelBuilder.getModel(stream, path);
         }
-        return model;
     }
 
 }

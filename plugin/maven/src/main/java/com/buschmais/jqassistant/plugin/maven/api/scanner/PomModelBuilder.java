@@ -2,8 +2,9 @@ package com.buschmais.jqassistant.plugin.maven.api.scanner;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.maven.model.Model;
+import org.apache.maven.api.model.Model;
 
 /**
  * Defines the interface for a POM model builder. If available on the scanner
@@ -22,4 +23,5 @@ public interface PomModelBuilder {
      */
     Model getModel(File pomFile) throws IOException;
 
+    Model getModel(InputStream stream, String path);
 }
