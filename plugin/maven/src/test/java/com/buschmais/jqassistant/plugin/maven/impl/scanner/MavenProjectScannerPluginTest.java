@@ -24,13 +24,13 @@ import com.buschmais.jqassistant.plugin.maven.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven.impl.scanner.dependency.DependencyScanner;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import org.apache.maven.api.model.Build;
+import org.apache.maven.api.model.Model;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
@@ -144,10 +144,11 @@ class MavenProjectScannerPluginTest {
         when(project.getParent()).thenReturn(parentProject);
         properties.put(MavenProject.class.getName(), project);
 
-        Build build = new Build();
-        build.setOutputDirectory("target/classes");
-        build.setTestOutputDirectory("target/test-classes");
-        when(project.getBuild()).thenReturn(build);
+        Build build = Build.newBuilder()
+            .outputDirectory("target/classes")
+            .testOutputDirectory("target/test-classes")
+            .build();
+        when(project.getBuild()).thenReturn(new org.apache.maven.model.Build(build));
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
         List<ArtifactDescriptor> createsArtifacts = new LinkedList<>();
         when(projectDescriptor.getCreatesArtifacts()).thenReturn(createsArtifacts);
@@ -169,7 +170,7 @@ class MavenProjectScannerPluginTest {
         doReturn(modelDescriptor).when(store)
             .create(MavenPomDescriptor.class);
         Model effectiveModel = mock(Model.class);
-        when(project.getModel()).thenReturn(effectiveModel);
+        when(project.getModel()).thenReturn(new org.apache.maven.model.Model(effectiveModel));
         doReturn(modelDescriptor).when(scanner)
             .scan(any(Model.class), eq(pomXml.getAbsolutePath()), eq(MavenScope.PROJECT));
         doReturn(modelDescriptor).when(store)

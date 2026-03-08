@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.maven.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven.api.scanner.PomModelBuilder;
 
-import org.apache.maven.model.Model;
+import org.apache.maven.api.model.Model;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
