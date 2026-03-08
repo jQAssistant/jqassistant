@@ -7,13 +7,13 @@
         <version>2.10.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>maven3</artifactId>
+    <artifactId>maven</artifactId>
 
-    <name>jQAssistant Maven 3 Plugin</name>
+    <name>jQAssistant Maven Plugin</name>
 
     <description>
         Plugin for jQAssistant to be able to scan and to
-        analyze Maven 3 related artifacts.
+        analyze Maven related artifacts.
     </description>
 
     <properties>
