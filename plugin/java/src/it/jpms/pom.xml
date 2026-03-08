@@ -39,7 +39,7 @@
                                       version: @project.version@
                                   scan:
                                     properties:
-                                      maven.dependencies.scan: true
+                                      maven3.dependencies.scan: true
                                   analyze:
                                     groups:
                                       - it
