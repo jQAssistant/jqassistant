@@ -15,6 +15,4 @@ jqassistant:
       default-concept-severity: INFO
     groups:
       - jqa-*
-  maven:
-    reuse-store: false
 
