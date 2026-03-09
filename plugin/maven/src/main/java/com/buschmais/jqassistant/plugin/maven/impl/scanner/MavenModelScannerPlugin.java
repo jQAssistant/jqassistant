@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.maven.impl.scanner.artifact.MavenArtifac
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenSourceDescriptor;
 
 import org.apache.maven.api.model.*;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.apache.maven.api.xml.XmlNode;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Optional.ofNullable;
@@ -76,7 +76,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         addDevelopers(pomDescriptor, model, store);
         addContributors(pomDescriptor, model, store);
         addOrganization(pomDescriptor, model, store);
-        addRepository(of(pomDescriptor), model.getRepositories(), store);
+        addRepository(pomDescriptor::getRepositories, model.getRepositories(), store);
         addScmInformation(pomDescriptor, model.getScm(), store);
         return pomDescriptor;
     }
@@ -223,14 +223,13 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param store
      *     The database.
      */
-    private void addConfiguration(ConfigurableDescriptor configurableDescriptor, Xpp3Dom config, Store store) {
+    private void addConfiguration(ConfigurableDescriptor configurableDescriptor, XmlNode config, Store store) {
         if (null == config) {
             return;
         }
         MavenConfigurationDescriptor configDescriptor = store.create(MavenConfigurationDescriptor.class);
         configurableDescriptor.setConfiguration(configDescriptor);
-        Xpp3Dom[] children = config.getChildren();
-        for (Xpp3Dom child : children) {
+        for (XmlNode child : config.children()) {
             configDescriptor.getValues()
                 .add(getConfigChildNodes(child, store));
         }
@@ -414,7 +413,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             mavenPluginDescriptor.getDeclaresDependencies()
                 .addAll(getDependencies(plugin.getDependencies(), context));
             addPluginExecutions(mavenPluginDescriptor, plugin, store);
-            addConfiguration(mavenPluginDescriptor, (Xpp3Dom) plugin.getConfiguration(), store);
+            addConfiguration(mavenPluginDescriptor, plugin.getConfiguration(), store);
             pluginDescriptors.add(mavenPluginDescriptor);
         }
         return pluginDescriptors;
@@ -509,7 +508,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             mavenPluginDescriptor.getExecutions()
                 .add(executionDescriptor);
             addExecutionGoals(executionDescriptor, pluginExecution, store);
-            addConfiguration(executionDescriptor, (Xpp3Dom) pluginExecution.getConfiguration(), store);
+            addConfiguration(executionDescriptor, pluginExecution.getConfiguration(), store);
         }
 
     }
@@ -558,7 +557,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             addManagedPlugins(mavenProfileDescriptor, profile.getBuild(), scannerContext);
             addDependencies(mavenProfileDescriptor, profile, scannerContext);
             addActivation(mavenProfileDescriptor, profile.getActivation(), store);
-            addRepository(of(mavenProfileDescriptor), profile.getRepositories(), store);
+            addRepository(mavenProfileDescriptor::getRepositories, profile.getRepositories(), store);
             addSources(mavenProfileDescriptor, profile.getBuild(), store);
         }
     }
@@ -600,10 +599,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     private void addProperties(BaseProfileDescriptor pomDescriptor, Map<String, String> properties, Store store) {
         for (Entry<String, String> entry : properties.entrySet()) {
             PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
-            propertyDescriptor.setName(entry.getKey()
-                .toString());
-            propertyDescriptor.setValue(entry.getValue()
-                .toString());
+            propertyDescriptor.setName(entry.getKey());
+            propertyDescriptor.setValue(entry.getValue());
             pomDescriptor.getProperties()
                 .add(propertyDescriptor);
         }
@@ -635,29 +632,21 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      *     The database.
      * @return Child config information.
      */
-    private ValueDescriptor<?> getConfigChildNodes(Xpp3Dom node, Store store) {
-        Xpp3Dom[] children = node.getChildren();
-        if (children.length == 0) {
+    private ValueDescriptor<?> getConfigChildNodes(XmlNode node, Store store) {
+        List<XmlNode> children = node.children();
+        if (children.isEmpty()) {
             PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
-            propertyDescriptor.setName(node.getName());
-            ofNullable(node.getValue()).ifPresent(propertyDescriptor::setValue);
+            propertyDescriptor.setName(node.name());
+            ofNullable(node.value()).ifPresent(propertyDescriptor::setValue);
             return propertyDescriptor;
         }
         ArrayValueDescriptor childDescriptor = store.create(ArrayValueDescriptor.class);
-        childDescriptor.setName(node.getName());
-        for (Xpp3Dom child : children) {
+        childDescriptor.setName(node.name());
+        for (XmlNode child : children) {
             childDescriptor.getValue()
                 .add(getConfigChildNodes(child, store));
         }
         return childDescriptor;
-    }
-
-    private static RepositoryHolder of(final MavenProfileDescriptor profileDescriptor) {
-        return () -> profileDescriptor.getRepositories();
-    }
-
-    private static RepositoryHolder of(final MavenPomDescriptor pomDescriptor) {
-        return () -> pomDescriptor.getRepositories();
     }
 
     protected interface RepositoryHolder {
