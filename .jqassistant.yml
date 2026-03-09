@@ -1,0 +1,20 @@
+jqassistant:
+  plugins:
+    - group-id: com.buschmais.jqassistant.build
+      artifact-id: jqassistant
+      version: ${jqassistant.build.version}
+  scan:
+    include:
+      files:
+        - ${project.basedir}/readme.adoc
+        - ${project.basedir}/src/main/asciidoc
+        - ${project.basedir}/.editorconfig
+        - ${project.basedir}/LICENSE
+  analyze:
+    rule:
+      default-concept-severity: INFO
+    groups:
+      - jqa-*
+  maven:
+    reuse-store: false
+

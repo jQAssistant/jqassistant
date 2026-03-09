@@ -136,30 +136,7 @@
                 <plugin>
                     <groupId>com.buschmais.jqassistant</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
-                    <configuration>
-                      <yaml><![CDATA[
-                        jqassistant:
-                          scan:
-                            include:
-                              files:
-                                - ${project.basedir}/readme.adoc
-                                - ${project.basedir}/src/main/asciidoc
-                                - ${project.basedir}/.editorconfig
-                                - ${project.basedir}/LICENSE
-                          analyze:
-                            groups:
-                              - jqa-*
-                          maven:
-                            reuse-store: false
-                      ]]></yaml>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant.build</groupId>
-                            <artifactId>jqassistant</artifactId>
-                            <version>${jqassistant.build.version}</version>
-                        </dependency>
-                    </dependencies>
+                    <version>${jqassistant.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
