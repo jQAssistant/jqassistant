@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.shared.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Indicates in which version a deprecated element (e.g. class, method, etc.) will be removed.
@@ -10,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
  * TODO: Verify with a jQA rule.
  */
 @Retention(RetentionPolicy.RUNTIME)
+//@Target
 public @interface ToBeRemovedInVersion {
 
     /**

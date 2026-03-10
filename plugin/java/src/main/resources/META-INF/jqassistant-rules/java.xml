@@ -2,6 +2,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 http://schema.jqassistant.org/rule/jqassistant-rule-v2.2.xsd">
 
+
     <concept id="java:InnerType">
         <description>Sets a label "Inner" on inner types.</description>
         <cypher><![CDATA[
@@ -778,6 +779,34 @@
               priority, type.fqn, memberName, description, issue
         ]]></cypher>
         <report primaryColumn="Type"/>
+    </constraint>
+    <constraint id="java:ToBeRemovedInVersion">
+        <description>Code element should be removed annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion"</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type)-[:DECLARES*0..]->(element),
+              (element)-[:ANNOTATED_BY]->(p)-[:HAS*0..]->(toBeRemovedInVersion)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion"}),
+              (toBeRemovedInVersion)-[:HAS]->(majorValue:Value{name:"major"}),
+              (toBeRemovedInVersion)-[:HAS]->(minorValue:Value{name:"minor"})
+            WITH
+              type,
+              case
+                when element:Member then element.name
+              end as memberName,
+              descriptionValue.value as description,
+              case split(priorityField.signature, " ")[1]
+                when "HIGH" then 0
+                when "MEDIUM" then 1
+                when "LOW" then 2
+                else 1 // default priority is MEDIUM
+              end as priority,
+              issueValue.value as issue
+            RETURN DISTINCT
+              priority as Priority, type.fqn as Type, memberName as Member, description as Description, issue as Issue
+            ORDER BY
+              priority, type.fqn, memberName, description, issue
+        ]]></cypher>
+        <report primaryColumn=""/>
     </constraint>
 
 </jqassistant-rules>
