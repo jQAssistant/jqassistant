@@ -14,14 +14,16 @@
         </description>
         <cypher><![CDATA[
             MATCH
+              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"}),
+              (properties)-[:HAS]->(currentMajor:Value{name:"jqassistant.version.major"}),
+              (properties)-[:HAS]->(currentMinor:Value{name:"jqassistant.version.minor"})
+            MATCH
               (type:Type)-[:DECLARES*0..]->(element),
               (element)-[:ANNOTATED_BY]->(toBeRemovedInVersion)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion"}),
               (toBeRemovedInVersion)-[:HAS]->(major:Value{name:"major"}),
               (toBeRemovedInVersion)-[:HAS]->(minor:Value{name:"minor"})
-            MATCH
-              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"})-[:HAS]->(majorJQA:Value{name:"jqassistant.version.major"}),
-              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"})-[:HAS]->(minorJQA:Value{name:"jqassistant.version.minor"})
-            WHERE major.value = toInteger(majorJQA.value) AND minor.value > toInteger(minorJQA.value) OR major.value > toInteger(majorJQA.value)
+            WHERE
+              major.value = toInteger(currentMajor.value) AND minor.value > toInteger(currentMinor.value) OR major.value > toInteger(currentMajor.value)
             WITH
               type, minor, major,
               CASE
@@ -39,14 +41,16 @@
         </description>
         <cypher><![CDATA[
             MATCH
+              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"}),
+              (properties)-[:HAS]->(currentMajor:Value{name:"jqassistant.version.major"}),
+              (properties)-[:HAS]->(currentMinor:Value{name:"jqassistant.version.minor"})
+            MATCH
               (type:Type)-[:DECLARES*0..]->(element),
               (element)-[:ANNOTATED_BY]->(toBeRemovedInVersion)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion"}),
               (toBeRemovedInVersion)-[:HAS]->(major:Value{name:"major"}),
               (toBeRemovedInVersion)-[:HAS]->(minor:Value{name:"minor"})
-            MATCH
-              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"})-[:HAS]->(majorJQA:Value{name:"jqassistant.version.major"}),
-              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"})-[:HAS]->(minorJQA:Value{name:"jqassistant.version.minor"})
-            WHERE major.value = toInteger(majorJQA.value) AND minor.value < toInteger(minorJQA.value) OR major.value < toInteger(majorJQA.value)
+            WHERE
+              major.value = toInteger(currentMajor.value) AND minor.value <= toInteger(currentMinor.value) OR major.value < toInteger(currentMajor.value)
             WITH
               type, minor, major,
               CASE
