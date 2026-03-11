@@ -10,7 +10,7 @@
 
     <constraint id="jqa-technical-debt:ToBeRemovedInVersion">
         <description>
-            All DTO classes must be located in packages named "model".
+            This Code Element should be removed from source code annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion".
         </description>
         <cypher><![CDATA[
             MATCH
