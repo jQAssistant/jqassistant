@@ -8,7 +8,7 @@
         <includeConstraint refId="java:TechnicalDebt"/>
     </group>
 
-    <constraint id="jqa-technical-debt:CodeElementToBeRemovedInVersion">
+    <constraint id="jqa-technical-debt:CodeElementToBeRemovedInVersion" severity="minor">
         <description>
             Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" will be removed in the given version.
         </description>
@@ -18,13 +18,42 @@
               (element)-[:ANNOTATED_BY]->(toBeRemovedInVersion)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion"}),
               (toBeRemovedInVersion)-[:HAS]->(major:Value{name:"major"}),
               (toBeRemovedInVersion)-[:HAS]->(minor:Value{name:"minor"})
+            MATCH
+              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"})-[:HAS]->(majorJQA:Value{name:"jqassistant.version.major"}),
+              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"})-[:HAS]->(minorJQA:Value{name:"jqassistant.version.minor"})
+            WHERE major.value = toInteger(majorJQA.value) AND minor.value > toInteger(minorJQA.value) OR major.value > toInteger(majorJQA.value)
             WITH
-              type,
+              type, minor, major,
               CASE
                 WHEN element:Member THEN element
-              END AS member, major, minor
+              END AS member
             RETURN
-              type as Type, member as Member, major.value as MajorVersion, minor.value as MinorVersion
+              type as Type, member as Member, minor.value as MinorVersionForRemoval, major.value AS MajorVersionForRemoval
+            ORDER BY
+              type.fqn, member.signature
+        ]]></cypher>
+    </constraint>
+    <constraint id="jqa-technical-debt:CodeElementToBeRemoved">
+        <description>
+            Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in the current version.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type)-[:DECLARES*0..]->(element),
+              (element)-[:ANNOTATED_BY]->(toBeRemovedInVersion)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion"}),
+              (toBeRemovedInVersion)-[:HAS]->(major:Value{name:"major"}),
+              (toBeRemovedInVersion)-[:HAS]->(minor:Value{name:"minor"})
+            MATCH
+              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"})-[:HAS]->(majorJQA:Value{name:"jqassistant.version.major"}),
+              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"})-[:HAS]->(minorJQA:Value{name:"jqassistant.version.minor"})
+            WHERE major.value = toInteger(majorJQA.value) AND minor.value < toInteger(minorJQA.value) OR major.value < toInteger(majorJQA.value)
+            WITH
+              type, minor, major,
+              CASE
+                WHEN element:Member THEN element
+              END AS member
+            RETURN
+              type as Type, member as Member, minor.value as MinorVersionForRemoval, major.value AS MajorVersionForRemoval
             ORDER BY
               type.fqn, member.signature
         ]]></cypher>
