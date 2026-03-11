@@ -1,0 +1,33 @@
+<jqassistant-rules
+        xmlns="http://schema.jqassistant.org/rule/v2.2"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-2.2.xsd">
+
+    <group id="jqa-technical-debt">
+        <includeConstraint refId="jqa-technical-debt:*"/>
+        <includeConstraint refId="java:TechnicalDebt"/>
+    </group>
+
+    <constraint id="jqa-technical-debt:ToBeRemovedInVersion">
+        <description>
+            All DTO classes must be located in packages named "model".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type)-[:DECLARES*0..]->(element),
+              (element)-[:ANNOTATED_BY]->(toBeRemovedInVersion)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion"}),
+              (toBeRemovedInVersion)-[:HAS]->(major:Value{name:"major"}),
+              (toBeRemovedInVersion)-[:HAS]->(minor:Value{name:"minor"})
+            WITH
+              type,
+              CASE
+                WHEN element:Member THEN element
+              END AS member, major, minor
+            RETURN
+              type as Type, member as Member, major.value as MajorVersion, minor.value as MinorVersion
+            ORDER BY
+              type.fqn, member.signature
+        ]]></cypher>
+    </constraint>
+
+</jqassistant-rules>

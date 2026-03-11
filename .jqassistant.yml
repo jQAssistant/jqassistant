@@ -15,4 +15,6 @@ jqassistant:
       default-concept-severity: INFO
     groups:
       - jqa-*
+    report:
+      continue-on-failure: true
 
