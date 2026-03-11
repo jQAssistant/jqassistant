@@ -8,9 +8,9 @@
         <includeConstraint refId="java:TechnicalDebt"/>
     </group>
 
-    <constraint id="jqa-technical-debt:ToBeRemovedInVersion">
+    <constraint id="jqa-technical-debt:CodeElementToBeRemovedInVersion">
         <description>
-            This Code Element should be removed from source code annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion".
+            Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" will be removed in the given version.
         </description>
         <cypher><![CDATA[
             MATCH
