@@ -28,14 +28,14 @@
                 WHEN element:Member THEN element
               END AS member
             RETURN
-              type as Type, member as Member, minor.value as MinorVersionForRemoval, major.value AS MajorVersionForRemoval
+              type as Type, member as Member, minor.value as MinorVersion, major.value AS MajorVersion
             ORDER BY
               type.fqn, member.signature
         ]]></cypher>
     </constraint>
     <constraint id="jqa-technical-debt:CodeElementToBeRemoved">
         <description>
-            Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in the current version.
+            Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in given version.
         </description>
         <cypher><![CDATA[
             MATCH
@@ -53,7 +53,7 @@
                 WHEN element:Member THEN element
               END AS member
             RETURN
-              type as Type, member as Member, minor.value as MinorVersionForRemoval, major.value AS MajorVersionForRemoval
+              type as Type, member as Member, minor.value as MinorVersion, major.value AS MajorVersion
             ORDER BY
               type.fqn, member.signature
         ]]></cypher>
