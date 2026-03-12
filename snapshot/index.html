@@ -8020,8 +8020,8 @@ OPTIONAL MATCH
 WITH
   type,
   case
-    when element:Member then element.name
-  end as memberName,
+    when element:Member then element
+  end as member,
   descriptionValue.value as description,
   case split(priorityField.signature, &quot; &quot;)[1]
     when &quot;HIGH&quot; then 0
@@ -8031,9 +8031,9 @@ WITH
   end as priority,
   issueValue.value as issue
 RETURN DISTINCT
-  priority as Priority, type.fqn as Type, memberName as Member, description as Description, issue as Issue
+  priority as Priority, type.fqn as Type, member as Member, description as Description, issue as Issue
 ORDER BY
-  priority, type.fqn, memberName, description, issue</code></pre>
+  priority, type.fqn, member.signature, description, issue</code></pre>
 </div>
 </div>
 </div>
@@ -12700,7 +12700,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-03-12 09:25:46 UTC
+Last updated 2026-03-12 16:22:51 UTC
 </div>
 </div>
 </body>
