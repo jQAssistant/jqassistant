@@ -1,0 +1,67 @@
+<jqassistant-rules
+        xmlns="http://schema.jqassistant.org/rule/v2.2"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-2.2.xsd">
+
+    <group id="jqa-technical-debt">
+        <includeConstraint refId="jqa-technical-debt:*"/>
+        <includeConstraint refId="java:TechnicalDebt"/>
+    </group>
+
+    <constraint id="jqa-technical-debt:CodeElementToBeRemovedInVersion" severity="minor">
+        <description>
+            Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" will be removed in the given version.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"}),
+              (properties)-[:HAS]->(currentMajor:Value{name:"jqassistant.version.major"}),
+              (properties)-[:HAS]->(currentMinor:Value{name:"jqassistant.version.minor"})
+            MATCH
+              (type:Type)-[:DECLARES*0..]->(element),
+              (element)-[:ANNOTATED_BY]->(toBeRemovedInVersion)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion"}),
+              (toBeRemovedInVersion)-[:HAS]->(major:Value{name:"major"}),
+              (toBeRemovedInVersion)-[:HAS]->(minor:Value{name:"minor"})
+            WHERE
+              major.value = toInteger(currentMajor.value) AND minor.value > toInteger(currentMinor.value) OR major.value > toInteger(currentMajor.value)
+            WITH
+              type, minor, major,
+              CASE
+                WHEN element:Member THEN element
+              END AS member
+            RETURN
+              type as Type, member as Member, minor.value as MinorVersion, major.value AS MajorVersion
+            ORDER BY
+              type.fqn, member.signature
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="jqa-technical-debt:CodeElementToBeRemoved">
+        <description>
+            Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in given version.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (properties:File:Properties{fileName:"/META-INF/jqassistant.properties"}),
+              (properties)-[:HAS]->(currentMajor:Value{name:"jqassistant.version.major"}),
+              (properties)-[:HAS]->(currentMinor:Value{name:"jqassistant.version.minor"})
+            MATCH
+              (type:Type)-[:DECLARES*0..]->(element),
+              (element)-[:ANNOTATED_BY]->(toBeRemovedInVersion)-[:OF_TYPE]->(:Type{fqn:"com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion"}),
+              (toBeRemovedInVersion)-[:HAS]->(major:Value{name:"major"}),
+              (toBeRemovedInVersion)-[:HAS]->(minor:Value{name:"minor"})
+            WHERE
+              major.value = toInteger(currentMajor.value) AND minor.value <= toInteger(currentMinor.value) OR major.value < toInteger(currentMajor.value)
+            WITH
+              type, minor, major,
+              CASE
+                WHEN element:Member THEN element
+              END AS member
+            RETURN
+              type as Type, member as Member, minor.value as MinorVersion, major.value AS MajorVersion
+            ORDER BY
+              type.fqn, member.signature
+        ]]></cypher>
+    </constraint>
+
+</jqassistant-rules>
