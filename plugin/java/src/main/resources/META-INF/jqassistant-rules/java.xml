@@ -762,8 +762,8 @@
             WITH
               type,
               case
-                when element:Member then element.name
-              end as memberName,
+                when element:Member then element
+              end as member,
               descriptionValue.value as description,
               case split(priorityField.signature, " ")[1]
                 when "HIGH" then 0
@@ -773,9 +773,9 @@
               end as priority,
               issueValue.value as issue
             RETURN DISTINCT
-              priority as Priority, type.fqn as Type, memberName as Member, description as Description, issue as Issue
+              priority as Priority, type.fqn as Type, member as Member, description as Description, issue as Issue
             ORDER BY
-              priority, type.fqn, memberName, description, issue
+              priority, type.fqn, member.signature, description, issue
         ]]></cypher>
         <report primaryColumn="Type"/>
     </constraint>
