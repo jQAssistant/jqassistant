@@ -1,0 +1,118 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-building-block-view]]
+
+
+== Building Block View
+
+
+
+=== Whitebox Overall System
+
+On the top level the system is structured into bounded contexts.
+
+_**<Overview Diagram>**_
+
+image::bounded-context_ToBeReport.svg[width=300px]
+
+Motivation::
+
+_<text explanation>_
+
+
+Contained Building Blocks::
+_<Description of contained building block (black boxes)>_
+
+Important Interfaces::
+_<Description of important interfaces>_
+
+
+
+
+==== <Name black box 1>
+
+
+
+_<Purpose/Responsibility>_
+
+_<Interface(s)>_
+
+_<(Optional) Quality/Performance Characteristics>_
+
+_<(Optional) Directory/File Location>_
+
+_<(Optional) Fulfilled Requirements>_
+
+_<(optional) Open Issues/Problems/Risks>_
+
+
+
+
+==== <Name black box 2>
+
+_<black box template>_
+
+==== <Name black box n>
+
+_<black box template>_
+
+
+==== <Name interface 1>
+
+...
+
+==== <Name interface m>
+
+
+
+=== Level 2
+
+Every bounded context is internally structured using the Ports and Adapters (Hexagonal) style.
+
+[plantuml]
+----
+include::../plantuml/ports-and-adapters.puml[]
+----
+
+==== White Box _<building block 1>_
+
+
+
+_<white box template>_
+
+==== White Box _<building block 2>_
+
+
+_<white box template>_
+
+...
+
+==== White Box _<building block m>_
+
+
+_<white box template>_
+
+
+
+=== Level 3
+
+
+
+
+==== White Box <_building block x.1_>
+
+
+
+
+_<white box template>_
+
+
+==== White Box <_building block x.2_>
+
+_<white box template>_
+
+
+
+==== White Box <_building block y.1_>
+
+_<white box template>_

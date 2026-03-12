@@ -1,0 +1,17 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-technical-risks]]
+== Risks and Technical Debts
+
+=== Overview
+
+include::jQAssistant:Summary[]
+
+=== Details
+
+:leveloffset: +1
+
+include::jQAssistant:Rules[]
+
+:leveloffset: -1
+

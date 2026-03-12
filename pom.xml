@@ -510,6 +510,7 @@
         </profile>
     </profiles>
     <modules>
+        <module>arc42</module>
         <module>bom</module>
         <module>core</module>
         <module>plugin</module>
