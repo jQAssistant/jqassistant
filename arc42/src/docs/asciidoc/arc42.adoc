@@ -6,10 +6,10 @@
 // configure EN settings for asciidoc
 include::src/config.adoc[]
 
-= image:arc42-logo.png[arc42] Template
-:revnumber: {revnumber}
-:revdate: {revdate}
-:revremark: {revremark}
+= image:arc42-logo.png[arc42] Documentation
+:revnumber: 1.0 EN
+:revdate: March 2026
+:revremark: (based upon AsciiDoc version)
 :toc-title: Table of Contents
 
 //additional style for arc42 help callouts
@@ -50,7 +50,7 @@ include::src/02_architecture_constraints.adoc[]
 
 <<<<
 // 3. Context and Scope
-include::src/03_context_and_scope.adoc[]
+include::src/03_system_scope_and_context.adoc[]
 
 <<<<
 // 4. Solution Strategy

@@ -1,0 +1,25 @@
+@startuml
+
+folder adapters {
+  folder primary {
+    interface UsersApi <<OpenApi>> <<Generated>>
+    class UsersApiController <<Primary Adapter>>
+  }
+  folder secondary {
+    class UserRepositoryImpl <<Secondary Adapter>> <<Spring Data JPA>>
+  }
+}
+
+folder domain {
+  class UserApplicationService <<Primary Port>>
+  class UserDomainService <<Service>>
+  interface UserRepository <<Secondary Port>>
+}
+
+UsersApi <|-down- UsersApiController
+UsersApiController -down-> UserApplicationService
+UserApplicationService -down-> UserDomainService
+UserDomainService -> UserRepository
+UserRepository <|- UserRepositoryImpl
+
+@enduml
