@@ -91,7 +91,7 @@ class MavenModelScannerPluginTest {
         doReturn(artifactDescriptor).when(artifactResolver)
             .resolve(any(Coordinates.class), eq(context));
 
-        plugin.scan(model, "/pom.xml", MavenScope.PROJECT, scanner);
+        plugin.scan(new org.apache.maven.model.Model(model), "/pom.xml", MavenScope.PROJECT, scanner);
 
         verify(mavenPomDescriptor).setArtifactId("test");
         verify(mavenPomDescriptor).setPackaging("jar");
@@ -127,7 +127,7 @@ class MavenModelScannerPluginTest {
         doReturn(artifactDescriptor).when(artifactResolver)
             .resolve(coordinatesCaptor.capture(), eq(context));
 
-        plugin.scan(model, "/pom.xml", MavenScope.PROJECT, scanner);
+        plugin.scan(new org.apache.maven.model.Model(model), "/pom.xml", MavenScope.PROJECT, scanner);
 
         verify(mavenPomDescriptor).setGroupId("com.buschmais.jqassistant");
         verify(mavenPomDescriptor).setArtifactId("test");

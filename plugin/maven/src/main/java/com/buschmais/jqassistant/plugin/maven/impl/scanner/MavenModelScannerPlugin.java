@@ -1,10 +1,9 @@
 package com.buschmais.jqassistant.plugin.maven.impl.scanner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -20,8 +19,9 @@ import com.buschmais.jqassistant.plugin.maven.api.scanner.MavenRepositoryResolve
 import com.buschmais.jqassistant.plugin.maven.impl.scanner.artifact.MavenArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenSourceDescriptor;
 
-import org.apache.maven.api.model.*;
-import org.apache.maven.api.xml.XmlNode;
+import org.apache.maven.model.*;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.slf4j.Logger;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Optional.ofNullable;
@@ -36,6 +36,8 @@ import static java.util.stream.Collectors.toMap;
  * @author ronald.kunzmann@buschmais.com
  */
 public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomDescriptor> {
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MavenModelScannerPlugin.class);
 
     @Override
     protected void configure() {
@@ -79,6 +81,19 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         addRepository(pomDescriptor::getRepositories, model.getRepositories(), store);
         addScmInformation(pomDescriptor, model.getScm(), store);
         return pomDescriptor;
+    }
+
+    private <T> void withMaven4ApiDelegate(Object wrapper, Class<T> type, Consumer<T> delegateConsumer) {
+        try {
+            Method delegateMethod = wrapper.getClass()
+                .getDeclaredMethod("getDelegate");
+            T delegate = type.cast(delegateMethod.invoke(wrapper));
+            delegateConsumer.accept(delegate);
+        } catch (NoSuchMethodException e) {
+            LOGGER.debug("No delegate method found for " + wrapper, e);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Cannot determine or invoke delegate method " + wrapper, e);
+        }
     }
 
     private void addScmInformation(MavenPomDescriptor pomDescriptor, Scm scmInformation, Store store) {
@@ -157,7 +172,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         ofNullable(model.getVersion()).ifPresent(pomDescriptor::setVersion);
         ofNullable(model.getUrl()).ifPresent(pomDescriptor::setUrl);
         ofNullable(model.getDescription()).ifPresent(pomDescriptor::setDescription);
-        pomDescriptor.setRoot(model.isRoot());
+        withMaven4ApiDelegate(model, org.apache.maven.api.model.Model.class, m -> pomDescriptor.setRoot(m.isRoot()));
         Coordinates artifactCoordinates = new ModelCoordinates(model);
         MavenArtifactDescriptor artifact = context.peek(ArtifactResolver.class)
             .resolve(artifactCoordinates, context);
@@ -209,7 +224,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             ofNullable(property.getName()).ifPresent(propertyDescriptor::setName);
             ofNullable(property.getValue()).ifPresent(propertyDescriptor::setValue);
         }
-        ofNullable(activation.getCondition()).ifPresent(profileActivationDescriptor::setCondition);
+        withMaven4ApiDelegate(activation, org.apache.maven.api.model.Activation.class,
+            a -> ofNullable(a.getCondition()).ifPresent(profileActivationDescriptor::setCondition));
     }
 
     /**
@@ -223,13 +239,13 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param store
      *     The database.
      */
-    private void addConfiguration(ConfigurableDescriptor configurableDescriptor, XmlNode config, Store store) {
+    private void addConfiguration(ConfigurableDescriptor configurableDescriptor, Xpp3Dom config, Store store) {
         if (null == config) {
             return;
         }
         MavenConfigurationDescriptor configDescriptor = store.create(MavenConfigurationDescriptor.class);
         configurableDescriptor.setConfiguration(configDescriptor);
-        for (XmlNode child : config.children()) {
+        for (Xpp3Dom child : config.getChildren()) {
             configDescriptor.getValues()
                 .add(getConfigChildNodes(child, store));
         }
@@ -413,7 +429,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             mavenPluginDescriptor.getDeclaresDependencies()
                 .addAll(getDependencies(plugin.getDependencies(), context));
             addPluginExecutions(mavenPluginDescriptor, plugin, store);
-            addConfiguration(mavenPluginDescriptor, plugin.getConfiguration(), store);
+            addConfiguration(mavenPluginDescriptor, (Xpp3Dom) plugin.getConfiguration(), store);
             pluginDescriptors.add(mavenPluginDescriptor);
         }
         return pluginDescriptors;
@@ -453,19 +469,21 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             return;
         }
         Build build = (Build) buildBase;
-        for (Source source : build.getSources()) {
-            MavenSourceDescriptor sourceDescriptor = store.create(MavenSourceDescriptor.class);
-            ofNullable(source.getScope()).ifPresent(sourceDescriptor::setScope);
-            ofNullable(source.getLang()).ifPresent(sourceDescriptor::setLang);
-            ofNullable(source.getModule()).ifPresent(sourceDescriptor::setModule);
-            ofNullable(source.getDirectory()).ifPresent(sourceDescriptor::setDirectory);
-            ofNullable(source.getTargetVersion()).ifPresent(sourceDescriptor::setTargetVersion);
-            ofNullable(source.getTargetPath()).ifPresent(sourceDescriptor::setTargetPath);
-            ofNullable(source.isStringFiltering()).ifPresent(sourceDescriptor::setStringFiltering);
-            ofNullable(source.isEnabled()).ifPresent(sourceDescriptor::setEnabled);
-            descriptor.getSources()
-                .add(sourceDescriptor);
-        }
+        withMaven4ApiDelegate(build, org.apache.maven.api.model.Build.class, b -> {
+            for (org.apache.maven.api.model.Source source : b.getSources()) {
+                MavenSourceDescriptor sourceDescriptor = store.create(MavenSourceDescriptor.class);
+                ofNullable(source.getScope()).ifPresent(sourceDescriptor::setScope);
+                ofNullable(source.getLang()).ifPresent(sourceDescriptor::setLang);
+                ofNullable(source.getModule()).ifPresent(sourceDescriptor::setModule);
+                ofNullable(source.getDirectory()).ifPresent(sourceDescriptor::setDirectory);
+                ofNullable(source.getTargetVersion()).ifPresent(sourceDescriptor::setTargetVersion);
+                ofNullable(source.getTargetPath()).ifPresent(sourceDescriptor::setTargetPath);
+                ofNullable(source.isStringFiltering()).ifPresent(sourceDescriptor::setStringFiltering);
+                ofNullable(source.isEnabled()).ifPresent(sourceDescriptor::setEnabled);
+                descriptor.getSources()
+                    .add(sourceDescriptor);
+            }
+        });
     }
 
     /**
@@ -508,7 +526,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             mavenPluginDescriptor.getExecutions()
                 .add(executionDescriptor);
             addExecutionGoals(executionDescriptor, pluginExecution, store);
-            addConfiguration(executionDescriptor, pluginExecution.getConfiguration(), store);
+            addConfiguration(executionDescriptor, (Xpp3Dom) pluginExecution.getConfiguration(), store);
         }
 
     }
@@ -596,15 +614,16 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param store
      *     The database.
      */
-    private void addProperties(BaseProfileDescriptor pomDescriptor, Map<String, String> properties, Store store) {
-        for (Entry<String, String> entry : properties.entrySet()) {
+    private void addProperties(BaseProfileDescriptor pomDescriptor, Properties properties, Store store) {
+        for (Entry<Object, Object> entry : properties.entrySet()) {
             PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
-            propertyDescriptor.setName(entry.getKey());
-            propertyDescriptor.setValue(entry.getValue());
+            propertyDescriptor.setName(entry.getKey()
+                .toString());
+            propertyDescriptor.setValue(entry.getValue()
+                .toString());
             pomDescriptor.getProperties()
                 .add(propertyDescriptor);
         }
-
     }
 
     /**
@@ -632,17 +651,17 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      *     The database.
      * @return Child config information.
      */
-    private ValueDescriptor<?> getConfigChildNodes(XmlNode node, Store store) {
-        List<XmlNode> children = node.children();
-        if (children.isEmpty()) {
+    private ValueDescriptor<?> getConfigChildNodes(Xpp3Dom node, Store store) {
+        Xpp3Dom[] children = node.getChildren();
+        if (children == null || children.length == 0) {
             PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
-            propertyDescriptor.setName(node.name());
-            ofNullable(node.value()).ifPresent(propertyDescriptor::setValue);
+            propertyDescriptor.setName(node.getName());
+            ofNullable(node.getValue()).ifPresent(propertyDescriptor::setValue);
             return propertyDescriptor;
         }
         ArrayValueDescriptor childDescriptor = store.create(ArrayValueDescriptor.class);
-        childDescriptor.setName(node.name());
-        for (XmlNode child : children) {
+        childDescriptor.setName(node.getName());
+        for (Xpp3Dom child : children) {
             childDescriptor.getValue()
                 .add(getConfigChildNodes(child, store));
         }

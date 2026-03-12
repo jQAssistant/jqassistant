@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.maven.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven.api.scanner.PomModelBuilder;
 
-import org.apache.maven.api.model.Model;
+import org.apache.maven.model.Model;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -36,7 +36,8 @@ class MavenPomFileScannerPluginTest {
 
         FileResource fileResource = Mockito.mock(FileResource.class, NOT_MOCKED_ANSWER);
 
-        doReturn(inputStream).when(fileResource).createStream();
+        doReturn(inputStream).when(fileResource)
+            .createStream();
 
         String path = "/a/b/c/pom.xml";
 
@@ -53,7 +54,8 @@ class MavenPomFileScannerPluginTest {
 
         FileResource fileResource = Mockito.mock(FileResource.class, NOT_MOCKED_ANSWER);
 
-        doReturn(inputStream).when(fileResource).createStream();
+        doReturn(inputStream).when(fileResource)
+            .createStream();
 
         String path = "/a/b/c/d.pom";
 
@@ -70,7 +72,8 @@ class MavenPomFileScannerPluginTest {
 
         FileResource fileResource = Mockito.mock(FileResource.class, NOT_MOCKED_ANSWER);
 
-        doReturn(inputStream).when(fileResource).createStream();
+        doReturn(inputStream).when(fileResource)
+            .createStream();
 
         String path = "/a/b/c/pom.foobar";
 
@@ -87,7 +90,8 @@ class MavenPomFileScannerPluginTest {
 
         FileResource fileResource = Mockito.mock(FileResource.class, NOT_MOCKED_ANSWER);
 
-        doReturn(inputStream).when(fileResource).createStream();
+        doReturn(inputStream).when(fileResource)
+            .createStream();
 
         String path = "/a/b/c/d.xml";
 
@@ -101,11 +105,12 @@ class MavenPomFileScannerPluginTest {
         MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
 
         InputStream inputStream = new ByteArrayInputStream(
-                "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"><a></a></project>".getBytes(StandardCharsets.UTF_8));
+            "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"><a></a></project>".getBytes(StandardCharsets.UTF_8));
 
         FileResource fileResource = Mockito.mock(FileResource.class, NOT_MOCKED_ANSWER);
 
-        doReturn(inputStream).when(fileResource).createStream();
+        doReturn(inputStream).when(fileResource)
+            .createStream();
 
         String path = "/a/b/c/d.xml";
 
@@ -119,11 +124,12 @@ class MavenPomFileScannerPluginTest {
         MavenPomFileScannerPlugin plugin = new MavenPomFileScannerPlugin();
 
         InputStream inputStream = new ByteArrayInputStream(
-                "<project xmlns=\"http://maven.apache.org/POM/4.1.0\"><a></a></project>".getBytes(StandardCharsets.UTF_8));
+            "<project xmlns=\"http://maven.apache.org/POM/4.1.0\"><a></a></project>".getBytes(StandardCharsets.UTF_8));
 
         FileResource fileResource = Mockito.mock(FileResource.class, NOT_MOCKED_ANSWER);
 
-        doReturn(inputStream).when(fileResource).createStream();
+        doReturn(inputStream).when(fileResource)
+            .createStream();
 
         String path = "/a/b/c/d.xml";
 
@@ -140,7 +146,8 @@ class MavenPomFileScannerPluginTest {
 
         FileResource fileResource = Mockito.mock(FileResource.class, NOT_MOCKED_ANSWER);
 
-        doReturn(inputStream).when(fileResource).createStream();
+        doReturn(inputStream).when(fileResource)
+            .createStream();
 
         String path = "/a/b/c/d.xml";
 
@@ -156,8 +163,10 @@ class MavenPomFileScannerPluginTest {
 
         FileResource fileResource = mock(FileResource.class);
         InputStream stream = new ByteArrayInputStream("<project/>".getBytes(StandardCharsets.UTF_8));
-        doReturn(stream).when(fileResource).createStream();
-        doReturn(new File("pom.xml")).when(fileResource).getFile();
+        doReturn(stream).when(fileResource)
+            .createStream();
+        doReturn(new File("pom.xml")).when(fileResource)
+            .getFile();
 
         MavenPomXmlDescriptor inputDescriptor = mock(MavenPomXmlDescriptor.class);
         MavenPomXmlDescriptor scannedDescriptor = mock(MavenPomXmlDescriptor.class);
@@ -182,8 +191,10 @@ class MavenPomFileScannerPluginTest {
 
         FileResource fileResource = mock(FileResource.class);
         InputStream stream = new ByteArrayInputStream("<project/>".getBytes(StandardCharsets.UTF_8));
-        doReturn(stream).when(fileResource).createStream();
-        doReturn(new File("pom.xml")).when(fileResource).getFile();
+        doReturn(stream).when(fileResource)
+            .createStream();
+        doReturn(new File("pom.xml")).when(fileResource)
+            .getFile();
 
         MavenPomXmlDescriptor inputDescriptor = mock(MavenPomXmlDescriptor.class);
 

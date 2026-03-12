@@ -24,13 +24,12 @@ import com.buschmais.jqassistant.plugin.maven.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven.impl.scanner.dependency.DependencyScanner;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import org.apache.maven.api.model.Build;
-import org.apache.maven.api.model.Model;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
@@ -144,7 +143,7 @@ class MavenProjectScannerPluginTest {
         when(project.getParent()).thenReturn(parentProject);
         properties.put(MavenProject.class.getName(), project);
 
-        Build build = Build.newBuilder()
+        org.apache.maven.api.model.Build build = org.apache.maven.api.model.Build.newBuilder()
             .outputDirectory("target/classes")
             .testOutputDirectory("target/test-classes")
             .build();
@@ -165,12 +164,12 @@ class MavenProjectScannerPluginTest {
         MavenPomXmlDescriptor pomXmlDescriptor = mock(MavenPomXmlDescriptor.class);
         when(scanner.scan(pomXml, pomXml.getAbsolutePath(), MavenScope.PROJECT)).thenReturn(pomXmlDescriptor);
 
-        // Effective effective model
+        // Effective model
         MavenPomDescriptor modelDescriptor = mock(MavenPomDescriptor.class);
         doReturn(modelDescriptor).when(store)
             .create(MavenPomDescriptor.class);
         Model effectiveModel = mock(Model.class);
-        when(project.getModel()).thenReturn(new org.apache.maven.model.Model(effectiveModel));
+        when(project.getModel()).thenReturn(effectiveModel);
         doReturn(modelDescriptor).when(scanner)
             .scan(any(Model.class), eq(pomXml.getAbsolutePath()), eq(MavenScope.PROJECT));
         doReturn(modelDescriptor).when(store)

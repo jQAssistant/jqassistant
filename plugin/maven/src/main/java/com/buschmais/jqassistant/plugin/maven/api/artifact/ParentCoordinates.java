@@ -1,8 +1,9 @@
 package com.buschmais.jqassistant.plugin.maven.api.artifact;
 
-import org.apache.maven.api.model.Parent;
+import org.apache.maven.model.Parent;
 
 public final class ParentCoordinates implements Coordinates {
+
     private final Parent parent;
 
     public ParentCoordinates(Parent parent) {

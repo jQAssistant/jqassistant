@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.plugin.maven.api.scanner.RawModelBuilder;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XMLFileFilter;
 
-import org.apache.maven.api.model.Model;
+import org.apache.maven.model.Model;
 
 /**
  * Scans pom.xml files.

@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.maven.api.artifact;
 
-import org.apache.maven.api.model.Dependency;
+import org.apache.maven.model.Dependency;
 
 public class DependencyCoordinates implements Coordinates {
 

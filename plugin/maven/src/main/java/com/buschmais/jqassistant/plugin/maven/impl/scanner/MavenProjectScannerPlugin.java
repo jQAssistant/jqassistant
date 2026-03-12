@@ -338,7 +338,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             .create(MavenPomDescriptor.class);
         scanner.getContext()
             .push(MavenPomDescriptor.class, mavenPomDescriptor);
-        scanner.scan(project.getModel().getDelegate(), pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        scanner.scan(project.getModel(), pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
         scanner.getContext()
             .pop(MavenPomDescriptor.class);
         MavenPomDescriptor effectiveModelDescriptor = scanner.getContext()

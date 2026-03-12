@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.maven.api.model.Model;
+import org.apache.maven.model.Model;
 
 /**
  * Defines the interface for a POM model builder. If available on the scanner
@@ -16,10 +16,10 @@ public interface PomModelBuilder {
      * Build the Maven model from the given POM file.
      *
      * @param pomFile
-     *            The pom file.
+     *     The pom file.
      * @return The Maven model.
      * @throws IOException
-     *             If model building fails.
+     *     If model building fails.
      */
     Model getModel(File pomFile) throws IOException;
 

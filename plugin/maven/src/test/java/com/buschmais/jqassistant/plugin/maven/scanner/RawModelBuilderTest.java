@@ -6,7 +6,7 @@ import java.net.URL;
 
 import com.buschmais.jqassistant.plugin.maven.api.scanner.RawModelBuilder;
 
-import org.apache.maven.api.model.Model;
+import org.apache.maven.model.Model;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
