@@ -12,21 +12,6 @@ include::src/config.adoc[]
 :revremark: (based upon AsciiDoc version)
 :toc-title: Table of Contents
 
-//additional style for arc42 help callouts
-ifdef::backend-html5[]
-++++
-<style>
-.arc42help {font-size:small; width: 14px; height: 16px; overflow: hidden; position: absolute; right: 0; padding: 2px 0 3px 2px;}
-.arc42help::before {content: "?";}
-.arc42help:hover {width:auto; height: auto; z-index: 100; padding: 10px;}
-.arc42help:hover::before {content: "";}
-@media print {
-	.arc42help {display:none;}
-}
-</style>
-++++
-endif::backend-html5[]
-
 
 include::src/about-arc42.adoc[]
 
@@ -50,7 +35,7 @@ include::src/02_architecture_constraints.adoc[]
 
 <<<<
 // 3. Context and Scope
-include::src/03_system_scope_and_context.adoc[]
+include::src/03_context_and_scope.adoc[]
 
 <<<<
 // 4. Solution Strategy

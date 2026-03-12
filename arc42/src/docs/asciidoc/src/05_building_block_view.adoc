@@ -12,8 +12,6 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 _**<Overview Diagram>**_
 
-Every bounded context is internally structured using the Ports and Adapters (Hexagonal) style.
-
 [plantuml]
 ----
 include::../plantuml/05_whitebox.puml[]

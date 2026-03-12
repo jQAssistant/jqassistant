@@ -1,10 +1,7 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
-[[section-system-scope-and-context]]
-== System Scope and Context
-
-
-
+[[section-context-and-scope]]
+== Context and Scope
 
 
 === Business Context

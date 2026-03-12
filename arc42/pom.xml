@@ -28,7 +28,7 @@
                     <attributes>
                         <toc>left</toc>
                         <imagesdir>./</imagesdir>
-                        <jqassistant-report-path>${project.build.directory}/jqassistant/jqassistant-report.xml</jqassistant-report-path>
+                        <jqassistant-report-path>${session.executionRootDirectory}/target/jqassistant/jqassistant-report.xml</jqassistant-report-path>
                     </attributes>
                 </configuration>
                 <executions>
@@ -70,4 +70,13 @@
         </plugins>
     </build>
 
+    <dependencies>
+        <!-- ensure this module is built as the last one within the Maven reactor-->
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>manual</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>
