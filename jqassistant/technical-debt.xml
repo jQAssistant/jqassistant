@@ -35,6 +35,7 @@
               type.fqn, member.signature
         ]]></cypher>
     </constraint>
+
     <constraint id="jqa-technical-debt:CodeElementToBeRemoved">
         <description>
             Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in given version.
