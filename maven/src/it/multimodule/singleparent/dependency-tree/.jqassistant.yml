@@ -1,5 +1,5 @@
 jqassistant:
   scan:
     properties:
-      maven3.dependencies.scan: true
-      maven3.dependencies.includes: org.springframework*:*:*:*
+      maven.dependencies.scan: true
+      maven.dependencies.includes: org.springframework*:*:*:*
