@@ -36,24 +36,24 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-        - name: Deploy GitHub Pages to snapshot
+        - name: Deploy GitHub Pages to arc42
           uses: peaceiris/actions-gh-pages@v3
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_dir: "./arc42/target/generated-docs/"
-            destination_dir: ./arc42
+            destination_dir: ./arc42/
             keep_files: true
 
   publish-report:
     runs-on: ubuntu-latest
     needs: build
     steps:
-       - name: Deploy GitHub Pages to snapshot
+       - name: Deploy GitHub Pages to report
          uses: peaceiris/actions-gh-pages@v3
          with:
            github_token: ${{ secrets.GITHUB_TOKEN }}
            publish_dir: "./target/jqassistant/"
-           destination_dir: ./report
+           destination_dir: "./report"
            keep_files: true
 
 
