@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenSourceDescriptor;
 import com.buschmais.xo.api.annotation.Abstract;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 

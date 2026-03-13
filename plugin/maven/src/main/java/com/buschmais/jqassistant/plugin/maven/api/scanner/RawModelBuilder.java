@@ -47,7 +47,7 @@ public class RawModelBuilder implements PomModelBuilder {
         try {
             delegateConstructor = Model.class.getDeclaredConstructor(org.apache.maven.api.model.Model.class);
         } catch (NoSuchMethodException e) {
-            LOGGER.warn("Delegate constructor for Maven 4 model not found.", e);
+            LOGGER.debug("Delegate constructor for Maven 4 model not found.", e);
             return empty();
         }
         MavenStaxReader mavenStaxReader = new MavenStaxReader();

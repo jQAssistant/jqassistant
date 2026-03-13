@@ -17,7 +17,7 @@ import com.buschmais.jqassistant.plugin.maven.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven.api.model.*;
 import com.buschmais.jqassistant.plugin.maven.api.scanner.MavenRepositoryResolver;
 import com.buschmais.jqassistant.plugin.maven.impl.scanner.artifact.MavenArtifactResolver;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenSourceDescriptor;
+import com.buschmais.jqassistant.plugin.maven.api.model.MavenSourceDescriptor;
 
 import org.apache.maven.model.*;
 import org.codehaus.plexus.util.xml.Xpp3Dom;

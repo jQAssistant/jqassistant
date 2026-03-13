@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
+package com.buschmais.jqassistant.plugin.maven.impl.scanner;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven.api.model.MavenProjectDirectoryDescriptor;
 
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;

@@ -30,7 +30,7 @@
         <class>com.buschmais.jqassistant.plugin.maven.api.model.MavenArtifactIdDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven.api.model.MavenVersionDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven.api.model.MavenScmDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenSourceDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven.api.model.MavenSourceDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven.api.model.MavenTestArtifactDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven.api.model.EffectiveDescriptor</class>
     </model>
@@ -41,8 +41,8 @@
         <class>com.buschmais.jqassistant.plugin.maven.impl.scanner.MavenPomFileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.maven.impl.scanner.MavenModelScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.maven.impl.scanner.MavenProjectScannerPlugin</class>
-        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenWARProjectScannerPlugin</class>
-        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenEARProjectScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven.impl.scanner.MavenWARProjectScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven.impl.scanner.MavenEARProjectScannerPlugin</class>
     </scanner>
     <rules>
         <resource>maven.xml</resource>

@@ -1,6 +1,5 @@
-package com.buschmais.jqassistant.plugin.maven3.api.model;
+package com.buschmais.jqassistant.plugin.maven.api.model;
 
-import com.buschmais.jqassistant.plugin.maven.api.model.MavenDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 
