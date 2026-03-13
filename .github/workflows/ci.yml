@@ -40,7 +40,7 @@ jobs:
           uses: peaceiris/actions-gh-pages@v3
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./arc42/target/generated-docs/
+            publish_dir: "./arc42/target/generated-docs/"
             destination_dir: ./arc42
             keep_files: true
 
@@ -52,7 +52,7 @@ jobs:
          uses: peaceiris/actions-gh-pages@v3
          with:
            github_token: ${{ secrets.GITHUB_TOKEN }}
-           publish_dir: ./target/jqassistant/
+           publish_dir: "./target/jqassistant/"
            destination_dir: ./report
            keep_files: true
 
