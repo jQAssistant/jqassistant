@@ -9,7 +9,7 @@
         <cypher>
             MATCH
               (:Maven:Project)-[:CONTAINS]->(application:Directory{fileName:"src/main/application"}),
-              (webapp)-[:CONTAINS]->(applicationXml:Xml:File{fileName:"/META-INF/application.xml"})
+              (application)-[:CONTAINS]->(applicationXml:Xml:File{fileName:"/META-INF/application.xml"})
             RETURN
               applicationXml
         </cypher>
