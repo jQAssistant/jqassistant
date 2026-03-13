@@ -25,7 +25,7 @@ on:
         type: string
         required: false
         default: '[11, 25]'
-      publish_arc42:
+      publish_snapshots:
         description: Whether to attempt publishing snapshots. When false, the workflow will only run build.
         type: boolean
         default: true
@@ -58,8 +58,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ts-graphviz/setup-graphviz@v1
-        with:
-          cache: 'maven'
 
       - name: Deploy GitHub Pages to arc42
         uses: peaceiris/actions-gh-pages@v3
