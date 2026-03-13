@@ -40,6 +40,8 @@
         <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenPomFileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenModelScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenWARProjectScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenEARProjectScannerPlugin</class>
     </scanner>
     <rules>
         <resource>maven3.xml</resource>
