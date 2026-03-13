@@ -88,16 +88,16 @@
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
         <junit.version>5.14.3</junit.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
-        <lombok.version>1.18.42</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <maven.version>3.6.3</maven.version>
         <maven-api.version>4.0.0-rc-5</maven-api.version>
-        <mockito.version>5.22.0</mockito.version>
+        <mockito.version>5.23.0</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
         <model-assert.version>1.1.0</model-assert.version>
         <neo4j_4x.version>4.4.48</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
-        <neo4j_5x.version>5.26.21</neo4j_5x.version>
+        <neo4j_5x.version>5.26.22</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
          This default setting is required by Jenkins for parsing the Maven model -->
         <neo4j.version>${neo4j_4x.version}</neo4j.version>
@@ -133,34 +133,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${exec-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.buschmais.jqassistant</groupId>
-                    <artifactId>jqassistant-maven-plugin</artifactId>
-                    <configuration>
-                      <yaml><![CDATA[
-                        jqassistant:
-                          scan:
-                            include:
-                              files:
-                                - ${project.basedir}/readme.adoc
-                                - ${project.basedir}/src/main/asciidoc
-                                - ${project.basedir}/.editorconfig
-                                - ${project.basedir}/LICENSE
-                          analyze:
-                            groups:
-                              - jqa-*
-                          maven:
-                            reuse-store: false
-                      ]]></yaml>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant.build</groupId>
-                            <artifactId>jqassistant</artifactId>
-                            <version>${jqassistant.build.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
