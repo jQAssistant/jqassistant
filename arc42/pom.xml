@@ -10,9 +10,9 @@
     <artifactId>arc42</artifactId>
     <packaging>pom</packaging>
 
-    <name>arc 42 documentation</name>
+    <name>jQAssistant arc42</name>
 
-    <description>Developer documentation for jQAssistant</description>
+    <description>arc42 based architecture documentation for jQAssistant</description>
 
     <build>
         <plugins>
