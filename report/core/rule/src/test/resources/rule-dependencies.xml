@@ -1,0 +1,94 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.7">
+
+    <group id="test">
+        <includeGroup refId="test:Constraints" />
+        <includeGroup refId="test:Concepts" />
+    </group>
+
+    <group id="test:Constraints">
+        <includeConstraint refId="test:Constraint" />
+    </group>
+
+    <group id="test:Concepts">
+        <includeConcept refId="test:ProvidingConcept2">
+            <providesConcept refId="test:AbstractConcept"/>
+        </includeConcept>
+        <includeConcept refId="test:ProvidingConcept4">
+            <providesConcept refId="test:AbstractConcept" activation="if-required"/>
+        </includeConcept>
+    </group>
+
+    <constraint id="test:Constraint">
+        <requiresConcept refId="test:Concept" />
+        <description>Test constraint</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </constraint>
+
+    <concept id="test:Concept">
+        <requiresConcept refId="test:AbstractConcept" />
+        <description>Test concept</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:AbstractConcept">
+        <description>Abstract test concept</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ProvidingConcept1">
+        <providesConcept refId="test:AbstractConcept"/>
+        <description>Providing test concept 1</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ProvidingConcept2">
+        <description>Providing test concept 2</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ProvidingConcept3">
+        <providesConcept refId="test:AbstractConcept" activation="if-required"/>
+        <description>Providing test concept 3</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:ProvidingConcept4">
+        <description>Providing test concept 4</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            return
+              n
+        ]]></cypher>
+    </concept>
+</jqassistant-rules>

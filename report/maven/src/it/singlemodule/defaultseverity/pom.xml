@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@.integration</artifactId>
+        <version>@project.version@</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <artifactId>@project.artifactId@.integration.singlemodule.defaultseverity</artifactId>
+
+    <profiles>
+        <profile>
+            <id>1</id>
+            <properties>
+                <jqassistant.analyze.groups>default</jqassistant.analyze.groups>
+                <jqa.xmlReportFile>target/jqassistant/jqassistant-report.1.xml</jqa.xmlReportFile>
+            </properties>
+        </profile>
+        <profile>
+            <id>2</id>
+            <properties>
+                <jqassistant.analyze.concepts>severity:ConceptWithDefaultSeverity</jqassistant.analyze.concepts>
+                <jqassistant.analyze.report.fail-on-severity>MINOR</jqassistant.analyze.report.fail-on-severity>
+                <jqa.xmlReportFile>target/jqassistant/jqassistant-report.2.xml</jqa.xmlReportFile>
+            </properties>
+        </profile>
+        <profile>
+            <id>3</id>
+            <properties>
+                <jqassistant.analyze.concepts>severity:ConceptWithDefaultSeverity</jqassistant.analyze.concepts>
+                <jqassistant.analyze.report.fail-on-severity>MAJOR</jqassistant.analyze.report.fail-on-severity>
+                <jqa.xmlReportFile>target/jqassistant/jqassistant-report.3.xml</jqa.xmlReportFile>
+            </properties>
+        </profile>
+        <profile>
+            <id>4</id>
+            <properties>
+                <jqassistant.analyze.constraints>severity:ConstraintWithDefaultSeverity</jqassistant.analyze.constraints>
+                <jqassistant.analyze.report.fail-on-severity>MAJOR</jqassistant.analyze.report.fail-on-severity>
+                <jqa.xmlReportFile>target/jqassistant/jqassistant-report.4.xml</jqa.xmlReportFile>
+            </properties>
+        </profile>
+        <profile>
+            <id>5</id>
+            <properties>
+                <jqassistant.analyze.constraints>severity:ConstraintWithDefaultSeverity</jqassistant.analyze.constraints>
+                <jqassistant.analyze.report.fail-on-severity>CRITICAL</jqassistant.analyze.report.fail-on-severity>
+                <jqa.xmlReportFile>target/jqassistant/jqassistant-report.5.xml</jqa.xmlReportFile>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

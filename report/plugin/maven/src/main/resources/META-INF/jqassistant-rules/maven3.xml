@@ -1,0 +1,19 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+
+<constraint id="maven3:HierarchicalParentModuleRelation">
+        <description>If a parent Maven project declares a module then the parent project must also be declared as the
+            parent of the module (i.e. to keep the project hierarchy consistent).
+        </description>
+        <cypher><![CDATA[
+            match
+              (parent:Maven:Project)-[:HAS_MODULE]->(module:Maven:Project)
+            where
+              not (module)-[:HAS_PARENT]->(parent)
+            return
+              module as InvalidModule
+        ]]></cypher>
+    </constraint>
+
+</jqassistant-rules>

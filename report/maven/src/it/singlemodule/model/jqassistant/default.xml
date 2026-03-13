@@ -1,0 +1,42 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="default">
+        <includeConcept refId="test:ProjectHasModel"/>
+        <includeConcept refId="test:ProjectHasEffectiveModel"/>
+        <includeConcept refId="test:TestArtifactDependsOnMainArtifact"/>
+    </group>
+
+    <concept id="test:ProjectHasModel" severity="critical">
+        <description>Return all POM models</description>
+        <cypher>
+            MATCH
+            (:Maven:Project)-[:HAS_MODEL]->(pom:Maven:Pom:File)
+            RETURN
+            pom
+        </cypher>
+    </concept>
+
+    <concept id="test:ProjectHasEffectiveModel" severity="critical">
+        <description>Return all POM models</description>
+        <cypher>
+            MATCH
+            (:Maven:Project)-[:HAS_EFFECTIVE_MODEL]->(pom:Maven:Pom:Effective)
+            RETURN
+            pom
+        </cypher>
+    </concept>
+
+    <concept id="test:TestArtifactDependsOnMainArtifact" severity="critical">
+        <description>Verifies that the :Test artifact depends on the :Main artifact</description>
+        <cypher>
+            MATCH
+              (project:Maven:Project),
+              (project)-[:CREATES]->(main:Main:Artifact),
+              (project)-[:CREATES]->(test:Test:Artifact),
+              (test)-[:DEPENDS_ON]->(main)
+            RETURN
+              main, test
+        </cypher>
+    </concept>
+
+</jqa:jqassistant-rules>

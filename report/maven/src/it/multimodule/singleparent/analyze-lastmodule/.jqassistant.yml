@@ -1,0 +1,4 @@
+jqassistant:
+  maven:
+    module:
+      skip: ${jqa.skip:false}

@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="616.0230712890625" height="276.3825988769531"
+     viewBox="-288.93115234375 -50.614017486572266 616.0230712890625 276.3825988769531">
+    <title>Neo4j Graph Visualization</title>
+    <desc>Created using Neo4j (http://www.neo4j.com/)</desc>
+    <g class="layer relationships">
+        <g class="relationship"
+           transform="translate(-244.44000244140625 -3.8394833103379966) rotate(450.15188375002685)">
+            <path class="outline" fill="#FB95AF" stroke="none"
+                  d="M 40 0.5 L 65.79504662811989 0.5 L 65.79504662811989 -0.5 L 40 -0.5 Z M 112.47838097870583 0.5 L 138.27342760682572 0.5 L 138.27342760682572 3.5 L 145.27342760682572 0 L 138.27342760682572 -3.5 L 138.27342760682572 -0.5 L 112.47838097870583 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="89.13671380341286" y="3"
+                  transform="rotate(180 89.13671380341286 0)" font-family="sans-serif">CONTAINS
+            </text>
+        </g>
+        <g class="relationship" transform="translate(-244.93113791852494 181.43329332758256) rotate(309.1649207547146)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 95.71444158701172 0.5 L 95.71444158701172 -0.5 L 40 -0.5 Z M 138.58110647348633 0.5 L 194.29554806049805 0.5 L 194.29554806049805 3.5 L 201.29554806049805 0 L 194.29554806049805 -3.5 L 194.29554806049805 -0.5 L 138.58110647348633 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="117.14777403024902" y="3"
+                  font-family="sans-serif">HAS_KEY
+            </text>
+        </g>
+        <g class="relationship" transform="translate(-92.53979423402042 -5.650698194533902) rotate(449.84651121728643)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 63.97664628616694 0.5 L 63.97664628616694 -0.5 L 40 -0.5 Z M 116.44331346145991 0.5 L 140.41995974762685 0.5 L 140.41995974762685 3.5 L 147.41995974762685 0 L 140.41995974762685 -3.5 L 140.41995974762685 -0.5 L 116.44331346145991 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="90.20997987381342" y="3"
+                  font-family="sans-serif">HAS_VALUE
+            </text>
+        </g>
+        <g class="relationship" transform="translate(-92.03771838628467 181.76858905105667) rotate(315.20707844577976)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 108.75734298698205 0.5 L 108.75734298698205 -0.5 L 40 -0.5 Z M 151.62400787345666 0.5 L 220.38135086043872 0.5 L 220.38135086043872 3.5 L 227.38135086043872 0 L 220.38135086043872 -3.5 L 220.38135086043872 -0.5 L 151.62400787345666 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="130.19067543021936" y="3"
+                  font-family="sans-serif">HAS_KEY
+            </text>
+        </g>
+        <g class="relationship" transform="translate(-92.03771838628467 181.76858905105667) rotate(358.1586154233132)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 70.10264914853303 0.5 L 70.10264914853303 -0.5 L 40 -0.5 Z M 112.96931403500764 0.5 L 143.07196318354067 0.5 L 143.07196318354067 3.5 L 150.07196318354067 0 L 143.07196318354067 -3.5 L 143.07196318354067 -0.5 L 112.96931403500764 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="91.53598159177034" y="3"
+                  font-family="sans-serif">HAS_KEY
+            </text>
+        </g>
+        <g class="relationship" transform="translate(97.71153832662753 -6.614017271423037) rotate(360.55275287463604)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 60.94949982742992 0.5 L 60.94949982742992 -0.5 L 40 -0.5 Z M 113.41616700272289 0.5 L 134.3656668301528 0.5 L 134.3656668301528 3.5 L 141.3656668301528 0 L 134.3656668301528 -3.5 L 134.3656668301528 -0.5 L 113.41616700272289 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="87.1828334150764" y="3"
+                  font-family="sans-serif">HAS_VALUE
+            </text>
+        </g>
+        <g class="relationship" transform="translate(97.9360938667154 175.66106528875113) rotate(359.73802383615043)">
+            <path class="outline" fill="#A5ABB6" stroke="none"
+                  d="M 40 0.5 L 62.84556817801024 0.5 L 62.84556817801024 -0.5 L 40 -0.5 Z M 115.31223535330321 0.5 L 138.15780353131345 0.5 L 138.15780353131345 3.5 L 145.15780353131345 0 L 138.15780353131345 -3.5 L 138.15780353131345 -0.5 L 115.31223535330321 -0.5 Z"/>
+            <text text-anchor="middle" pointer-events="none" font-size="8px" fill="#000000" x="89.07890176565672" y="3"
+                  font-family="sans-serif">HAS_VALUE
+            </text>
+        </g>
+    </g>
+    <g class="layer nodes">
+        <g class="node" transform="translate(-244.44000244140625,-3.8394833103379966)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#6DCE9E" stroke="#60B58B" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">File
+            </text>
+        </g>
+        <g class="node" transform="translate(-244.93113791852494,181.43329332758256)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#FFD86E" stroke="#EDBA39" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#604A0E"
+                  font-family="sans-serif">Object</text>
+        </g>
+        <g class="node" transform="translate(-92.53979423402042,-5.650698194533902)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#A5ABB6" stroke="#9AA1AC" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">A
+            </text>
+        </g>
+        <g class="node" transform="translate(-92.03771838628467,181.76858905105667)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#FFD86E" stroke="#EDBA39" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#604A0E"
+                  font-family="sans-serif">Object</text>
+        </g>
+        <g class="node" transform="translate(97.71153832662753,-6.614017271423037)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#A5ABB6" stroke="#9AA1AC" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">B
+            </text>
+        </g>
+        <g class="node" transform="translate(97.9360938667154,175.66106528875113)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#A5ABB6" stroke="#9AA1AC" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">D
+            </text>
+        </g>
+        <g class="node" transform="translate(279.0687652341032,-4.864344965994363)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#FF756E" stroke="#E06760" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#FFFFFF"
+                  font-family="sans-serif">C
+            </text>
+        </g>
+        <g class="node selected" transform="translate(283.0919619141426,174.81446258134113)">
+            <circle class="outline" cx="0" cy="0" r="40" fill="#FFD86E" stroke="#EDBA39" stroke-width="2px"/>
+            <text text-anchor="middle" pointer-events="none" y="5" font-size="10px" fill="#604A0E"
+                  font-family="sans-serif">Object</text>
+        </g>
+    </g>
+</svg>

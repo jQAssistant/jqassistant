@@ -1,0 +1,16 @@
+groups:
+    - id: default
+      includedConcepts:
+          - refId: oneConcept
+
+concepts:
+    - id: oneConcept
+      description: >
+         A concept. A concept. A concept. A concept. A concept. A concept.
+         A concept. A concept. A concept. A concept. A concept. A concept.
+         A concept. A concept. A concept. A concept. A concept. A concept.
+      language: cypher
+      source: |
+        MATCH   (c:Type:Class)-[:DECLARES]->(m:Method)
+        SET     c:XYZ
+        RETURN  c

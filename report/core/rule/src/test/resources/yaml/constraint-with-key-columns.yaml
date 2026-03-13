@@ -1,0 +1,14 @@
+---
+constraints:
+  - id: test:Constraint
+    description: Test constraint
+    source: |
+      match
+        (c1:File), (c2:groupId)
+      return
+        c1, c2
+    report:
+      primaryColumn: c1
+      keyColumns: c1, c2
+      type: html
+

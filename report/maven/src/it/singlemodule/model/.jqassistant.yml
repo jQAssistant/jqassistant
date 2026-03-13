@@ -1,0 +1,4 @@
+jqassistant:
+  analyze:
+    report:
+      fail-on-severity: MINOR

@@ -1,0 +1,4 @@
+jqassistant:
+  store:
+    embedded:
+      neo4j-version: ${neo4j_5x.version}

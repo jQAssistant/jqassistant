@@ -1,0 +1,46 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1">
+
+    <concept id="test:Concept">
+        <description>Test Concept.</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            where
+              n.name = {name}
+            return
+              n
+            limit
+              {limit}
+        ]]></cypher>
+    </concept>
+
+    <constraint id="test:Constraint">
+        <description>Test Constraint.</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            where
+              n.name = {name}
+            return
+              n
+            limit
+              {limit}
+        ]]></cypher>
+    </constraint>
+
+    <group id="test:GroupWithoutSeverity">
+        <includeConcept refId="test:Concept"/>
+        <includeConstraint refId="test:Constraint"/>
+    </group>
+
+    <group id="test:GroupWithSeverity" severity="blocker">
+        <includeConcept refId="test:Concept"/>
+        <includeConstraint refId="test:Constraint"/>
+    </group>
+
+    <group id="test:GroupWithOverridenSeverities" severity="blocker">
+        <includeConcept refId="test:Concept" severity="critical"/>
+        <includeConstraint refId="test:Constraint" severity="critical"/>
+    </group>
+
+</jqa:jqassistant-rules>

@@ -1,0 +1,7 @@
+jqassistant:
+  analyze:
+    rule:
+      default-group-severity: INFO
+    report:
+      properties:
+        xml.report.file: ${jqa.xmlReportFile}

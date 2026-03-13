@@ -1,0 +1,115 @@
+== JSON Report
+
+Generates a JSON file from a rule result using `json` as report type.
+
+=== Examples
+
+The following concept returns a result with a single column.
+
+[source,xml]
+.Concept returning a single column per row containing a string value
+----
+<concept id="json:SingleColumn">
+    <description>Creates a JSON report using a single column result.</description>
+    <cypher><![CDATA[
+        UNWIND
+          ["a", "b"] as row
+        RETURN
+          row
+    ]]></cypher>
+    <report type="json"/>
+</concept>
+----
+
+The following JSON file is created, containing an array with an item for each row returned by the query:
+
+[source,json]
+.json_SingleColumn.json
+----
+[
+  "a",
+  "b"
+]
+----
+
+This works similar for object or array structure:
+
+[source,xml]
+.Concept returning a single column per row containing an object
+----
+<concept id="json:Object">
+    <description>Creates a JSON report for an object structure.</description>
+    <cypher><![CDATA[
+        RETURN
+          {
+            scalar: "Scalar Value",
+            array: [
+              "Array Item"
+            ],
+            object: {
+                scalar: "Embedded Object"
+            }
+          } as row
+    ]]></cypher>
+    <report type="json"/>
+</concept>
+----
+
+[source,json]
+.json_Object.json
+----
+[
+          {
+            "scalar": "Scalar Value",
+            "array": [
+              "Array Item"
+            ],
+            "object": {
+                "scalar": "Embedded Object"
+            }
+          }
+]
+----
+
+The examples above returned a single column per row. A concept might as well return multiple columns:
+
+[source,xml]
+.Concept returning multiple columns per row
+----
+<concept id="json:MultipleColumns">
+    <description>Creates a JSON report using a multi-column result.</description>
+    <cypher><![CDATA[
+        UNWIND
+          [
+            {
+                key: "key1",
+                value: "value1"
+            },
+            {
+                key: "key2",
+                value: "value2"
+            }
+          ] as row
+        RETURN
+          row.key as key, row.value as value
+    ]]></cypher>
+    <report type="json"/>
+</concept>
+----
+
+In this case each row is wrapped into an object containing the column names as keys:
+
+[source,json]
+.json_MultipleColumns.json
+----
+[
+          {
+            "key": "key1",
+            "value": "value1"
+          },
+          {
+            "key": "key2",
+            "value": "value2"
+          }
+]
+----

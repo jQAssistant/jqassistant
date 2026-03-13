@@ -1,0 +1,8 @@
+jqassistant:
+  analyze:
+    concepts:
+      - custom-concept
+    report:
+      properties:
+        # verify interpolation of properties provided by Maven
+        xml.report.file: ${project.build.directory}/custom-jqassistant-report.xml

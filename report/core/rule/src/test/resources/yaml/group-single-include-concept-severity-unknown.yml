@@ -1,0 +1,7 @@
+---
+groups:
+  - id: snafu
+    includedConcepts:
+      - refId: other
+        severity: PENG
+...

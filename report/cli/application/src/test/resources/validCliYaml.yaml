@@ -1,0 +1,30 @@
+jqassistant:
+  repositories:
+    local: /home/benutzer/.jqassistant/repository
+    ignore-transitive-repositories: true
+    remotes:
+      central:
+        url: https://repository.zentral.example.com
+        username: benutzername
+        password: passwort
+        releases:
+          enabled: true
+          update-policy: daily
+          checksum-policy: warn
+        snapshots:
+          enabled: false
+          update-policy: daily
+          checksum-policy: warn
+    mirrors:
+      mirror-repository:
+        url: https://mirror.example.com
+        mirror-of: central
+        username: mirror-benutzer
+        password: mirror-passwort
+  proxy:
+    protocol: https
+    host: proxy.example.com
+    port: 8080
+    non-proxy-hosts: localhost|*.intranet.example.com
+    username: proxy-benutzer
+    password: proxy-passwort

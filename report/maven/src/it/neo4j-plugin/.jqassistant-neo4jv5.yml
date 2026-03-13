@@ -1,0 +1,7 @@
+jqassistant:
+  analyze:
+    groups:
+      - it
+  store:
+    embedded:
+      apoc-enabled: true

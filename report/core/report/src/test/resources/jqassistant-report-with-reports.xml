@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jqassistant-report xmlns="http://schema.jqassistant.org/report/v2.0">
+        <group date="2023-02-20T13:18:48" id="default">
+    <concept id="concept-with-reports">
+            <description/>
+            <result>
+                <columns primary="Column 1" count="1">
+                    <column primary="true">Column 1</column>
+                </columns>
+                <rows count="1">
+                    <row>
+                        <column name="Column 1">
+                            <value>Value 1</value>
+                        </column>
+                    </row>
+                </rows>
+            </result>
+            <reports>
+                <image label="plantuml">file:image1.png</image>
+                <link label="CSV">file:table.csv</link>
+                <image label="plantuml">file:image2.png</image>
+            </reports>
+            <status>success</status>
+            <severity level="4">info</severity>
+            <duration>140</duration>
+        </concept>
+        <duration>140</duration>
+    </group>
+</jqassistant-report>

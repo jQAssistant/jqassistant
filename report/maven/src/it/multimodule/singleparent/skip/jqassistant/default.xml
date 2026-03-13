@@ -1,0 +1,35 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="it">
+        <includeConstraint refId="it:*"/>
+    </group>
+
+    <constraint id="it:MavenModules" severity="blocker">
+        <description>Return all Maven projects, including parents and modules.</description>
+        <cypher>
+          MATCH
+            (project:Maven:Project:Directory:File)
+          RETURN
+            count(project)
+        </cypher>
+        <verify>
+            <aggregation min="4" max="4" />
+        </verify>
+    </constraint>
+
+    <constraint id="it:MavenModulesWithModel" severity="blocker">
+        <description>Return all Maven projects that have been scanned, i.e. that contain an effective model.</description>
+        <cypher>
+        MATCH
+          (project:Maven:Project:Directory:File)-[:HAS_EFFECTIVE_MODEL]->(:Maven:Pom)
+        WHERE NOT
+           project.name in [
+             "jqassistant-maven-plugin.integration.multimodule.singleparent.skip",
+             "jqassistant-maven-plugin.integration.multimodule.singleparent.skip.module1"
+           ]
+        RETURN
+          project
+        </cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>

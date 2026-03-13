@@ -1,0 +1,10 @@
+"%test-store":
+  jqassistant:
+    store:
+      uri: "file:target/test-store"
+"%activeByDefault":
+  jqassistant:
+    store:
+      uri: "file:target/active-by-default-store"
+
+

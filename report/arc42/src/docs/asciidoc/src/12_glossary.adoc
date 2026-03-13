@@ -1,0 +1,17 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-glossary]]
+== Glossary
+
+
+
+[cols="e,2e" options="header"]
+|===
+|Term |Definition
+
+|<Term-1>
+|<definition-1>
+
+|<Term-2>
+|<definition-2>
+|===
