@@ -1,0 +1,9 @@
+jqassistant:
+  scan:
+    continue-on-error: ${continueOnError:true}
+    reset: true
+    include:
+      files:
+        - java:classpath::~/my-project/build/classes
+    properties:
+      overwritten-user-value: "overwritten"

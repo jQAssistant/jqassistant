@@ -1,0 +1,4 @@
+groups:
+  - includedConcepts:
+      - refId: a
+      - refId: b

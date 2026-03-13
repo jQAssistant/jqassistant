@@ -1,0 +1,69 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
+
+    <group id="default" severity="blocker">
+        <includeConcept refId="test:*"/>
+    </group>
+
+    <!-- These concepts verify the as-is status, there are currently more artifacts created than actually exist in the scanned code -->
+
+    <concept id="test:ArtifactDependencies">
+        <description>Verifies expected artifact dependencies.</description>
+        <cypher><![CDATA[
+           MATCH
+              (:Maven:Project)-[:CREATES]->(a1:Artifact),
+              (:Maven:Project)-[:CREATES]->(a2:Artifact),
+              (a1)-[:DEPENDS_ON]->(a2)
+            RETURN
+              count(*) as count
+        ]]></cypher>
+        <verify>
+            <aggregation column="count" min="5" max="5"/>
+        </verify>
+    </concept>
+
+    <concept id="test:ExpectedArtifactDependencies">
+        <description>Verifies expected artifact dependencies.</description>
+        <cypher><![CDATA[
+            WITH
+              [
+                {
+                  from: { name: "test-only", type:"jar"},
+                  to: [ { name: "main-only", type:"jar"} ]
+                },
+                {
+                  from: { name: "main-only", type:"test-jar"},
+                  to: [ { name: "main-only", type:"jar"} ]
+                },
+                {
+                  from: { name: "test-only", type:"test-jar"},
+                  to: [ { name: "test-only", type:"jar"} ]
+                },
+                {
+                  from: { name: "main-and-test", type:"test-jar"},
+                  to: [ { name: "main-and-test", type:"jar"} ]
+                },
+                {
+                  from: { name: "project-artifacts", type:"test-jar"},
+                  to: [ { name: "project-artifacts", type:"pom"} ]
+                }
+              ] as expectedDependencies
+            UNWIND
+              expectedDependencies as expectedDependency
+            UNWIND
+              expectedDependency.to as to
+            MATCH
+              (:Maven:Project)-[:CREATES]->(a1:Artifact),
+              (:Maven:Project)-[:CREATES]->(a2:Artifact),
+              (a1)-[:DEPENDS_ON]->(a2)
+            WHERE
+              a1.name ends with expectedDependency.from.name and a1.type=expectedDependency.from.type
+              and a2.name ends with to.name and a2.type=to.type
+            RETURN
+              count(*) as count
+        ]]></cypher>
+        <verify>
+            <aggregation column="count" min="5" max="5"/>
+        </verify>
+    </concept>
+
+</jqa:jqassistant-rules>

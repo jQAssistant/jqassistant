@@ -1,0 +1,23 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="default">
+        <includeGroup refId="nestedGroup" />
+    </group>
+
+    <group id="nestedGroup">
+        <includeConstraint refId="test:MemberByType" />
+        <includeConstraint refId="java:AvoidCyclicPackageDependencies"/>
+        <includeConstraint refId="java:AvoidCyclicArtifactDependencies" />
+    </group>
+
+    <constraint id="test:MemberByType" severity="minor">
+        <description>Test constraint.</description>
+        <cypher>
+            MATCH
+              (:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Member)
+            RETURN
+              t, collect(m)
+        </cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>

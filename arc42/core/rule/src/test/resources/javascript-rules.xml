@@ -1,0 +1,34 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
+
+    <concept id="test:JavaScriptConcept">
+        <description>A test concept based on JavaScript.</description>
+        <script language="JavaScript">
+
+        </script>
+    </concept>
+
+    <constraint id="test:JavaScriptConstraint">
+        <description>A test constraint based on JavaScript.</description>
+        <script language="JavaScript">
+
+        </script>
+    </constraint>
+
+    <concept id="test:JavaScriptExecutableConcept">
+        <description>A test concept based on JavaScript.</description>
+        <source language="JavaScript">
+
+        </source>
+    </concept>
+
+    <constraint id="test:JavaScriptExecutableConstraint">
+        <description>A test constraint based on JavaScript.</description>
+        <source language="JavaScript">
+
+        </source>
+    </constraint>
+
+
+</jqassistant-rules>

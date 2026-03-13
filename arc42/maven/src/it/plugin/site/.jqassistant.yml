@@ -1,0 +1,17 @@
+jqassistant:
+  plugins:
+    - group-id: com.buschmais.jqassistant
+      artifact-id: jqassistant-maven-plugin.integration.plugin.customplugin
+      version: ${project.version}
+  scan:
+    include:
+      urls:
+        - jqassistant-plugin:META-INF/jqassistant-plugin.xml
+    properties:
+      custom.scan.value: testValue
+  analyze:
+    groups:
+      - default
+    report:
+      properties:
+        customReport.fileName: ${project.build.directory}/customReport.txt

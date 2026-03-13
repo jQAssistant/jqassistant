@@ -1,0 +1,5 @@
+"%test-profile":
+  jqassistant:
+    scan:
+      properties:
+        profile-user-value: "test-value"

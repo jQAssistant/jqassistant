@@ -1,0 +1,67 @@
+//
+//
+//
+
+=== Groups
+
+A group in a YAML rule document is represented as a map of keys.
+
+.Keys of a map to specify a group in a YAML rule document
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `id`
+| 1
+| The unique id for this group.
+
+| `severity`
+| 0..1
+| Severity for all included groups, constraints, and concept, overwriting
+  the specified severity for those.
+  Must be one of `blocker`, `critical`, `major`, `minor`, or `info`.
+
+| `includedConcepts`
+| 0..1
+| Sequence of rule references to concepts to be included in this group.
+  See xref:yaml-rule-references[] for details
+
+| `includedConstraints`
+| 0..1
+| Sequence of rule references to constraints to be included in this group.
+  See xref:yaml-rule-references[] for details
+
+| `includedGroups`
+| 0..1
+| Sequence of references to other groups to be included in this group.
+  See xref:yaml-rule-references[] for details
+|===
+
+
+[[yaml-rule-references]]
+.Keys of a map to specify a rule reference
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `refId`
+| 1
+| The id of a rule or group which should be included in the containing group.
+
+| `severity`
+| 0..1
+| The severity to be applied to the referenced rule or group, overwriting
+  the actual specified severity.
+
+| `optional`
+| 0..1
+| Specifies if the rule or group is optional or not. Possible values are `true`
+  and `false`. The default value is `false`.
+
+|===

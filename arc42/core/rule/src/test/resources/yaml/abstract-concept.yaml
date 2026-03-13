@@ -1,0 +1,7 @@
+---
+concepts:
+  - id: test:AbstractConcept
+    abstract: true
+  - id: test:NonAbstractConcept
+
+

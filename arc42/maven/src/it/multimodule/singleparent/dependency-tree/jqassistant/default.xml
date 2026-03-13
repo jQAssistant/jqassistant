@@ -1,0 +1,36 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.3">
+
+    <group id="default">
+        <includeConcept refId="test:*"/>
+    </group>
+
+    <concept id="test:SpringComponentByMetaAnnotation" severity="blocker">
+        <description>Returns all Spring components using meta-annotations.</description>
+        <cypher>
+            <![CDATA[
+                MATCH
+                  (:Main:Artifact)-[:CONTAINS]->(component:Type),
+                  (component)-[:ANNOTATED_BY|OF_TYPE*]->(:Type{fqn:"org.springframework.stereotype.Component"})
+                RETURN
+                  component
+            ]]></cypher>
+    </concept>
+
+    <concept id="test:MavenArtifactDependsOnSpringArtifacts" severity="blocker">
+        <description>Returns the Dependency Tree filtered by Spring artifacts.</description>
+        <cypher>
+            <![CDATA[
+                MATCH
+                  (:Maven:Project)-[:CREATES]->(artifact:Artifact),
+                  shortestPath((artifact)-[:DEPENDS_ON*]->(dependency:Jar:Artifact)) // verify the dependency is actually scanned and visible as Jar
+                WHERE
+                  dependency.name = "spring-core" // indirect dependency
+                RETURN
+                  artifact.fqn, collect(dependency.fqn)
+        ]]></cypher>
+        <verify>
+            <rowCount min="4" max="4"/>
+        </verify>
+    </concept>
+
+</jqa:jqassistant-rules>

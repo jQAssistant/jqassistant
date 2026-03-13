@@ -1,0 +1,9 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="default">
+        <includeConcept refId="java:TypeAssignableFrom" />
+        <includeConstraint refId="java:AvoidCyclicPackageDependencies"/>
+        <includeConstraint refId="java:AvoidCyclicArtifactDependencies" />
+    </group>
+
+</jqa:jqassistant-rules>

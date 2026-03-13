@@ -1,0 +1,8 @@
+leftName, leftId, rightName, rightId
+plugin a, plugin.a, plugin a, plugin.a
+Plugin a, plugin.a, Plugin A, plugin.a
+Plugin a, plugin.a, Plugin A, plugin.A
+Plugin a, plugin.a, Plugin A, plugin.A
+Plugin a, plugin.a, Plugin A, PLUGIN.A
+Plugin a, plugin.a, PLUGIN A, PLUGIN.A
+PLUGIN A, PLUGIN.A, PLUGIN A, PLUGIN.A

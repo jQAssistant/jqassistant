@@ -1,0 +1,7 @@
+jqassistant:
+  analyze:
+    rule-parameters:
+      simpleParameter: value0
+      mapParameter:
+        key1: value1
+        key2: value2

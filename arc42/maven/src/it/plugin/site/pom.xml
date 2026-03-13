@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+    <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@.integration.plugin</artifactId>
+        <version>@project.version@</version>
+    </parent>
+    <artifactId>@project.artifactId@.integration.plugin.site</artifactId>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>scan</goal>
+                            <goal>analyze</goal>
+                        </goals>
+                        <configuration>
+                            <configurationLocations>
+                                <!-- The module is executed within the aggregator by the invoker plugin, the configuration would be searched there -->
+                                <configurationLocation>${project.basedir}/.jqassistant.yml</configurationLocation>
+                            </configurationLocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

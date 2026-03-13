@@ -1,0 +1,17 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.9 http://schema.jqassistant.org/rule/jqassistant-rule-v2.9.xsd">
+
+    <concept id="test:AbstractConcept" abstract="true">
+        <cypher><![CDATA[
+            Cypher Concept
+        ]]></cypher>
+    </concept>
+
+    <concept id="test:NonAbstractConcept">
+        <cypher><![CDATA[
+            Cypher Concept
+        ]]></cypher>
+    </concept>
+
+</jqassistant-rules>

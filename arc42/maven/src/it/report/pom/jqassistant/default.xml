@@ -1,0 +1,17 @@
+<jqa:jqassistant-rules xmlns:jqa="http://schema.jqassistant.org/rule/v2.8">
+
+    <jqa:group id="default">
+        <jqa:includeConcept refId="test:Pom" />
+    </jqa:group>
+
+    <jqa:concept id="test:Pom">
+        <jqa:description>Test concept for verifying pom node.</jqa:description>
+        <jqa:cypher>
+            MATCH
+                (pom:Maven:Pom)
+            RETURN
+                pom
+        </jqa:cypher>
+    </jqa:concept>
+
+</jqa:jqassistant-rules>

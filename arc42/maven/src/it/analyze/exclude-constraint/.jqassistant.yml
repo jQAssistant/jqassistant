@@ -1,0 +1,6 @@
+jqassistant:
+  analyze:
+    groups:
+      - it
+    exclude-constraints:
+      - it:ExcludedConstraint

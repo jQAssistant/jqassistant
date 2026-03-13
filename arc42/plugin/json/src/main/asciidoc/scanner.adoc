@@ -1,0 +1,183 @@
+:numbered:              // Number all section headers
+:sectnumlevels: 5       // Number up to section level 5
+:toclevels: 2           // Table of content should have only two levels
+
+[[JsonScanner]]
+== Scanner for JSON Files
+
+Scanner to scan https://www.rfc-editor.org/info/rfc7159[RFC 7159^]
+compliant JSON files.
+
+NOTE: The tests of our JSON plugin use the JSON files provided by
+      the https://github.com/nst/JSONTestSuite[_JSON Parsing Test Suite_^]
+      by https://github.com/nst[Nicolas Serot^]. The suite hase been
+      created as an appendix to the article
+      http://seriot.ch/parsing_json.php[Parsing JSON is a Minefield^].
+
+=== Limitations
+
+The JSON scanner is able to process the majority of valid and invalid
+JSON documents. However it can have problems with invalid JSON documents
+with invalid Unicode characters.
+
+=== Configuration
+
+.Configuration properties
+[options="header", cols="2"]
+|====
+| Property
+| Description
+
+| `json.file.include`
+| A comma separated list of file name patterns, wildcards (?,\*) are allowed,
+  e.g. `/data/town.json.tmpl`.
+
+| `json.file.exclude`
+| A comma separated list of file name patterns, wildcards (?,\*) are allowed,
+  e.g. `/data/data.json`.
+|====
+
+[[:Json:File]]
+=== Nodes labeled with `:Json:File`
+
+.Properties of `:Json:File`
+[options="header"]
+|===
+| Name     | Description
+
+| fileName
+| The file of the JSON document.
+
+| valid
+| Flag to indicate if the JSON document is valid according
+  to RFC 7159.
+|===
+
+.Relations of `:Json:File`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+
+| CONTAINS
+| <<:Json:Object>>, <<:Json:Array>> or <<:Json:Scalar>>
+| 1
+| References the contained JSON value.
+|===
+
+[[:Json:Array]]
+=== Nodes labeled with `:Json:Array`
+
+.Properties of `:Json:Array`
+[options="header"]
+|===
+| Name     | Description
+2+| None
+|===
+
+.Relations of `:Json:Array`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+
+| CONTAINS_VALUE
+| <<:Json:Object>>, <<:Json:Array>> or <<:Json:Scalar>>
+| 0..n
+| References a value contained in the array.
+|===
+
+
+[[:Json:Key]]
+=== Nodes labeled with `:Json:Key`
+
+.Properties of `:Json:Key`
+[options="header"]
+|===
+| Name     | Description
+
+| name
+| The literal name of the key.
+|===
+
+.Relations of `:Json:Key`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+
+| HAS_VALUE
+| <<:Json:Object>>, <<:Json:Array>> or <<:Json:Scalar>>
+| 1
+| The value associated with the key.
+|===
+
+
+
+
+[[:Json:Object]]
+=== Nodes labeled with `:Json:Object`
+
+.Properties of `:Json:Object`
+[options="header"]
+|===
+| Name     | Description
+2+| None
+|===
+
+.Relations of `:Json:Object`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+
+| HAS_KEY
+| <<:Json:Key>>
+| 0..n
+| The key of a key value pair in an JSON object.
+|===
+
+
+
+[[:Json:Scalar]]
+=== Nodes labeled with `:Json:Scalar`
+
+.Properties of `:Json:Scalar`
+[options="header"]
+|===
+| Name     | Description
+| value    | The value itself. The JSON spezification allows to have null values. Therefore the might be no value.
+|===
+
+.Relations of `:Json:Scalar`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+4+| None
+|===
+
+[[:Json:Value]]
+=== Nodes labeled with `:Json:Value`
+
+The label `:Value` is only a marker label without any own properties
+or relationships. It marks only an element of an JSON structure as
+value associated with an other JSON element.
+
+For example:
+
+* The elements of an JSON array are labeled as `Value`.
+* The value of an key value pair is labeled as `Value`.
+
+
+.Properties of `:Json:Value`
+[options="header"]
+|===
+| Name     | Description
+2+| None
+|===
+
+.Relations of `:Json:Value`
+[options="header"]
+|===
+| Name   | Target label(s) | Cardinality | Description
+4+| None
+|===
+
+
+include::examples.adoc[]

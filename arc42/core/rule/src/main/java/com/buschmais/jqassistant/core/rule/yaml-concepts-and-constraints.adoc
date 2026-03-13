@@ -1,0 +1,264 @@
+//
+//
+//
+
+=== Concepts and Constraints
+
+Concepts and contraints are used differently by jQAssistant, but they
+share the same structure. Therefore contraints and concepts are document
+together. Due to the different usage of concepts and contraints, different
+default values are used for some of the available options.
+Since concepts and constraints are both rules, the term rule is
+used for both in this chapter.
+
+A rule in a YAML rule document is represented as a map of keys. The keynames
+are the same or very similar to the element and attribute names used in
+jQAssistants's XML Schema.
+
+//------------------------------------------------------------------------
+
+.Keys of a map to specify a rule in a YAML rule document
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `id`
+| 1
+| Unique id of the rule.
+
+| `deprecated`
+| 0..1
+| Marks a rule as deprecated. A given text should be used to inform the
+  user of the deprecation and the consequences of the deprecation.
+
+| `description`
+| 0..1
+| Description of the rule.  Intended to be shown to the user in case
+  the verification of the rule failed and to document the rule itself.
+
+| `language`
+| 0..1
+| Specifies the language the actual rule is written in.
+
+  If not specified it is assumed that the actual rule is written
+  in Cypher.
+
+// todo Link to new user guide and to the section about writing rules in other languages than Cypher
+
+| `report`
+| 0..1
+| Specifies a report which should be generated based on the
+  result of the of rule.
+  See xref:yaml-report-specification[] for details.
+
+| `requiresConcepts`
+| 0..1
+| Sequence of rule references to concepts required by the rule.
+  Required conceptswill be executed before the rule itself will be executed.
+  See xref:yaml-keys-required-concepts[] for details.
+
+| `requiresParameters`
+| 0..1
+| Sequence of required parameters of the rule.
+  See xref:yaml-keys-required-parameters[] for details.
+
+| `severity`
+| 0..1
+| The serverity of the rule. Must be one of `blocker`, `critical`,
+  `major`, `minor`, or `info`.
+
+  If not specified, the default severity
+  for a concept is `minor`, for constraint it is `major`.
+
+// todo Link to the section on our severities in the user manual
+
+
+| `verify`
+| 0..1
+| The verification method of the rule.
+  See xref:yaml-keys-verification-method[] for details.
+
+| `source`
+| 1
+| The statement representing the rule.
+
+|===
+
+//------------------------------------------------------------------------
+
+[[yaml-keys-required-concepts]]
+.Keys of a map to specify the required concepts
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `refId`
+| 1
+| The id of a concept which must be executed before this rule.
+  jQAssistant will ensure the required execution order of all concepts.
+
+| `severity`
+| 0..1
+| The severity to be applied to the referenced rule, overwriting
+  the actual specified severity.
+
+| `optional`
+| 0..1
+| Specifies if a rule is optional or not. Possible values are `true`
+  and `false`. The default value is `false`.
+
+// todo Where did we document what optional means?
+
+|===
+
+//------------------------------------------------------------------------
+
+[[yaml-keys-required-parameters]]
+.Keys of a map to specify the required parameters
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `name`
+| 1
+| The name of the required parameter.
+
+| `type`
+| 1
+| The data type of the parameter. Must be one of: `boolean`, `byte`,
+  `char`, `double`, `float`, `int`, `long`, `short`, `String`
+
+| `defaultValue`
+| 0..1
+| The default value for the parameter if not specified.
+
+|===
+
+//------------------------------------------------------------------------
+
+[[yaml-keys-verification-method]]
+.Keys of a map to specify the verification method
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `aggregation`
+| 0..1
+| Verification should be performed by aggregating the value of a
+  specific column. See
+  xref:yaml-aggregation-options[] for details.
+
+| `rowCount`
+| 0..1
+| Verification should be performed by counting the results rows.
+  See xref:yaml-rowcount-options[] for details.
+
+|===
+
+If no verification method has been specified, the default
+result verification will be performed via rowcounting.
+
+// todo Link to the section on verification in the new user guide
+
+
+//------------------------------------------------------------------------
+
+[[yaml-aggregation-options]]
+.Keys of a map to specify a result verification via aggregation
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `column`
+| 0..1
+| The column those value will be used to perform the verification.
+  If omitted the first column of the result set will be used for the
+  verification.
+
+| `max`
+| 0..1
+| The allowed inclusive maximal value for the verification used column.
+
+| `min`
+| 0..1
+| The allowed inclusive minimal value for the verification used column.
+
+|===
+
+// todo document the default values for concepts and the default values for constraints
+// todo Document how the verification is done if none of these values are given
+
+//------------------------------------------------------------------------
+
+[[yaml-rowcount-options]]
+
+.Keys of a map to specify a result verification via row counting
+[cols="2,1,5",options="header"]
+|===
+
+| Key
+| Cardinality
+| Description
+
+| `max`
+| 0..1
+| Allowed maximal inclusive number of rows in the result set of a rule.
+
+ For a constraint, the default value is 0, since a constraint may not
+ have any results. For a concept, `max` has no default value, that
+ means that there is no upper limit for the size of the result set.
+
+| `min`
+| 0..1
+| Required minimal inclusive number of rows in the result set of a rule.
+
+ For a constraint, the default value is 0, since a constraint may not
+ have any results. For a concept, `min` has a default value of 1, as
+ a concept must have at least one match to be concidered as successful.
+
+|===
+
+[[yaml-report-specification]]
+.Keys of a map to specify a report
+[cols="2,1,5",options="header"]
+|===
+| Key
+| Cardinality
+| Description
+
+| `primaryColumn`
+| 1
+| Specifies the column of the result set, which will be overhanded as
+  primary column to the plugin generating the report.
+
+  If not specified the first column of the result set will be
+  taken als primary column.
+
+| `properties`
+| 0..1
+| Map with properties, which will be overhanded to the
+  plugin generating the report.
+
+| `type`
+| 1
+| Specifies the report to be generated. Which reports are available
+  depends on the used report plugins.
+
+|===
+
+
