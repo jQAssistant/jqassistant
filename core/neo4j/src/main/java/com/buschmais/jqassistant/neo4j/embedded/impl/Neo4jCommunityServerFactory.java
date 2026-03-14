@@ -43,6 +43,7 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
             .property(GraphDatabaseSettings.debug_log_enabled, false)
             // deactivate user data collector
             .property(GraphDatabaseSettings.index_background_sampling_enabled, false);
+        neo4jProperties.forEach(propertiesBuilder::property);
         if (connectorEnabled) {
             propertiesBuilder.property(BoltConnector.enabled, true);
             propertiesBuilder.property(BoltConnector.listen_address, new SocketAddress(listenAddress, boltPort));
