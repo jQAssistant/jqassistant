@@ -77,7 +77,6 @@
     <modules>
         <module>application</module>
         <module>assembly</module>
-        <module>neo4jv4</module>
         <module>neo4jv5</module>
         <module>test</module>
     </modules>
