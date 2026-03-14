@@ -88,20 +88,21 @@
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
         <junit.version>5.14.3</junit.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
-        <lombok.version>1.18.42</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <maven.version>3.6.3</maven.version>
-        <mockito.version>5.22.0</mockito.version>
+        <maven-api.version>4.0.0-rc-5</maven-api.version>
+        <mockito.version>5.23.0</mockito.version>
         <system-lambda.version>1.2.1</system-lambda.version>
         <model-assert.version>1.1.0</model-assert.version>
-        <neo4j_5x.version>5.26.21</neo4j_5x.version>
+        <neo4j_5x.version>5.26.22</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the "neo4jv5" profile -->
         <neo4j.version/>
         <neo4j.neo4j-java-driver.version>5.28.10</neo4j.neo4j-java-driver.version>
         <neo4j-browser.version>5.24.0</neo4j-browser.version>
         <slf4j.version>2.0.17</slf4j.version>
         <smallrye-config.version>3.10.2</smallrye-config.version>
-        <maven-resolver.version>1.9.27</maven-resolver.version>
+        <maven-resolver.version>2.0.16</maven-resolver.version>
         <snakeyaml.version>2.6</snakeyaml.version>
         <snakeyaml-engine.version>3.0.1</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
@@ -129,34 +130,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${exec-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.buschmais.jqassistant</groupId>
-                    <artifactId>jqassistant-maven-plugin</artifactId>
-                    <configuration>
-                      <yaml><![CDATA[
-                        jqassistant:
-                          scan:
-                            include:
-                              files:
-                                - ${project.basedir}/readme.adoc
-                                - ${project.basedir}/src/main/asciidoc
-                                - ${project.basedir}/.editorconfig
-                                - ${project.basedir}/LICENSE
-                          analyze:
-                            groups:
-                              - jqa-*
-                          maven:
-                            reuse-store: false
-                      ]]></yaml>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant.build</groupId>
-                            <artifactId>jqassistant</artifactId>
-                            <version>${jqassistant.build.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
