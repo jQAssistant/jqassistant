@@ -1,5 +1,5 @@
 module java.it.jpms.module1 {
-    requires com.fasterxml.jackson.core;
+    requires tools.jackson.core;
 
     exports com.buschmais.jqassistant.plugin.java.it.jpms.module1.api;
     exports com.buschmais.jqassistant.plugin.java.it.jpms.module1.impl to java.it.jpms.module2;

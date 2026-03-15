@@ -22,13 +22,13 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatter
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.json.api.model.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
-import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS;
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS;
+import static tools.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS;
 
 @Slf4j
 @ScannerPlugin.Requires(FileDescriptor.class)
@@ -44,8 +44,9 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
     @Override
     public void initialize() {
         this.objectMapper = new ObjectMapper();
-        this.objectMapper.enable(ALLOW_COMMENTS);
-        this.objectMapper.enable(FAIL_ON_TRAILING_TOKENS);
+        this.objectMapper.deserializationConfig()
+            .with(JsonReadFeature.ALLOW_JAVA_COMMENTS)
+            .with(FAIL_ON_TRAILING_TOKENS);
     }
 
     @Override
@@ -85,7 +86,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
             } else {
                 jsonFileDescriptor.setValid(false);
             }
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             jsonFileDescriptor.setValid(false);
         }
         return jsonFileDescriptor;
@@ -114,7 +115,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
             return objectDescriptor;
         case ARRAY:
             JSONArrayDescriptor arrayDescriptor = store.create(JSONArrayDescriptor.class);
-            Iterator<JsonNode> elements = jsonNode.elements();
+            Iterator<JsonNode> elements = jsonNode.iterator();
             while (elements.hasNext()) {
                 JsonNode element = elements.next();
                 JSONValueDescriptor valueDescriptor = toDescriptor(element, store);

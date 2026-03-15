@@ -3,10 +3,10 @@ package com.buschmais.jqassistant.core.runtime.api.configuration;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.networknt.schema.Error;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import static com.buschmais.jqassistant.core.runtime.api.configuration.JsonSchemaGenerator.validateYaml;
 import static org.assertj.core.api.Assertions.assertThat;
