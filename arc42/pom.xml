@@ -21,7 +21,7 @@
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <sourceDocumentName>index.adoc</sourceDocumentName>
+                    <sourceDocumentName>arc42.adoc</sourceDocumentName>
                     <requires>
                         <require>asciidoctor-diagram</require>
                     </requires>
