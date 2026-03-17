@@ -1,0 +1,22 @@
+@startuml
+
+folder jQAssistant {
+  component core as "Core Framework" {
+  }
+
+  component plugins as "Plugins" {
+  }
+
+  component maven as "Maven Plugin"{
+  }
+
+  component cli as "Commandline Integration" {
+  }
+
+  plugins -down-> core : uses
+  maven   -down-> core : uses
+  maven   .down.> plugins : uses
+  cli     -down-> core : uses
+  cli     .down.> plugins : uses
+}
+@enduml
