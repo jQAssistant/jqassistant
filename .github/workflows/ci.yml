@@ -10,7 +10,7 @@ on:
       - "*"
   pull_request:
     branches:
-      - "master"
+      - "1147-improve-sonarqube-integration-for-jqa"
       - "bugfix/*"
   workflow_dispatch: {}
 
@@ -31,4 +31,4 @@ jobs:
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
       sonar_projectKey: ${{secrets.SONAR_PROJECTKEY}}
-      sonar_host-url: "https://localhost:9000"
+      sonar_host_url: "https://localhost:9000"
