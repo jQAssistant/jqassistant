@@ -12,7 +12,7 @@ on:
     branches:
       - "master"
       - "bugfix/*"
-  workflow_dispatch: { }
+  workflow_dispatch: {}
 
 concurrency:
   group: build-java-${{ github.ref }}
@@ -24,11 +24,9 @@ jobs:
     with:
       publish_snapshots: true
       pages: "./manual/target/generated-docs/"
-
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
-
