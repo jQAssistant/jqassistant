@@ -30,5 +30,5 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
-      sonar_projectKey: ${{secrets.SONAR_PROJECTKEY}}
+      sonar_projectKey: "jQA"
       sonar_host_url: "https://localhost:9000"
