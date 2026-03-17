@@ -4,6 +4,7 @@ name: CI
 on:
   workflow_call:
     inputs:
+      secrets:
         sonar_host_url:
           type: string
           description: "URL for sonarqube results"

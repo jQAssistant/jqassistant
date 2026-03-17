@@ -123,7 +123,7 @@
         <!-- Sonar -->
         <sonar.organization>jqassistant</sonar.organization>
         <sonar.projectKey>${{ secrets.SONAR_POJECTKEY }}</sonar.projectKey>
-        <sonar.host.url>${{ inputs.SONAR_HOST_URL }}</sonar.host.url>
+        <sonar.host.url>${{ secrets.sonar_host_url }}</sonar.host.url>
     </properties>
 
     <build>
