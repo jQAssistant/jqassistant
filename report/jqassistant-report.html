@@ -1,0 +1,3214 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+        <title>jQAssistant Report</title>
+    </head>
+    <body>
+        <script type="text/javascript" xmlns:tns="http://schema.jqassistant.org/report/v2.9">
+            function getResultElement(id) {
+                return document.getElementById('resultOf' + id);
+            }
+
+            function showResult(ruleId) {
+                if (!ruleId) return;
+                    var details = document.getElementById(ruleId);
+                if (!details) return;
+                details.open = true;
+                details.scrollIntoView({
+                    block: "start"
+                    });
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".timeStamp").forEach(stamp => {
+                    const date = new Date(stamp.textContent);
+                    const options = {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                        timeZoneName: "short"
+                    }
+                    const parts = new Intl.DateTimeFormat("en-US", options).formatToParts(date);
+                    function getValue(type) {
+                        for (var i = 0; i < parts.length; i++) {
+                            if (parts[i].type === type){
+                                return parts[i].value;
+                            }
+                        }
+                        return "";
+                    }
+                    stamp.textContent =
+                        `${getValue("day")}.`
+                        +`${getValue("month")}.`
+                        +`${getValue("year")} `
+                        +`${getValue("hour")}:`
+                        +`${getValue("minute")} `
+                        +`(${getValue("timeZoneName")})`;
+                });
+            });
+        </script>
+        <style type="text/css">
+            body {
+                font-family:'Open Sans', sans-serif;
+                line-height:1.5;
+                color:#3d3a37;
+                background-color:#FFFCF0
+                overflow: auto;
+                width:80%
+            }
+
+            a, a:link, a:visited, a:hover, a:focus, a:active {
+                color:#000;
+            }
+
+            h1 {
+                margin: 0;
+            }
+
+            h5 {
+            margin: 0;
+            }
+
+            h6 {
+                color:#747270;
+                font-weight:normal;
+                margin: 0;
+                }
+
+            h3 {
+                margin-bottom: 0;
+            }
+
+            ul {
+                margin-top: 0;
+                margin-left: 25px;
+                padding-left: 0;
+            }
+
+            .abstractRule {
+                font-style: italic;
+            }
+
+            table {
+                border-collapse:collapse;
+                background-color:#e0ddd1;
+                }
+
+            table th {
+            background-color:#aba9a1;
+                color:#fff;
+                }
+
+            table tr td, th {
+                border-style:solid;
+                border-width:1.5px;
+                border-color:#aba9a1;
+                padding:5px;
+                white-space: nowrap;
+            }
+
+            table tr th {
+                text-align:left;
+            }
+
+            #footer {
+                color:#747270;
+            }
+
+            .report-table {
+                display:inline-block;
+                width: max-content
+                border-collapse:collapse;
+                background-color:#e0ddd1;
+                border-radius: 10px;
+                white-space: normal;
+                overflow-wrap: anywhere;
+                overflow: hidden;
+                margin-right:10px;
+
+            }
+
+            .header-row {
+                background: #7a7974;
+                font-weight: 600;
+                border-bottom: 1px solid #ccc;
+                background-color:#aba9a1;
+                color:#fff;
+            }
+
+            .columns-grid {
+                display: grid;
+                grid-template-columns:  55px 65px 80px 90px minmax(350px,1Fr);
+                padding: 6px;
+            }
+
+            .groups-grid {
+                display: grid;
+                grid-template-columns:  40px 350px minmax(300px,1Fr);
+                padding: 6px;
+            }
+
+            .details-content {
+                margin: 10px;
+            }
+
+            .row-separator {
+                border-bottom: 1px solid #ddd;
+            }
+
+            .rule-name {
+                cursor:pointer;
+                text-decoration:underline;
+            }
+
+            .result {
+                margin-bottom: 12px;
+                color:#3d3a37;
+            }
+
+            .success {
+                background-color:#43a047; 
+                color:#fff;
+            }
+
+            .failure {
+                background-color:#ce413c; 
+                color:#fff;
+            }
+
+            .warning {
+                background-color:#e3ad24; 
+                color:#fff;
+            }
+
+            .skipped {
+                background-color:#bfbdb4; 
+            }
+        </style>
+        <h1>
+            jQAssistant Report - jQAssistant Parent</h1>
+        <h5>
+                        Timestamp:
+            <span class="timeStamp">2026-03-17T09:41:19.374Z</span>
+        </h5>
+        <div>
+            <h3>Constraints</h3>
+            <h6>
+                <ul>
+                    <li>Move the mouse over a constraint to view a description.</li>
+                    <li>Click on a constraint to open a details view.</li>
+                </ul>
+            </h6>
+            <section class="report-table">
+                <div class="header-row columns-grid">
+                    <div>#</div>
+                    <div>Status</div>
+                    <div>Severity</div>
+                    <div>Count</div>
+                    <div>Constraint</div>
+                </div>
+                <details id="java:TechnicalDebt" class="row-separator">
+                    <summary class="failure columns-grid">
+                        <div>1</div>
+                        <div>
+                            <span title="Violations Found">&#127783;&nbsp;</span><span title="Failure (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10008;</span>
+                        </div>
+                        <div>major</div>
+                        <div>4</div>
+                        <div>
+                            <span title="Technical debt should be removed from code elements annotated by &quot;@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt&quot;." class="rule-name">java:TechnicalDebt</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjava:TechnicalDebt" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>Priority</th><th>Type</th><th>Member</th><th>Description</th><th>Issue</th>
+                                </tr>
+                                <tr>
+                                    <td>0</td><td>com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</td><td>debtField</td><td>technicalDebt:Field with debts</td><td>859</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td><td>com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</td><td></td><td>technicalDebt:Class with debts</td><td>284</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td><td>com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</td><td></td><td>technicalDebt:Class with defaults</td><td></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td><td>com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</td><td>doSomething</td><td>technicalDebt:Method with debts</td><td>3</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-technical-debt:CodeElementToBeRemoved" class="row-separator">
+                    <summary class="failure columns-grid">
+                        <div>2</div>
+                        <div>
+                            <span title="Violations Found">&#127783;&nbsp;</span><span title="Failure (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10008;</span>
+                        </div>
+                        <div>major</div>
+                        <div>2</div>
+                        <div>
+                            <span title="Code elements annotated by &quot;@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion&quot; should have been removed in given version." class="rule-name">jqa-technical-debt:CodeElementToBeRemoved</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-technical-debt:CodeElementToBeRemoved" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in given version.</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>Type</th><th>Member</th><th>MinorVersion</th><th>MajorVersion</th>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.rule.api.source.RuleSource</td><td>java.io.InputStream getInputStream()</td><td>6</td><td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.store.api.Store</td><td>com.buschmais.jqassistant.core.store.api.model.Descriptor find(java.lang.Class,java.lang.String)</td><td>9</td><td>1</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-legal:license:only-one-in-pom" class="row-separator">
+                    <summary class="warning columns-grid">
+                        <div>1</div>
+                        <div>
+                            <span title="Violations Found">&#127783;&nbsp;</span><span title="Warning (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#128901;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>2</div>
+                        <div>
+                            <span title="A jQAssistant project must have exactly one license specified in
+its Maven POM. This project has one or more then one license
+specified." class="rule-name">jqa-legal:license:only-one-in-pom</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-legal:license:only-one-in-pom" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">A jQAssistant project must have exactly one license specified in
+its Maven POM. This project has one or more then one license
+specified.</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>Project</th><th>groupId</th><th>artifactId</th>
+                                </tr>
+                                <tr>
+                                    <td>jQAssistant Parent</td><td>com.buschmais.jqassistant</td><td>parent</td>
+                                </tr>
+                                <tr>
+                                    <td>jQAssistant Java Annotations.</td><td>com.buschmais.jqassistant.plugin</td><td>java-annotation</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-project-layout:documentation:releasenotes-exists" class="row-separator">
+                    <summary class="warning columns-grid">
+                        <div>2</div>
+                        <div>
+                            <span title="Violations Found">&#127783;&nbsp;</span><span title="Warning (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#128901;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>1</div>
+                        <div>
+                            <span title="There should be an Asciidoctor document for the release notes of this version." class="rule-name">jqa-project-layout:documentation:releasenotes-exists</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-project-layout:documentation:releasenotes-exists" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">There should be an Asciidoctor document for the release notes of this version.</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>Project</th>
+                                </tr>
+                                <tr>
+                                    <td>jQAssistant Parent</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-technical-debt:CodeElementToBeRemovedInVersion" class="row-separator">
+                    <summary class="warning columns-grid">
+                        <div>3</div>
+                        <div>
+                            <span title="Violations Found">&#127783;&nbsp;</span><span title="Warning (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#128901;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>2</div>
+                        <div>
+                            <span title="Code elements annotated by &quot;@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion&quot; will be removed in the given version." class="rule-name">jqa-technical-debt:CodeElementToBeRemovedInVersion</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-technical-debt:CodeElementToBeRemovedInVersion" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" will be removed in the given version.</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>Type</th><th>Member</th><th>MinorVersion</th><th>MajorVersion</th>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.report.api.model.source.AbstractLocation</td><td></td><td>0</td><td>3</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.shared.map.MapBuilder</td><td></td><td>0</td><td>3</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-plugin:ImplictlyRegisteredLabelsShouldNotBeRegisteredExplicitly" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>1</div>
+                        <div>
+                            <span title="Violations Found">&#127783;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>info</div>
+                        <div>8</div>
+                        <div>
+                            <span title="XO @Label-interfaces should not be registered explicitly if a deriving interface registers it implicitly.
+
+Rationale: Reduce class loading/initialization time at startup in larger classpath contexts (e.g. Maven plugin)." class="rule-name">jqa-plugin:ImplictlyRegisteredLabelsShouldNotBeRegisteredExplicitly</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-plugin:ImplictlyRegisteredLabelsShouldNotBeRegisteredExplicitly" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">XO @Label-interfaces should not be registered explicitly if a deriving interface registers it implicitly.
+
+Rationale: Reduce class loading/initialization time at startup in larger classpath contexts (e.g. Maven plugin).</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>Label</th><th>SubLabels</th>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</td><td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td><td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor, com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td><td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TestDescriptor</td><td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td><td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</td><td>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor, com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</td><td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</td><td>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Required Concept</th><th>Status</th>
+                            </tr>
+                            <tr>
+                                <td><span class="rule-name" onclick="javascript:showResult('jqa-plugin:PluginDescriptorRegistersModel')">jqa-plugin:PluginDescriptorRegistersModel</span></td><td><span class="success">success</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rule-name" onclick="javascript:showResult('jqa-plugin:Label')">jqa-plugin:Label</span></td><td><span class="success">success</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </details>
+                <details id="jqa-maven-constraints:scm-connection-declaration" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>2</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>blocker</div>
+                        <div>1</div>
+                        <div>
+                            <span title="The SCM section of this jQAssistant project seems to be not correct. Please
+ensure that the developer connection and the connection point to a repository
+in the jQAssistant organization at Github.
+
+The SCM section of this project should be similar to this one:
+
+<scm>
+  <connection>scm:git:git@github.com:jqassistant/jqa-xyz-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jqassistant/jqa-xzy-plugin.git</developerConnection>
+    <url>https://github.com/jqassistant/jqa-xyz-plugin</url>
+</scm>" class="rule-name">jqa-maven-constraints:scm-connection-declaration</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:scm-connection-declaration" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The SCM section of this jQAssistant project seems to be not correct. Please
+ensure that the developer connection and the connection point to a repository
+in the jQAssistant organization at Github.
+
+The SCM section of this project should be similar to this one:
+
+&lt;scm&gt;
+  &lt;connection&gt;scm:git:git@github.com:jqassistant/jqa-xyz-plugin.git&lt;/connection&gt;
+    &lt;developerConnection&gt;scm:git:git@github.com:jqassistant/jqa-xzy-plugin.git&lt;/developerConnection&gt;
+    &lt;url&gt;https://github.com/jqassistant/jqa-xyz-plugin&lt;/url&gt;
+&lt;/scm&gt;</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>existing</th>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-maven-constraints:AvoidDependenciesTojQAssistantTestArtifacts" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>3</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>critical</div>
+                        <div>0</div>
+                        <div>
+                            <span title="The main artifact created by a jQAssistant Maven project must not depend on
+jQAssistant test artifacts (i.e. type &quot;test-jar&quot;).
+
+Usually the reason is a missing &quot;test&quot; scope in the dependency declaration." class="rule-name">jqa-maven-constraints:AvoidDependenciesTojQAssistantTestArtifacts</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:AvoidDependenciesTojQAssistantTestArtifacts" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The main artifact created by a jQAssistant Maven project must not depend on
+jQAssistant test artifacts (i.e. type "test-jar").
+
+Usually the reason is a missing "test" scope in the dependency declaration.</pre>
+                        <p> (no result)</p>
+                        <table>
+                            <tr>
+                                <th>Required Concept</th><th>Status</th>
+                            </tr>
+                            <tr>
+                                <td><span class="rule-name" onclick="javascript:showResult('jqa-maven-constraints:jQAssistantArtifact')">jqa-maven-constraints:jQAssistantArtifact</span></td><td><span class="success">success</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </details>
+                <details id="jqa-maven-constraints:java-compiler-target-version" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>4</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>critical</div>
+                        <div>0</div>
+                        <div>
+                            <span title="The Maven Compiler plugin must NOT define a Java bytecode target version other than
+&quot;11&quot; as the framework and the plugins must be executable in environments where
+only Java 11 is available." class="rule-name">jqa-maven-constraints:java-compiler-target-version</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:java-compiler-target-version" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The Maven Compiler plugin must NOT define a Java bytecode target version other than
+"11" as the framework and the plugins must be executable in environments where
+only Java 11 is available.</pre>
+                        <p> (no result)</p>
+                    </div>
+                </details>
+                <details id="jqa-legal:license:is-correctly-defined" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>5</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>major</div>
+                        <div>1</div>
+                        <div>
+                            <span title="The license definition seems to be wrong. Please ensure
+to declare the license in this project as follows:
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>" class="rule-name">jqa-legal:license:is-correctly-defined</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-legal:license:is-correctly-defined" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The license definition seems to be wrong. Please ensure
+to declare the license in this project as follows:
+
+    &lt;licenses&gt;
+        &lt;license&gt;
+            &lt;name&gt;GNU General Public License, v3&lt;/name&gt;
+            &lt;url&gt;https://www.gnu.org/licenses/gpl-3.0.html&lt;/url&gt;
+        &lt;/license&gt;
+    &lt;/licenses&gt;</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>Project</th><th>groupId</th><th>artifactId</th>
+                                </tr>
+                                <tr>
+                                    <td>jQAssistant Parent</td><td>com.buschmais.jqassistant</td><td>parent</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-maven-constraints:organisation-present" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>6</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>major</div>
+                        <div>2</div>
+                        <div>
+                            <span title="The information on the organisation of the jQAssistant project
+is not correct or even missing.
+
+Below you can find the correct way to specify the organisation
+in the toplevel POM of the Maven project.
+
+<organization>
+  <name>jQAssistant Development Team</name>
+  <url>https://jqassistant.org</url>
+</organization>" class="rule-name">jqa-maven-constraints:organisation-present</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:organisation-present" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The information on the organisation of the jQAssistant project
+is not correct or even missing.
+
+Below you can find the correct way to specify the organisation
+in the toplevel POM of the Maven project.
+
+&lt;organization&gt;
+  &lt;name&gt;jQAssistant Development Team&lt;/name&gt;
+  &lt;url&gt;https://jqassistant.org&lt;/url&gt;
+&lt;/organization&gt;</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>child</th>
+                                </tr>
+                                <tr>
+                                    <td>name</td>
+                                </tr>
+                                <tr>
+                                    <td>url</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Required Concept</th><th>Status</th>
+                            </tr>
+                            <tr>
+                                <td><span class="rule-name" onclick="javascript:showResult('jqa-maven-constraints:mark-root-project')">jqa-maven-constraints:mark-root-project</span></td><td><span class="success">success</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </details>
+                <details id="jqa-plugin:pluginid-must-be-given" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>7</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>major</div>
+                        <div>0</div>
+                        <div>
+                            <span title="The root element of the plugin descriptor must provide the id
+attribute. The id itself must start with the prefix 'jqa.plugin'.
+
+An example for a valid root element declaration for a plugin
+descriptor must look like this
+
+<jqassistant-plugin
+    xmlns=&quot;http://schema.jqassistant.org/plugin/v1.10&quot;
+    name=&quot;<Name of the Plugin>&quot;
+    id=&quot;jqa.plugin.<pluginid>&quot;>
+..." class="rule-name">jqa-plugin:pluginid-must-be-given</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-plugin:pluginid-must-be-given" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The root element of the plugin descriptor must provide the id
+attribute. The id itself must start with the prefix 'jqa.plugin'.
+
+An example for a valid root element declaration for a plugin
+descriptor must look like this
+
+&lt;jqassistant-plugin
+    xmlns="http://schema.jqassistant.org/plugin/v1.10"
+    name="&lt;Name of the Plugin&gt;"
+    id="jqa.plugin.&lt;pluginid&gt;"&gt;
+...</pre>
+                        <p> (no result)</p>
+                        <table>
+                            <tr>
+                                <th>Required Concept</th><th>Status</th>
+                            </tr>
+                            <tr>
+                                <td><span class="rule-name" onclick="javascript:showResult('jqa-plugin:PluginDescriptor')">jqa-plugin:PluginDescriptor</span></td><td><span class="success">success</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </details>
+                <details id="jqa-plugin:UnregisteredLabel" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>8</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>major</div>
+                        <div>0</div>
+                        <div>
+                            <span title="All XO @Label types must be registered in the plugin descriptor." class="rule-name">jqa-plugin:UnregisteredLabel</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-plugin:UnregisteredLabel" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">All XO @Label types must be registered in the plugin descriptor.</pre>
+                        <p> (no result)</p>
+                        <table>
+                            <tr>
+                                <th>Required Concept</th><th>Status</th>
+                            </tr>
+                            <tr>
+                                <td><span class="rule-name" onclick="javascript:showResult('jqa-plugin:PluginDescriptorRegistersModel')">jqa-plugin:PluginDescriptorRegistersModel</span></td><td><span class="success">success</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rule-name" onclick="javascript:showResult('jqa-plugin:Label')">jqa-plugin:Label</span></td><td><span class="success">success</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </details>
+                <details id="jqa-legal:license:exists" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>9</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>1</div>
+                        <div>
+                            <span title="It must exist in the root directory of the project a
+readme file called 'LICENSE'.
+
+This file contains the license of the project
+and should help users to identify the type of license
+the project uses." class="rule-name">jqa-legal:license:exists</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-legal:license:exists" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">It must exist in the root directory of the project a
+readme file called 'LICENSE'.
+
+This file contains the license of the project
+and should help users to identify the type of license
+the project uses.</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>license</th>
+                                </tr>
+                                <tr>
+                                    <td>/home/runner/work/jqassistant/jqassistant/LICENSE</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Required Concept</th><th>Status</th>
+                            </tr>
+                            <tr>
+                                <td><span class="rule-name" onclick="javascript:showResult('jqa-maven-constraints:mark-root-project')">jqa-maven-constraints:mark-root-project</span></td><td><span class="success">success</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </details>
+                <details id="jqa-maven-constraints:homepage" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>10</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>0</div>
+                        <div>
+                            <span title="The homepage of jQAssistant must be defined as the homepage of
+the Maven project. Please ensure that the following line is
+present in the parent POM:
+
+<url>https://jqassistant.org/</url>" class="rule-name">jqa-maven-constraints:homepage</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:homepage" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The homepage of jQAssistant must be defined as the homepage of
+the Maven project. Please ensure that the following line is
+present in the parent POM:
+
+&lt;url&gt;https://jqassistant.org/&lt;/url&gt;</pre>
+                        <p> (no result)</p>
+                    </div>
+                </details>
+                <details id="jqa-maven-constraints:project-description" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>11</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>1</div>
+                        <div>
+                            <span title="The Maven project must provide a useful description of the project.
+Please ensure that the description element is given in the Maven project.
+
+Example:
+  <description>
+    This plugin for jQAssistant provides support for scanning
+    the black hole in the center of the solar system.
+  </description>" class="rule-name">jqa-maven-constraints:project-description</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:project-description" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The Maven project must provide a useful description of the project.
+Please ensure that the description element is given in the Maven project.
+
+Example:
+  &lt;description&gt;
+    This plugin for jQAssistant provides support for scanning
+    the black hole in the center of the solar system.
+  &lt;/description&gt;</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>Project</th><th>Filename</th>
+                                </tr>
+                                <tr>
+                                    <td>jQAssistant Parent</td><td>/home/runner/work/jqassistant/jqassistant/pom.xml</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-maven-constraints:project-name" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>12</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>0</div>
+                        <div>
+                            <span title="The name of the project must be given in the Maven project. Furthermore
+the name must start with JQAssistant.
+
+Please ensure that a line similar to to the following line is
+present in the parent POM:
+
+<name>jQAssistant FooBar Plugin</name>" class="rule-name">jqa-maven-constraints:project-name</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:project-name" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The name of the project must be given in the Maven project. Furthermore
+the name must start with JQAssistant.
+
+Please ensure that a line similar to to the following line is
+present in the parent POM:
+
+&lt;name&gt;jQAssistant FooBar Plugin&lt;/name&gt;</pre>
+                        <p> (no result)</p>
+                    </div>
+                </details>
+                <details id="jqa-maven-constraints:version-information" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>13</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>1</div>
+                        <div>
+                            <span title="The Maven toplevel POM in project must provide its own version information.
+
+Example: <version>1.9</version>" class="rule-name">jqa-maven-constraints:version-information</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:version-information" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">The Maven toplevel POM in project must provide its own version information.
+
+Example: &lt;version&gt;1.9&lt;/version&gt;</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>model.fileName</th><th>text.value</th>
+                                </tr>
+                                <tr>
+                                    <td>/home/runner/work/jqassistant/jqassistant/pom.xml</td><td>2.10.0-SNAPSHOT</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-project-layout:editorconfig:exists" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>14</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>1</div>
+                        <div>
+                            <span title="Each repository should contain an editor config configuration file
+called '.editorconfig' in its root directory. For more
+details on '.editorconfig' see https://editorconfig.org/" class="rule-name">jqa-project-layout:editorconfig:exists</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-project-layout:editorconfig:exists" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">Each repository should contain an editor config configuration file
+called '.editorconfig' in its root directory. For more
+details on '.editorconfig' see https://editorconfig.org/</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>config</th><th>project</th>
+                                </tr>
+                                <tr>
+                                    <td>/home/runner/work/jqassistant/jqassistant/.editorconfig</td><td>jQAssistant Parent</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-project-layout:readme:exists" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>15</div>
+                        <div>
+                            <span title="No Violations Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>minor</div>
+                        <div>1</div>
+                        <div>
+                            <span title="It must exist in the root directory of the project a
+readme file called 'readme.adoc'.
+
+This file will be displayed on Github while browsing
+the repositories." class="rule-name">jqa-project-layout:readme:exists</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-project-layout:readme:exists" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">It must exist in the root directory of the project a
+readme file called 'readme.adoc'.
+
+This file will be displayed on Github while browsing
+the repositories.</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>project</th><th>readme</th>
+                                </tr>
+                                <tr>
+                                    <td>jQAssistant Parent</td><td>/home/runner/work/jqassistant/jqassistant/readme.adoc</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+            </section>
+        </div>
+        <div>
+            <h3>Concepts</h3>
+            <h6>
+                <ul>
+                    <li>Move the mouse over a concept to view a description.</li>
+                    <li>Click on a concept to open a details view.</li>
+                    <li>Abstract concepts are shown in italics.</li>
+                </ul>
+            </h6>
+            <section class="report-table">
+                <div class="header-row columns-grid">
+                    <div>#</div>
+                    <div>Status</div>
+                    <div>Severity</div>
+                    <div>Count</div>
+                    <div>Concept</div>
+                </div>
+                <details id="jqa-maven-constraints:jQAssistantArtifact" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>1</div>
+                        <div>
+                            <span title="Matches Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>blocker</div>
+                        <div>208</div>
+                        <div>
+                            <span title="This concept labels all artifacts with a groupId starting with &quot;com.buschmais.jqassistant&quot; with &quot;jQAssistant&quot;." class="rule-name">jqa-maven-constraints:jQAssistantArtifact</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:jQAssistantArtifact" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">This concept labels all artifacts with a groupId starting with "com.buschmais.jqassistant" with "jQAssistant".</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>artifact</th>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:parent:pom:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:parent:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.build:parent:pom:2.9.1</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.build:checkstyle:jar:${jqassistant.build.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.build:asciidoc:jar:${jqassistant.build.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:jar:2.9.1</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.build:checkstyle:jar:2.9.1</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.build:asciidoc:jar:2.9.1</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:bom:pom:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:bom:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:analysis:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:analysis:test-jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:neo4j:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:report:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:rule:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:runtime:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:artifact-resolver:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:scanner:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:schemata:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:shared:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:store:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:store:test-jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:test:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:test-jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java-annotation:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:test-jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:json:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:junit:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:maven3:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:xml:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:yaml2:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:analysis:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:analysis:test-jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:neo4j:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:report:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:rule:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:runtime:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:artifact-resolver:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:scanner:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:schemata:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:shared:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:store:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:store:test-jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:test:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:test-jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java-annotation:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:test-jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:json:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:junit:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:maven3:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:xml:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:yaml2:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:parent:pom:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:parent:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:parent:pom</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:bom:pom:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:shared:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:schemata:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:rule:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:schemata:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:shared:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:neo4j:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:store:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:neo4j:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:report:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:store:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:rule:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:analysis:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:report:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:artifact-resolver:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:scanner:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:runtime:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:scanner:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:analysis:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:test:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:runtime:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:artifact-resolver:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:parent:pom:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:parent:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.build:asciidoc:zip:xsl:2.9.1</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:parent:pom</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.build:asciidoc:zip:xsl:${jqassistant.build.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:test:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java-annotation:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:xml:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:test-jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java-annotation:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:xml:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:junit:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:test-jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:json:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:maven3:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant.parent:pom:1.0.0-RC-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:jqassistant.core.store:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.scm:jqassistant-maven-plugin:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant.assembly:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:with-one-managed-plugin:jar:1.0.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:with-one-dependency:jar:1.0.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:single-configured-plugin:jar:1.0.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:jqassistant.plugin:pom:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:jqassistant.plugin.common:jar:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:jqassistant.plugin.java:jar:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:jqassistant.plugin.common:xsl:plugin2asciidoc:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:jqassistant.plugin.common:xsl:rules2asciidoc:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:jqassistant.core.report:jar:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:jqassistant.core.plugin:jar:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:jqassistant.core.store:test-jar:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:jqassistant.core.analysis:test-jar:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:jqassistant.plugin.common:test-jar:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:jqassistant.plugin.bom:pom:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:test1:jar:1.0.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:test2:jar:1.0.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:jqassistant.core.analysis:test-jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:jqassistant.core.store:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugins:jqa-archivers-plugin:jar:1.2.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:parent:pom:2.1.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:junit:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:yaml2:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqa-distribution-specification:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqa-distribution-specification:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:yaml2:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:json:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:maven3:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:parent:pom:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:parent:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:parent:pom</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:zip:bin:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:plugins:zip:distribution:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqa-distribution-specification:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:zip:bin:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:plugins:zip:distribution:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqa-distribution-specification:jar</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:assembly:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:assembly:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:jqassistant-commandline-neo4jv4:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:jqassistant-commandline-neo4jv4:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:zip:bin</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:assembly:jar:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:jqassistant-commandline-neo4jv5:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:jqassistant-commandline-neo4jv5:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:test:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:test:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:jqassistant-commandline-neo4jv4:zip:distribution:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:jqassistant-commandline-neo4jv5:zip:distribution:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:jqassistant-commandline-neo4jv4:zip:distribution:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:jqassistant-commandline-neo4jv5:zip:distribution:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:maven-plugin:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:manual:jar:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:manual:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:yaml2:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:neo4j:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:parent:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:zip:schema:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:parent:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:xml:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:schemata:zip:schema:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:json:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:junit:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:zip:schema:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:maven3:zip:asciidoc:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:parent:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:neo4j:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:json:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:junit:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:maven3:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:xml:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:yaml2:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:parent:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:zip:asciidoc</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:schemata:zip:schema</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:zip:schema</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:zip:schema</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:parent:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:neo4j:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:yaml2:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:json:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:junit:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:xml:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:common:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:java:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin:maven3:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:parent:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:zip:asciidoc:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core:schemata:zip:schema:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.cli:application:zip:schema:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:jqassistant-maven-plugin:zip:schema:${project.version}</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:arc42:pom:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:arc42:test-jar:tests:2.10.0-SNAPSHOT</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant:manual:jar:${project.version}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-maven-constraints:mark-root-project" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>2</div>
+                        <div>
+                            <span title="Matches Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>blocker</div>
+                        <div>1</div>
+                        <div>
+                            <span title="This concept labels the parent Maven POM of a Maven Project with
+the label RootProject. This is needed to be able to write constraints
+on the root Maven POM of a Maven project." class="rule-name">jqa-maven-constraints:mark-root-project</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-maven-constraints:mark-root-project" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">This concept labels the parent Maven POM of a Maven Project with
+the label RootProject. This is needed to be able to write constraints
+on the root Maven POM of a Maven project.</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>rp</th>
+                                </tr>
+                                <tr>
+                                    <td>jQAssistant Parent</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-plugin:Label" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>3</div>
+                        <div>
+                            <span title="Matches Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>info</div>
+                        <div>366</div>
+                        <div>
+                            <span title="Adds the labels &quot;XO&quot; and &quot;Label&quot; to all interfaces representing XO labels." class="rule-name">jqa-plugin:Label</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-plugin:Label" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">Adds the labels "XO" and "Label" to all interfaces representing XO labels.</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>label.fqn</th>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.JUnitDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ByteCodeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.store.api.model.TaskDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.store.api.model.jQAssistantDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.store.api.model.TaskDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.RuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.report.api.model.Suppress</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.RuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.URIDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TestDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-plugin:PluginDescriptor" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>4</div>
+                        <div>
+                            <span title="Matches Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>info</div>
+                        <div>9</div>
+                        <div>
+                            <span title="Adds a label &quot;PluginDescriptor&quot; to classpath resources &quot;/META-INF/jqassistant-plugin.xml&quot;." class="rule-name">jqa-plugin:PluginDescriptor</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-plugin:PluginDescriptor" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">Adds a label "PluginDescriptor" to classpath resources "/META-INF/jqassistant-plugin.xml".</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>pluginDescriptor</th>
+                                </tr>
+                                <tr>
+                                    <td>/META-INF/jqassistant-plugin.xml</td>
+                                </tr>
+                                <tr>
+                                    <td>/META-INF/jqassistant-plugin.xml</td>
+                                </tr>
+                                <tr>
+                                    <td>/META-INF/jqassistant-plugin.xml</td>
+                                </tr>
+                                <tr>
+                                    <td>/META-INF/jqassistant-plugin.xml</td>
+                                </tr>
+                                <tr>
+                                    <td>/META-INF/jqassistant-plugin.xml</td>
+                                </tr>
+                                <tr>
+                                    <td>/META-INF/jqassistant-plugin.xml</td>
+                                </tr>
+                                <tr>
+                                    <td>/META-INF/jqassistant-plugin.xml</td>
+                                </tr>
+                                <tr>
+                                    <td>/META-INF/jqassistant-plugin.xml</td>
+                                </tr>
+                                <tr>
+                                    <td>/META-INF/jqassistant-plugin.xml</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+                <details id="jqa-plugin:PluginDescriptorRegistersModel" class="row-separator">
+                    <summary class="success columns-grid">
+                        <div>5</div>
+                        <div>
+                            <span title="Matches Found">&#9728;&nbsp;</span><span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#10004;</span>
+                        </div>
+                        <div>info</div>
+                        <div>117</div>
+                        <div>
+                            <span title="Creates a relationship REGISTERS_MODEL from /model/class-XML nodes to the corresponding model types." class="rule-name">jqa-plugin:PluginDescriptorRegistersModel</span>
+                        </div>
+                    </summary>
+                    <div id="resultOfjqa-plugin:PluginDescriptorRegistersModel" class="details-content" name="resultRow">
+                        <pre style="font-family:'Open Sans', sans-serif;">Creates a relationship REGISTERS_MODEL from /model/class-XML nodes to the corresponding model types.</pre>
+                        <div class="result">
+                            <table>
+                                <tr>
+                                    <th>Type</th>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.spi.RuleRepository</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TestDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.URIDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDeclaresTypeParameter</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RequiresDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.HasActualTypeArgumentDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.CatchesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Required Concept</th><th>Status</th>
+                            </tr>
+                            <tr>
+                                <td><span class="rule-name" onclick="javascript:showResult('jqa-plugin:PluginDescriptor')">jqa-plugin:PluginDescriptor</span></td><td><span class="success">success</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </details>
+            </section>
+        </div>
+        <div>
+            <h3>Groups</h3>
+            <section class="report-table">
+                <div class="header-row groups-grid">
+                    <div>#</div>
+                    <div>Group</div>
+                    <div>Description</div>
+                </div>
+                <summary class="groups-grid">
+                    <div>1</div>
+                    <div>jqa-legal</div>
+                    <div></div>
+                </summary>
+                <summary class="groups-grid">
+                    <div>2</div>
+                    <div>jqa-maven-constraints</div>
+                    <div></div>
+                </summary>
+                <summary class="groups-grid">
+                    <div>3</div>
+                    <div>jqa-plugin:Default</div>
+                    <div></div>
+                </summary>
+                <summary class="groups-grid">
+                    <div>4</div>
+                    <div>jqa-project-layout</div>
+                    <div></div>
+                </summary>
+                <summary class="groups-grid">
+                    <div>5</div>
+                    <div>jqa-technical-debt</div>
+                    <div></div>
+                </summary>
+            </section>
+        </div>
+    </body>
+</html>

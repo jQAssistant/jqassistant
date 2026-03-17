@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<testsuite name="jqassistant.Group_jqa-technical-debt" tests="3" failures="2" errors="0" time="2.0">
+    <testcase name="Constraint_java_TechnicalDebt" time="0.0" classname="jqassistant.Group_jqa-technical-debt">
+        <failure message="Technical debt should be removed from code elements annotated by &quot;@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt&quot;.">Priority = 0
+Type = com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample
+Member = debtField
+Description = technicalDebt:Field with debts
+Issue = 859
+---
+Priority = 1
+Type = com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample
+Member = 
+Description = technicalDebt:Class with debts
+Issue = 284
+---
+Priority = 1
+Type = com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample
+Member = 
+Description = technicalDebt:Class with defaults
+Issue = 
+---
+Priority = 2
+Type = com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample
+Member = doSomething
+Description = technicalDebt:Method with debts
+Issue = 3
+</failure>
+    </testcase>
+    <testcase name="Constraint_jqa-technical-debt_CodeElementToBeRemovedInVersion" time="0.0" classname="jqassistant.Group_jqa-technical-debt"/>
+    <testcase name="Constraint_jqa-technical-debt_CodeElementToBeRemoved" time="1.0" classname="jqassistant.Group_jqa-technical-debt">
+        <failure message="Code elements annotated by &quot;@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion&quot; should have been removed in given version.">Type = com.buschmais.jqassistant.core.rule.api.source.RuleSource
+Member = java.io.InputStream getInputStream()
+MinorVersion = 6
+MajorVersion = 2
+---
+Type = com.buschmais.jqassistant.core.store.api.Store
+Member = com.buschmais.jqassistant.core.store.api.model.Descriptor find(java.lang.Class,java.lang.String)
+MinorVersion = 9
+MajorVersion = 1
+</failure>
+    </testcase>
+</testsuite>

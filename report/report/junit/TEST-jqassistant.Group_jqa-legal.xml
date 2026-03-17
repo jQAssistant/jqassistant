@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<testsuite name="jqassistant.Group_jqa-legal" tests="4" failures="0" errors="0" time="0.0">
+    <testcase name="Constraint_jqa-legal_license_is-correctly-defined" time="0.0" classname="jqassistant.Group_jqa-legal"/>
+    <testcase name="Concept_jqa-maven-constraints_mark-root-project" time="0.0" classname="jqassistant.Group_jqa-legal"/>
+    <testcase name="Constraint_jqa-legal_license_exists" time="0.0" classname="jqassistant.Group_jqa-legal"/>
+    <testcase name="Constraint_jqa-legal_license_only-one-in-pom" time="0.0" classname="jqassistant.Group_jqa-legal"/>
+</testsuite>
