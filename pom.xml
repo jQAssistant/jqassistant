@@ -517,5 +517,6 @@
         <module>cli</module>
         <module>maven</module>
         <module>manual</module>
+        <module>arc42</module>
     </modules>
 </project>
