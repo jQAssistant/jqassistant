@@ -1,6 +1,0 @@
-jqassistant:
-  analyze:
-    rule:
-      directory: ${jqa.ruleDir}
-    report:
-      fail-on-severity: minor

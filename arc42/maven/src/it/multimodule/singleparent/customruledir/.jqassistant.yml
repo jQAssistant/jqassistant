@@ -1,4 +1,0 @@
-jqassistant:
-  analyze:
-    rule:
-      directory: build-config/jqa-rules

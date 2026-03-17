@@ -1,2 +1,0 @@
-jqassistant:
-  skip: ${jqa.skip}

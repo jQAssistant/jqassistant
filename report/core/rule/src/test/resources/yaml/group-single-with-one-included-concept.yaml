@@ -1,5 +1,0 @@
----
-groups:
-  - id: cccc
-    includedConcepts:
-      - refId: efg

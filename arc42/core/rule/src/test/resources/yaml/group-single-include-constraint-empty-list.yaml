@@ -1,5 +1,0 @@
-groups:
-  - id: group
-    includedConstraints:
-    includedConcepts:
-      - refId: other_concept

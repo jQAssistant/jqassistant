@@ -1,5 +1,0 @@
-jqassistant:
-  scan:
-    properties:
-      overwritten-user-value: "default"
-      user-value: "default"

@@ -1,5 +1,0 @@
-jqassistant:
-  store:
-    embedded:
-      apoc-enabled: true
-

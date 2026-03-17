@@ -1,3 +1,0 @@
-? ck1: &valueAlias aaa
-: 42
-zzz: *valueAlias

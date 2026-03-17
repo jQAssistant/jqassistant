@@ -1,8 +1,0 @@
-jqassistant:
-  scan:
-    include:
-      files:
-        - ${project.basedir}/config
-      urls:
-        - file:config/test.properties
-
