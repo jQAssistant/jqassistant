@@ -24,6 +24,7 @@ jobs:
     with:
       publish_snapshots: true
       pages: "./manual/target/generated-docs/"
+      sonar_project_key: "jqassistant_jqassistant<"
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
