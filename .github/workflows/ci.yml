@@ -31,3 +31,4 @@ jobs:
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+      sonar_token: ${{ secrets.SONAR_TOKEN }}
