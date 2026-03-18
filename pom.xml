@@ -122,7 +122,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Sonar -->
         <sonar.organization>jqassistant</sonar.organization>
-        <sonar.projectKey>${{env.SONAR_PROJECT_KEY}}</sonar.projectKey>
+        <sonar.projectKey>${{SONAR_PROJECT_KEY}}</sonar.projectKey>
     </properties>
 
     <build>
