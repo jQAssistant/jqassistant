@@ -4,13 +4,13 @@ name: CI
 on:
   push:
     branches:
-      - "1147-improve-sonarqube-integration-for-jqa"
+      - "master"
       - "bugfix/*"
     tags-ignore:
       - "*"
   pull_request:
     branches:
-      - "1147-improve-sonarqube-integration-for-jqa"
+      - "master"
       - "bugfix/*"
   workflow_dispatch: {}
 
@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   build:
-    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@integration-of-sonarqube-into-jQA
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@main
     with:
       publish_snapshots: true
       pages: "./manual/target/generated-docs/"
