@@ -14,6 +14,17 @@
 
     <description>arc42 based architecture documentation for jQAssistant</description>
 
+    <properties>
+        <confluence.url>https://buschmais.atlassian.net/wiki/</confluence.url>
+        <confluence.serverId>confluence</confluence.serverId>
+        <confluence.spaceKey>development</confluence.spaceKey>
+        <confluence.ancestorId>15138831</confluence.ancestorId>
+        <confluence.convertOnly>false</confluence.convertOnly>
+        <jqassistant-asciidoctorj-extensions.version>1.1.0</jqassistant-asciidoctorj-extensions.version>
+        <asciidoctorj-diagram.version>3.2.0</asciidoctorj-diagram.version>
+        <asciidoctorj-diagram-plantuml.version>1.2025.3</asciidoctorj-diagram-plantuml.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -53,17 +64,61 @@
                     <dependency>
                         <groupId>org.jqassistant.tooling.asciidoctorj</groupId>
                         <artifactId>jqassistant-asciidoctorj-extensions</artifactId>
-                        <version>1.1.0</version>
+                        <version>${jqassistant-asciidoctorj-extensions.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.asciidoctor</groupId>
                         <artifactId>asciidoctorj-diagram</artifactId>
-                        <version>3.2.0</version>
+                        <version>${asciidoctorj-diagram.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.asciidoctor</groupId>
                         <artifactId>asciidoctorj-diagram-plantuml</artifactId>
-                        <version>1.2025.3</version>
+                        <version>${asciidoctorj-diagram-plantuml.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.sahli.asciidoc.confluence.publisher</groupId>
+                <artifactId>asciidoc-confluence-publisher-maven-plugin</artifactId>
+                <version>0.31.0</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>publish</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <asciidocRootFolder>src/docs/asciidoc</asciidocRootFolder>
+                            <rootConfluenceUrl>${confluence.url}</rootConfluenceUrl>
+                            <serverId>${confluence.serverId}</serverId>
+                            <spaceKey>${confluence.spaceKey}</spaceKey>
+                            <ancestorId>${confluence.ancestorId}</ancestorId>
+                            <convertOnly>${confluence.convertOnly}</convertOnly>
+                            <notifyWatchers>false</notifyWatchers>
+                            <maxRequestsPerSecond>10</maxRequestsPerSecond>
+                            <attributes>
+                                <jqassistant-report-path>${session.executionRootDirectory}/target/jqassistant/jqassistant-report.xml</jqassistant-report-path>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jqassistant.tooling.asciidoctorj</groupId>
+                        <artifactId>jqassistant-asciidoctorj-extensions</artifactId>
+                        <version>${jqassistant-asciidoctorj-extensions.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-diagram</artifactId>
+                        <version>${asciidoctorj-diagram.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-diagram-plantuml</artifactId>
+                        <version>${asciidoctorj-diagram-plantuml.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
