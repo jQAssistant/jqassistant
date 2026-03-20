@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <testsuite name="jqassistant.Group_jqa-technical-debt" tests="3" failures="2" errors="0" time="2.0">
+    <testcase name="Constraint_jqa-technical-debt_CodeElementToBeRemovedInVersion" time="0.0" classname="jqassistant.Group_jqa-technical-debt"/>
     <testcase name="Constraint_java_TechnicalDebt" time="0.0" classname="jqassistant.Group_jqa-technical-debt">
         <failure message="Technical debt should be removed from code elements annotated by &quot;@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt&quot;.">Priority = 0
 Type = com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample
@@ -26,7 +27,6 @@ Description = technicalDebt:Method with debts
 Issue = 3
 </failure>
     </testcase>
-    <testcase name="Constraint_jqa-technical-debt_CodeElementToBeRemovedInVersion" time="0.0" classname="jqassistant.Group_jqa-technical-debt"/>
     <testcase name="Constraint_jqa-technical-debt_CodeElementToBeRemoved" time="1.0" classname="jqassistant.Group_jqa-technical-debt">
         <failure message="Code elements annotated by &quot;@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion&quot; should have been removed in given version.">Type = com.buschmais.jqassistant.core.rule.api.source.RuleSource
 Member = java.io.InputStream getInputStream()
