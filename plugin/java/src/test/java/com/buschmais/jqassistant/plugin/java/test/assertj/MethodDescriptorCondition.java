@@ -33,6 +33,10 @@ public class MethodDescriptorCondition extends Condition<MethodDescriptor> {
             .equals(expectedTypeName);
     }
 
+    public static MethodDescriptorCondition methodDescriptor(Class<?> type, String expectedSignature) {
+        return new MethodDescriptorCondition(type.getName(), expectedSignature);
+    }
+
     public static MethodDescriptorCondition methodDescriptor(Class<?> type, String name, Class<?>... parameterTypes) throws NoSuchMethodException {
         Method method = type.getDeclaredMethod(name, parameterTypes);
         return new MethodDescriptorCondition(type.getName(), method.getReturnType()

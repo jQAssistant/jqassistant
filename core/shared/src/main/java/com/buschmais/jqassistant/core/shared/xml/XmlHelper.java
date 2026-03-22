@@ -29,10 +29,6 @@ public class XmlHelper {
         xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
     }
 
-    public static XMLInputFactory getXMLInputFactory() {
-        return xmlInputFactory;
-    }
-
     public static boolean rootElementMatches(InputStreamSupplier inputStreamSupplier, Predicate<QName> rootElementPredicate) {
         try (InputStream stream = inputStreamSupplier.get()) {
             XMLStreamReader reader = xmlInputFactory.createXMLStreamReader(stream);
