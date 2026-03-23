@@ -1,0 +1,36 @@
+== 01 - Sub Chapter Title
+
+=== Context
+
+Describe the specific technical or business problem that needs a standardized solution. For example, why a specific library or pattern (like SLF4J or Paging) was chosen.
+
+=== Decision
+
+Detail the specific rules or standards to be followed. This often includes:
+
+
+* **Core Patterns:** Which concepts (e.g., Spring Data or Jakarta EE) the team is orienting toward.
+
+* **Signatures/Structures:** The exact order of parameters or components.
+
+** *Parameter 1* (e.g., Context)
+
+** *Parameter 2* (e.g., Filter attributes)
+
+** *Parameter 3* (e.g., Paging/Sorting objects)
+
+* **Definitions:** Breakdown of what specific objects (like PagingParams) consist of (e.g., offset, limit, sortOrder).
+
+=== Notes
+
+* Clarify the scope of the decision (e.g., whether it focuses on Facade methods or Repositories).
+
+* Mention any legacy code considerations or items that should eventually be removed from signatures.
+
+=== Consequences
+
+List the expected outcomes of following this template:
+
+* **Uniformity:** Consistent signatures or patterns across the codebase.
+
+* **Usability:** Easier implementation or consumption of the methods.
