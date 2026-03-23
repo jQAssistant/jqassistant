@@ -4,13 +4,13 @@ name: CI
 on:
   push:
     branches:
-      - "master"
+      - "1148-arc42-documentation-shall-be-published-to-Confluence"
       - "bugfix/*"
     tags-ignore:
       - "*"
   pull_request:
     branches:
-      - "master"
+      - "1148-arc42-documentation-shall-be-published-to-Confluence"
       - "bugfix/*"
   workflow_dispatch: {}
 
