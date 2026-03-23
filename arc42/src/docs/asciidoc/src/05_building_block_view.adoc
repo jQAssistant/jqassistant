@@ -3,11 +3,11 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-building-block-view]]
 
 
-== Building Block View
+== 5. Building Block View
 
 
 
-=== Whitebox Overall System
+=== 5.1. Whitebox Overall System
 
 
 _**<Overview Diagram>**_
@@ -67,7 +67,7 @@ _<black box template>_
 
 
 
-=== Level 2
+=== 5.2. Level 2
 
 
 ==== White Box _<building block 1>_
@@ -90,7 +90,7 @@ _<white box template>_
 
 
 
-=== Level 3
+=== 5.3. Level 3
 
 
 

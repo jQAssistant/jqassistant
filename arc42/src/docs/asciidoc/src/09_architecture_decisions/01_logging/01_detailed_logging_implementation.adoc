@@ -1,0 +1,28 @@
+== 01 - Logging with SLF4J
+
+=== Status
+Accepted
+
+=== Context
+To ensure consistent log analysis and system monitoring across the application, we need a unified logging abstraction. Without a standard, different modules might use different logging frameworks or inconsistent patterns (e.g., string concatenation), making it difficult to parse logs in centralized systems like ELK or Splunk. [cite: 1, 2]
+
+=== Decision
+We adopt **SLF4J** as the mandatory logging facade. The following rules must be strictly followed in all layers (Facade, Service, and Repository): [cite: 4]
+
+* **Logger Declaration**: Loggers must be declared as `static final` using the class name.
+** `private static final Logger log = LoggerFactory.getLogger(MyClass.class);`
+* **Parameterized Logging**: Use placeholders (`{}`) instead of string concatenation to prevent unnecessary memory allocation.
+** `log.info("Processing entity with ID: {}", entityId);`
+* **Exception Handling**: Always pass the exception object as the final argument to ensure the stack trace is captured.
+** `log.error("An unexpected error occurred during processing", exception);`
+* **Log Levels**:
+** *ERROR*: Critical failures requiring immediate action.
+** *WARN*: Unexpected but non-fatal behavior.
+** *INFO*: Major business milestones or lifecycle events.
+** *DEBUG*: Detailed technical information for troubleshooting.
+
+=== Consequences
+* **Consistency**: All logs follow the same structural patterns, facilitating easier debugging.
+* **Performance**: Parameterized logging avoids the overhead of string building for disabled log levels.
+* **Traceability**: Correct exception handling ensures that root causes are visible in the logs.
+* **Clean Code**: Standardized declarations reduce boilerplate and maintain a clean class structure.

@@ -23,6 +23,7 @@
         <jqassistant-asciidoctorj-extensions.version>1.1.0</jqassistant-asciidoctorj-extensions.version>
         <asciidoctorj-diagram.version>3.2.0</asciidoctorj-diagram.version>
         <asciidoctorj-diagram-plantuml.version>1.2025.3</asciidoctorj-diagram-plantuml.version>
+        <jqassistant-report-path>${session.executionRootDirectory}/target/jqassistant/jqassistant-report.xml</jqassistant-report-path>
     </properties>
 
     <build>
@@ -39,7 +40,7 @@
                     <attributes>
                         <toc>left</toc>
                         <imagesdir>./</imagesdir>
-                        <jqassistant-report-path>${session.executionRootDirectory}/target/jqassistant/jqassistant-report.xml</jqassistant-report-path>
+                        <jqassistant-report-path>${jqassistant-report-path}</jqassistant-report-path>
                     </attributes>
                 </configuration>
                 <executions>
@@ -90,7 +91,7 @@
                         </goals>
                         <phase>verify</phase>
                         <configuration>
-                            <asciidocRootFolder>src/docs/asciidoc</asciidocRootFolder>
+                            <asciidocRootFolder>src/docs/asciidoc/src</asciidocRootFolder>
                             <rootConfluenceUrl>${confluence.url}</rootConfluenceUrl>
                             <serverId>${confluence.serverId}</serverId>
                             <spaceKey>${confluence.spaceKey}</spaceKey>
@@ -99,7 +100,7 @@
                             <notifyWatchers>false</notifyWatchers>
                             <maxRequestsPerSecond>10</maxRequestsPerSecond>
                             <attributes>
-                                <jqassistant-report-path>${session.executionRootDirectory}/target/jqassistant/jqassistant-report.xml</jqassistant-report-path>
+                                <jqassistant-report-path>${jqassistant-report-path}</jqassistant-report-path>
                             </attributes>
                         </configuration>
                     </execution>
