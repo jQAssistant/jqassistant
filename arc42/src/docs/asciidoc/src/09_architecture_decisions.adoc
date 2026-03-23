@@ -3,6 +3,15 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-design-decisions]]
 == 9. Architecture Decisions
 
+ifndef::confluence[]
+:leveloffset: +1
+
+include::09_architecture_decisions/09_01_logging/09_01_detailed_logging_implementation.adoc[]
+
+:leveloffset: -1
+endif::confluence[]
+
+
 
 
 
