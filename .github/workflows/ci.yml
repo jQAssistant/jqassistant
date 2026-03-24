@@ -27,6 +27,8 @@ jobs:
       java_test_versions: '[17, 25]'
       publish_snapshots: true
       pages: "./manual/target/generated-docs/"
+      sonar_project_key: "jqassistant_jqassistant"
+      sonar_organization: "jqassistant"
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}

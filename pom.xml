@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.build</groupId>
         <artifactId>parent</artifactId>
-        <version>2.9.1</version>
+        <version>2.10.0-M1</version>
     </parent>
 
     <groupId>com.buschmais.jqassistant</groupId>
@@ -79,13 +79,13 @@
         <guice.version>7.0.0</guice.version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
         <httpcore.version>4.4.16</httpcore.version>
-        <jackson.version>2.21.1</jackson.version>
+        <jackson.version>3.1.0</jackson.version>
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <json-schema-validator.version>2.0.1</json-schema-validator.version>
-        <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
+        <json-schema-validator.version>3.0.1</json-schema-validator.version>
+        <jsonschema-generator.version>5.0.0</jsonschema-generator.version>
         <junit.version>5.14.3</junit.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
         <lombok.version>1.18.44</lombok.version>
@@ -118,9 +118,6 @@
         <!-- Maven config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- Sonar -->
-        <sonar.organization>jqassistant</sonar.organization>
-        <sonar.projectKey>jqassistant_jqassistant</sonar.projectKey>
     </properties>
 
     <build>
@@ -506,5 +503,6 @@
         <module>cli</module>
         <module>maven</module>
         <module>manual</module>
+        <module>arc42</module>
     </modules>
 </project>

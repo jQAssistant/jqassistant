@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FileRuleSourceTest extends AbstractRuleSourceTest {
 
-    @Test
+    @Override
     protected List<RuleSource> getRuleSources() throws IOException {
         URL resource = FileRuleSource.class.getClassLoader().getResource("META-INF/jqassistant-rules");
         return FileRuleSource.getRuleSources(new File(resource.getPath()));
