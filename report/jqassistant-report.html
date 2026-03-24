@@ -192,7 +192,7 @@
             jQAssistant Report - jQAssistant Parent</h1>
         <h5>
                         Timestamp:
-            <span class="timeStamp">2026-03-22T19:08:18.924Z</span>
+            <span class="timeStamp">2026-03-24T21:26:20.493Z</span>
         </h5>
         <div>
             <h3>Constraints</h3>
@@ -389,7 +389,7 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</td><td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td><td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor, com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td><td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor, com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td><td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
@@ -401,13 +401,13 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td><td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</td><td>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor, com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</td><td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor, com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</td><td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</td><td>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</td><td>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</td>
                                 </tr>
                             </table>
                         </div>
@@ -1640,10 +1640,34 @@ on the root Maven POM of a Maven project.</pre>
                                     <th>label.fqn</th>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.URIDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</td>
@@ -1655,67 +1679,31 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</td>
@@ -1727,115 +1715,79 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor</td>
@@ -1847,64 +1799,37 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor</td>
@@ -1913,19 +1838,91 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor</td>
                                 </tr>
                                 <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
+                                </tr>
+                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</td>
@@ -1934,16 +1931,13 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</td>
@@ -1952,46 +1946,52 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.junit.api.model.JUnitDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</td>
@@ -2000,157 +2000,13 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor</td>
@@ -2159,115 +2015,13 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ByteCodeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor</td>
@@ -2279,16 +2033,10 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
@@ -2297,46 +2045,13 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationDescriptor</td>
@@ -2348,10 +2063,31 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ByteCodeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
@@ -2360,46 +2096,67 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveDescriptor</td>
@@ -2408,19 +2165,289 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</td>
                                 </tr>
                                 <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor</td>
+                                </tr>
+                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor</td>
@@ -2441,34 +2468,7 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
@@ -2478,6 +2478,9 @@ on the root Maven POM of a Maven project.</pre>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.core.store.api.model.TaskDescriptor</td>
@@ -2498,13 +2501,13 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.RuleDescriptor</td>
                                 </tr>
                                 <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
+                                </tr>
+                                <tr>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.core.report.api.model.Suppress</td>
@@ -2513,70 +2516,64 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</td>
                                 </tr>
                                 <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</td>
+                                </tr>
+                                <tr>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.RuleDescriptor</td>
                                 </tr>
                                 <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
+                                </tr>
+                                <tr>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.URIDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
@@ -2586,6 +2583,24 @@ on the root Maven POM of a Maven project.</pre>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor</td>
@@ -2612,13 +2627,13 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor</td>
@@ -2627,19 +2642,19 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</td>
@@ -2648,58 +2663,28 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor</td>
@@ -2717,25 +2702,40 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor</td>
                                 </tr>
                                 <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</td>
+                                </tr>
+                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor</td>
                                 </tr>
                             </table>
                         </div>
@@ -2811,34 +2811,19 @@ on the root Maven POM of a Maven project.</pre>
                                     <th>Type</th>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.core.analysis.spi.RuleRepository</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor</td>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.GroupDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</td>
+                                    <td>com.buschmais.jqassistant.core.analysis.api.model.AnalyzeTaskDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.core.analysis.spi.RuleRepository</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.core.analysis.api.model.ConstraintDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TestDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor</td>
@@ -2847,7 +2832,22 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</td>
                                 </tr>
                                 <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</td>
+                                </tr>
+                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.TestDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.URIDescriptor</td>
@@ -2856,16 +2856,7 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</td>
@@ -2874,121 +2865,67 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.HasActualTypeArgumentDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDeclaresTypeParameter</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.CatchesDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.CatchesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.RequiresDescriptor</td>
@@ -2997,43 +2934,103 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.HasActualTypeArgumentDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDeclaresTypeParameter</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</td>
@@ -3042,64 +3039,19 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</td>
@@ -3108,58 +3060,106 @@ on the root Maven POM of a Maven project.</pre>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</td>
-                                </tr>
-                                <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</td>
-                                </tr>
-                                <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</td>
                                 </tr>
                                 <tr>
                                     <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</td>
                                 </tr>
                                 <tr>
-                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</td>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</td>
+                                </tr>
+                                <tr>
+                                    <td>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</td>
                                 </tr>
                             </table>
                         </div>
