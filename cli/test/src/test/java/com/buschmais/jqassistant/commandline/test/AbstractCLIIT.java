@@ -39,7 +39,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.joining;
 import static lombok.AccessLevel.PRIVATE;
@@ -58,9 +57,6 @@ public abstract class AbstractCLIIT {
     @RequiredArgsConstructor
     private enum DISTRIBUTION {
 
-        NEO4JV4(Runtime.Version.parse("11")
-            .feature(), of(Runtime.Version.parse("17")
-            .feature())),
         NEO4JV5(Runtime.Version.parse("17")
             .feature(), empty());
 
@@ -93,7 +89,7 @@ public abstract class AbstractCLIIT {
     /**
      * Meta-annotation for test to executed for multiple distributions
      */
-    @RepeatedTest(value = 2) // Must match the length of #DistributionParameterResolver.DISTRIBUTIONS
+    @RepeatedTest(value = 1) // Must match the length of #DistributionParameterResolver.DISTRIBUTIONS
     @Retention(RUNTIME)
     @Target(METHOD)
     @interface DistributionTest {
@@ -220,8 +216,7 @@ public abstract class AbstractCLIIT {
         ProcessBuilder builder = new ProcessBuilder(command);
         Map<String, String> environment = builder.environment();
         environment.put("JQASSISTANT_HOME", jqaHome);
-        // add-opens is required by Neo4jv4 on JDK17
-        environment.put("JQASSISTANT_OPTS", "--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED -Duser.home=" + userHome);
+        environment.put("JQASSISTANT_OPTS", "-Duser.home=" + userHome);
         // environment.put("JQASSISTANT_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
         File workingDirectory = getWorkingDirectory();

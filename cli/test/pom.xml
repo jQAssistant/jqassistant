@@ -43,13 +43,6 @@
         <!-- Distributions -->
         <dependency>
             <groupId>com.buschmais.jqassistant.cli</groupId>
-            <artifactId>jqassistant-commandline-neo4jv4</artifactId>
-            <type>zip</type>
-            <classifier>distribution</classifier>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.cli</groupId>
             <artifactId>jqassistant-commandline-neo4jv5</artifactId>
             <type>zip</type>
             <classifier>distribution</classifier>
