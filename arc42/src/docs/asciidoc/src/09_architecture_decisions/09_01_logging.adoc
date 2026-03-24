@@ -1,1 +1,9 @@
-== 9.1. - Logging
+== 9.1. Logging
+
+ifndef::confluence[]
+:leveloffset: +1
+
+include::09_01_logging/09_01_detailed_logging_implementation.adoc[]
+
+:leveloffset: -1
+endif::confluence[]

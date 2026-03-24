@@ -1,4 +1,4 @@
-== 9.1.1 - Logging with SLF4J
+== 9.1.1 Logging with SLF4J
 
 === Status
 Accepted
@@ -7,7 +7,7 @@ Accepted
 To ensure consistent log analysis and system monitoring across the application, we need a unified logging abstraction. Without a standard, different modules might use different logging frameworks or inconsistent patterns (e.g., string concatenation), making it difficult to parse logs in centralized systems like ELK or Splunk.
 
 === Decision
-We adopt **SLF4J** as the mandatory logging facade. The following rules must be strictly followed in all layers (Facade, Service, and Repository):
+We adopt **SLF4J** as the mandatory logging facade. The following rules must be strictly followed:
 
 * **Logger Declaration**: Loggers must be declared as `static final` using the class name.
 ** `private static final Logger log = LoggerFactory.getLogger(MyClass.class);`

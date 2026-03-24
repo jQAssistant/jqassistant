@@ -6,7 +6,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 ifndef::confluence[]
 :leveloffset: +1
 
-include::09_architecture_decisions/09_01_logging/09_01_detailed_logging_implementation.adoc[]
+include::09_architecture_decisions/09_01_logging.adoc[]
 
 :leveloffset: -1
 endif::confluence[]
