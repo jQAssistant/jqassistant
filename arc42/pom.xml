@@ -15,7 +15,7 @@
     <description>arc42 based architecture documentation for jQAssistant</description>
 
     <properties>
-        <confluence.url>https://buschmais.atlassian.net/wiki/</confluence.url>
+        <confluence.url>https://buschmais.atlassian.net/wiki</confluence.url>
         <confluence.serverId>confluence</confluence.serverId>
         <confluence.spaceKey>development</confluence.spaceKey>
         <confluence.ancestorId>15138831</confluence.ancestorId>
