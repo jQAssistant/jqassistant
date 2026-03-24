@@ -1,0 +1,76 @@
+<jqassistant-rules
+    xmlns="http://schema.jqassistant.org/rule/v2.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-2.2.xsd">
+
+    <group id="jqa-logging">
+        <includeConcept refId="jqa-logging:*"/>
+        <includeConstraint refId="jqa-logging:*"/>
+    </group>
+
+    <concept id="jqa-logging:HasLogger">
+        <description>
+            The classes org.slf4j.Logger, org.apache.commons.logging.Log and java.util.logging.Logger are logging frameworks and labeled as Logger.
+        </description>
+        <cypher><![CDATA[
+          MATCH
+            (:Artifact)-[:REQUIRES]->(logger:Type)
+          WHERE
+            logger.fqn IN ["org.slf4j.Logger", "org.apache.commons.logging.Log","java.util.logging.Logger","org.apache.logging.log4j.Logger"]
+          SET
+            logger:Logger
+          RETURN DISTINCT
+            logger.fqn AS Logger
+        ]]></cypher>
+    </concept>
+
+    <concept id="jqa-logging:LoggerIsSlf4jLogger">
+        <description>
+            The class org.slf4j.Logger represents the Slf4j logger.
+        </description>
+        <cypher><![CDATA[
+          MATCH
+            (slf4j:Type)
+          WHERE
+            slf4j.fqn = "org.slf4j.Logger"
+          SET
+            slf4j:Slf4j
+          RETURN DISTINCT
+            slf4j.fqn as Slf4j
+       ]]></cypher>
+    </concept>
+
+    <constraint id="jqa-logging:LoggerNotSlf4j">
+        <requiresConcept refId="jqa-logging:HasLogger"/>
+        <requiresConcept refId="jqa-logging:LoggerIsSlf4jLogger"/>
+        <description>
+            Refractor other logging frameworks to Slf4j.
+        </description>
+        <cypher><![CDATA[
+          MATCH
+            (logger:Type:Logger)-[:DECLARES]->(m:Method),
+            (t:Type)-[:DECLARES]->(:Method)-[usage:INVOKES]->(m)
+          WHERE  NOT
+            logger:Slf4j
+          RETURN
+            t.fqn AS Type, logger.fqn AS Logger, collect(usage.lineNumber) AS LineNumbers
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="jqa-logging:SysOutSysErrLogging">
+       <description>System.out or System.err should not be used for logging</description>
+       <cypher><![CDATA[
+         MATCH
+           (system:Type{fqn: "java.lang.System"})-[:DECLARES]->(writer:Field),
+           (a:Main:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Method),
+           (m)-[reads:READS]->(writer)
+         WHERE
+           writer.signature in [
+             "java.io.PrintStream out",
+             "java.io.PrintStream err"
+           ]
+         RETURN
+           t.fqn as Type, writer.signature, collect(reads.lineNumber) as LineNumbers
+       ]]></cypher>
+    </constraint>
+</jqassistant-rules>
