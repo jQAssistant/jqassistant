@@ -410,7 +410,7 @@
 
             <!-- Jackson -->
             <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
+                <groupId>tools.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>${jackson2.version}</version>
                 <scope>import</scope>
