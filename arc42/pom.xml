@@ -20,6 +20,8 @@
         <confluence.spaceKey>development</confluence.spaceKey>
         <confluence.ancestorId>15138831</confluence.ancestorId>
         <confluence.convertOnly>true</confluence.convertOnly>
+        <confluence.username>${env.CONFLUENCE_USERNAME}</confluence.username>
+        <confluence.password>${env.CONFLUENCE_PASSWORD}</confluence.password>
         <jqassistant-asciidoctorj-extensions.version>1.1.0</jqassistant-asciidoctorj-extensions.version>
         <asciidoctorj-diagram.version>3.2.0</asciidoctorj-diagram.version>
         <asciidoctorj-diagram-plantuml.version>1.2025.3</asciidoctorj-diagram-plantuml.version>
@@ -96,6 +98,8 @@
                             <serverId>${confluence.serverId}</serverId>
                             <spaceKey>${confluence.spaceKey}</spaceKey>
                             <ancestorId>${confluence.ancestorId}</ancestorId>
+                            <username>${confluence.username}</username>
+                            <password>${confluence.password}</password>
                             <convertOnly>${confluence.convertOnly}</convertOnly>
                             <notifyWatchers>false</notifyWatchers>
                             <maxRequestsPerSecond>10</maxRequestsPerSecond>
