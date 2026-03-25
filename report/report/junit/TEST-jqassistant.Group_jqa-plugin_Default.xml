@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <testsuite name="jqassistant.Group_jqa-plugin_Default" tests="6" failures="0" errors="0" time="1.0">
     <testcase name="Concept_jqa-plugin_PluginDescriptorRegistersModel" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
-    <testcase name="Concept_jqa-plugin_Label" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
-    <testcase name="Constraint_jqa-plugin_ImplictlyRegisteredLabelsShouldNotBeRegisteredExplicitly" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
-    <testcase name="Concept_jqa-plugin_PluginDescriptor" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
     <testcase name="Constraint_jqa-plugin_pluginid-must-be-given" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
+    <testcase name="Constraint_jqa-plugin_ImplictlyRegisteredLabelsShouldNotBeRegisteredExplicitly" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
+    <testcase name="Concept_jqa-plugin_Label" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
     <testcase name="Constraint_jqa-plugin_UnregisteredLabel" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
+    <testcase name="Concept_jqa-plugin_PluginDescriptor" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
 </testsuite>
