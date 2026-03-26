@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <testsuite name="jqassistant.Group_jqa-maven-constraints" tests="9" failures="0" errors="0" time="1.0">
-    <testcase name="Constraint_jqa-maven-constraints_java-compiler-target-version" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
     <testcase name="Concept_jqa-maven-constraints_jQAssistantArtifact" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
-    <testcase name="Constraint_jqa-maven-constraints_homepage" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
-    <testcase name="Constraint_jqa-maven-constraints_AvoidDependenciesTojQAssistantTestArtifacts" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
-    <testcase name="Constraint_jqa-maven-constraints_version-information" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
     <testcase name="Constraint_jqa-maven-constraints_project-name" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
     <testcase name="Constraint_jqa-maven-constraints_organisation-present" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
+    <testcase name="Constraint_jqa-maven-constraints_homepage" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
     <testcase name="Constraint_jqa-maven-constraints_scm-connection-declaration" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
+    <testcase name="Constraint_jqa-maven-constraints_AvoidDependenciesTojQAssistantTestArtifacts" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
+    <testcase name="Constraint_jqa-maven-constraints_java-compiler-target-version" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
+    <testcase name="Constraint_jqa-maven-constraints_version-information" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
     <testcase name="Constraint_jqa-maven-constraints_project-description" time="0.0" classname="jqassistant.Group_jqa-maven-constraints"/>
 </testsuite>
