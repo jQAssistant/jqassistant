@@ -5,10 +5,13 @@
 
     <group id="jqa-logging">
         <includeConcept refId="jqa-logging:*"/>
+        <includeConcept refId="jqa-logging:OSSLogger"/>
+            <providesConcept refId="jqa-logging:Logger"/>
         <includeConstraint refId="jqa-logging:*"/>
     </group>
 
-    <concept id="jqa-logging:HasLogger">
+    <concept id="jqa-logging:OSSLogger">
+        <providesConcept refId="jqa-logging:Logger"/>
         <description>
             The classes org.slf4j.Logger, org.apache.commons.logging.Log and java.util.logging.Logger are logging frameworks and labeled as Logger.
         </description>
