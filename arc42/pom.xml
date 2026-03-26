@@ -16,9 +16,8 @@
 
     <properties>
         <confluence.url>https://buschmais.atlassian.net/wiki</confluence.url>
-        <confluence.username>username</confluence.username>
-        <confluence.password>password</confluence.password>
-        <confluence.serverId>confluence</confluence.serverId>
+        <confluence.username>${env.CONFLUENCE_USERNAME}</confluence.username>
+        <confluence.password>${env.CONFLUENCE_PASSWORD}</confluence.password>
         <confluence.spaceKey>development</confluence.spaceKey>
         <confluence.ancestorId>15138831</confluence.ancestorId>
         <confluence.convertOnly>true</confluence.convertOnly>
@@ -97,7 +96,6 @@
                             <rootConfluenceUrl>${confluence.url}</rootConfluenceUrl>
                             <username>${confluence.username}</username>
                             <password>${confluence.password}</password>
-                            <serverId>${confluence.serverId}</serverId>
                             <spaceKey>${confluence.spaceKey}</spaceKey>
                             <ancestorId>${confluence.ancestorId}</ancestorId>
                             <convertOnly>${confluence.convertOnly}</convertOnly>
