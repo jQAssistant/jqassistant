@@ -18,9 +18,6 @@ concurrency:
   group: build-java-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  CONFLUENCE_USERNAME: ${{ secrets.CONFLUENCE_USERNAME }}
-  CONFLUENCE_PASSWORD: ${{ secrets.CONFLUENCE_PASSWORD }}
 jobs:
   build:
     uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@main
