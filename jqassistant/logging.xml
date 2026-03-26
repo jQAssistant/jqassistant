@@ -1,14 +1,15 @@
 <jqassistant-rules
-    xmlns="http://schema.jqassistant.org/rule/v2.2"
+    xmlns="http://schema.jqassistant.org/rule/v2.9"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-2.2.xsd">
+    xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.9 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-rule-2.9.xsd">
 
     <group id="jqa-logging">
-        <includeConcept refId="jqa-logging:*"/>
-        <includeConcept refId="jqa-logging:OSSLogger"/>
-            <providesConcept refId="jqa-logging:Logger"/>
         <includeConstraint refId="jqa-logging:*"/>
     </group>
+
+    <concept id="jqa-logging:Logger">
+        <description>Abstract anchor for all logging framework providers.</description>
+    </concept>
 
     <concept id="jqa-logging:OSSLogger">
         <providesConcept refId="jqa-logging:Logger"/>
@@ -27,13 +28,14 @@
         ]]></cypher>
     </concept>
 
-    <concept id="jqa-logging:LoggerIsSlf4jLogger">
+    <concept id="jqa-logging:Slf4j">
+        <requiresConcept refId="jqa-logging:Logger"/>
         <description>
             The class org.slf4j.Logger represents the Slf4j logger.
         </description>
         <cypher><![CDATA[
           MATCH
-            (slf4j:Type)
+            (slf4j:Type:Logger)
           WHERE
             slf4j.fqn = "org.slf4j.Logger"
           SET
@@ -43,9 +45,8 @@
        ]]></cypher>
     </concept>
 
-    <constraint id="jqa-logging:LoggerNotSlf4j">
-        <requiresConcept refId="jqa-logging:HasLogger"/>
-        <requiresConcept refId="jqa-logging:LoggerIsSlf4jLogger"/>
+    <constraint id="jqa-logging:UseSlf4jForLogging">
+        <requiresConcept refId="jqa-logging:Slf4j"/>
         <description>
             Refractor other logging frameworks to Slf4j.
         </description>
@@ -60,7 +61,7 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="jqa-logging:SysOutSysErrLogging">
+    <constraint id="jqa-logging:IllegalUsageOfSystemOutAndErr">
        <description>System.out or System.err should not be used for logging</description>
        <cypher><![CDATA[
          MATCH
