@@ -30,7 +30,7 @@
                 WHEN element:Member THEN element
               END AS member
             RETURN
-              type as Type, member as Member, minor.value as MinorVersion, major.value AS MajorVersion
+              type as Type, member as Member, major.value AS MajorVersion, minor.value as MinorVersion
             ORDER BY
               type.fqn, member.signature
         ]]></cypher>
@@ -58,7 +58,7 @@
                 WHEN element:Member THEN element
               END AS member
             RETURN
-              type as Type, member as Member, minor.value as MinorVersion, major.value AS MajorVersion
+              type as Type, member as Member, major.value AS MajorVersion, minor.value as MinorVersion
             ORDER BY
               type.fqn, member.signature
         ]]></cypher>

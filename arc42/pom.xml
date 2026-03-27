@@ -117,7 +117,11 @@
                     <dependency>
                         <groupId>org.asciidoctor</groupId>
                         <artifactId>asciidoctorj-diagram</artifactId>
+<<<<<<< 1148-arc42-documentation-shall-be-published-to-Confluence
                         <version>${asciidoctorj-diagram.version}</version>
+=======
+                        <version>3.2.1</version>
+>>>>>>> master
                     </dependency>
                     <dependency>
                         <groupId>org.asciidoctor</groupId>
