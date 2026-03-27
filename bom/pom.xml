@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>parent</artifactId>
-        <version>2.10.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>bom</artifactId>
@@ -132,7 +132,7 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>maven3</artifactId>
+                <artifactId>maven</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -298,6 +298,11 @@
                 <artifactId>maven-resolver-util</artifactId>
                 <version>${maven-resolver.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-supplier-mvn4</artifactId>
+                <version>${maven-resolver.version}</version>
+            </dependency>
 
             <!-- Start of SLF4J dependencies -->
             <dependency>
@@ -407,7 +412,14 @@
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson2.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson3.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

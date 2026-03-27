@@ -8,7 +8,6 @@ import java.math.BigInteger;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -22,13 +21,12 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatter
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.json.api.model.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
-import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS;
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS;
+import static tools.jackson.core.json.JsonReadFeature.ALLOW_JAVA_COMMENTS;
 
 @Slf4j
 @ScannerPlugin.Requires(FileDescriptor.class)
@@ -37,15 +35,15 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
     public static final String PROPERTY_INCLUDE = "json.file.include";
     public static final String PROPERTY_EXCLUDE = "json.file.exclude";
 
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     private FilePatternMatcher filePatternMatcher;
 
     @Override
     public void initialize() {
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.enable(ALLOW_COMMENTS);
-        this.objectMapper.enable(FAIL_ON_TRAILING_TOKENS);
+        this.jsonMapper = JsonMapper.builder()
+            .enable(ALLOW_JAVA_COMMENTS)
+            .build();
     }
 
     @Override
@@ -77,7 +75,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
                 .onMalformedInput(CodingErrorAction.IGNORE);
             InputStreamReader reader = new InputStreamReader(inputStream, charsetDecoder);
 
-            JsonNode jsonNode = objectMapper.readTree(reader);
+            JsonNode jsonNode = jsonMapper.readTree(reader);
             JSONValueDescriptor valueDescriptor = toDescriptor(jsonNode, store);
             if (valueDescriptor != null) {
                 jsonFileDescriptor.setValue(valueDescriptor);
@@ -85,7 +83,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
             } else {
                 jsonFileDescriptor.setValid(false);
             }
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             jsonFileDescriptor.setValid(false);
         }
         return jsonFileDescriptor;
@@ -96,7 +94,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
         case BOOLEAN:
             return toScalarValue(jsonNode.booleanValue(), store);
         case STRING:
-            return toScalarValue(jsonNode.textValue(), store);
+            return toScalarValue(jsonNode.stringValue(), store);
         case NUMBER:
             return numberToScalarValue(jsonNode.numberValue(), store);
         case NULL:
@@ -114,9 +112,7 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
             return objectDescriptor;
         case ARRAY:
             JSONArrayDescriptor arrayDescriptor = store.create(JSONArrayDescriptor.class);
-            Iterator<JsonNode> elements = jsonNode.elements();
-            while (elements.hasNext()) {
-                JsonNode element = elements.next();
+            for (JsonNode element : jsonNode) {
                 JSONValueDescriptor valueDescriptor = toDescriptor(element, store);
                 if (valueDescriptor != null) {
                     arrayDescriptor.getValues()
