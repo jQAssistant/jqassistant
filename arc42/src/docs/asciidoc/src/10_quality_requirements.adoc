@@ -1,15 +1,15 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-quality-scenarios]]
-== Quality Requirements
+== 10. Quality Requirements
 
 
 
 
-=== Quality Tree
+=== 10.1. Quality Tree
 
 
 
-=== Quality Scenarios
+=== 10.2. Quality Scenarios
 
 

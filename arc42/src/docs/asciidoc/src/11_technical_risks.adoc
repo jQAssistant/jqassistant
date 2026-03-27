@@ -1,16 +1,13 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-technical-risks]]
-== Risks and Technical Debts
+== 11. Risks and Technical Debts
 
-=== Overview
+=== 11.1. Overview
 
 include::jQAssistant:Summary[constraints="*"]
 
-=== Details
-
-
-
+=== 11.2. Details
 
 include::jQAssistant:Rules[constraints="*", leveloffset=+3]
 

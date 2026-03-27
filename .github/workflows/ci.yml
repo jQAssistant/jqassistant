@@ -26,9 +26,15 @@ jobs:
       pages: "./manual/target/generated-docs/"
       sonar_project_key: "jqassistant_jqassistant"
       sonar_organization: "jqassistant"
+<<<<<<< 1148-arc42-documentation-shall-be-published-to-Confluence
+
+=======
+>>>>>>> master
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+      confluence_username: ${{ secrets.CONFLUENCE_USERNAME }}
+      confluence_password: ${{ secrets.CONFLUENCE_PASSWORD }}
