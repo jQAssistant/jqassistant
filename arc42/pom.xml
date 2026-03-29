@@ -16,16 +16,31 @@
 
     <properties>
         <confluence.url>https://buschmais.atlassian.net/wiki</confluence.url>
-        <confluence.username>${env.CONFLUENCE_USERNAME}</confluence.username>
-        <confluence.password>${env.CONFLUENCE_PASSWORD}</confluence.password>
+        <confluence.username>confluence</confluence.username>
+        <confluence.password>confluence</confluence.password>
         <confluence.spaceKey>development</confluence.spaceKey>
         <confluence.ancestorId>15138831</confluence.ancestorId>
         <confluence.convertOnly>true</confluence.convertOnly>
         <jqassistant-asciidoctorj-extensions.version>1.1.0</jqassistant-asciidoctorj-extensions.version>
-        <asciidoctorj-diagram.version>3.2.0</asciidoctorj-diagram.version>
-        <asciidoctorj-diagram-plantuml.version>1.2025.3</asciidoctorj-diagram-plantuml.version>
+        <asciidoctorj-diagram.version>3.2.1</asciidoctorj-diagram.version>
+        <asciidoctorj-diagram-plantuml.version>1.2026.2</asciidoctorj-diagram-plantuml.version>
         <jqassistant-report-path>${session.executionRootDirectory}/target/jqassistant/jqassistant-report.xml</jqassistant-report-path>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>publish-to-confluence</id>
+            <activation>
+                <property>
+                    <name>env.CONFLUENCE_USERNAME</name>
+                </property>
+            </activation>
+            <properties>
+                <confluence.username>${env.CONFLUENCE_USERNAME}</confluence.username>
+                <confluence.password>${env.CONFLUENCE_PASSWORD}</confluence.password>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
