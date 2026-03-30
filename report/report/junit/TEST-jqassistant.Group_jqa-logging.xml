@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <testsuite name="jqassistant.Group_jqa-logging" tests="5" failures="0" errors="0" time="0.0">
+    <testcase name="Constraint_jqa-logging_UseSlf4jForLogging" time="0.0" classname="jqassistant.Group_jqa-logging"/>
+    <testcase name="Concept_jqa-logging_Logger" time="0.0" classname="jqassistant.Group_jqa-logging"/>
+    <testcase name="Concept_jqa-logging_OSSLogger" time="0.0" classname="jqassistant.Group_jqa-logging"/>
     <testcase name="Concept_jqa-logging_Slf4j" time="0.0" classname="jqassistant.Group_jqa-logging"/>
     <testcase name="Constraint_jqa-logging_IllegalUsageOfSystemOutAndErr" time="0.0" classname="jqassistant.Group_jqa-logging"/>
-    <testcase name="Constraint_jqa-logging_UseSlf4jForLogging" time="0.0" classname="jqassistant.Group_jqa-logging"/>
-    <testcase name="Concept_jqa-logging_OSSLogger" time="0.0" classname="jqassistant.Group_jqa-logging"/>
-    <testcase name="Concept_jqa-logging_Logger" time="0.0" classname="jqassistant.Group_jqa-logging"/>
 </testsuite>
