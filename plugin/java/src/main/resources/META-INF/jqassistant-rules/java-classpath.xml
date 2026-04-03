@@ -163,12 +163,33 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Method)-[throws:THROWS]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
-            CALL {
-              WITH
-                m, throws, t
+              (m:Method)-[throws:THROWS{declaration:false}]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
+            CALL (m, throws, t) {
               MERGE
-                (m)-[throws1:THROWS]->(t)
+                (m)-[throws1:THROWS{lineNumber:throws.lineNumber}]->(t)
+              SET
+                throws1 = properties(throws),
+                throws1.resolved = true
+            }
+            RETURN
+              count(*) as ResolvedExceptionTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="java-classpath:ResolveThrowsDeclaration">
+        <requiresConcept refId="java-classpath:ResolveType"/>
+        <description>Propagates declared "THROWS" relations between methods and types to their resolved types with a property
+            "resolved:true".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[throws:THROWS{declaration:true}]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
+            CALL (m, throws, t) {
+              MERGE
+                (m)-[throws1:THROWS{declaration:true}]->(t)
               SET
                 throws1 = properties(throws),
                 throws1.resolved = true
@@ -394,6 +415,7 @@
         <requiresConcept refId="java-classpath:ResolveImplements"/>
         <requiresConcept refId="java-classpath:ResolveFieldType"/>
         <requiresConcept refId="java-classpath:ResolveThrows"/>
+        <requiresConcept refId="java-classpath:ResolveThrowsDeclaration"/>
         <requiresConcept refId="java-classpath:ResolveReturns"/>
         <requiresConcept refId="java-classpath:ResolveParameterType"/>
         <requiresConcept refId="java-classpath:ResolveAnnotationType"/>
