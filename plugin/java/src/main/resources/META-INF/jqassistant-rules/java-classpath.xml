@@ -164,7 +164,9 @@
         <cypher><![CDATA[
             MATCH
               (m:Method)-[throws:THROWS{declaration:false}]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
-            CALL (m, throws, t) {
+            CALL {
+              WITH
+                m, throws, t
               MERGE
                 (m)-[throws1:THROWS{lineNumber:throws.lineNumber}]->(t)
               SET
@@ -187,7 +189,9 @@
         <cypher><![CDATA[
             MATCH
               (m:Method)-[throws:THROWS{declaration:true}]->(:Java:Type)-[:RESOLVES_TO]->(t:Java:Type)
-            CALL (m, throws, t) {
+            CALL {
+              WITH
+                m, throws, t
               MERGE
                 (m)-[throws1:THROWS{declaration:true}]->(t)
               SET
