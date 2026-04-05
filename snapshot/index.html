@@ -6991,6 +6991,9 @@ The annotation is evaluated by the constraint <code>java:TechnicalDebt</code> to
 <p><a href="#java-classpath:ResolveThrows">Concept <code>java-classpath:ResolveThrows</code></a></p>
 </li>
 <li>
+<p><a href="#java-classpath:ResolveThrowsDeclaration">Concept <code>java-classpath:ResolveThrowsDeclaration</code></a></p>
+</li>
+<li>
 <p><a href="#java-classpath:ResolveReturns">Concept <code>java-classpath:ResolveReturns</code></a></p>
 </li>
 <li>
@@ -8116,8 +8119,8 @@ CALL {
   MERGE
     (t)-[dependsOn1:DEPENDS_ON]-&gt;(t2)
   SET
-    dependsOn1=dependsOn,
-    dependsOn1.resolved=true
+    dependsOn1 = properties(dependsOn),
+    dependsOn1.resolved = true
 } IN TRANSACTIONS
 RETURN
   count(*) as ResolvedDependencies</code></pre>
@@ -8150,8 +8153,8 @@ CALL {
   MERGE
     (t)-[extends1:EXTENDS]-&gt;(t2)
   SET
-    extends1=extends,
-    extends1.resolved=true
+    extends1 = properties(extends),
+    extends1.resolved = true
 } IN TRANSACTIONS
 RETURN
   count(*) as ResolvedSuperClass</code></pre>
@@ -8184,8 +8187,8 @@ CALL {
   MERGE
     (t)-[implements1:IMPLEMENTS]-&gt;(t2)
   SET
-    implements1=implements,
-    implements1.resolved=true
+    implements1 = properties(implements),
+    implements1.resolved = true
 } IN TRANSACTIONS
 RETURN
   count(*) as ResolvedInterfaces</code></pre>
@@ -8218,8 +8221,8 @@ CALL {
   MERGE
     (f)-[ofType1:OF_TYPE]-&gt;(t)
   SET
-    ofType1=ofType,
-    ofType1.resolved=true
+    ofType1 = properties(ofType),
+    ofType1.resolved = true
 } IN TRANSACTIONS
 RETURN
   count(*) as ResolvedFieldTypes</code></pre>
@@ -8245,15 +8248,49 @@ RETURN
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (m:Method)-[throws:THROWS]-&gt;(:Java:Type)-[:RESOLVES_TO]-&gt;(t:Java:Type)
+  (m:Method)-[throws:THROWS{declaration:false}]-&gt;(:Java:Type)-[:RESOLVES_TO]-&gt;(t:Java:Type)
 CALL {
   WITH
     m, throws, t
   MERGE
-    (m)-[throws1:THROWS]-&gt;(t)
+    (m)-[throws1:THROWS{lineNumber:throws.lineNumber}]-&gt;(t)
   SET
-    throws1=throws,
-    throws1.resolved=true
+    throws1 = properties(throws),
+    throws1.resolved = true
+}
+RETURN
+  count(*) as ResolvedExceptionTypes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java-classpath:ResolveType">java-classpath:ResolveType</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="java-classpath:ResolveThrowsDeclaration"><a class="link" href="#java-classpath:ResolveThrowsDeclaration">Concept <code>java-classpath:ResolveThrowsDeclaration</code></a></h5>
+<div class="paragraph">
+<p>Propagates declared "THROWS" relations between methods and types to their resolved types with a property
+            "resolved:true".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (m:Method)-[throws:THROWS{declaration:true}]-&gt;(:Java:Type)-[:RESOLVES_TO]-&gt;(t:Java:Type)
+CALL {
+  WITH
+    m, throws, t
+  MERGE
+    (m)-[throws1:THROWS{declaration:true}]-&gt;(t)
+  SET
+    throws1 = properties(throws),
+    throws1.resolved = true
 }
 RETURN
   count(*) as ResolvedExceptionTypes</code></pre>
@@ -8286,8 +8323,8 @@ CALL {
   MERGE
     (m)-[returns1:RETURNS]-&gt;(t)
   SET
-    returns1=returns,
-    returns1.resolved=true
+    returns1 = properties(returns),
+    returns1.resolved = true
 } IN TRANSACTIONS
 RETURN
   count(*) as ResolvedReturnTypes</code></pre>
@@ -8320,8 +8357,8 @@ CALL {
   MERGE
     (m)-[ofType1:OF_TYPE]-&gt;(t)
   SET
-    ofType1=ofType,
-    ofType1.resolved=true
+    ofType1 = properties(ofType),
+    ofType1.resolved = true
 } IN TRANSACTIONS
 RETURN
   count(*) as ResolvedParameterTypes</code></pre>
@@ -8354,8 +8391,8 @@ CALL {
   MERGE
     (a)-[ofType1:OF_TYPE]-&gt;(t)
   SET
-    ofType1=ofType,
-    ofType1.resolved=true
+    ofType1 = properties(ofType),
+    ofType1.resolved = true
 } IN TRANSACTIONS
 RETURN
   count(*) as ResolvedAnnotationTypes</code></pre>
@@ -8388,8 +8425,8 @@ CALL {
   MERGE
     (b)-[ofRawType1:OF_RAW_TYPE]-&gt;(t)
   SET
-    ofRawType1=ofRawType,
-    ofRawType1.resolved=true
+    ofRawType1 = properties(ofRawType),
+    ofRawType1.resolved = true
 } IN TRANSACTIONS
 RETURN
   count(*) as ResolvedRawTypes</code></pre>
@@ -8422,8 +8459,8 @@ CALL {
   MERGE
     (v)-[is1:IS]-&gt;(e2)
   SET
-    is1=is,
-    is1.resolved=true
+    is1= properties(is),
+    is1.resolved = true
 } IN TRANSACTIONS
 RETURN
   count(*) as ResolvedValueTypes</code></pre>
@@ -8459,8 +8496,8 @@ CALL {
   MERGE
     (m)-[reads1:READS {relationId: id(reads)}]-&gt;(f2)
   SET
-    reads1=reads,
-    reads1.resolved=true
+    reads1 = properties(reads),
+    reads1.resolved = true
   REMOVE
     reads1.relationId
 } IN TRANSACTIONS
@@ -8495,8 +8532,8 @@ CALL {
   MERGE
     (m)-[writes1:WRITES {relationId: id(writes)}]-&gt;(f2)
   SET
-    writes1=writes,
-    writes1.resolved=true
+    writes1 = properties(writes),
+    writes1.resolved = true
   REMOVE
     writes1.relationId
 } IN TRANSACTIONS
@@ -8531,8 +8568,8 @@ CALL {
   MERGE
     (m)-[invokes1:INVOKES {relationId : id(invokes)}]-&gt;(m2)
   SET
-    invokes1=invokes,
-    invokes1.resolved=true
+    invokes1 = properties(invokes),
+    invokes1.resolved = true
   REMOVE
     invokes1.relationId
   }
@@ -8583,6 +8620,9 @@ RETURN
 </li>
 <li>
 <p><a href="#java-classpath:ResolveThrows">java-classpath:ResolveThrows</a></p>
+</li>
+<li>
+<p><a href="#java-classpath:ResolveThrowsDeclaration">java-classpath:ResolveThrowsDeclaration</a></p>
 </li>
 <li>
 <p><a href="#java-classpath:ResolveReturns">java-classpath:ResolveReturns</a></p>
@@ -12700,7 +12740,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-04-01 07:43:15 UTC
+Last updated 2026-04-05 21:57:22 UTC
 </div>
 </div>
 </body>
