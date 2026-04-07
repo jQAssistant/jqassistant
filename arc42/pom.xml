@@ -24,7 +24,7 @@
         <jqassistant-asciidoctorj-extensions.version>1.1.0</jqassistant-asciidoctorj-extensions.version>
         <asciidoctorj-diagram.version>3.2.1</asciidoctorj-diagram.version>
         <asciidoctorj-diagram-plantuml.version>1.2026.2</asciidoctorj-diagram-plantuml.version>
-        <jqassistant-report-path>${session.executionRootDirectory}/target/jqassistant/jqassistant-report.xml</jqassistant-report-path>
+        <jqassistant-report-path>${session.executionRootDirectory}/target/jqassistant/non-existent-jqassistant-report.xml</jqassistant-report-path>
     </properties>
 
     <profiles>
