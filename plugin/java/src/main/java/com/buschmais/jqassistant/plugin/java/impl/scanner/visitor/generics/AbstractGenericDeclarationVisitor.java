@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDeclaresTypeParameter;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 
 import org.objectweb.asm.signature.SignatureVisitor;
@@ -17,7 +17,7 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
 
     protected final T descriptor;
 
-    protected final TypeCache.CachedType containingType;
+    protected final ClassFileDescriptor containingType;
 
     protected GenericDeclarationDescriptor genericDeclaration;
 
@@ -25,7 +25,7 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
 
     private TypeVariableDescriptor currentTypeParameter;
 
-    protected AbstractGenericDeclarationVisitor(VisitorHelper visitorHelper, T descriptor, TypeCache.CachedType containingType) {
+    protected AbstractGenericDeclarationVisitor(VisitorHelper visitorHelper, T descriptor, ClassFileDescriptor containingType) {
         super(VisitorHelper.ASM_OPCODES);
         this.visitorHelper = visitorHelper;
         this.descriptor = descriptor;

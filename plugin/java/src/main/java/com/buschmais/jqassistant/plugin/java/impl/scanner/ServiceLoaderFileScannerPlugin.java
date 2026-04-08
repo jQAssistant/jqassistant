@@ -34,7 +34,8 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileRe
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return CLASSPATH.equals(scope) && PATTERN.matcher(path).matches();
+        return CLASSPATH.equals(scope) && PATTERN.matcher(path)
+            .matches();
     }
 
     @Override
@@ -46,7 +47,8 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileRe
         String serviceInterface = matcher.group(2);
         ScannerContext context = scanner.getContext();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
-        ServiceLoaderDescriptor serviceLoaderDescriptor = context.getStore().addDescriptorType(fileDescriptor, ServiceLoaderDescriptor.class);
+        ServiceLoaderDescriptor serviceLoaderDescriptor = context.getStore()
+            .addDescriptorType(fileDescriptor, ServiceLoaderDescriptor.class);
         TypeDescriptor interfaceTypeDescriptor = getTypeDescriptor(serviceInterface, context);
         serviceLoaderDescriptor.setType(interfaceTypeDescriptor);
 
@@ -56,7 +58,8 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileRe
             while ((serviceImplementation = reader.readLine()) != null) {
                 if (!isEmptyOrComment(serviceImplementation)) {
                     TypeDescriptor implementationTypeDescriptor = getTypeDescriptor(serviceImplementation, context);
-                    serviceLoaderDescriptor.getContains().add(implementationTypeDescriptor);
+                    serviceLoaderDescriptor.getContains()
+                        .add(implementationTypeDescriptor);
                 }
             }
         }
@@ -64,12 +67,13 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileRe
     }
 
     private boolean isEmptyOrComment(String line) {
-        return StringUtils.isEmpty(line) || StringUtils.trimToEmpty(line).startsWith("#");
+        return StringUtils.isEmpty(line) || StringUtils.trimToEmpty(line)
+            .startsWith("#");
     }
 
     private TypeDescriptor getTypeDescriptor(String fqn, ScannerContext scannerContext) {
         TypeResolver typeResolver = scannerContext.peek(TypeResolver.class);
-        return typeResolver.resolve(fqn, scannerContext).getTypeDescriptor();
+        return typeResolver.resolve(fqn, scannerContext);
     }
 
 }

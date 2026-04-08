@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -16,7 +17,7 @@ public class MethodSignatureVisitor extends AbstractGenericDeclarationVisitor<Me
 
     private int parameterIndex = 0;
 
-    public MethodSignatureVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
+    public MethodSignatureVisitor(ClassFileDescriptor containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
         super(visitorHelper, methodDescriptor, containingType);
     }
 

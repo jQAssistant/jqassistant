@@ -4,7 +4,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.delegate.DelegatingMethodVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.AbstractBoundVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.ClassSignatureVisitor;
@@ -30,7 +29,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     private final VisitorHelper visitorHelper;
 
-    private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
+    private ClassFileDescriptor classFileDescriptor;
 
     private String typeName;
 
@@ -52,15 +51,6 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         this.visitorHelper = visitorHelper;
     }
 
-    /**
-     * Return the type descriptor created by visiting the class.
-     *
-     * @return The type descriptor.
-     */
-    public ClassFileDescriptor getTypeDescriptor() {
-        return cachedType != null ? cachedType.getTypeDescriptor() : null;
-    }
-
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         this.typeName = name;
@@ -70,26 +60,24 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         Class<? extends JavaByteCodeFileDescriptor> javaByteCodeType = getClassFileType(access);
         if (ClassFileDescriptor.class.isAssignableFrom(javaByteCodeType)) {
             String fullQualifiedName = SignatureHelper.getObjectType(name);
-            cachedType = visitorHelper.createType(fullQualifiedName, javaByteCodeFileDescriptor, (Class<? extends ClassFileDescriptor>) javaByteCodeType);
+            classFileDescriptor = visitorHelper.createType(fullQualifiedName, javaByteCodeFileDescriptor,
+                (Class<? extends ClassFileDescriptor>) javaByteCodeType);
             visitorHelper.getTypeVariableResolver()
                 .push();
-            ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
             if (visitorHelper.hasFlag(access, Opcodes.ACC_ABSTRACT) && !visitorHelper.hasFlag(access, Opcodes.ACC_INTERFACE)) {
                 classFileDescriptor.setAbstract(Boolean.TRUE);
             }
             setModifiers(access, classFileDescriptor);
             if (signature == null) {
-                TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), cachedType)
-                    .getTypeDescriptor();
+                TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), classFileDescriptor);
                 classFileDescriptor.setSuperClass(superClassType);
                 for (String anInterface : interfaces) {
-                    TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(anInterface), cachedType)
-                        .getTypeDescriptor();
+                    TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(anInterface), classFileDescriptor);
                     classFileDescriptor.getInterfaces()
                         .add(interfaceType);
                 }
             } else {
-                new SignatureReader(signature).accept(new ClassSignatureVisitor(cachedType, visitorHelper));
+                new SignatureReader(signature).accept(new ClassSignatureVisitor(classFileDescriptor, visitorHelper));
             }
         }
     }
@@ -108,26 +96,23 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
-        cachedType.getTypeDescriptor()
-            .setStatic(true);
-        cachedType.getTypeDescriptor()
-            .setFinal(true);
+        classFileDescriptor.setStatic(true);
+        classFileDescriptor.setFinal(true);
         return null;
     }
 
     @Override
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
-        final FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(cachedType, SignatureHelper.getFieldSignature(name, desc));
+        final FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(classFileDescriptor, SignatureHelper.getFieldSignature(name, desc));
         fieldDescriptor.setName(name);
         fieldDescriptor.setVolatile(visitorHelper.hasFlag(access, Opcodes.ACC_VOLATILE));
         fieldDescriptor.setTransient(visitorHelper.hasFlag(access, Opcodes.ACC_TRANSIENT));
         setModifiers(access, fieldDescriptor);
         if (signature == null) {
-            TypeDescriptor typeDescriptor = visitorHelper.resolveType(SignatureHelper.getType((desc)), cachedType)
-                .getTypeDescriptor();
+            TypeDescriptor typeDescriptor = visitorHelper.resolveType(SignatureHelper.getType((desc)), classFileDescriptor);
             fieldDescriptor.setType(typeDescriptor);
         } else {
-            new SignatureReader(signature).accept(new AbstractBoundVisitor(visitorHelper, cachedType) {
+            new SignatureReader(signature).accept(new AbstractBoundVisitor(visitorHelper, classFileDescriptor) {
                 @Override
                 protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                     fieldDescriptor.setType(rawTypeBound);
@@ -137,20 +122,20 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         }
         if (value != null) {
             if (value instanceof org.objectweb.asm.Type) {
-                visitorHelper.resolveType(SignatureHelper.getType((org.objectweb.asm.Type) value), cachedType);
+                visitorHelper.resolveType(SignatureHelper.getType((org.objectweb.asm.Type) value), classFileDescriptor);
             }
             PrimitiveValueDescriptor valueDescriptor = visitorHelper.getValueDescriptor(PrimitiveValueDescriptor.class);
             valueDescriptor.setValue(value);
             fieldDescriptor.setValue(valueDescriptor);
         }
-        return new FieldVisitor(cachedType, fieldDescriptor, visitorHelper);
+        return new FieldVisitor(classFileDescriptor, fieldDescriptor, visitorHelper);
     }
 
     @Override
     public org.objectweb.asm.MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
         final String[] exceptions) {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
-        MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedType, methodSignature);
+        MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(classFileDescriptor, methodSignature);
         if (isLambda(name, access)) {
             visitorHelper.getStore()
                 .addDescriptorType(methodDescriptor, LambdaMethodDescriptor.class);
@@ -167,22 +152,19 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         }
         if (signature == null) {
             String returnType = SignatureHelper.getType(org.objectweb.asm.Type.getReturnType(desc));
-            methodDescriptor.setReturns(visitorHelper.resolveType(returnType, cachedType)
-                .getTypeDescriptor());
+            methodDescriptor.setReturns(visitorHelper.resolveType(returnType, classFileDescriptor));
             org.objectweb.asm.Type[] types = org.objectweb.asm.Type.getArgumentTypes(desc);
             for (int i = 0; i < types.length; i++) {
                 String parameterType = SignatureHelper.getType(types[i]);
-                TypeDescriptor typeDescriptor = visitorHelper.resolveType(parameterType, cachedType)
-                    .getTypeDescriptor();
+                TypeDescriptor typeDescriptor = visitorHelper.resolveType(parameterType, classFileDescriptor);
                 ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, i);
                 parameterDescriptor.setType(typeDescriptor);
             }
         } else {
-            new SignatureReader(signature).accept(new MethodSignatureVisitor(cachedType, methodDescriptor, visitorHelper));
+            new SignatureReader(signature).accept(new MethodSignatureVisitor(classFileDescriptor, methodDescriptor, visitorHelper));
         }
         for (int i = 0; exceptions != null && i < exceptions.length; i++) {
-            TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), cachedType)
-                .getTypeDescriptor();
+            TypeDescriptor exceptionType = visitorHelper.resolveType(SignatureHelper.getObjectType(exceptions[i]), classFileDescriptor);
             visitorHelper.getStore()
                 .addDescriptorType(exceptionType, ThrowableDescriptor.class);
             ThrowsDescriptor throwsDescriptor = visitorHelper.getStore()
@@ -192,14 +174,14 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         Type type = getObjectType(typeName);
         MethodNode methodNode = new MethodNode(access, name, desc, signature, exceptions);
         MethodDataFlowVerifier methodDataFlowVerifier = getMethodDataFlowVerifier(type);
-        return new DelegatingMethodVisitor(new MethodVisitor(cachedType, methodDescriptor, visitorHelper),
+        return new DelegatingMethodVisitor(new MethodVisitor(classFileDescriptor, methodDescriptor, visitorHelper),
             new MethodCatchesVisitor(methodDescriptor, visitorHelper), new MethodLoCVisitor(methodDescriptor), new MethodComplexityVisitor(methodDescriptor),
             new MethodDataFlowVisitor(type, methodDescriptor, methodNode, methodDataFlowVerifier, visitorHelper));
     }
 
     private MethodDataFlowVerifier getMethodDataFlowVerifier(Type type) {
-        return new MethodDataFlowVerifier(type, InterfaceTypeDescriptor.class.isAssignableFrom(this.cachedType.getTypeDescriptor()
-            .getClass()), getObjectType(superTypeName), stream(interfaceNames).map(Type::getObjectType)
+        return new MethodDataFlowVerifier(type, InterfaceTypeDescriptor.class.isAssignableFrom(this.classFileDescriptor.getClass()),
+            getObjectType(superTypeName), stream(interfaceNames).map(Type::getObjectType)
             .collect(toList()));
     }
 
@@ -240,16 +222,14 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitInnerClass(final String name, final String outerName, final String innerName, final int access) {
-        if (outerName != null && cachedType != null) {
+        if (outerName != null && classFileDescriptor != null) {
             String innerTypeName = SignatureHelper.getObjectType(name);
             // resolve inner type against outer cached type to add dependencies
-            TypeDescriptor innerType = visitorHelper.resolveType(innerTypeName, cachedType)
-                .getTypeDescriptor();
+            TypeDescriptor innerType = visitorHelper.resolveType(innerTypeName, classFileDescriptor);
             String outerTypeName = SignatureHelper.getObjectType(outerName);
-            ClassFileDescriptor outerTypeDescriptor = cachedType.getTypeDescriptor();
             // set relation from outer to inner class only if outer type is the currently visited class
-            if (outerTypeName.equals(outerTypeDescriptor.getFullQualifiedName())) {
-                outerTypeDescriptor.getDeclaredInnerClasses()
+            if (outerTypeName.equals(classFileDescriptor.getFullQualifiedName())) {
+                classFileDescriptor.getDeclaredInnerClasses()
                     .add(innerType);
             }
         }
@@ -258,16 +238,14 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public void visitOuterClass(final String owner, final String name, final String desc) {
         String outerTypeName = SignatureHelper.getObjectType(owner);
-        TypeCache.CachedType<?> cachedOuterType = visitorHelper.resolveType(outerTypeName, this.cachedType);
-        TypeDescriptor innerType = this.cachedType.getTypeDescriptor();
-        cachedOuterType.getTypeDescriptor()
-            .getDeclaredInnerClasses()
-            .add(innerType);
+        TypeDescriptor typeDescriptor = visitorHelper.resolveType(outerTypeName, this.classFileDescriptor);
+        typeDescriptor.getDeclaredInnerClasses()
+            .add(this.classFileDescriptor);
         if (name != null) {
             String methodSignature = SignatureHelper.getMethodSignature(name, desc);
-            MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(cachedOuterType, methodSignature);
+            MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, methodSignature);
             methodDescriptor.getDeclaredInnerClasses()
-                .add(innerType);
+                .add(this.classFileDescriptor);
         }
     }
 
@@ -275,13 +253,13 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        return visitorHelper.addAnnotation(cachedType, cachedType.getTypeDescriptor(), SignatureHelper.getType(desc));
+        return visitorHelper.addAnnotation(classFileDescriptor, classFileDescriptor, SignatureHelper.getType(desc));
     }
 
     @Override
     public void visitEnd() {
-        if (cachedType != null) {
-            visitorHelper.storeDependencies(cachedType);
+        if (classFileDescriptor != null) {
+            visitorHelper.flush();
             visitorHelper.getTypeVariableResolver()
                 .pop();
         }
@@ -328,6 +306,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             return RecordTypeDescriptor.class;
         } else if (visitorHelper.hasFlag(flags, Opcodes.ACC_MODULE)) {
             return ModuleFileDescriptor.class;
-        } return ClassTypeDescriptor.class;
+        }
+        return ClassTypeDescriptor.class;
     }
 }

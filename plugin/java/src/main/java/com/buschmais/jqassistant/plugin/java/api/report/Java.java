@@ -178,13 +178,13 @@ public @interface Java {
                     @Override
                     public String getName(TypeDependsOnDescriptor descriptor) {
                         return descriptor.getDependent()
-                            .getName() + "->" + descriptor.getDependency()
-                            .getName();
+                            .getFullQualifiedName() + "->" + descriptor.getDependency()
+                            .getFullQualifiedName();
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(TypeDependsOnDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getDependent());
+                        return TypeSourceHelper.getSourceLocation(descriptor.getDependent(), empty(), empty());
                     }
                 };
             }

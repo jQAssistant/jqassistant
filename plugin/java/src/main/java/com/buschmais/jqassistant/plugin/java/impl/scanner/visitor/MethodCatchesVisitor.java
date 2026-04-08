@@ -52,8 +52,7 @@ class MethodCatchesVisitor extends MethodVisitor {
     public void visitEnd() {
         for (TryCatchBlock tryCatchBlock : tryCatchBlocks) {
             String throwableType = SignatureHelper.getObjectType(tryCatchBlock.getType());
-            TypeDescriptor typeDescriptor = visitorHelper.resolveType(throwableType)
-                .getTypeDescriptor();
+            TypeDescriptor typeDescriptor = visitorHelper.resolveType(throwableType);
             visitorHelper.getStore()
                 .addDescriptorType(typeDescriptor, ThrowableDescriptor.class);
             CatchesDescriptor catchesDescriptor = visitorHelper.getStore()

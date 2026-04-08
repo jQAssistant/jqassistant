@@ -66,12 +66,6 @@ public interface TypeDescriptor extends JavaByteCodeDescriptor, PackageMemberDes
     @Declares
     Set<TypeDescriptor> getDeclaredInnerClasses();
 
-    @Outgoing
-    List<TypeDependsOnDescriptor> getDependencies();
-
-    @Incoming
-    List<TypeDependsOnDescriptor> getDependents();
-
     List<ThrowsDescriptor> getThrownBy();
 
     List<CatchesDescriptor> getCatchingMethods();

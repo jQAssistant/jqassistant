@@ -18,7 +18,7 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
 
     private ArrayValueDescriptor arrayValueDescriptor;
 
-    private TypeCache.CachedType containingType;
+    private ClassFileDescriptor containingType;
 
     private D descriptor;
 
@@ -28,7 +28,7 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
      * @param visitorHelper
      *            The {@link VisitorHelper}.
      */
-    protected AbstractAnnotationVisitor(TypeCache.CachedType containingType, D descriptor, VisitorHelper visitorHelper) {
+    protected AbstractAnnotationVisitor(ClassFileDescriptor containingType, D descriptor, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
         this.containingType = containingType;
         this.descriptor = descriptor;
@@ -40,11 +40,11 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
         if (value instanceof Type) {
             String type = SignatureHelper.getType((Type) value);
             ClassValueDescriptor valueDescriptor = createValue(ClassValueDescriptor.class, name);
-            valueDescriptor.setValue(visitorHelper.resolveType(type, containingType).getTypeDescriptor());
+            valueDescriptor.setValue(visitorHelper.resolveType(type, containingType));
             addValue(name, valueDescriptor);
         } else {
             PrimitiveValueDescriptor valueDescriptor = createValue(PrimitiveValueDescriptor.class, name);
-            TypeDescriptor typeDescriptor = visitorHelper.resolveType(value.getClass().getName(), containingType).getTypeDescriptor();
+            TypeDescriptor typeDescriptor = visitorHelper.resolveType(value.getClass().getName(), containingType);
             valueDescriptor.setType(typeDescriptor);
             valueDescriptor.setValue(value);
             addValue(name, valueDescriptor);
@@ -54,9 +54,9 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
     @Override
     public void visitEnum(final String name, final String desc, final String value) {
         EnumValueDescriptor valueDescriptor = createValue(EnumValueDescriptor.class, name);
-        TypeCache.CachedType cachedTypeDescriptor = visitorHelper.resolveType(SignatureHelper.getType(desc), containingType);
-        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(cachedTypeDescriptor, SignatureHelper.getFieldSignature(value, desc));
-        valueDescriptor.setType(visitorHelper.resolveType(Enum.class.getName(), containingType).getTypeDescriptor());
+        TypeDescriptor typeDescriptor = visitorHelper.resolveType(SignatureHelper.getType(desc), containingType);
+        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, SignatureHelper.getFieldSignature(value, desc));
+        valueDescriptor.setType(visitorHelper.resolveType(Enum.class.getName(), containingType));
         valueDescriptor.setValue(fieldDescriptor);
         addValue(name, valueDescriptor);
     }
@@ -64,7 +64,7 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
     @Override
     public AnnotationValueVisitor visitAnnotation(final String name, final String desc) {
         AnnotationValueDescriptor valueDescriptor = createValue(AnnotationValueDescriptor.class, name);
-        valueDescriptor.setType(visitorHelper.resolveType(SignatureHelper.getType(desc), containingType).getTypeDescriptor());
+        valueDescriptor.setType(visitorHelper.resolveType(SignatureHelper.getType(desc), containingType));
         addValue(name, valueDescriptor);
         return new AnnotationValueVisitor(containingType, valueDescriptor, visitorHelper);
     }

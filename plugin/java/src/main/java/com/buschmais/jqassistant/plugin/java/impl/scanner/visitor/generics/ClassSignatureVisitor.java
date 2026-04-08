@@ -10,8 +10,8 @@ import org.objectweb.asm.signature.SignatureVisitor;
 
 public class ClassSignatureVisitor extends AbstractGenericDeclarationVisitor<ClassFileDescriptor> {
 
-    public ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper) {
-        super(visitorHelper, cachedType.getTypeDescriptor(), cachedType);
+    public ClassSignatureVisitor(ClassFileDescriptor cachedType, VisitorHelper visitorHelper) {
+        super(visitorHelper, cachedType, cachedType);
     }
 
     @Override

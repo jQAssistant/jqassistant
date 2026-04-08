@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
@@ -8,11 +9,11 @@ import org.objectweb.asm.AnnotationVisitor;
 
 public class FieldVisitor extends org.objectweb.asm.FieldVisitor {
 
-    private final TypeCache.CachedType containingType;
+    private final ClassFileDescriptor containingType;
     private final FieldDescriptor fieldDescriptor;
     private final VisitorHelper visitorHelper;
 
-    protected FieldVisitor(TypeCache.CachedType containingType, FieldDescriptor fieldDescriptor, VisitorHelper visitorHelper) {
+    protected FieldVisitor(ClassFileDescriptor containingType, FieldDescriptor fieldDescriptor, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
         this.containingType = containingType;
         this.fieldDescriptor = fieldDescriptor;

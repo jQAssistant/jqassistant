@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 /**
@@ -12,13 +13,13 @@ public class AnnotationValueVisitor extends AbstractAnnotationVisitor<Annotation
 
     /**
      * Constructor.
-     * 
+     *
      * @param visitorHelper
      *            The
      *            {@link com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper}
      *            .
      */
-    protected AnnotationValueVisitor(TypeCache.CachedType containingType, AnnotationValueDescriptor descriptor, VisitorHelper visitorHelper) {
+    protected AnnotationValueVisitor(ClassFileDescriptor containingType, AnnotationValueDescriptor descriptor, VisitorHelper visitorHelper) {
         super(containingType, descriptor, visitorHelper);
     }
 

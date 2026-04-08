@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -46,10 +47,10 @@ class InvalidClassFileIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         assertThat(fileDescriptors.size()).isEqualTo(1);
         FileDescriptor fileDescriptor = fileDescriptors.get(0);
-        assertThat(fileDescriptor).isInstanceOf(ClassFileDescriptor.class);
-        ClassFileDescriptor classFileDescriptor = (ClassFileDescriptor) fileDescriptor;
-        assertThat(classFileDescriptor.getFileName()).isEqualTo(path);
-        assertThat(classFileDescriptor.isValid()).isEqualTo(false);
+        assertThat(fileDescriptor).isInstanceOf(JavaByteCodeFileDescriptor.class);
+        JavaByteCodeFileDescriptor javaByteCodeFileDescriptor = (JavaByteCodeFileDescriptor) fileDescriptor;
+        assertThat(javaByteCodeFileDescriptor.getFileName()).isEqualTo(path);
+        assertThat(javaByteCodeFileDescriptor.isValid()).isEqualTo(false);
         store.commitTransaction();
 
     }

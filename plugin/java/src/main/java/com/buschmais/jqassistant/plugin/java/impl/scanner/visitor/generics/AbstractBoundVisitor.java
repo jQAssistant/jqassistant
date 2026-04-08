@@ -23,13 +23,13 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     protected final VisitorHelper visitorHelper;
 
-    private final TypeCache.CachedType<? extends ClassFileDescriptor> containingType;
+    private final ClassFileDescriptor containingType;
 
     private BoundDescriptor current;
 
     private List<BoundDescriptor> actualTypeArguments = new ArrayList<>();
 
-    public AbstractBoundVisitor(VisitorHelper visitorHelper, TypeCache.CachedType<? extends ClassFileDescriptor> containingType) {
+    public AbstractBoundVisitor(VisitorHelper visitorHelper, ClassFileDescriptor containingType) {
         super(VisitorHelper.ASM_OPCODES);
         this.visitorHelper = visitorHelper;
         this.containingType = containingType;
@@ -52,14 +52,14 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     private final void createBound(String rawTypeName) {
         current = visitorHelper.getStore().create(BoundDescriptor.class);
-        TypeDescriptor rawType = visitorHelper.resolveType(rawTypeName, containingType).getTypeDescriptor();
+        TypeDescriptor rawType = visitorHelper.resolveType(rawTypeName, containingType);
         current.setRawType(rawType);
         apply(rawType, current);
     }
 
     @Override
     public final void visitTypeVariable(String name) {
-        TypeVariableDescriptor typeVariable = visitorHelper.getTypeVariableResolver().resolve(name, containingType.getTypeDescriptor());
+        TypeVariableDescriptor typeVariable = visitorHelper.getTypeVariableResolver().resolve(name, containingType);
         apply(typeVariable);
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     private void apply(BoundDescriptor bound) {
         TypeDescriptor rawType = getRawTypeBound(bound);
-        apply(rawType != null ? rawType : visitorHelper.resolveType(DEFAULT_RAW_TYPE_BOUND, containingType).getTypeDescriptor(), bound);
+        apply(rawType != null ? rawType : visitorHelper.resolveType(DEFAULT_RAW_TYPE_BOUND, containingType), bound);
     }
 
     /**

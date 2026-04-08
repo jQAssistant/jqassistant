@@ -80,8 +80,7 @@ public class MethodDataFlowVisitor extends MethodVisitor {
         } else {
             String throwableType = SignatureHelper.getType(frame.getStack(0)
                 .getType());
-            TypeDescriptor typeDescriptor = visitorHelper.resolveType(throwableType)
-                .getTypeDescriptor();
+            TypeDescriptor typeDescriptor = visitorHelper.resolveType(throwableType);
             Store store = visitorHelper.getStore();
             store.addDescriptorType(typeDescriptor, ThrowableDescriptor.class);
             ThrowsDescriptor throwsDescriptor = store.create(methodDescriptor, ThrowsDescriptor.class, typeDescriptor);

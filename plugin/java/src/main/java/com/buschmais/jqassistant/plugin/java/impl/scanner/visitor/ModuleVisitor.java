@@ -22,8 +22,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     @Override
     public void visitMainClass(String mainClass) {
-        TypeDescriptor mainClassType = visitorHelper.resolveType(mainClass)
-            .getTypeDescriptor();
+        TypeDescriptor mainClassType = visitorHelper.resolveType(mainClass);
         moduleFileDescriptor.setMainClass(mainClassType);
     }
 
@@ -57,8 +56,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     @Override
     public void visitUse(String service) {
-        TypeDescriptor serviceType = visitorHelper.resolveType(getObjectType(service))
-            .getTypeDescriptor();
+        TypeDescriptor serviceType = visitorHelper.resolveType(getObjectType(service));
         moduleFileDescriptor.getUsesServices()
             .add(serviceType);
     }
@@ -70,12 +68,10 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
         // (providedService)-[:WITH_PROVIDER]->(:Type)
         ProvidedServiceDescriptor providesService = visitorHelper.getStore()
             .create(ProvidedServiceDescriptor.class);
-        providesService.setService(visitorHelper.resolveType(getObjectType(service))
-            .getTypeDescriptor());
+        providesService.setService(visitorHelper.resolveType(getObjectType(service)));
         for (String provider : providers) {
             providesService.getProviders()
-                .add(visitorHelper.resolveType(getObjectType(provider))
-                    .getTypeDescriptor());
+                .add(visitorHelper.resolveType(getObjectType(provider)));
         }
         moduleFileDescriptor.getProvidesServices()
             .add(providesService);
@@ -83,8 +79,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     private ModuleDescriptor resolveModule(String module, String version) {
         ScannerContext scannerContext = visitorHelper.getScannerContext();
-        return scannerContext
-            .peek(TypeResolver.class)
+        return scannerContext.peek(TypeResolver.class)
             .requireModule(module, version, scannerContext);
     }
 

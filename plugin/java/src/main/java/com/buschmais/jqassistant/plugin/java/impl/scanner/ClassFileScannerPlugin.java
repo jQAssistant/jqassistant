@@ -60,7 +60,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
         final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         JavaByteCodeFileDescriptor javaByteCodeFileDescriptor = context.getStore()
             .addDescriptorType(fileDescriptor, JavaByteCodeFileDescriptor.class);
-        VisitorHelper visitorHelper = new VisitorHelper(context, configuration);
+        VisitorHelper visitorHelper = new VisitorHelper(javaByteCodeFileDescriptor, context, configuration);
         final ClassVisitor visitor = new ClassVisitor(javaByteCodeFileDescriptor, visitorHelper);
         try (InputStream inputStream = file.createStream()) {
             new ClassReader(inputStream).accept(visitor, 0);
