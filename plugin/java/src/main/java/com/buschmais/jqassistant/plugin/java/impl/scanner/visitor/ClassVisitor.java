@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
@@ -27,15 +26,11 @@ import static org.objectweb.asm.Type.getObjectType;
  */
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
-    private final FileDescriptor fileDescriptor;
+    private JavaByteCodeFileDescriptor javaByteCodeFileDescriptor;
 
     private final VisitorHelper visitorHelper;
 
     private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
-
-    private JavaByteCodeDescriptor javaByteCodeDescriptor;
-
-    private String sourceFileName;
 
     private String typeName;
 
@@ -43,19 +38,17 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     private String[] interfaceNames;
 
-    private int byteCodeVersion;
-
     /**
      * Constructor.
      *
-     * @param fileDescriptor
+     * @param javaByteCodeFileDescriptor
      *     The file descriptor to be migrated to a type descriptor.
      * @param visitorHelper
      *     The visitor helper.
      */
-    public ClassVisitor(FileDescriptor fileDescriptor, VisitorHelper visitorHelper) {
+    public ClassVisitor(JavaByteCodeFileDescriptor javaByteCodeFileDescriptor, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
-        this.fileDescriptor = fileDescriptor;
+        this.javaByteCodeFileDescriptor = javaByteCodeFileDescriptor;
         this.visitorHelper = visitorHelper;
     }
 
@@ -73,15 +66,14 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         this.typeName = name;
         this.superTypeName = superName;
         this.interfaceNames = interfaces;
-        this.byteCodeVersion = version;
-        Class<? extends JavaByteCodeDescriptor> javaByteCodeType = getJavaByteCodeType(access);
+        javaByteCodeFileDescriptor.setByteCodeVersion(version);
+        Class<? extends JavaByteCodeFileDescriptor> javaByteCodeType = getClassFileType(access);
         if (ClassFileDescriptor.class.isAssignableFrom(javaByteCodeType)) {
             String fullQualifiedName = SignatureHelper.getObjectType(name);
-            cachedType = visitorHelper.createType(fullQualifiedName, fileDescriptor, (Class<? extends ClassFileDescriptor>) javaByteCodeType);
+            cachedType = visitorHelper.createType(fullQualifiedName, javaByteCodeFileDescriptor, (Class<? extends ClassFileDescriptor>) javaByteCodeType);
             visitorHelper.getTypeVariableResolver()
                 .push();
             ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
-            this.javaByteCodeDescriptor = classFileDescriptor;
             if (visitorHelper.hasFlag(access, Opcodes.ACC_ABSTRACT) && !visitorHelper.hasFlag(access, Opcodes.ACC_INTERFACE)) {
                 classFileDescriptor.setAbstract(Boolean.TRUE);
             }
@@ -105,14 +97,13 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public ModuleVisitor visitModule(String name, int access, String version) {
         ScannerContext scannerContext = visitorHelper.getScannerContext();
-        ModuleDescriptor moduleDescriptor = scannerContext.getStore()
-            .addDescriptorType(fileDescriptor, ModuleDescriptor.class);
-        moduleDescriptor.setFullQualifiedName(name);
-        moduleDescriptor.setVersion(version);
-        moduleDescriptor.setOpen(visitorHelper.hasFlag(access, Opcodes.ACC_OPEN));
-        moduleDescriptor.setSynthetic(visitorHelper.hasFlag(access, Opcodes.ACC_SYNTHETIC));
-        this.javaByteCodeDescriptor = moduleDescriptor;
-        return new ModuleVisitor(moduleDescriptor, visitorHelper);
+        ModuleFileDescriptor moduleFileDescriptor = scannerContext.getStore()
+            .addDescriptorType(javaByteCodeFileDescriptor, ModuleFileDescriptor.class);
+        moduleFileDescriptor.setFullQualifiedName(name);
+        moduleFileDescriptor.setVersion(version);
+        moduleFileDescriptor.setOpen(visitorHelper.hasFlag(access, Opcodes.ACC_OPEN));
+        moduleFileDescriptor.setSynthetic(visitorHelper.hasFlag(access, Opcodes.ACC_SYNTHETIC));
+        return new ModuleVisitor(moduleFileDescriptor, visitorHelper);
     }
 
     @Override
@@ -244,7 +235,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitSource(final String source, final String debug) {
-        this.sourceFileName = source;
+        this.javaByteCodeFileDescriptor.setSourceFileName(source);
     }
 
     @Override
@@ -289,8 +280,6 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitEnd() {
-        javaByteCodeDescriptor.setByteCodeVersion(byteCodeVersion);
-        javaByteCodeDescriptor.setSourceFileName(sourceFileName);
         if (cachedType != null) {
             visitorHelper.storeDependencies(cachedType);
             visitorHelper.getTypeVariableResolver()
@@ -328,7 +317,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      *     The access flags.
      * @return The types label.
      */
-    private Class<? extends JavaByteCodeDescriptor> getJavaByteCodeType(int flags) {
+    private Class<? extends JavaByteCodeFileDescriptor> getClassFileType(int flags) {
         if (visitorHelper.hasFlag(flags, Opcodes.ACC_ANNOTATION)) {
             return AnnotationTypeDescriptor.class;
         } else if (visitorHelper.hasFlag(flags, Opcodes.ACC_ENUM)) {
@@ -338,8 +327,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         } else if (visitorHelper.hasFlag(flags, Opcodes.ACC_RECORD)) {
             return RecordTypeDescriptor.class;
         } else if (visitorHelper.hasFlag(flags, Opcodes.ACC_MODULE)) {
-            return ModuleDescriptor.class;
-        }
-        return ClassTypeDescriptor.class;
+            return ModuleFileDescriptor.class;
+        } return ClassTypeDescriptor.class;
     }
 }

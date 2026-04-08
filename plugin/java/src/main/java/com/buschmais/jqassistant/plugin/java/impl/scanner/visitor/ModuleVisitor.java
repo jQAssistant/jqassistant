@@ -1,15 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.java.api.model.AccessModifierDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.PackageToModuleDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.RequiresDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
 import org.objectweb.asm.Opcodes;
@@ -19,12 +11,12 @@ import static java.lang.Boolean.TRUE;
 
 public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
-    private final ModuleDescriptor moduleDescriptor;
+    private final ModuleFileDescriptor moduleFileDescriptor;
     private final VisitorHelper visitorHelper;
 
-    public ModuleVisitor(ModuleDescriptor moduleDescriptor, VisitorHelper visitorHelper) {
+    public ModuleVisitor(ModuleFileDescriptor moduleFileDescriptor, VisitorHelper visitorHelper) {
         super(VisitorHelper.ASM_OPCODES);
-        this.moduleDescriptor = moduleDescriptor;
+        this.moduleFileDescriptor = moduleFileDescriptor;
         this.visitorHelper = visitorHelper;
     }
 
@@ -32,14 +24,14 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
     public void visitMainClass(String mainClass) {
         TypeDescriptor mainClassType = visitorHelper.resolveType(mainClass)
             .getTypeDescriptor();
-        moduleDescriptor.setMainClass(mainClassType);
+        moduleFileDescriptor.setMainClass(mainClassType);
     }
 
     @Override
     public void visitRequire(String module, int access, String version) {
         ModuleDescriptor requiredModule = resolveModule(module, version);
         RequiresDescriptor requiresDescriptor = visitorHelper.getStore()
-            .create(moduleDescriptor, RequiresDescriptor.class, requiredModule);
+            .create(moduleFileDescriptor, RequiresDescriptor.class, requiredModule);
         applyFlags(requiresDescriptor, access);
     }
 
@@ -49,7 +41,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
         // (pe)-[:OF_PACKAGE]->(:Package);
         // (pe)-[:TO_MODULE]->(:Module);
         ExportedPackageDescriptor exportedPackage = packageToModule(packaze, access, modules, ExportedPackageDescriptor.class);
-        moduleDescriptor.getExportedPackages()
+        moduleFileDescriptor.getExportedPackages()
             .add(exportedPackage);
     }
 
@@ -59,7 +51,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
         // (op)-[:OF_PACKAGE]->(:Package);
         // (op)-[:TO_MODULE]->(:Module);
         OpenPackageDescriptor openPackage = packageToModule(packaze, access, modules, OpenPackageDescriptor.class);
-        moduleDescriptor.getOpenPackages()
+        moduleFileDescriptor.getOpenPackages()
             .add(openPackage);
     }
 
@@ -67,7 +59,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
     public void visitUse(String service) {
         TypeDescriptor serviceType = visitorHelper.resolveType(getObjectType(service))
             .getTypeDescriptor();
-        moduleDescriptor.getUsesServices()
+        moduleFileDescriptor.getUsesServices()
             .add(serviceType);
     }
 
@@ -85,7 +77,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
                 .add(visitorHelper.resolveType(getObjectType(provider))
                     .getTypeDescriptor());
         }
-        moduleDescriptor.getProvidesServices()
+        moduleFileDescriptor.getProvidesServices()
             .add(providesService);
     }
 

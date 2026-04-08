@@ -2,15 +2,12 @@ package com.buschmais.jqassistant.plugin.java.api.model;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.ValidDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.report.Java;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Java(Java.JavaLanguageElement.Type)
-public interface ClassFileDescriptor
-        extends TypeDescriptor, FileDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor, ValidDescriptor {
+public interface ClassFileDescriptor extends JavaByteCodeFileDescriptor, TypeDescriptor, AccessModifierDescriptor, AbstractDescriptor {
 
     /**
      * Return the super class.
@@ -24,7 +21,7 @@ public interface ClassFileDescriptor
      * Set the super class.
      *
      * @param superClass
-     *            The super class.
+     *     The super class.
      */
     void setSuperClass(TypeDescriptor superClass);
 
@@ -40,7 +37,7 @@ public interface ClassFileDescriptor
      * Set the generic super class.
      *
      * @param genericSuperClass
-     *            The generic super class.
+     *     The generic super class.
      */
     void setGenericSuperClass(BoundDescriptor genericSuperClass);
 
