@@ -25,14 +25,14 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private static final String JAVA_LANG_SYNTHETIC = "java.lang.Synthetic";
     private static final String THIS = "this";
 
-    private final ClassFileDescriptor containingType;
+    private final TypeClassFileDescriptor containingType;
     private final MethodDescriptor methodDescriptor;
     private final ClassFileVisitorContext classFileVisitorContext;
 
     private int syntheticParameters = 0;
     private Integer lineNumber = null;
 
-    protected MethodVisitor(ClassFileDescriptor containingType, MethodDescriptor methodDescriptor, ClassFileVisitorContext classFileVisitorContext) {
+    protected MethodVisitor(TypeClassFileDescriptor containingType, MethodDescriptor methodDescriptor, ClassFileVisitorContext classFileVisitorContext) {
         super(ClassFileVisitorContext.ASM_OPCODES);
         this.containingType = containingType;
         this.methodDescriptor = methodDescriptor;

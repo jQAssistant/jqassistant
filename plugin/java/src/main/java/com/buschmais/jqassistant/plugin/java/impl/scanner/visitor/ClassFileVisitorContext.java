@@ -30,7 +30,7 @@ public class ClassFileVisitorContext {
      */
     private static final String CONSTRUCTOR_METHOD = "void <init>";
 
-    private final JavaByteCodeFileDescriptor javaByteCodeFileDescriptor;
+    private final ClassFileDescriptor classFileDescriptor;
 
     @Getter
     private final ScannerContext scannerContext;
@@ -53,9 +53,9 @@ public class ClassFileVisitorContext {
      * @param configuration
      *     The configuration.
      */
-    public ClassFileVisitorContext(JavaByteCodeFileDescriptor javaByteCodeFileDescriptor, ScannerContext scannerContext,
+    public ClassFileVisitorContext(ClassFileDescriptor classFileDescriptor, ScannerContext scannerContext,
         ClassFileScannerConfiguration configuration) {
-        this.javaByteCodeFileDescriptor = javaByteCodeFileDescriptor;
+        this.classFileDescriptor = classFileDescriptor;
         this.scannerContext = scannerContext;
         this.configuration = configuration;
         this.typeVariableResolver = new TypeVariableResolver();
@@ -74,7 +74,7 @@ public class ClassFileVisitorContext {
      */
     public TypeDescriptor resolveType(String fullQualifiedName) {
         TypeDescriptor dependency = getTypeResolver().resolve(fullQualifiedName, scannerContext);
-        if (!javaByteCodeFileDescriptor.equals(dependency)) {
+        if (!classFileDescriptor.equals(dependency)) {
             dependencyCache.compute(dependency, (typeDescriptor, integer) -> integer == null ? 1 : integer + 1);
         }
         return dependency;
@@ -87,7 +87,7 @@ public class ClassFileVisitorContext {
      *
      * @param type The expected type.
      */
-    <T extends ClassFileDescriptor> T createType(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType) {
+    <T extends TypeClassFileDescriptor> T createType(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType) {
         return getTypeResolver().create(fullQualifiedName, fileDescriptor, descriptorType, scannerContext);
     }
 
@@ -296,7 +296,7 @@ public class ClassFileVisitorContext {
             TypeDescriptor dependency = entry.getKey();
             final Integer weight = entry.getValue();
             TypeDependsOnDescriptor dependsOnDescriptor = scannerContext.getStore()
-                .create(javaByteCodeFileDescriptor, TypeDependsOnDescriptor.class, dependency);
+                .create(classFileDescriptor, TypeDependsOnDescriptor.class, dependency);
             dependsOnDescriptor.setWeight(weight);
         }
     }

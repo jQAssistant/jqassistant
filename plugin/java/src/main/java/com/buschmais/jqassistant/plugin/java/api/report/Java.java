@@ -46,15 +46,15 @@ public @interface Java {
         },
         Type {
             @Override
-            public SourceProvider<ClassFileDescriptor> getSourceProvider() {
+            public SourceProvider<TypeClassFileDescriptor> getSourceProvider() {
                 return new SourceProvider<>() {
                     @Override
-                    public String getName(ClassFileDescriptor descriptor) {
+                    public String getName(TypeClassFileDescriptor descriptor) {
                         return descriptor.getFullQualifiedName();
                     }
 
                     @Override
-                    public Optional<FileLocation> getSourceLocation(ClassFileDescriptor descriptor) {
+                    public Optional<FileLocation> getSourceLocation(TypeClassFileDescriptor descriptor) {
                         return TypeSourceHelper.getSourceLocation(descriptor);
                     }
                 };

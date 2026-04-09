@@ -7,7 +7,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 @Label("Module")
-public interface ModuleFileDescriptor extends JavaByteCodeFileDescriptor, ModuleDescriptor, AccessModifierDescriptor {
+public interface ModuleClassFileDescriptor extends ClassFileDescriptor, ModuleDescriptor, AccessModifierDescriptor {
 
     String getVersion();
 

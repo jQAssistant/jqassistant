@@ -32,7 +32,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.java.api.model.ModuleFileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ModuleClassFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</class>

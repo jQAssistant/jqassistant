@@ -7,9 +7,9 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 /**
@@ -19,11 +19,11 @@ public class ArtifactScopedTypeResolver implements TypeResolver {
 
     private final String classPathDirectory;
 
-    private JavaArtifactFileDescriptor artifact;
+    private final JavaArtifactFileDescriptor artifact;
 
-    private boolean hasDependencies;
+    private final boolean hasDependencies;
 
-    private Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
+    private final Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
 
     /**
      * The type cache.
@@ -53,7 +53,7 @@ public class ArtifactScopedTypeResolver implements TypeResolver {
     }
 
     @Override
-    public final <T extends ClassFileDescriptor> T create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType,
+    public final <T extends TypeClassFileDescriptor> T create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType,
         ScannerContext context) {
         T typeDescriptor = context.getStore()
             .addDescriptorType(fileDescriptor, descriptorType);
@@ -73,7 +73,7 @@ public class ArtifactScopedTypeResolver implements TypeResolver {
             }
             if (typeDescriptor == null) {
                 String requiredFileName = "/" + fullQualifiedName.replace(".", "/") + ".class";
-                typeDescriptor = require(requiredFileName, ClassFileDescriptor.class, context);
+                typeDescriptor = require(requiredFileName, TypeClassFileDescriptor.class, context);
                 setTypeProperties(typeDescriptor, fullQualifiedName);
                 artifactTypes.put(fullQualifiedName, typeDescriptor);
             }

@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext;
@@ -16,7 +16,7 @@ public class MethodSignatureVisitor extends AbstractGenericDeclarationVisitor<Me
 
     private int parameterIndex = 0;
 
-    public MethodSignatureVisitor(ClassFileDescriptor containingType, MethodDescriptor methodDescriptor, ClassFileVisitorContext classFileVisitorContext) {
+    public MethodSignatureVisitor(TypeClassFileDescriptor containingType, MethodDescriptor methodDescriptor, ClassFileVisitorContext classFileVisitorContext) {
         super(classFileVisitorContext, methodDescriptor, containingType);
     }
 

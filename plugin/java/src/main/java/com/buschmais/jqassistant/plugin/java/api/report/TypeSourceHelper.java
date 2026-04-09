@@ -5,7 +5,7 @@ import java.util.Optional;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.report.FileSourceHelper;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
@@ -30,22 +30,22 @@ public class TypeSourceHelper {
     }
 
     static Optional<FileLocation> getSourceLocation(TypeDescriptor typeDescriptor, Optional<Integer> startLine, Optional<Integer> endLine) {
-        if (typeDescriptor instanceof JavaByteCodeFileDescriptor) {
-            JavaByteCodeFileDescriptor javaByteCodeFileDescriptor = (JavaByteCodeFileDescriptor) typeDescriptor;
-            return getSourceLocation(javaByteCodeFileDescriptor, startLine, endLine);
+        if (typeDescriptor instanceof ClassFileDescriptor) {
+            ClassFileDescriptor classFileDescriptor = (ClassFileDescriptor) typeDescriptor;
+            return getSourceLocation(classFileDescriptor, startLine, endLine);
         }
         return empty();
     }
 
-    public static Optional<FileLocation> getSourceLocation(JavaByteCodeFileDescriptor javaByteCodeFileDescriptor, Optional<Integer> startLine,
+    public static Optional<FileLocation> getSourceLocation(ClassFileDescriptor classFileDescriptor, Optional<Integer> startLine,
         Optional<Integer> endLine) {
-        for (FileDescriptor parent : javaByteCodeFileDescriptor.getParents()) {
+        for (FileDescriptor parent : classFileDescriptor.getParents()) {
             if (parent instanceof PackageDescriptor) {
                 // File location can only safely built if a parent package exists.
                 PackageDescriptor packageDescriptor = (PackageDescriptor) parent;
                 FileLocation.FileLocationBuilder<?, ?> fileLocationBuilder = FileLocation.builder();
-                fileLocationBuilder.parent(FileSourceHelper.getParentLocation(javaByteCodeFileDescriptor));
-                fileLocationBuilder.fileName(packageDescriptor.getFileName() + "/" + javaByteCodeFileDescriptor.getSourceFileName());
+                fileLocationBuilder.parent(FileSourceHelper.getParentLocation(classFileDescriptor));
+                fileLocationBuilder.fileName(packageDescriptor.getFileName() + "/" + classFileDescriptor.getSourceFileName());
                 fileLocationBuilder.startLine(startLine);
                 fileLocationBuilder.endLine(endLine);
                 return of(fileLocationBuilder.build());

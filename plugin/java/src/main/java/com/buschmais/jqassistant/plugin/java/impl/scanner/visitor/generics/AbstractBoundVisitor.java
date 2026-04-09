@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
@@ -22,13 +22,13 @@ public abstract class AbstractBoundVisitor extends SignatureVisitor {
 
     protected final ClassFileVisitorContext classFileVisitorContext;
 
-    private final ClassFileDescriptor containingType;
+    private final TypeClassFileDescriptor containingType;
 
     private final List<BoundDescriptor> actualTypeArguments = new ArrayList<>();
 
     private BoundDescriptor current;
 
-    public AbstractBoundVisitor(ClassFileVisitorContext classFileVisitorContext, ClassFileDescriptor containingType) {
+    public AbstractBoundVisitor(ClassFileVisitorContext classFileVisitorContext, TypeClassFileDescriptor containingType) {
         super(ClassFileVisitorContext.ASM_OPCODES);
         this.classFileVisitorContext = classFileVisitorContext;
         this.containingType = containingType;

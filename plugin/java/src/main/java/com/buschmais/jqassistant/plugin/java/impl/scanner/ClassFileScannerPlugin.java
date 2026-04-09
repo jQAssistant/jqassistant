@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaByteCodeFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext;
 
@@ -25,7 +25,7 @@ import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSP
  * Implementation of the {@link AbstractScannerPlugin} for Java classes.
  */
 @Requires(FileDescriptor.class)
-public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, JavaByteCodeFileDescriptor> {
+public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, ClassFileDescriptor> {
 
     public static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
@@ -55,20 +55,20 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     }
 
     @Override
-    public JavaByteCodeFileDescriptor scan(FileResource file, String path, Scope scope, final Scanner scanner) throws IOException {
+    public ClassFileDescriptor scan(FileResource file, String path, Scope scope, final Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
-        JavaByteCodeFileDescriptor javaByteCodeFileDescriptor = context.getStore()
-            .addDescriptorType(fileDescriptor, JavaByteCodeFileDescriptor.class);
-        ClassFileVisitorContext classFileVisitorContext = new ClassFileVisitorContext(javaByteCodeFileDescriptor, context, configuration);
-        final ClassFileVisitor visitor = new ClassFileVisitor(javaByteCodeFileDescriptor, classFileVisitorContext);
+        ClassFileDescriptor classFileDescriptor = context.getStore()
+            .addDescriptorType(fileDescriptor, ClassFileDescriptor.class);
+        ClassFileVisitorContext classFileVisitorContext = new ClassFileVisitorContext(classFileDescriptor, context, configuration);
+        final ClassFileVisitor visitor = new ClassFileVisitor(classFileDescriptor, classFileVisitorContext);
         try (InputStream inputStream = file.createStream()) {
             new ClassReader(inputStream).accept(visitor, 0);
-            javaByteCodeFileDescriptor.setValid(true);
+            classFileDescriptor.setValid(true);
         } catch (RuntimeException e) {
             LOGGER.warn("Cannot scan class '" + path + "'.", e);
-            javaByteCodeFileDescriptor.setValid(false);
+            classFileDescriptor.setValid(false);
         }
-        return javaByteCodeFileDescriptor;
+        return classFileDescriptor;
     }
 }

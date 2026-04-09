@@ -8,8 +8,8 @@ import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -269,7 +269,7 @@ class TypeResolverIT extends AbstractJavaPluginIT {
             return result;
         });
         store.beginTransaction();
-        List<? extends ClassFileDescriptor> descriptors = query("MATCH (t:Type) WHERE t.fqn ends with '.A' RETURN t ORDER BY t.fqn").getColumn("t");
+        List<? extends TypeClassFileDescriptor> descriptors = query("MATCH (t:Type) WHERE t.fqn ends with '.A' RETURN t ORDER BY t.fqn").getColumn("t");
 
         assertThat(descriptors.size()).isEqualTo(2);
 

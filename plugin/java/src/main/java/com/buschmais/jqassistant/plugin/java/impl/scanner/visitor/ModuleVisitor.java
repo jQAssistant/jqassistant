@@ -11,26 +11,26 @@ import static java.lang.Boolean.TRUE;
 
 public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
-    private final ModuleFileDescriptor moduleFileDescriptor;
+    private final ModuleClassFileDescriptor moduleClassFileDescriptor;
     private final ClassFileVisitorContext classFileVisitorContext;
 
-    public ModuleVisitor(ModuleFileDescriptor moduleFileDescriptor, ClassFileVisitorContext classFileVisitorContext) {
+    public ModuleVisitor(ModuleClassFileDescriptor moduleClassFileDescriptor, ClassFileVisitorContext classFileVisitorContext) {
         super(ClassFileVisitorContext.ASM_OPCODES);
-        this.moduleFileDescriptor = moduleFileDescriptor;
+        this.moduleClassFileDescriptor = moduleClassFileDescriptor;
         this.classFileVisitorContext = classFileVisitorContext;
     }
 
     @Override
     public void visitMainClass(String mainClass) {
         TypeDescriptor mainClassType = classFileVisitorContext.resolveType(mainClass);
-        moduleFileDescriptor.setMainClass(mainClassType);
+        moduleClassFileDescriptor.setMainClass(mainClassType);
     }
 
     @Override
     public void visitRequire(String module, int access, String version) {
         ModuleDescriptor requiredModule = resolveModule(module, version);
         RequiresDescriptor requiresDescriptor = classFileVisitorContext.getStore()
-            .create(moduleFileDescriptor, RequiresDescriptor.class, requiredModule);
+            .create(moduleClassFileDescriptor, RequiresDescriptor.class, requiredModule);
         applyFlags(requiresDescriptor, access);
     }
 
@@ -40,7 +40,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
         // (pe)-[:OF_PACKAGE]->(:Package);
         // (pe)-[:TO_MODULE]->(:Module);
         ExportedPackageDescriptor exportedPackage = packageToModule(packaze, access, modules, ExportedPackageDescriptor.class);
-        moduleFileDescriptor.getExportedPackages()
+        moduleClassFileDescriptor.getExportedPackages()
             .add(exportedPackage);
     }
 
@@ -50,14 +50,14 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
         // (op)-[:OF_PACKAGE]->(:Package);
         // (op)-[:TO_MODULE]->(:Module);
         OpenPackageDescriptor openPackage = packageToModule(packaze, access, modules, OpenPackageDescriptor.class);
-        moduleFileDescriptor.getOpenPackages()
+        moduleClassFileDescriptor.getOpenPackages()
             .add(openPackage);
     }
 
     @Override
     public void visitUse(String service) {
         TypeDescriptor serviceType = classFileVisitorContext.resolveType(getObjectType(service));
-        moduleFileDescriptor.getUsesServices()
+        moduleClassFileDescriptor.getUsesServices()
             .add(serviceType);
     }
 
@@ -73,7 +73,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
             providesService.getProviders()
                 .add(classFileVisitorContext.resolveType(getObjectType(provider)));
         }
-        moduleFileDescriptor.getProvidesServices()
+        moduleClassFileDescriptor.getProvidesServices()
             .add(providesService);
     }
 

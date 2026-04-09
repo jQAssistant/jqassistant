@@ -128,9 +128,9 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
 
     @Test
     void typeDependsOnElement() {
-        ClassFileDescriptor dependent = getTypeDescriptor();
+        TypeClassFileDescriptor dependent = getTypeDescriptor();
         when(dependent.getFullQualifiedName()).thenReturn("A");
-        ClassFileDescriptor dependency = mock(ClassFileDescriptor.class);
+        TypeClassFileDescriptor dependency = mock(TypeClassFileDescriptor.class);
         when(dependency.getFullQualifiedName()).thenReturn("B");
         TypeDependsOnDescriptor dependsOnDescriptor = mock(TypeDependsOnDescriptor.class);
         when(dependsOnDescriptor.getDependent()).thenReturn(dependent);
@@ -139,11 +139,11 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         verify(dependsOnDescriptor, TypeDepdendency, "A->B", "/com/buschmais/Test.java");
     }
 
-    private ClassFileDescriptor getTypeDescriptor() {
+    private TypeClassFileDescriptor getTypeDescriptor() {
         PackageDescriptor packageDescriptor = mock(PackageDescriptor.class);
         doReturn("/com/buschmais").when(packageDescriptor)
             .getFileName();
-        ClassFileDescriptor descriptor = mock(ClassFileDescriptor.class);
+        TypeClassFileDescriptor descriptor = mock(TypeClassFileDescriptor.class);
         doReturn("/com/buschmais/Test.class").when(descriptor)
             .getFileName();
         doReturn("Test.java").when(descriptor)

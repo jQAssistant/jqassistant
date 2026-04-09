@@ -13,10 +13,10 @@ import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguage
 public interface TypeDependsOnDescriptor extends Descriptor {
 
     @Incoming
-    JavaByteCodeFileDescriptor getDependency();
+    ClassFileDescriptor getDependency();
 
     @Outgoing
-    JavaByteCodeFileDescriptor getDependent();
+    ClassFileDescriptor getDependent();
 
     Integer getWeight();
 

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -32,7 +32,7 @@ class PojoIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         TestResult testResult = query("MATCH (t:Java:ByteCode:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t as types");
         assertThat(testResult.getRows()).hasSize(1);
-        ClassFileDescriptor typeDescriptor = (ClassFileDescriptor) testResult.getRows()
+        TypeClassFileDescriptor typeDescriptor = (TypeClassFileDescriptor) testResult.getRows()
             .get(0)
             .get("types");
         assertThat(typeDescriptor).is(typeDescriptor(Pojo.class));
