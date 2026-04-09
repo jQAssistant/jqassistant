@@ -98,7 +98,8 @@ public class ClassFileVisitor extends ClassVisitor {
 
     @Override
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
-        final FieldDescriptor fieldDescriptor = classFileVisitorContext.getFieldDescriptor(typeClassFileDescriptor, SignatureHelper.getFieldSignature(name, desc));
+        final FieldDescriptor fieldDescriptor = classFileVisitorContext.getFieldDescriptor(typeClassFileDescriptor,
+            SignatureHelper.getFieldSignature(name, desc));
         fieldDescriptor.setName(name);
         fieldDescriptor.setVolatile(classFileVisitorContext.hasFlag(access, Opcodes.ACC_VOLATILE));
         fieldDescriptor.setTransient(classFileVisitorContext.hasFlag(access, Opcodes.ACC_TRANSIENT));
@@ -254,8 +255,8 @@ public class ClassFileVisitor extends ClassVisitor {
 
     @Override
     public void visitEnd() {
+        classFileVisitorContext.flush();
         if (typeClassFileDescriptor != null) {
-            classFileVisitorContext.flush();
             classFileVisitorContext.getTypeVariableResolver()
                 .pop();
         }

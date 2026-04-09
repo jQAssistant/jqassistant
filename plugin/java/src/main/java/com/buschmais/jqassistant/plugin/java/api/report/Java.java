@@ -171,19 +171,19 @@ public @interface Java {
                 };
             }
         },
-        TypeDepdendency {
+        ClassFileDepdendency {
             @Override
-            public SourceProvider<TypeDependsOnDescriptor> getSourceProvider() {
+            public SourceProvider<ClassFileDependsOnDescriptor> getSourceProvider() {
                 return new SourceProvider<>() {
                     @Override
-                    public String getName(TypeDependsOnDescriptor descriptor) {
+                    public String getName(ClassFileDependsOnDescriptor descriptor) {
                         return descriptor.getDependent()
                             .getFullQualifiedName() + "->" + descriptor.getDependency()
                             .getFullQualifiedName();
                     }
 
                     @Override
-                    public Optional<FileLocation> getSourceLocation(TypeDependsOnDescriptor descriptor) {
+                    public Optional<FileLocation> getSourceLocation(ClassFileDependsOnDescriptor descriptor) {
                         return TypeSourceHelper.getSourceLocation(descriptor.getDependent(), empty(), empty());
                     }
                 };

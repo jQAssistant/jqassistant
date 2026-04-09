@@ -295,8 +295,8 @@ public class ClassFileVisitorContext {
         for (Map.Entry<TypeDescriptor, Integer> entry : dependencyCache.entrySet()) {
             TypeDescriptor dependency = entry.getKey();
             final Integer weight = entry.getValue();
-            TypeDependsOnDescriptor dependsOnDescriptor = scannerContext.getStore()
-                .create(classFileDescriptor, TypeDependsOnDescriptor.class, dependency);
+            ClassFileDependsOnDescriptor dependsOnDescriptor = scannerContext.getStore()
+                .create(classFileDescriptor, ClassFileDependsOnDescriptor.class, dependency);
             dependsOnDescriptor.setWeight(weight);
         }
     }

@@ -45,9 +45,9 @@ public interface ClassFileDescriptor
     void setByteCodeVersion(int byteCodeVersion);
 
     @Relation.Outgoing
-    List<TypeDependsOnDescriptor> getDependencies();
+    List<ClassFileDependsOnDescriptor> getDependencies();
 
     @Relation.Incoming
-    List<TypeDependsOnDescriptor> getDependents();
+    List<ClassFileDependsOnDescriptor> getDependents();
 
 }
