@@ -2,16 +2,16 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.delegate;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext;
 
 import org.objectweb.asm.AnnotationVisitor;
 
 public class DelegatingAnnotationVisitor extends AnnotationVisitor {
 
-    private Delegator<AnnotationVisitor> delegator;
+    private final Delegator<AnnotationVisitor> delegator;
 
     public DelegatingAnnotationVisitor(List<AnnotationVisitor> visitors) {
-        super(VisitorHelper.ASM_OPCODES);
+        super(ClassFileVisitorContext.ASM_OPCODES);
         this.delegator = new Delegator<>(visitors);
     }
 
@@ -37,6 +37,6 @@ public class DelegatingAnnotationVisitor extends AnnotationVisitor {
 
     @Override
     public void visitEnd() {
-        delegator.accept(visitor -> visitor.visitEnd());
+        delegator.accept(AnnotationVisitor::visitEnd);
     }
 }

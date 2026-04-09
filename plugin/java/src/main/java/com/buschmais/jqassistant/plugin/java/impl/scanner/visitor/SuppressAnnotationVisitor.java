@@ -31,9 +31,9 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
 
     private String suppressReason;
 
-    public SuppressAnnotationVisitor(AnnotatedDescriptor annotatedDescriptor, VisitorHelper visitorHelper) {
-        super(VisitorHelper.ASM_OPCODES);
-        this.suppressDescriptor = visitorHelper.getStore()
+    public SuppressAnnotationVisitor(AnnotatedDescriptor annotatedDescriptor, ClassFileVisitorContext classFileVisitorContext) {
+        super(ClassFileVisitorContext.ASM_OPCODES);
+        this.suppressDescriptor = classFileVisitorContext.getStore()
             .addDescriptorType(annotatedDescriptor, JavaSuppressDescriptor.class);
     }
 

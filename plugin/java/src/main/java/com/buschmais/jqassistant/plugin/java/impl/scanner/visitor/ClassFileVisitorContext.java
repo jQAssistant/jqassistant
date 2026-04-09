@@ -14,7 +14,6 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerConfig
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.TypeVariableResolver;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
@@ -22,7 +21,7 @@ import org.objectweb.asm.Opcodes;
 /**
  * Class containing helper methods for ASM visitors.
  */
-public class VisitorHelper {
+public class ClassFileVisitorContext {
 
     public static final int ASM_OPCODES = Opcodes.ASM9;
 
@@ -31,24 +30,20 @@ public class VisitorHelper {
      */
     private static final String CONSTRUCTOR_METHOD = "void <init>";
 
-    private final JavaByteCodeFileDescriptor classFileDescriptor;
+    private final JavaByteCodeFileDescriptor javaByteCodeFileDescriptor;
 
+    @Getter
     private final ScannerContext scannerContext;
 
+    @Getter
     private final ClassFileScannerConfiguration configuration;
 
+    @Getter
     private final TypeVariableResolver typeVariableResolver;
 
     private final Map<TypeDescriptor, Integer> dependencyCache = new HashMap<>();
 
     private final Map<TypeDescriptor, Map<String, MemberDescriptor>> memberCache = new HashMap<>();
-
-    @Getter
-    @RequiredArgsConstructor
-    private static final class Dependency {
-        private final TypeDescriptor type;
-        private Integer weight = 0;
-    }
 
     /**
      * Constructor.
@@ -56,28 +51,18 @@ public class VisitorHelper {
      * @param scannerContext
      *     The scanner context
      * @param configuration
+     *     The configuration.
      */
-    public VisitorHelper(JavaByteCodeFileDescriptor javaByteCodeFileDescriptor, ScannerContext scannerContext, ClassFileScannerConfiguration configuration) {
-        this.classFileDescriptor = javaByteCodeFileDescriptor;
+    public ClassFileVisitorContext(JavaByteCodeFileDescriptor javaByteCodeFileDescriptor, ScannerContext scannerContext,
+        ClassFileScannerConfiguration configuration) {
+        this.javaByteCodeFileDescriptor = javaByteCodeFileDescriptor;
         this.scannerContext = scannerContext;
         this.configuration = configuration;
         this.typeVariableResolver = new TypeVariableResolver();
     }
 
-    public ScannerContext getScannerContext() {
-        return scannerContext;
-    }
-
-    public ClassFileScannerConfiguration getConfiguration() {
-        return configuration;
-    }
-
     public Store getStore() {
         return scannerContext.getStore();
-    }
-
-    public TypeVariableResolver getTypeVariableResolver() {
-        return typeVariableResolver;
     }
 
     /*
@@ -87,22 +72,12 @@ public class VisitorHelper {
      * @param dependentType The containing type which depends on the resolved type.
      * @return The resolved CachedType.
      */
-    public TypeDescriptor resolveType(String fullQualifiedName, ClassFileDescriptor dependentType) {
-        TypeDescriptor dependency = resolveType(fullQualifiedName);
-        if (!dependentType.equals(dependency)) {
+    public TypeDescriptor resolveType(String fullQualifiedName) {
+        TypeDescriptor dependency = getTypeResolver().resolve(fullQualifiedName, scannerContext);
+        if (!javaByteCodeFileDescriptor.equals(dependency)) {
             dependencyCache.compute(dependency, (typeDescriptor, integer) -> integer == null ? 1 : integer + 1);
         }
         return dependency;
-    }
-
-    /*
-     * Return the type descriptor for the given type name.
-     *
-     * @param typeName The full qualified name of the type (e.g. java.lang.Object).
-     * @return The resolved CachedType.
-     */
-    public TypeDescriptor resolveType(String fullQualifiedName) {
-        return getTypeResolver().resolve(fullQualifiedName, scannerContext);
     }
 
     /*
@@ -298,7 +273,7 @@ public class VisitorHelper {
      *     The type name of the annotation.
      * @return The annotation descriptor.
      */
-    AnnotationVisitor addAnnotation(ClassFileDescriptor containingDescriptor, AnnotatedDescriptor annotatedDescriptor, String typeName) {
+    AnnotationVisitor addAnnotation(AnnotatedDescriptor annotatedDescriptor, String typeName) {
         if (typeName == null) {
             return null;
         }
@@ -307,13 +282,13 @@ public class VisitorHelper {
             .equals(typeName)) {
             return new SuppressAnnotationVisitor(annotatedDescriptor, this);
         }
-        TypeDescriptor type = resolveType(typeName, containingDescriptor);
+        TypeDescriptor type = resolveType(typeName);
         AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore()
             .create(AnnotationValueDescriptor.class);
         annotationDescriptor.setType(type);
         annotatedDescriptor.getAnnotatedBy()
             .add(annotationDescriptor);
-        return new AnnotationValueVisitor(containingDescriptor, annotationDescriptor, this);
+        return new AnnotationValueVisitor(annotationDescriptor, this);
     }
 
     public void flush() {
@@ -321,7 +296,7 @@ public class VisitorHelper {
             TypeDescriptor dependency = entry.getKey();
             final Integer weight = entry.getValue();
             TypeDependsOnDescriptor dependsOnDescriptor = scannerContext.getStore()
-                .create(classFileDescriptor, TypeDependsOnDescriptor.class, dependency);
+                .create(javaByteCodeFileDescriptor, TypeDependsOnDescriptor.class, dependency);
             dependsOnDescriptor.setWeight(weight);
         }
     }

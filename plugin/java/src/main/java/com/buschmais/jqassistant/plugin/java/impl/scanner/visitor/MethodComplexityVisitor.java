@@ -42,16 +42,16 @@ class MethodComplexityVisitor extends MethodVisitor {
         asList(IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT,
                IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE, IFNULL, IFNONNULL)));
 
-    private Set<Label> whitelistLabels = new HashSet<>();
+    private final Set<Label> whitelistLabels = new HashSet<>();
 
-    private Map<Label, ExceptionHandler> exceptionHandlers = new HashMap<>();
+    private final Map<Label, ExceptionHandler> exceptionHandlers = new HashMap<>();
 
     private boolean skip = false;
 
     private int complexity;
 
     public MethodComplexityVisitor(MethodDescriptor methodDescriptor) {
-        super(VisitorHelper.ASM_OPCODES);
+        super(ClassFileVisitorContext.ASM_OPCODES);
         this.methodDescriptor = methodDescriptor;
     }
 

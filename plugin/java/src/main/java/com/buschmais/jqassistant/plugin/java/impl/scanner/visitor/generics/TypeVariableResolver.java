@@ -20,17 +20,17 @@ public class TypeVariableResolver {
     }
 
     public void declare(TypeVariableDescriptor typeVariable) {
-        typeVariableDeclarations.getFirst().put(typeVariable);
+        typeVariableDeclarations.getFirst()
+            .put(typeVariable);
     }
 
     public TypeVariableDescriptor resolve(String name, TypeDescriptor containingType) {
-        Optional<TypeVariableDescriptor> typeVariableOptional = typeVariableDeclarations.stream().map(genericDeclarations -> genericDeclarations.get(name))
-                .filter(value -> value != null).findFirst();
-        if (typeVariableOptional.isPresent()) {
-            return typeVariableOptional.get();
-        }
-        // No declaration found, add a required type variable to the containing type
-        return containingType.requireTypeParameter(name);
+        Optional<TypeVariableDescriptor> typeVariableOptional = typeVariableDeclarations.stream()
+            .map(genericDeclarations -> genericDeclarations.get(name))
+            .filter(Objects::nonNull)
+            .findFirst();
+        // Use declaration or add a required type variable to the containing type
+        return typeVariableOptional.orElseGet(() -> containingType.requireTypeParameter(name));
     }
 
     @RequiredArgsConstructor

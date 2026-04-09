@@ -12,24 +12,24 @@ import static java.lang.Boolean.TRUE;
 public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     private final ModuleFileDescriptor moduleFileDescriptor;
-    private final VisitorHelper visitorHelper;
+    private final ClassFileVisitorContext classFileVisitorContext;
 
-    public ModuleVisitor(ModuleFileDescriptor moduleFileDescriptor, VisitorHelper visitorHelper) {
-        super(VisitorHelper.ASM_OPCODES);
+    public ModuleVisitor(ModuleFileDescriptor moduleFileDescriptor, ClassFileVisitorContext classFileVisitorContext) {
+        super(ClassFileVisitorContext.ASM_OPCODES);
         this.moduleFileDescriptor = moduleFileDescriptor;
-        this.visitorHelper = visitorHelper;
+        this.classFileVisitorContext = classFileVisitorContext;
     }
 
     @Override
     public void visitMainClass(String mainClass) {
-        TypeDescriptor mainClassType = visitorHelper.resolveType(mainClass);
+        TypeDescriptor mainClassType = classFileVisitorContext.resolveType(mainClass);
         moduleFileDescriptor.setMainClass(mainClassType);
     }
 
     @Override
     public void visitRequire(String module, int access, String version) {
         ModuleDescriptor requiredModule = resolveModule(module, version);
-        RequiresDescriptor requiresDescriptor = visitorHelper.getStore()
+        RequiresDescriptor requiresDescriptor = classFileVisitorContext.getStore()
             .create(moduleFileDescriptor, RequiresDescriptor.class, requiredModule);
         applyFlags(requiresDescriptor, access);
     }
@@ -56,7 +56,7 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
 
     @Override
     public void visitUse(String service) {
-        TypeDescriptor serviceType = visitorHelper.resolveType(getObjectType(service));
+        TypeDescriptor serviceType = classFileVisitorContext.resolveType(getObjectType(service));
         moduleFileDescriptor.getUsesServices()
             .add(serviceType);
     }
@@ -66,25 +66,25 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
         // (:Module)-[:PROVIDES]->(ps:ProvidedService)
         // (providedService)-[:OF_TYPE]->(:Type)
         // (providedService)-[:WITH_PROVIDER]->(:Type)
-        ProvidedServiceDescriptor providesService = visitorHelper.getStore()
+        ProvidedServiceDescriptor providesService = classFileVisitorContext.getStore()
             .create(ProvidedServiceDescriptor.class);
-        providesService.setService(visitorHelper.resolveType(getObjectType(service)));
+        providesService.setService(classFileVisitorContext.resolveType(getObjectType(service)));
         for (String provider : providers) {
             providesService.getProviders()
-                .add(visitorHelper.resolveType(getObjectType(provider)));
+                .add(classFileVisitorContext.resolveType(getObjectType(provider)));
         }
         moduleFileDescriptor.getProvidesServices()
             .add(providesService);
     }
 
     private ModuleDescriptor resolveModule(String module, String version) {
-        ScannerContext scannerContext = visitorHelper.getScannerContext();
+        ScannerContext scannerContext = classFileVisitorContext.getScannerContext();
         return scannerContext.peek(TypeResolver.class)
             .requireModule(module, version, scannerContext);
     }
 
     private <D extends PackageToModuleDescriptor> D packageToModule(String packaze, int access, String[] modules, Class<D> descriptorType) {
-        D descriptor = visitorHelper.getStore()
+        D descriptor = classFileVisitorContext.getStore()
             .create(descriptorType);
         applyFlags(descriptor, access);
         descriptor.setPackage(resolvePackage(packaze));
@@ -103,22 +103,22 @@ public class ModuleVisitor extends org.objectweb.asm.ModuleVisitor {
     }
 
     private PackageDescriptor resolvePackage(String packaze) {
-        ScannerContext scannerContext = visitorHelper.getScannerContext();
+        ScannerContext scannerContext = classFileVisitorContext.getScannerContext();
         return scannerContext.peek(TypeResolver.class)
             .require("/" + packaze, PackageDescriptor.class, scannerContext);
     }
 
     private void applyFlags(AccessModifierDescriptor accessModifierDescriptor, int access) {
-        if (visitorHelper.hasFlag(access, Opcodes.ACC_STATIC_PHASE)) {
+        if (classFileVisitorContext.hasFlag(access, Opcodes.ACC_STATIC_PHASE)) {
             accessModifierDescriptor.setStatic(TRUE);
         }
-        if (visitorHelper.hasFlag(access, Opcodes.ACC_TRANSITIVE)) {
+        if (classFileVisitorContext.hasFlag(access, Opcodes.ACC_TRANSITIVE)) {
             accessModifierDescriptor.setTransitive(TRUE);
         }
-        if (visitorHelper.hasFlag(access, Opcodes.ACC_SYNTHETIC)) {
+        if (classFileVisitorContext.hasFlag(access, Opcodes.ACC_SYNTHETIC)) {
             accessModifierDescriptor.setSynthetic(TRUE);
         }
-        if (visitorHelper.hasFlag(access, Opcodes.ACC_MANDATED)) {
+        if (classFileVisitorContext.hasFlag(access, Opcodes.ACC_MANDATED)) {
             accessModifierDescriptor.setMandated(TRUE);
         }
     }

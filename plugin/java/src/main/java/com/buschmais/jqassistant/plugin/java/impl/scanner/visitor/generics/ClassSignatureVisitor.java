@@ -3,20 +3,19 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext;
 
 import org.objectweb.asm.signature.SignatureVisitor;
 
 public class ClassSignatureVisitor extends AbstractGenericDeclarationVisitor<ClassFileDescriptor> {
 
-    public ClassSignatureVisitor(ClassFileDescriptor cachedType, VisitorHelper visitorHelper) {
-        super(visitorHelper, cachedType, cachedType);
+    public ClassSignatureVisitor(ClassFileDescriptor classFileDescriptor, ClassFileVisitorContext classFileVisitorContext) {
+        super(classFileVisitorContext, classFileDescriptor, classFileDescriptor);
     }
 
     @Override
     public SignatureVisitor visitSuperclass() {
-        return new AbstractBoundVisitor(visitorHelper, containingType) {
+        return new AbstractBoundVisitor(classFileVisitorContext, descriptor) {
             @Override
             protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 descriptor.setSuperClass(rawTypeBound);
@@ -27,7 +26,7 @@ public class ClassSignatureVisitor extends AbstractGenericDeclarationVisitor<Cla
 
     @Override
     public SignatureVisitor visitInterface() {
-        return new AbstractBoundVisitor(visitorHelper, containingType) {
+        return new AbstractBoundVisitor(classFileVisitorContext, containingType) {
             @Override
             protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 descriptor.getInterfaces().add(rawTypeBound);
