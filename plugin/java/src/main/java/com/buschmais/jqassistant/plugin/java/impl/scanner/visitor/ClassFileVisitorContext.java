@@ -53,8 +53,7 @@ public class ClassFileVisitorContext {
      * @param configuration
      *     The configuration.
      */
-    public ClassFileVisitorContext(ClassFileDescriptor classFileDescriptor, ScannerContext scannerContext,
-        ClassFileScannerConfiguration configuration) {
+    public ClassFileVisitorContext(ClassFileDescriptor classFileDescriptor, ScannerContext scannerContext, ClassFileScannerConfiguration configuration) {
         this.classFileDescriptor = classFileDescriptor;
         this.scannerContext = scannerContext;
         this.configuration = configuration;
