@@ -1,3 +1,4 @@
+@Deprecated
 module java.it.jpms.module1 {
     requires com.fasterxml.jackson.core;
 

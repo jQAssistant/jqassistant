@@ -18,10 +18,10 @@ class MethodLoCVisitor extends MethodVisitor {
     private Integer lineNumber = null;
     private Integer firstLineNumber = null;
     private Integer lastLineNumber = null;
-    private Set<Integer> effectiveLines = new HashSet<>();
+    private final Set<Integer> effectiveLines = new HashSet<>();
 
     public MethodLoCVisitor(MethodDescriptor methodDescriptor) {
-        super(VisitorHelper.ASM_OPCODES);
+        super(ClassFileVisitorContext.ASM_OPCODES);
         this.methodDescriptor = methodDescriptor;
     }
 

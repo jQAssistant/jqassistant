@@ -5,7 +5,7 @@ import java.util.List;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.analysis.SimpleVerifier;
 
-import static com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper.ASM_OPCODES;
+import static com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext.ASM_OPCODES;
 
 /**
  * Overrides functionality of {@link SimpleVerifier} that relies on loading classes and implements best guesses about class types and hierarchies.
@@ -17,7 +17,7 @@ final class MethodDataFlowVerifier extends SimpleVerifier {
     private final List<Type> interfaceTypes;
     private final boolean isInterfaceType;
 
-    protected MethodDataFlowVerifier(Type type, final boolean isInterface, Type superType, List<Type> interfaceTypes) {
+    MethodDataFlowVerifier(Type type, final boolean isInterface, Type superType, List<Type> interfaceTypes) {
         super(ASM_OPCODES, type, superType, interfaceTypes, isInterface);
         this.type = type;
         this.superType = superType;

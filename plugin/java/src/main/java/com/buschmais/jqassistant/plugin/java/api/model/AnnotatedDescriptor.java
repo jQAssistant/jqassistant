@@ -13,7 +13,7 @@ public interface AnnotatedDescriptor extends Descriptor {
 
     /**
      * Return the annotations this descriptor is annotated by.
-     * 
+     *
      * @return The annotations this descriptor is annotated by.
      */
     @Relation("ANNOTATED_BY")

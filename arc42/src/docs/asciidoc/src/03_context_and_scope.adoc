@@ -1,10 +1,10 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-context-and-scope]]
-== Context and Scope
+== 3. Context and Scope
 
 
-=== Business Context
+=== 3.1. Business Context
 
 
 
@@ -12,7 +12,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 **<optionally: Explanation of external domain interfaces>**
 
-=== Technical Context
+=== 3.2. Technical Context
 
 
 

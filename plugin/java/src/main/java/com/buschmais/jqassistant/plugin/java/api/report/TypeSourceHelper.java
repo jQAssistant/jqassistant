@@ -21,12 +21,8 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public class TypeSourceHelper {
 
-    static String getSourceFile(TypeDescriptor typeDescriptor) {
-        return (typeDescriptor instanceof ClassFileDescriptor) ? ((ClassFileDescriptor) typeDescriptor).getFileName() : null;
-    }
-
     static Optional<FileLocation> getSourceLocation(TypeDescriptor typeDescriptor) {
-        return TypeSourceHelper.getSourceLocation(typeDescriptor, empty(), empty());
+        return getSourceLocation(typeDescriptor, empty(), empty());
     }
 
     static Optional<FileLocation> getSourceLocation(TypeDescriptor typeDescriptor, Integer lineNumber) {
@@ -36,17 +32,23 @@ public class TypeSourceHelper {
     static Optional<FileLocation> getSourceLocation(TypeDescriptor typeDescriptor, Optional<Integer> startLine, Optional<Integer> endLine) {
         if (typeDescriptor instanceof ClassFileDescriptor) {
             ClassFileDescriptor classFileDescriptor = (ClassFileDescriptor) typeDescriptor;
-            for (FileDescriptor parent : classFileDescriptor.getParents()) {
-                if (parent instanceof PackageDescriptor) {
-                    // File location can only safely built if a parent package exists.
-                    PackageDescriptor packageDescriptor = (PackageDescriptor) parent;
-                    FileLocation.FileLocationBuilder fileLocationBuilder = FileLocation.builder();
-                    fileLocationBuilder.parent(FileSourceHelper.getParentLocation(classFileDescriptor));
-                    fileLocationBuilder.fileName(packageDescriptor.getFileName() + "/" + classFileDescriptor.getSourceFileName());
-                    fileLocationBuilder.startLine(startLine);
-                    fileLocationBuilder.endLine(endLine);
-                    return of(fileLocationBuilder.build());
-                }
+            return getSourceLocation(classFileDescriptor, startLine, endLine);
+        }
+        return empty();
+    }
+
+    public static Optional<FileLocation> getSourceLocation(ClassFileDescriptor classFileDescriptor, Optional<Integer> startLine,
+        Optional<Integer> endLine) {
+        for (FileDescriptor parent : classFileDescriptor.getParents()) {
+            if (parent instanceof PackageDescriptor) {
+                // File location can only safely built if a parent package exists.
+                PackageDescriptor packageDescriptor = (PackageDescriptor) parent;
+                FileLocation.FileLocationBuilder<?, ?> fileLocationBuilder = FileLocation.builder();
+                fileLocationBuilder.parent(FileSourceHelper.getParentLocation(classFileDescriptor));
+                fileLocationBuilder.fileName(packageDescriptor.getFileName() + "/" + classFileDescriptor.getSourceFileName());
+                fileLocationBuilder.startLine(startLine);
+                fileLocationBuilder.endLine(endLine);
+                return of(fileLocationBuilder.build());
             }
         }
         return empty();

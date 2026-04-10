@@ -6,17 +6,17 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
-import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.TypeDepdendency;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.ClassFileDepdendency;
 
-@Java(TypeDepdendency)
+@Java(ClassFileDepdendency)
 @Relation("DEPENDS_ON")
-public interface TypeDependsOnDescriptor extends Descriptor {
+public interface ClassFileDependsOnDescriptor extends Descriptor {
 
     @Incoming
-    TypeDescriptor getDependency();
+    ClassFileDescriptor getDependency();
 
     @Outgoing
-    TypeDescriptor getDependent();
+    ClassFileDescriptor getDependent();
 
     Integer getWeight();
 

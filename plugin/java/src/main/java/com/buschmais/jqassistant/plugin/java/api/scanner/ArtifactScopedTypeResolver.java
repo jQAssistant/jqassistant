@@ -7,9 +7,9 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 /**
@@ -19,11 +19,11 @@ public class ArtifactScopedTypeResolver implements TypeResolver {
 
     private final String classPathDirectory;
 
-    private JavaArtifactFileDescriptor artifact;
+    private final JavaArtifactFileDescriptor artifact;
 
-    private boolean hasDependencies;
+    private final boolean hasDependencies;
 
-    private Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
+    private final Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
 
     /**
      * The type cache.
@@ -53,32 +53,33 @@ public class ArtifactScopedTypeResolver implements TypeResolver {
     }
 
     @Override
-    public final <T extends ClassFileDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, FileDescriptor fileDescriptor,
-        Class<T> descriptorType, ScannerContext context) {
+    public final <T extends TypeClassFileDescriptor> T create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType,
+        ScannerContext context) {
         T typeDescriptor = context.getStore()
             .addDescriptorType(fileDescriptor, descriptorType);
         setTypeProperties(typeDescriptor, fullQualifiedName);
         artifactTypes.put(fullQualifiedName, typeDescriptor);
-        return getCachedType(fullQualifiedName, typeDescriptor);
+        typeCache.put(fullQualifiedName, typeDescriptor);
+        return typeDescriptor;
     }
 
     @Override
-    public final TypeCache.CachedType<TypeDescriptor> resolve(String fullQualifiedName, ScannerContext context) {
-        TypeCache.CachedType<TypeDescriptor> cachedType = typeCache.get(fullQualifiedName);
-        if (cachedType == null) {
-            TypeDescriptor typeDescriptor = artifactTypes.get(fullQualifiedName);
+    public final TypeDescriptor resolve(String fullQualifiedName, ScannerContext context) {
+        TypeDescriptor typeDescriptor = typeCache.get(fullQualifiedName);
+        if (typeDescriptor == null) {
+            typeDescriptor = artifactTypes.get(fullQualifiedName);
             if (typeDescriptor == null) {
                 typeDescriptor = hasDependencies ? artifact.resolveRequiredType(fullQualifiedName) : null;
             }
             if (typeDescriptor == null) {
                 String requiredFileName = "/" + fullQualifiedName.replace(".", "/") + ".class";
-                typeDescriptor = require(requiredFileName, ClassFileDescriptor.class, context);
+                typeDescriptor = require(requiredFileName, TypeClassFileDescriptor.class, context);
                 setTypeProperties(typeDescriptor, fullQualifiedName);
                 artifactTypes.put(fullQualifiedName, typeDescriptor);
             }
-            cachedType = getCachedType(fullQualifiedName, typeDescriptor);
+            typeCache.put(fullQualifiedName, typeDescriptor);
         }
-        return cachedType;
+        return typeDescriptor;
     }
 
     @Override
@@ -104,12 +105,6 @@ public class ArtifactScopedTypeResolver implements TypeResolver {
                 artifactTypes.put(typeDescriptor.getFullQualifiedName(), typeDescriptor);
             }
         }
-    }
-
-    private <T extends TypeDescriptor> TypeCache.CachedType<T> getCachedType(String fullQualifiedName, TypeDescriptor typeDescriptor) {
-        TypeCache.CachedType<T> cachedType = new TypeCache.CachedType(typeDescriptor);
-        typeCache.put(fullQualifiedName, cachedType);
-        return cachedType;
     }
 
     private <T extends TypeDescriptor> void setTypeProperties(T typeDescriptor, String fullQualifiedName) {

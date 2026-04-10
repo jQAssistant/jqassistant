@@ -2,61 +2,50 @@ package com.buschmais.jqassistant.plugin.java.api.model;
 
 import java.util.List;
 
+import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValidDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.report.Java;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-@Java(Java.JavaLanguageElement.Type)
-public interface ClassFileDescriptor
-        extends TypeDescriptor, FileDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor, ValidDescriptor {
+/**
+ * Defines the combination of labels "Java" and "ByteCode".
+ */
+public interface ClassFileDescriptor extends JavaByteCodeDescriptor, FileDescriptor, FullQualifiedNameDescriptor, AnnotatedDescriptor, ValidDescriptor {
 
     /**
-     * Return the super class.
+     * Return the name of the source file.
      *
-     * @return The super class.
+     * @return The name of the source file.
      */
-    @Relation("EXTENDS")
-    TypeDescriptor getSuperClass();
+    String getSourceFileName();
 
     /**
-     * Set the super class.
+     * Set the name of the source file.
      *
-     * @param superClass
-     *            The super class.
+     * @param sourceFileName
+     *     The name of the source file.
      */
-    void setSuperClass(TypeDescriptor superClass);
+    void setSourceFileName(String sourceFileName);
 
     /**
-     * Return the generic super class.
+     * Return the byte code version of the class file.
      *
-     * @return The generic super class.
+     * @return The byte code version of the class file.
      */
-    @Relation("EXTENDS_GENERIC")
-    BoundDescriptor getGenericSuperClass();
+    int getByteCodeVersion();
 
     /**
-     * Set the generic super class.
+     * Set the byte code version of the class file.
      *
-     * @param genericSuperClass
-     *            The generic super class.
+     * @param byteCodeVersion
+     *     The byte code version of the class file.
      */
-    void setGenericSuperClass(BoundDescriptor genericSuperClass);
+    void setByteCodeVersion(int byteCodeVersion);
 
-    /**
-     * Return the implemented interfaces.
-     *
-     * @return The implemented interfaces.
-     */
-    @Relation("IMPLEMENTS")
-    List<TypeDescriptor> getInterfaces();
+    @Relation.Outgoing
+    List<ClassFileDependsOnDescriptor> getDependencies();
 
-    /**
-     * Return the implemented generic interfaces.
-     *
-     * @return The implemented generic interfaces.
-     */
-    @Relation("IMPLEMENTS_GENERIC")
-    List<BoundDescriptor> getGenericInterfaces();
+    @Relation.Incoming
+    List<ClassFileDependsOnDescriptor> getDependents();
+
 }

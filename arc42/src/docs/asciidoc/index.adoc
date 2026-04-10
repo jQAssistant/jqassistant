@@ -4,26 +4,21 @@
 // ====================================
 
 // configure EN settings for asciidoc
-include::src/config.adoc[]
+include::src/_config.adoc[]
 
-= image:arc42-logo.png[arc42] Documentation
+= image:src/_arc42-logo.png[arc42] Documentation
 :revnumber: 1.0 EN
 :revdate: March 2026
 :revremark: (based upon AsciiDoc version)
 :toc-title: Table of Contents
 
 
-include::src/about-arc42.adoc[]
+include::src/_about-arc42.adoc[]
 
 // horizontal line
 ***
 
 
-
-
-
-// numbering from here on
-:numbered:
 
 <<<<
 // 1. Introduction and Goals

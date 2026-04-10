@@ -18,7 +18,7 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-import static com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper.ASM_OPCODES;
+import static com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext.ASM_OPCODES;
 import static org.objectweb.asm.Opcodes.ATHROW;
 
 @Slf4j
@@ -30,17 +30,17 @@ public class MethodDataFlowVisitor extends MethodVisitor {
 
     private final MethodNode methodNode;
 
-    private final VisitorHelper visitorHelper;
+    private final ClassFileVisitorContext classFileVisitorContext;
 
     private final Analyzer<BasicValue> analyzer;
 
     MethodDataFlowVisitor(Type type, MethodDescriptor methodDescriptor, MethodNode methodNode, MethodDataFlowVerifier methodDataFlowVerifier,
-        VisitorHelper visitorHelper) {
+        ClassFileVisitorContext classFileVisitorContext) {
         super(ASM_OPCODES, methodNode);
         this.type = type;
         this.methodDescriptor = methodDescriptor;
         this.methodNode = methodNode;
-        this.visitorHelper = visitorHelper;
+        this.classFileVisitorContext = classFileVisitorContext;
         this.analyzer = new Analyzer<>(methodDataFlowVerifier);
     }
 
@@ -80,9 +80,8 @@ public class MethodDataFlowVisitor extends MethodVisitor {
         } else {
             String throwableType = SignatureHelper.getType(frame.getStack(0)
                 .getType());
-            TypeDescriptor typeDescriptor = visitorHelper.resolveType(throwableType)
-                .getTypeDescriptor();
-            Store store = visitorHelper.getStore();
+            TypeDescriptor typeDescriptor = classFileVisitorContext.resolveType(throwableType);
+            Store store = classFileVisitorContext.getStore();
             store.addDescriptorType(typeDescriptor, ThrowableDescriptor.class);
             ThrowsDescriptor throwsDescriptor = store.create(methodDescriptor, ThrowsDescriptor.class, typeDescriptor);
             throwsDescriptor.setDeclaration(false);

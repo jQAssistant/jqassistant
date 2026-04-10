@@ -1,6 +1,15 @@
 version: 2
 updates:
   - package-ecosystem: 'maven'
+    target-branch: "main"
+    directory: '/'
+    schedule:
+      interval: 'daily'
+      time: '00:00'
+    open-pull-requests-limit: 15
+
+  - package-ecosystem: 'maven'
+    target-branch: "release/3.0"
     directory: '/'
     schedule:
       interval: 'daily'

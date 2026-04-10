@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -259,28 +259,29 @@ class TypeResolverIT extends AbstractJavaPluginIT {
         final String resource = "/" + A.class.getName()
             .replace(".", "/") + ".class";
         final File file = new File(directory, resource);
-        scanClasses(B.class);
-        List<? extends FileDescriptor> descriptors = execute("a1", new ScanClassPathOperation() {
-            @Override
-            public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                List<FileDescriptor> result = new ArrayList<>();
-                FileDescriptor fileDescriptor1 = scanner.scan(file, "/1.0" + resource, JavaScope.CLASSPATH);
-                FileDescriptor fileDescriptor2 = scanner.scan(file, resource, JavaScope.CLASSPATH);
-                result.add(fileDescriptor1);
-                result.add(fileDescriptor2);
-                return result;
-            }
+        scanClasses("a1", B.class);
+        execute("a1", (artifact, scanner) -> {
+            List<FileDescriptor> result = new ArrayList<>();
+            FileDescriptor fileDescriptor1 = scanner.scan(file, "/1.0" + resource, JavaScope.CLASSPATH);
+            FileDescriptor fileDescriptor2 = scanner.scan(file, resource, JavaScope.CLASSPATH);
+            result.add(fileDescriptor1);
+            result.add(fileDescriptor2);
+            return result;
         });
         store.beginTransaction();
+        List<? extends TypeClassFileDescriptor> descriptors = query("MATCH (t:Type) WHERE t.fqn ends with '.A' RETURN t ORDER BY t.fqn").getColumn("t");
+
         assertThat(descriptors.size()).isEqualTo(2);
-        FileDescriptor fileDescriptor1 = descriptors.get(0);
+
+        FileDescriptor fileDescriptor0 = descriptors.get(0);
+        assertThat(fileDescriptor0.getFileName()).isEqualTo(resource);
+        assertThat(fileDescriptor0).isInstanceOf(TypeDescriptor.class);
+        assertThat(((TypeDescriptor) fileDescriptor0).getFullQualifiedName()).isEqualTo(A.class.getName());
+
+        FileDescriptor fileDescriptor1 = descriptors.get(1);
         assertThat(fileDescriptor1.getFileName()).isEqualTo("/1.0" + resource);
         assertThat(fileDescriptor1).isInstanceOf(TypeDescriptor.class);
         assertThat(((TypeDescriptor) fileDescriptor1).getFullQualifiedName()).isEqualTo(A.class.getName());
-        FileDescriptor fileDescriptor2 = descriptors.get(1);
-        assertThat(fileDescriptor2.getFileName()).isEqualTo(resource);
-        assertThat(fileDescriptor2).isInstanceOf(TypeDescriptor.class);
-        assertThat(((TypeDescriptor) fileDescriptor2).getFullQualifiedName()).isEqualTo(A.class.getName());
         store.commitTransaction();
     }
 }

@@ -1,23 +1,23 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDeclaresTypeParameter;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext;
 
 import org.objectweb.asm.signature.SignatureVisitor;
 
 public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends SignatureVisitor {
 
-    protected final VisitorHelper visitorHelper;
+    protected final ClassFileVisitorContext classFileVisitorContext;
 
     protected final T descriptor;
 
-    protected final TypeCache.CachedType containingType;
+    protected final TypeClassFileDescriptor containingType;
 
     protected GenericDeclarationDescriptor genericDeclaration;
 
@@ -25,9 +25,9 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
 
     private TypeVariableDescriptor currentTypeParameter;
 
-    protected AbstractGenericDeclarationVisitor(VisitorHelper visitorHelper, T descriptor, TypeCache.CachedType containingType) {
-        super(VisitorHelper.ASM_OPCODES);
-        this.visitorHelper = visitorHelper;
+    protected AbstractGenericDeclarationVisitor(ClassFileVisitorContext classFileVisitorContext, T descriptor, TypeClassFileDescriptor containingType) {
+        super(ClassFileVisitorContext.ASM_OPCODES);
+        this.classFileVisitorContext = classFileVisitorContext;
         this.descriptor = descriptor;
         this.containingType = containingType;
     }
@@ -35,13 +35,13 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
     @Override
     public final void visitFormalTypeParameter(String name) {
         if (this.genericDeclaration == null) {
-            this.genericDeclaration = visitorHelper.getStore()
+            this.genericDeclaration = classFileVisitorContext.getStore()
                 .addDescriptorType(descriptor, GenericDeclarationDescriptor.class);
         }
         this.currentTypeParameter = resolveDeclaredTypeParameter();
         this.currentTypeParameter.setName(name);
         this.currentTypeParameterIndex++;
-        visitorHelper.getTypeVariableResolver()
+        classFileVisitorContext.getTypeVariableResolver()
             .declare(this.currentTypeParameter);
     }
 
@@ -58,9 +58,9 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
             }
         }
         // Create a new type parameter declaration.
-        TypeVariableDescriptor typeParameter = visitorHelper.getStore()
+        TypeVariableDescriptor typeParameter = classFileVisitorContext.getStore()
             .create(TypeVariableDescriptor.class);
-        GenericDeclarationDeclaresTypeParameter declaration = visitorHelper.getStore()
+        GenericDeclarationDeclaresTypeParameter declaration = classFileVisitorContext.getStore()
             .create(this.genericDeclaration, GenericDeclarationDeclaresTypeParameter.class, typeParameter);
         declaration.setIndex(this.currentTypeParameterIndex);
         return typeParameter;
@@ -68,7 +68,7 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
 
     @Override
     public final SignatureVisitor visitClassBound() {
-        return new AbstractBoundVisitor(visitorHelper, containingType) {
+        return new AbstractBoundVisitor(classFileVisitorContext, containingType) {
             @Override
             protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 currentTypeParameter.setRawType(rawTypeBound);
@@ -80,7 +80,7 @@ public class AbstractGenericDeclarationVisitor<T extends Descriptor> extends Sig
 
     @Override
     public final SignatureVisitor visitInterfaceBound() {
-        return new AbstractBoundVisitor(visitorHelper, containingType) {
+        return new AbstractBoundVisitor(classFileVisitorContext, containingType) {
             @Override
             protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                 currentTypeParameter.setRawType(rawTypeBound);

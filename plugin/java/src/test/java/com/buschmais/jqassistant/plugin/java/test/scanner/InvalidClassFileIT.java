@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -55,15 +56,15 @@ class InvalidClassFileIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void validClass() throws IOException {
+    void validClass() {
         scanClasses(InvalidClassFileIT.class);
         store.beginTransaction();
         List<FileDescriptor> fileDescriptors = query("MATCH (c:Class:File) RETURN c").getColumn("c");
         assertThat(fileDescriptors.size()).isEqualTo(1);
         FileDescriptor fileDescriptor = fileDescriptors.get(0);
-        assertThat(fileDescriptor).isInstanceOf(ClassFileDescriptor.class);
-        ClassFileDescriptor classFileDescriptor = (ClassFileDescriptor) fileDescriptor;
-        assertThat(classFileDescriptor.isValid()).isEqualTo(true);
+        assertThat(fileDescriptor).isInstanceOf(TypeClassFileDescriptor.class);
+        TypeClassFileDescriptor typeClassFileDescriptor = (TypeClassFileDescriptor) fileDescriptor;
+        assertThat(typeClassFileDescriptor.isValid()).isEqualTo(true);
         store.commitTransaction();
 
     }

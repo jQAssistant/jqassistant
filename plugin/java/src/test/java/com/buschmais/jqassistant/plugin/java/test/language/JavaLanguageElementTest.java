@@ -127,23 +127,23 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
     }
 
     @Test
-    void typeDependsOnElement() {
-        TypeDescriptor dependent = getTypeDescriptor();
-        when(dependent.getName()).thenReturn("A");
-        TypeDescriptor dependency = mock(TypeDescriptor.class);
-        when(dependency.getName()).thenReturn("B");
-        TypeDependsOnDescriptor dependsOnDescriptor = mock(TypeDependsOnDescriptor.class);
+    void classFileDependsOnElement() {
+        TypeClassFileDescriptor dependent = getTypeDescriptor();
+        when(dependent.getFullQualifiedName()).thenReturn("A");
+        TypeClassFileDescriptor dependency = mock(TypeClassFileDescriptor.class);
+        when(dependency.getFullQualifiedName()).thenReturn("B");
+        ClassFileDependsOnDescriptor dependsOnDescriptor = mock(ClassFileDependsOnDescriptor.class);
         when(dependsOnDescriptor.getDependent()).thenReturn(dependent);
         when(dependsOnDescriptor.getDependency()).thenReturn(dependency);
 
-        verify(dependsOnDescriptor, TypeDepdendency, "A->B", "/com/buschmais/Test.java");
+        verify(dependsOnDescriptor, ClassFileDepdendency, "A->B", "/com/buschmais/Test.java");
     }
 
-    private TypeDescriptor getTypeDescriptor() {
+    private TypeClassFileDescriptor getTypeDescriptor() {
         PackageDescriptor packageDescriptor = mock(PackageDescriptor.class);
         doReturn("/com/buschmais").when(packageDescriptor)
             .getFileName();
-        ClassFileDescriptor descriptor = mock(ClassFileDescriptor.class);
+        TypeClassFileDescriptor descriptor = mock(TypeClassFileDescriptor.class);
         doReturn("/com/buschmais/Test.class").when(descriptor)
             .getFileName();
         doReturn("Test.java").when(descriptor)

@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 
-public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>, ClassFileDescriptor> {
+public class ClassResourceScannerPlugin extends AbstractScannerPlugin<Class<?>, ClassFileDescriptor> {
 
     @Override
     public boolean accepts(Class<?> item, String path, Scope scope) throws IOException {

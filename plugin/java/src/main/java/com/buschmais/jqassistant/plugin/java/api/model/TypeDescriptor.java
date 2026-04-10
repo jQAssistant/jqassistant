@@ -9,7 +9,6 @@ import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
-import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
@@ -65,12 +64,6 @@ public interface TypeDescriptor extends JavaByteCodeDescriptor, PackageMemberDes
     @Outgoing
     @Declares
     Set<TypeDescriptor> getDeclaredInnerClasses();
-
-    @Outgoing
-    List<TypeDependsOnDescriptor> getDependencies();
-
-    @Incoming
-    List<TypeDependsOnDescriptor> getDependents();
 
     List<ThrowsDescriptor> getThrownBy();
 

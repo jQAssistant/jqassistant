@@ -9,7 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 public interface RequiresDescriptor extends AccessModifierDescriptor, Descriptor {
 
     @Outgoing
-    ModuleDescriptor getRequiringModule();
+    ModuleClassFileDescriptor getRequiringModule();
 
     @Incoming
     ModuleDescriptor getRequiredModule();

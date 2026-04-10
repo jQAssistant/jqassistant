@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.delegate;
 
-import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext;
 
 import org.objectweb.asm.*;
 
@@ -11,7 +11,7 @@ public class DelegatingMethodVisitor extends MethodVisitor {
     private final Delegator<MethodVisitor> delegator;
 
     public DelegatingMethodVisitor(MethodVisitor... visitors) {
-        super(VisitorHelper.ASM_OPCODES);
+        super(ClassFileVisitorContext.ASM_OPCODES);
         this.delegator = new Delegator<>(asList(visitors));
     }
 

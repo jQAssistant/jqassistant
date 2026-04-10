@@ -7,32 +7,28 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Type;
 
 public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
 
-    private VisitorHelper visitorHelper;
+    private final ClassFileVisitorContext classFileVisitorContext;
+
+    private final D descriptor;
 
     private ArrayValueDescriptor arrayValueDescriptor;
-
-    private TypeCache.CachedType containingType;
-
-    private D descriptor;
 
     /**
      * Constructor.
      *
-     * @param visitorHelper
-     *            The {@link VisitorHelper}.
+     * @param classFileVisitorContext
+     *     The {@link ClassFileVisitorContext}.
      */
-    protected AbstractAnnotationVisitor(TypeCache.CachedType containingType, D descriptor, VisitorHelper visitorHelper) {
-        super(VisitorHelper.ASM_OPCODES);
-        this.containingType = containingType;
+    protected AbstractAnnotationVisitor(D descriptor, ClassFileVisitorContext classFileVisitorContext) {
+        super(ClassFileVisitorContext.ASM_OPCODES);
         this.descriptor = descriptor;
-        this.visitorHelper = visitorHelper;
+        this.classFileVisitorContext = classFileVisitorContext;
     }
 
     @Override
@@ -40,11 +36,12 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
         if (value instanceof Type) {
             String type = SignatureHelper.getType((Type) value);
             ClassValueDescriptor valueDescriptor = createValue(ClassValueDescriptor.class, name);
-            valueDescriptor.setValue(visitorHelper.resolveType(type, containingType).getTypeDescriptor());
+            valueDescriptor.setValue(classFileVisitorContext.resolveType(type));
             addValue(name, valueDescriptor);
         } else {
             PrimitiveValueDescriptor valueDescriptor = createValue(PrimitiveValueDescriptor.class, name);
-            TypeDescriptor typeDescriptor = visitorHelper.resolveType(value.getClass().getName(), containingType).getTypeDescriptor();
+            TypeDescriptor typeDescriptor = classFileVisitorContext.resolveType(value.getClass()
+                .getName());
             valueDescriptor.setType(typeDescriptor);
             valueDescriptor.setValue(value);
             addValue(name, valueDescriptor);
@@ -54,9 +51,9 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
     @Override
     public void visitEnum(final String name, final String desc, final String value) {
         EnumValueDescriptor valueDescriptor = createValue(EnumValueDescriptor.class, name);
-        TypeCache.CachedType cachedTypeDescriptor = visitorHelper.resolveType(SignatureHelper.getType(desc), containingType);
-        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(cachedTypeDescriptor, SignatureHelper.getFieldSignature(value, desc));
-        valueDescriptor.setType(visitorHelper.resolveType(Enum.class.getName(), containingType).getTypeDescriptor());
+        TypeDescriptor typeDescriptor = classFileVisitorContext.resolveType(SignatureHelper.getType(desc));
+        FieldDescriptor fieldDescriptor = classFileVisitorContext.getFieldDescriptor(typeDescriptor, SignatureHelper.getFieldSignature(value, desc));
+        valueDescriptor.setType(classFileVisitorContext.resolveType(Enum.class.getName()));
         valueDescriptor.setValue(fieldDescriptor);
         addValue(name, valueDescriptor);
     }
@@ -64,9 +61,9 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
     @Override
     public AnnotationValueVisitor visitAnnotation(final String name, final String desc) {
         AnnotationValueDescriptor valueDescriptor = createValue(AnnotationValueDescriptor.class, name);
-        valueDescriptor.setType(visitorHelper.resolveType(SignatureHelper.getType(desc), containingType).getTypeDescriptor());
+        valueDescriptor.setType(classFileVisitorContext.resolveType(SignatureHelper.getType(desc)));
         addValue(name, valueDescriptor);
-        return new AnnotationValueVisitor(containingType, valueDescriptor, visitorHelper);
+        return new AnnotationValueVisitor(valueDescriptor, classFileVisitorContext);
     }
 
     @Override
@@ -82,11 +79,11 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
      * Create a value descriptor of given type and name and initializes it.
      *
      * @param type
-     *            The class type.
+     *     The class type.
      * @param name
-     *            The name
+     *     The name
      * @param <T>
-     *            The type.
+     *     The type.
      * @return The initialized descriptor.
      */
     private <T extends ValueDescriptor<?>> T createValue(Class<T> type, String name) {
@@ -99,7 +96,7 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
         } else {
             valueName = name;
         }
-        T valueDescriptor = visitorHelper.getValueDescriptor(type);
+        T valueDescriptor = classFileVisitorContext.getValueDescriptor(type);
         valueDescriptor.setName(valueName);
         return valueDescriptor;
     }
@@ -108,9 +105,9 @@ public abstract class AbstractAnnotationVisitor<D> extends AnnotationVisitor {
      * Add the descriptor as value to the current annotation or array value.
      *
      * @param name
-     *            The name.
+     *     The name.
      * @param value
-     *            The value.
+     *     The value.
      */
     private void addValue(String name, ValueDescriptor<?> value) {
         if (arrayValueDescriptor != null && name == null) {

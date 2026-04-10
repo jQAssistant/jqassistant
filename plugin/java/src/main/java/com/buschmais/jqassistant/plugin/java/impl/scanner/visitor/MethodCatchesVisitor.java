@@ -24,16 +24,16 @@ class MethodCatchesVisitor extends MethodVisitor {
 
     private final MethodDescriptor methodDescriptor;
 
-    private final VisitorHelper visitorHelper;
+    private final ClassFileVisitorContext classFileVisitorContext;
 
-    private List<TryCatchBlock> tryCatchBlocks = new ArrayList<>();
+    private final List<TryCatchBlock> tryCatchBlocks = new ArrayList<>();
 
-    private Map<Label, Integer> lineNumbers = new HashMap<>();
+    private final Map<Label, Integer> lineNumbers = new HashMap<>();
 
-    public MethodCatchesVisitor(MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
-        super(VisitorHelper.ASM_OPCODES);
+    public MethodCatchesVisitor(MethodDescriptor methodDescriptor, ClassFileVisitorContext classFileVisitorContext) {
+        super(ClassFileVisitorContext.ASM_OPCODES);
         this.methodDescriptor = methodDescriptor;
-        this.visitorHelper = visitorHelper;
+        this.classFileVisitorContext = classFileVisitorContext;
     }
 
     @Override
@@ -52,11 +52,10 @@ class MethodCatchesVisitor extends MethodVisitor {
     public void visitEnd() {
         for (TryCatchBlock tryCatchBlock : tryCatchBlocks) {
             String throwableType = SignatureHelper.getObjectType(tryCatchBlock.getType());
-            TypeDescriptor typeDescriptor = visitorHelper.resolveType(throwableType)
-                .getTypeDescriptor();
-            visitorHelper.getStore()
+            TypeDescriptor typeDescriptor = classFileVisitorContext.resolveType(throwableType);
+            classFileVisitorContext.getStore()
                 .addDescriptorType(typeDescriptor, ThrowableDescriptor.class);
-            CatchesDescriptor catchesDescriptor = visitorHelper.getStore()
+            CatchesDescriptor catchesDescriptor = classFileVisitorContext.getStore()
                 .create(methodDescriptor, CatchesDescriptor.class, typeDescriptor);
             catchesDescriptor.setFirstLineNumber(lineNumbers.get(tryCatchBlock.getStart()));
             catchesDescriptor.setLastLineNumber(lineNumbers.get(tryCatchBlock.getEnd()));

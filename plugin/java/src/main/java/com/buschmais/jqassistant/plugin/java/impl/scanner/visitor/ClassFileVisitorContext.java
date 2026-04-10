@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -8,18 +9,19 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerConfiguration;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.TypeVariableResolver;
 
+import lombok.Getter;
+import org.jspecify.annotations.NonNull;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 
 /**
  * Class containing helper methods for ASM visitors.
  */
-public class VisitorHelper {
+public class ClassFileVisitorContext {
 
     public static final int ASM_OPCODES = Opcodes.ASM9;
 
@@ -28,11 +30,20 @@ public class VisitorHelper {
      */
     private static final String CONSTRUCTOR_METHOD = "void <init>";
 
+    private final ClassFileDescriptor classFileDescriptor;
+
+    @Getter
     private final ScannerContext scannerContext;
 
+    @Getter
     private final ClassFileScannerConfiguration configuration;
 
+    @Getter
     private final TypeVariableResolver typeVariableResolver;
+
+    private final Map<TypeDescriptor, Integer> dependencyCache = new HashMap<>();
+
+    private final Map<TypeDescriptor, Map<String, MemberDescriptor>> memberCache = new HashMap<>();
 
     /**
      * Constructor.
@@ -40,27 +51,17 @@ public class VisitorHelper {
      * @param scannerContext
      *     The scanner context
      * @param configuration
+     *     The configuration.
      */
-    public VisitorHelper(ScannerContext scannerContext, ClassFileScannerConfiguration configuration) {
+    public ClassFileVisitorContext(ClassFileDescriptor classFileDescriptor, ScannerContext scannerContext, ClassFileScannerConfiguration configuration) {
+        this.classFileDescriptor = classFileDescriptor;
         this.scannerContext = scannerContext;
         this.configuration = configuration;
         this.typeVariableResolver = new TypeVariableResolver();
     }
 
-    public ScannerContext getScannerContext() {
-        return scannerContext;
-    }
-
-    public ClassFileScannerConfiguration getConfiguration() {
-        return configuration;
-    }
-
     public Store getStore() {
         return scannerContext.getStore();
-    }
-
-    public TypeVariableResolver getTypeVariableResolver() {
-        return typeVariableResolver;
     }
 
     /*
@@ -70,22 +71,12 @@ public class VisitorHelper {
      * @param dependentType The containing type which depends on the resolved type.
      * @return The resolved CachedType.
      */
-    public TypeCache.CachedType resolveType(String fullQualifiedName, TypeCache.CachedType<? extends ClassFileDescriptor> dependentType) {
-        TypeCache.CachedType<?> cachedType = resolveType(fullQualifiedName);
-        if (!dependentType.equals(cachedType)) {
-            dependentType.addDependency(cachedType.getTypeDescriptor());
+    public TypeDescriptor resolveType(String fullQualifiedName) {
+        TypeDescriptor dependency = getTypeResolver().resolve(fullQualifiedName, scannerContext);
+        if (!classFileDescriptor.equals(dependency)) {
+            dependencyCache.compute(dependency, (typeDescriptor, integer) -> integer == null ? 1 : integer + 1);
         }
-        return cachedType;
-    }
-
-    /*
-     * Return the type descriptor for the given type name.
-     *
-     * @param typeName The full qualified name of the type (e.g. java.lang.Object).
-     * @return The resolved CachedType.
-     */
-    public TypeCache.CachedType<?> resolveType(String fullQualifiedName) {
-        return getTypeResolver().resolve(fullQualifiedName, scannerContext);
+        return dependency;
     }
 
     /*
@@ -95,7 +86,7 @@ public class VisitorHelper {
      *
      * @param type The expected type.
      */
-    <T extends ClassFileDescriptor> TypeCache.CachedType<T> createType(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType) {
+    <T extends TypeClassFileDescriptor> T createType(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType) {
         return getTypeResolver().create(fullQualifiedName, fileDescriptor, descriptorType, scannerContext);
     }
 
@@ -119,30 +110,67 @@ public class VisitorHelper {
     /**
      * Return the method descriptor for the given type and method signature.
      *
-     * @param cachedType
-     *            The containing type.
+     * @param typeDescriptor
+     *     The containing type.
      * @param signature
-     *            The method signature.
+     *     The method signature.
      * @return The method descriptor.
      */
-    MethodDescriptor getMethodDescriptor(TypeCache.CachedType<?> cachedType, String signature) {
-        MethodDescriptor methodDescriptor = cachedType.getMethod(signature);
-        if (methodDescriptor == null) {
-            if (signature.startsWith(CONSTRUCTOR_METHOD)) {
-                methodDescriptor = scannerContext.getStore().create(ConstructorDescriptor.class);
+    MethodDescriptor getMethodDescriptor(TypeDescriptor typeDescriptor, String signature) {
+        Map<String, MemberDescriptor> membersPerOfType = getMembersOfType(typeDescriptor);
+        return (MethodDescriptor) membersPerOfType.computeIfAbsent(signature, s -> {
+            MethodDescriptor methodDescriptor;
+            if (s.startsWith(CONSTRUCTOR_METHOD)) {
+                methodDescriptor = scannerContext.getStore()
+                    .create(ConstructorDescriptor.class);
             } else {
-                methodDescriptor = scannerContext.getStore().create(MethodDescriptor.class);
+                methodDescriptor = scannerContext.getStore()
+                    .create(MethodDescriptor.class);
             }
-            methodDescriptor.setSignature(signature);
-            cachedType.addMember(signature, methodDescriptor);
-        }
-        return methodDescriptor;
+            methodDescriptor.setSignature(s);
+            typeDescriptor.getDeclaredMethods()
+                .add(methodDescriptor);
+            return methodDescriptor;
+        });
+    }
+
+    /**
+     * Return the field descriptor for the given type and field signature.
+     *
+     * @param typeDescriptor
+     *     The containing type.
+     * @param signature
+     *     The field signature.
+     * @return The field descriptor.
+     */
+    FieldDescriptor getFieldDescriptor(TypeDescriptor typeDescriptor, String signature) {
+        Map<String, MemberDescriptor> membersOfType = getMembersOfType(typeDescriptor);
+        return (FieldDescriptor) membersOfType.computeIfAbsent(signature, s -> {
+            FieldDescriptor fieldDescriptor = scannerContext.getStore()
+                .create(FieldDescriptor.class);
+            fieldDescriptor.setSignature(s);
+            typeDescriptor.getDeclaredFields()
+                .add(fieldDescriptor);
+            return fieldDescriptor;
+        });
+    }
+
+    private @NonNull Map<String, MemberDescriptor> getMembersOfType(TypeDescriptor typeDescriptor) {
+        return memberCache.computeIfAbsent(typeDescriptor, t -> {
+            Map<String, MemberDescriptor> members = new HashMap<>();
+            for (MemberDescriptor memberDescriptor : typeDescriptor.getDeclaredMembers()) {
+                members.put(memberDescriptor.getSignature(), memberDescriptor);
+            }
+            return members;
+        });
     }
 
     public ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
-        ParameterDescriptor parameterDescriptor = scannerContext.getStore().create(ParameterDescriptor.class);
+        ParameterDescriptor parameterDescriptor = scannerContext.getStore()
+            .create(ParameterDescriptor.class);
         parameterDescriptor.setIndex(index);
-        methodDescriptor.getParameters().add(parameterDescriptor);
+        methodDescriptor.getParameters()
+            .add(parameterDescriptor);
         return parameterDescriptor;
     }
 
@@ -159,14 +187,15 @@ public class VisitorHelper {
      * Add a invokes relation between two methods.
      *
      * @param methodDescriptor
-     *            The invoking method.
+     *     The invoking method.
      * @param lineNumber
-     *            The line number.
+     *     The line number.
      * @param invokedMethodDescriptor
-     *            The invoked method.
+     *     The invoked method.
      */
     void addInvokes(MethodDescriptor methodDescriptor, final Integer lineNumber, MethodDescriptor invokedMethodDescriptor) {
-        InvokesDescriptor invokesDescriptor = scannerContext.getStore().create(methodDescriptor, InvokesDescriptor.class, invokedMethodDescriptor);
+        InvokesDescriptor invokesDescriptor = scannerContext.getStore()
+            .create(methodDescriptor, InvokesDescriptor.class, invokedMethodDescriptor);
         invokesDescriptor.setLineNumber(lineNumber);
     }
 
@@ -174,14 +203,15 @@ public class VisitorHelper {
      * Add a reads relation between a method and a field.
      *
      * @param methodDescriptor
-     *            The method.
+     *     The method.
      * @param lineNumber
-     *            The line number.
+     *     The line number.
      * @param fieldDescriptor
-     *            The field.
+     *     The field.
      */
     void addReads(MethodDescriptor methodDescriptor, final Integer lineNumber, FieldDescriptor fieldDescriptor) {
-        ReadsDescriptor readsDescriptor = scannerContext.getStore().create(methodDescriptor, ReadsDescriptor.class, fieldDescriptor);
+        ReadsDescriptor readsDescriptor = scannerContext.getStore()
+            .create(methodDescriptor, ReadsDescriptor.class, fieldDescriptor);
         readsDescriptor.setLineNumber(lineNumber);
     }
 
@@ -189,47 +219,30 @@ public class VisitorHelper {
      * Add a writes relation between a method and a field.
      *
      * @param methodDescriptor
-     *            The method.
+     *     The method.
      * @param lineNumber
-     *            The line number.
+     *     The line number.
      * @param fieldDescriptor
-     *            The field.
+     *     The field.
      */
     void addWrites(MethodDescriptor methodDescriptor, final Integer lineNumber, FieldDescriptor fieldDescriptor) {
-        WritesDescriptor writesDescriptor = scannerContext.getStore().create(methodDescriptor, WritesDescriptor.class, fieldDescriptor);
+        WritesDescriptor writesDescriptor = scannerContext.getStore()
+            .create(methodDescriptor, WritesDescriptor.class, fieldDescriptor);
         writesDescriptor.setLineNumber(lineNumber);
     }
 
     /**
      * Return the field descriptor for the given type and field signature.
      *
-     * @param cachedType
-     *            The containing type.
-     * @param signature
-     *            The field signature.
-     * @return The field descriptor.
-     */
-    FieldDescriptor getFieldDescriptor(TypeCache.CachedType<?> cachedType, String signature) {
-        FieldDescriptor fieldDescriptor = cachedType.getField(signature);
-        if (fieldDescriptor == null) {
-            fieldDescriptor = scannerContext.getStore().create(FieldDescriptor.class);
-            fieldDescriptor.setSignature(signature);
-            cachedType.addMember(signature, fieldDescriptor);
-        }
-        return fieldDescriptor;
-    }
-
-    /**
-     * Return the field descriptor for the given type and field signature.
-     *
      * @param name
-     *            The variable name.
+     *     The variable name.
      * @param signature
-     *            The variable signature.
+     *     The variable signature.
      * @return The field descriptor.
      */
     VariableDescriptor getVariableDescriptor(String name, String signature) {
-        VariableDescriptor variableDescriptor = scannerContext.getStore().create(VariableDescriptor.class);
+        VariableDescriptor variableDescriptor = scannerContext.getStore()
+            .create(VariableDescriptor.class);
         variableDescriptor.setName(name);
         variableDescriptor.setSignature(signature);
         return variableDescriptor;
@@ -239,13 +252,14 @@ public class VisitorHelper {
      * Creates a {@link ValueDescriptor}.
      *
      * @param valueDescriptorType
-     *            The type of the value descriptor.
+     *     The type of the value descriptor.
      * @param <T>
-     *            The type of the value descriptor.
+     *     The type of the value descriptor.
      * @return The value descriptor.
      */
     <T extends ValueDescriptor<?>> T getValueDescriptor(Class<T> valueDescriptorType) {
-        return scannerContext.getStore().create(valueDescriptorType);
+        return scannerContext.getStore()
+            .create(valueDescriptorType);
     }
 
     /**
@@ -253,33 +267,35 @@ public class VisitorHelper {
      * descriptor.
      *
      * @param annotatedDescriptor
-     *            The annotated descriptor.
+     *     The annotated descriptor.
      * @param typeName
-     *            The type name of the annotation.
+     *     The type name of the annotation.
      * @return The annotation descriptor.
      */
-    AnnotationVisitor addAnnotation(TypeCache.CachedType containingDescriptor, AnnotatedDescriptor annotatedDescriptor, String typeName) {
+    AnnotationVisitor addAnnotation(AnnotatedDescriptor annotatedDescriptor, String typeName) {
         if (typeName == null) {
             return null;
         }
         if (jQASuppress.class.getName()
-            .equals(typeName) || com.buschmais.jqassistant.plugin.java.api.jQASuppress.class.getName().equals(typeName)) {
+            .equals(typeName) || com.buschmais.jqassistant.plugin.java.api.jQASuppress.class.getName()
+            .equals(typeName)) {
             return new SuppressAnnotationVisitor(annotatedDescriptor, this);
         }
-        TypeDescriptor type = resolveType(typeName, containingDescriptor).getTypeDescriptor();
-        AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class);
+        TypeDescriptor type = resolveType(typeName);
+        AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore()
+            .create(AnnotationValueDescriptor.class);
         annotationDescriptor.setType(type);
-        annotatedDescriptor.getAnnotatedBy().add(annotationDescriptor);
-        return new AnnotationValueVisitor(containingDescriptor, annotationDescriptor, this);
+        annotatedDescriptor.getAnnotatedBy()
+            .add(annotationDescriptor);
+        return new AnnotationValueVisitor(annotationDescriptor, this);
     }
 
-    public void storeDependencies(TypeCache.CachedType<?> cachedType) {
-        Map<TypeDescriptor, Integer> dependencies = cachedType.getDependencies();
-        for (Map.Entry<TypeDescriptor, Integer> entry : dependencies.entrySet()) {
+    public void flush() {
+        for (Map.Entry<TypeDescriptor, Integer> entry : dependencyCache.entrySet()) {
             TypeDescriptor dependency = entry.getKey();
             final Integer weight = entry.getValue();
-            TypeDescriptor dependent = cachedType.getTypeDescriptor();
-            TypeDependsOnDescriptor dependsOnDescriptor = scannerContext.getStore().create(dependent, TypeDependsOnDescriptor.class, dependency);
+            ClassFileDependsOnDescriptor dependsOnDescriptor = scannerContext.getStore()
+                .create(classFileDescriptor, ClassFileDependsOnDescriptor.class, dependency);
             dependsOnDescriptor.setWeight(weight);
         }
     }

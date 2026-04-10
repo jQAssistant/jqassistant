@@ -2,8 +2,8 @@ package com.buschmais.jqassistant.plugin.java.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 /**
@@ -29,8 +29,7 @@ public interface TypeResolver {
      * @param scannerContext
      *     The scanner context. @return The type descriptor.
      */
-    <T extends ClassFileDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType,
-        ScannerContext scannerContext);
+    <T extends TypeClassFileDescriptor> T create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType, ScannerContext scannerContext);
 
     /**
      * Resolve or create the descriptor for Java type name to be used as
@@ -41,7 +40,7 @@ public interface TypeResolver {
      * @param context
      *     The scanner context.
      */
-    TypeCache.CachedType<TypeDescriptor> resolve(String fullQualifiedName, ScannerContext context);
+    TypeDescriptor resolve(String fullQualifiedName, ScannerContext context);
 
     /**
      * Resolves a {@link FileDescriptor} from the class path.

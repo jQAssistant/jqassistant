@@ -5,7 +5,6 @@ import java.lang.invoke.LambdaMetafactory;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.AbstractBoundVisitor;
 
 import org.objectweb.asm.*;
@@ -17,7 +16,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodVisitor.class);
 
-    private static final String LAMBDA_META_FACTORY = Type.getType(LambdaMetafactory.class).getInternalName();
+    private static final String LAMBDA_META_FACTORY = Type.getType(LambdaMetafactory.class)
+        .getInternalName();
 
     /**
      * Annotation indicating a synthetic parameter of a method.
@@ -25,17 +25,18 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private static final String JAVA_LANG_SYNTHETIC = "java.lang.Synthetic";
     private static final String THIS = "this";
 
-    private TypeCache.CachedType containingType;
-    private MethodDescriptor methodDescriptor;
-    private VisitorHelper visitorHelper;
+    private final TypeClassFileDescriptor containingType;
+    private final MethodDescriptor methodDescriptor;
+    private final ClassFileVisitorContext classFileVisitorContext;
+
     private int syntheticParameters = 0;
     private Integer lineNumber = null;
 
-    protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
-        super(VisitorHelper.ASM_OPCODES);
+    protected MethodVisitor(TypeClassFileDescriptor containingType, MethodDescriptor methodDescriptor, ClassFileVisitorContext classFileVisitorContext) {
+        super(ClassFileVisitorContext.ASM_OPCODES);
         this.containingType = containingType;
         this.methodDescriptor = methodDescriptor;
-        this.visitorHelper = visitorHelper;
+        this.classFileVisitorContext = classFileVisitorContext;
     }
 
     @Override
@@ -47,33 +48,33 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
             syntheticParameters = Math.max(syntheticParameters, parameter + 1);
             return null;
         }
-        ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, parameter - syntheticParameters);
+        ParameterDescriptor parameterDescriptor = classFileVisitorContext.getParameterDescriptor(methodDescriptor, parameter - syntheticParameters);
         if (parameterDescriptor == null) {
-            LOGGER.warn("Cannot find parameter with index {} in method signature {}#{}", parameter - syntheticParameters, containingType.getTypeDescriptor()
+            LOGGER.warn("Cannot find parameter with index {} in method signature {}#{}", parameter - syntheticParameters, methodDescriptor.getDeclaringType()
                 .getFullQualifiedName(), methodDescriptor.getSignature());
             return null;
         }
-        return visitorHelper.addAnnotation(containingType, parameterDescriptor, SignatureHelper.getType(desc));
+        return classFileVisitorContext.addAnnotation(parameterDescriptor, SignatureHelper.getType(desc));
     }
 
     @Override
     public void visitTypeInsn(final int opcode, final String type) {
-        visitorHelper.resolveType(SignatureHelper.getObjectType(type), containingType);
+        classFileVisitorContext.resolveType(SignatureHelper.getObjectType(type));
     }
 
     @Override
     public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
         String fieldSignature = SignatureHelper.getFieldSignature(name, desc);
-        TypeCache.CachedType targetType = visitorHelper.resolveType(SignatureHelper.getObjectType(owner), containingType);
-        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(targetType, fieldSignature);
+        TypeDescriptor targetType = classFileVisitorContext.resolveType(SignatureHelper.getObjectType(owner));
+        FieldDescriptor fieldDescriptor = classFileVisitorContext.getFieldDescriptor(targetType, fieldSignature);
         switch (opcode) {
         case Opcodes.GETFIELD:
         case Opcodes.GETSTATIC:
-            visitorHelper.addReads(methodDescriptor, lineNumber, fieldDescriptor);
+            classFileVisitorContext.addReads(methodDescriptor, lineNumber, fieldDescriptor);
             break;
         case Opcodes.PUTFIELD:
         case Opcodes.PUTSTATIC:
-            visitorHelper.addWrites(methodDescriptor, lineNumber, fieldDescriptor);
+            classFileVisitorContext.addWrites(methodDescriptor, lineNumber, fieldDescriptor);
             break;
         }
     }
@@ -104,32 +105,33 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
      */
     private void invoke(String owner, String name, String desc) {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
-        TypeCache.CachedType targetType = visitorHelper.resolveType(SignatureHelper.getObjectType(owner), containingType);
-        MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(targetType, methodSignature);
-        visitorHelper.addInvokes(methodDescriptor, lineNumber, invokedMethodDescriptor);
+        TypeDescriptor targetType = classFileVisitorContext.resolveType(SignatureHelper.getObjectType(owner));
+        MethodDescriptor invokedMethodDescriptor = classFileVisitorContext.getMethodDescriptor(targetType, methodSignature);
+        classFileVisitorContext.addInvokes(methodDescriptor, lineNumber, invokedMethodDescriptor);
     }
 
     @Override
     public void visitLdcInsn(final Object cst) {
         if (cst instanceof Type) {
-            visitorHelper.resolveType(SignatureHelper.getType((Type) cst), containingType);
+            classFileVisitorContext.resolveType(SignatureHelper.getType((Type) cst));
         }
     }
 
     @Override
     public void visitMultiANewArrayInsn(final String desc, final int dims) {
-        visitorHelper.resolveType(SignatureHelper.getType(desc), containingType);
+        classFileVisitorContext.resolveType(SignatureHelper.getType(desc));
     }
 
     @Override
     public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
-        if (visitorHelper.getConfiguration().isIncludeLocalVariables() && !THIS.equals(name)) {
-            final VariableDescriptor variableDescriptor = visitorHelper.getVariableDescriptor(name, SignatureHelper.getFieldSignature(name, desc));
+        if (classFileVisitorContext.getConfiguration()
+            .isIncludeLocalVariables() && !THIS.equals(name)) {
+            final VariableDescriptor variableDescriptor = classFileVisitorContext.getVariableDescriptor(name, SignatureHelper.getFieldSignature(name, desc));
             if (signature == null) {
-                TypeDescriptor type = visitorHelper.resolveType(SignatureHelper.getType((desc)), containingType).getTypeDescriptor();
+                TypeDescriptor type = classFileVisitorContext.resolveType(SignatureHelper.getType((desc)));
                 variableDescriptor.setType(type);
             } else {
-                new SignatureReader(signature).accept(new AbstractBoundVisitor( visitorHelper, containingType) {
+                new SignatureReader(signature).accept(new AbstractBoundVisitor(classFileVisitorContext, containingType) {
                     @Override
                     protected void apply(TypeDescriptor rawTypeBound, BoundDescriptor bound) {
                         variableDescriptor.setType(rawTypeBound);
@@ -137,26 +139,27 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
                     }
                 });
             }
-            methodDescriptor.getVariables().add(variableDescriptor);
+            methodDescriptor.getVariables()
+                .add(variableDescriptor);
         }
     }
 
     @Override
     public AnnotationVisitor visitAnnotationDefault() {
-        return new AnnotationDefaultVisitor(containingType, this.methodDescriptor, visitorHelper);
+        return new AnnotationDefaultVisitor(this.methodDescriptor, classFileVisitorContext);
     }
 
     @Override
     public void visitTryCatchBlock(final Label start, final Label end, final Label handler, final String type) {
         if (type != null) {
             String fullQualifiedName = SignatureHelper.getObjectType(type);
-            visitorHelper.resolveType(fullQualifiedName, containingType);
+            classFileVisitorContext.resolveType(fullQualifiedName);
         }
     }
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        return visitorHelper.addAnnotation(containingType, methodDescriptor, SignatureHelper.getType(desc));
+        return classFileVisitorContext.addAnnotation(methodDescriptor, SignatureHelper.getType(desc));
     }
 
     @Override
@@ -166,6 +169,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitEnd() {
-        visitorHelper.getTypeVariableResolver().pop();
+        classFileVisitorContext.getTypeVariableResolver()
+            .pop();
     }
 }

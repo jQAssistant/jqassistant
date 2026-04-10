@@ -10,9 +10,9 @@ import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -79,7 +79,7 @@ class DependencyIT extends AbstractJavaPluginIT {
         List<Map<String, Object>> rows = query("MATCH (t1:Type)-[d:DEPENDS_ON]->(t2:Type) WHERE t1.fqn=$t1 and t2.fqn=$t2 RETURN d", params).getRows();
         assertThat(rows).hasSize(1);
         Map<String, Object> row = rows.get(0);
-        TypeDependsOnDescriptor dependsOn = (TypeDependsOnDescriptor) row.get("d");
+        ClassFileDependsOnDescriptor dependsOn = (ClassFileDependsOnDescriptor) row.get("d");
         assertThat(dependsOn.getWeight()).isEqualTo(7);
         store.commitTransaction();
     }

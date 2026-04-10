@@ -9,7 +9,7 @@
     </description>
     <model>
         <class>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.java.api.model.TypeDependsOnDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDependsOnDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</class>
@@ -32,7 +32,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.java.api.model.ModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.ModuleClassFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</class>
@@ -61,7 +61,7 @@
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.JarScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageDirectoryScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin</class>
-        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassTypeScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassResourceScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.PropertyFileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ManifestFileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ServiceLoaderFileScannerPlugin</class>

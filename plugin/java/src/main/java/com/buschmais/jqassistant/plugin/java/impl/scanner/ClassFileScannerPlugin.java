@@ -12,8 +12,8 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassVisitor;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitor;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext;
 
 import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
@@ -60,8 +60,8 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
         final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         ClassFileDescriptor classFileDescriptor = context.getStore()
             .addDescriptorType(fileDescriptor, ClassFileDescriptor.class);
-        VisitorHelper visitorHelper = new VisitorHelper(context, configuration);
-        final ClassVisitor visitor = new ClassVisitor(fileDescriptor, visitorHelper);
+        ClassFileVisitorContext classFileVisitorContext = new ClassFileVisitorContext(classFileDescriptor, context, configuration);
+        final ClassFileVisitor visitor = new ClassFileVisitor(classFileDescriptor, classFileVisitorContext);
         try (InputStream inputStream = file.createStream()) {
             new ClassReader(inputStream).accept(visitor, 0);
             classFileDescriptor.setValid(true);

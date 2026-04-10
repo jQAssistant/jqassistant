@@ -46,15 +46,15 @@ public @interface Java {
         },
         Type {
             @Override
-            public SourceProvider<ClassFileDescriptor> getSourceProvider() {
+            public SourceProvider<TypeClassFileDescriptor> getSourceProvider() {
                 return new SourceProvider<>() {
                     @Override
-                    public String getName(ClassFileDescriptor descriptor) {
+                    public String getName(TypeClassFileDescriptor descriptor) {
                         return descriptor.getFullQualifiedName();
                     }
 
                     @Override
-                    public Optional<FileLocation> getSourceLocation(ClassFileDescriptor descriptor) {
+                    public Optional<FileLocation> getSourceLocation(TypeClassFileDescriptor descriptor) {
                         return TypeSourceHelper.getSourceLocation(descriptor);
                     }
                 };
@@ -171,20 +171,20 @@ public @interface Java {
                 };
             }
         },
-        TypeDepdendency {
+        ClassFileDepdendency {
             @Override
-            public SourceProvider<TypeDependsOnDescriptor> getSourceProvider() {
+            public SourceProvider<ClassFileDependsOnDescriptor> getSourceProvider() {
                 return new SourceProvider<>() {
                     @Override
-                    public String getName(TypeDependsOnDescriptor descriptor) {
+                    public String getName(ClassFileDependsOnDescriptor descriptor) {
                         return descriptor.getDependent()
-                            .getName() + "->" + descriptor.getDependency()
-                            .getName();
+                            .getFullQualifiedName() + "->" + descriptor.getDependency()
+                            .getFullQualifiedName();
                     }
 
                     @Override
-                    public Optional<FileLocation> getSourceLocation(TypeDependsOnDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getDependent());
+                    public Optional<FileLocation> getSourceLocation(ClassFileDependsOnDescriptor descriptor) {
+                        return TypeSourceHelper.getSourceLocation(descriptor.getDependent(), empty(), empty());
                     }
                 };
             }
