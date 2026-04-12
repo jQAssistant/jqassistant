@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
@@ -192,7 +192,7 @@ class TypeResolverIT extends AbstractJavaPluginIT {
             .build());
         assertThat(testResult.getRows()
             .size()).isEqualTo(1);
-        ArtifactFileDescriptor a = (ArtifactFileDescriptor) testResult.getColumn("artifact")
+        ArtifactDescriptor a = (ArtifactDescriptor) testResult.getColumn("artifact")
             .get(0);
         assertThat(a.getFullQualifiedName()).isEqualTo("a2");
         store.commitTransaction();

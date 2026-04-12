@@ -8,6 +8,8 @@ import java.util.Set;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactFilter;
@@ -72,8 +74,8 @@ public class DependencyScanner {
                 FileDescriptor fileDescriptor = artifactResolver.resolve(new MavenArtifactCoordinates(artifact, false), FileDescriptor.class,
                     scanner.getContext());
                 // The dependency might have been scanned before within another module, so check
-                // if it is not yet a FileContainerDescriptor (directory, JAR, etc.)
-                if (artifactFile != null && !(fileDescriptor instanceof FileContainerDescriptor)) {
+                // if it is not yet a JAR (or more general: an Archive)
+                if (artifactFile != null && !(fileDescriptor instanceof ArchiveDescriptor)) {
                     scanner.scan(artifactFile, artifactFile.getAbsolutePath(), DefaultScope.NONE);
                 }
             }

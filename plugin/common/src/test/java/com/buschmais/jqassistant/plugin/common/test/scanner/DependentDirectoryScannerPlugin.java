@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirectoryDescriptor;
 
@@ -15,7 +16,7 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 /**
  * A dependent scanner plugin.
  */
-@Requires(DirectoryDescriptor.class)
+@Requires(FileContainerDescriptor.class)
 public class DependentDirectoryScannerPlugin extends AbstractScannerPlugin<File, DependentDirectoryDescriptor> {
 
     @Override

@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.core.report.api.model.Language;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 
@@ -33,7 +33,6 @@ public @interface Generic {
          * Named elements.
          */
         Named {
-
             @Override
             public SourceProvider<NamedDescriptor> getSourceProvider() {
                 return new SourceProvider<NamedDescriptor>() {
@@ -77,18 +76,20 @@ public @interface Generic {
         /**
          * Artifacts.
          */
-        ArtifactFile {
+        Artifact {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new SourceProvider<ArtifactFileDescriptor>() {
+                return new SourceProvider<ArtifactDescriptor>() {
                     @Override
-                    public String getName(ArtifactFileDescriptor descriptor) {
-                        return descriptor.getFullQualifiedName() != null ? descriptor.getFullQualifiedName() : descriptor.getFileName();
+                    public String getName(ArtifactDescriptor descriptor) {
+                        return descriptor.getFullQualifiedName();
                     }
 
                     @Override
-                    public Optional<FileLocation> getSourceLocation(ArtifactFileDescriptor descriptor) {
-                        return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
+                    public Optional<FileLocation> getSourceLocation(ArtifactDescriptor descriptor) {
+                        return descriptor instanceof FileDescriptor ?
+                            FileSourceHelper.getSourceLocation((FileDescriptor) descriptor, empty(), empty()) :
+                            empty();
                     }
                 };
             }

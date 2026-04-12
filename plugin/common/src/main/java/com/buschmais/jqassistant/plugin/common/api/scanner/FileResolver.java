@@ -19,7 +19,7 @@ public interface FileResolver {
      * @param requiredPath
      *            The path of the file to require, e.g. /com/acme/Example.class
      * @param containedPath
-     *            The internal path (e.g. within the the same artifact if
+     *            The internal path (e.g. within the same artifact if
      *            applicable), e.g. /WEB-INF/classes/com/acme/Example.class
      * @param type
      *            The file descriptor type.

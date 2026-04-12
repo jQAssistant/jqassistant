@@ -2,24 +2,22 @@ package com.buschmais.jqassistant.plugin.common.api.model;
 
 import java.util.List;
 
+import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-
 /**
- * The {@link FileContainerDescriptor} describes an file artifact
- * that contains one or more other file artifacts. Typical
- * examples for such artifacts are directories on filesystems
- * or archive formats as Zip, GZip, and Jars.
+ * The {@link FileContainerDescriptor} describes a file container providing and {@link FileDescriptor}s and requiring {@link FileDescriptor}s, e.g. directories or archives.
  */
-public interface FileContainerDescriptor extends FileNameDescriptor {
+@Label("FileContainer")
+public interface FileContainerDescriptor extends DirectoryDescriptor {
 
     /**
-     * Return the contained descriptors.
+     * Return the provided descriptors.
      *
-     * @return The contained descriptors.
+     * @return The provided descriptors.
      */
-    @Relation("CONTAINS")
-    List<FileDescriptor> getContains();
+    @Relation("PROVIDES")
+    List<FileDescriptor> getProvides();
 
     /**
      * Return the required descriptors.

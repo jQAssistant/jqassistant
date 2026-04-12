@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.common.api.model;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.report.Generic;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
@@ -11,6 +12,8 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
+import static com.buschmais.jqassistant.plugin.common.api.report.Generic.GenericLanguageElement.Artifact;
+
 /**
  * Describes an artifact.
  *
@@ -18,7 +21,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  *
  */
 @Label(value = "Artifact", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDescriptor {
+@Generic(Artifact)
+public interface ArtifactDescriptor extends FileContainerDescriptor, NamedDescriptor, FullQualifiedNameDescriptor {
 
     /**
      * @return the group

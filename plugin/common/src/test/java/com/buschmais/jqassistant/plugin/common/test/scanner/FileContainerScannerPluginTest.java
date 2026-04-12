@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
@@ -48,16 +48,19 @@ public class FileContainerScannerPluginTest {
         when(scanner.getContext()).thenReturn(context);
         when(context.getStore()).thenReturn(store);
         when(store.create(FileDescriptor.class)).thenReturn(mock(FileDescriptor.class));
-        doReturn(cache).when(store).getCache(anyString());
-        doAnswer((Answer<FileDescriptor>) invocation -> ((Function<String, FileDescriptor>) invocation.getArgument(1)).apply(invocation.getArgument(0)))
-                .when(cache).get(anyString(), any(Function.class));
+        doReturn(cache).when(store)
+            .getCache(anyString());
+        doAnswer((Answer<FileDescriptor>) invocation -> ((Function<String, FileDescriptor>) invocation.getArgument(1)).apply(invocation.getArgument(0))).when(
+                cache)
+            .get(anyString(), any(Function.class));
         Deque<FileResolver> fileResolvers = new LinkedList<>();
 
         doAnswer(invocation -> {
             FileResolver resolver = (FileResolver) invocation.getArguments()[1];
             fileResolvers.push(resolver);
             return null;
-        }).when(context).push(eq(FileResolver.class), any(FileResolver.class));
+        }).when(context)
+            .push(eq(FileResolver.class), any(FileResolver.class));
 
         when(context.peek(FileResolver.class)).then(invocation -> fileResolvers.peek());
 
@@ -73,22 +76,24 @@ public class FileContainerScannerPluginTest {
     }
 
     @Test
-    public void contains() throws IOException {
+    public void provides() throws IOException {
         TestContainerScannerPlugin scannerPlugin = new TestContainerScannerPlugin();
-        DirectoryDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "B", "C", "reject"), "/", DefaultScope.NONE, scanner);
+        FileContainerDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "B", "C", "reject"), "/", DefaultScope.NONE, scanner);
         assertThat(directoryDescriptor).isNotNull();
 
         verify(directoryDescriptor).setFileName("/");
 
-        List<FileDescriptor> contains = scannerPlugin.getContains();
-        assertThat(contains.size()).isEqualTo(3);
-        assertThat(contains).isEqualTo(directoryDescriptor.getContains());
-        FileDescriptor a = contains.get(0);
+        List<FileDescriptor> provides = scannerPlugin.getContains();
+        assertThat(provides.size()).isEqualTo(3);
+        assertThat(provides).isEqualTo(directoryDescriptor.getContains());
+        FileDescriptor a = provides.get(0);
         verify(a).setFileName("/A");
-        FileDescriptor b = contains.get(1);
+        FileDescriptor b = provides.get(1);
         verify(b).setFileName("/B");
-        FileDescriptor c = contains.get(2);
+        FileDescriptor c = provides.get(2);
         verify(c).setFileName("/C");
+
+        assertThat(scannerPlugin.getContains()).isEqualTo(provides);
 
         List<FileDescriptor> requires = scannerPlugin.getRequires();
         assertThat(requires.size()).isEqualTo(1);
@@ -100,7 +105,7 @@ public class FileContainerScannerPluginTest {
     @Test
     public void requires() throws IOException {
         TestContainerScannerPlugin scannerPlugin = new TestContainerScannerPlugin();
-        DirectoryDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "D"), "/", DefaultScope.NONE, scanner);
+        FileContainerDescriptor directoryDescriptor = scannerPlugin.scan(Arrays.asList("A", "D"), "/", DefaultScope.NONE, scanner);
         assertThat(directoryDescriptor).isNotNull();
 
         verify(directoryDescriptor).setFileName("/");
@@ -118,7 +123,9 @@ public class FileContainerScannerPluginTest {
         assertThat(requires).isEqualTo(directoryDescriptor.getRequires());
     }
 
-    private static class TestContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {
+    private static class TestContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, FileContainerDescriptor> {
+
+        private List<FileDescriptor> provides = new ArrayList<>();
 
         private List<FileDescriptor> contains = new ArrayList<>();
 
@@ -130,15 +137,16 @@ public class FileContainerScannerPluginTest {
         }
 
         @Override
-        protected DirectoryDescriptor getContainerDescriptor(Collection<String> container, ScannerContext scannerContext) {
-            DirectoryDescriptor directoryDescriptor = mock(DirectoryDescriptor.class);
+        protected FileContainerDescriptor getContainerDescriptor(Collection<String> container, ScannerContext scannerContext) {
+            FileContainerDescriptor directoryDescriptor = mock(FileContainerDescriptor.class);
+            when(directoryDescriptor.getContains()).thenReturn(provides);
             when(directoryDescriptor.getContains()).thenReturn(contains);
             when(directoryDescriptor.getRequires()).thenReturn(requires);
             return directoryDescriptor;
         }
 
         @Override
-        protected Iterable<? extends String> getEntries(Collection<String> container) throws IOException {
+        protected Iterable<? extends String> getEntries(Collection<String> container) {
             return container;
         }
 
@@ -153,12 +161,12 @@ public class FileContainerScannerPluginTest {
         }
 
         @Override
-        protected void enterContainer(Collection<String> container, DirectoryDescriptor containerDescriptor, ScannerContext scannerContext) throws IOException {
+        protected void enterContainer(Collection<String> container, FileContainerDescriptor containerDescriptor, ScannerContext scannerContext) {
 
         }
 
         @Override
-        protected void leaveContainer(Collection<String> container, DirectoryDescriptor containerDescriptor, ScannerContext scannerContext) throws IOException {
+        protected void leaveContainer(Collection<String> container, FileContainerDescriptor containerDescriptor, ScannerContext scannerContext) {
 
         }
 
@@ -167,11 +175,15 @@ public class FileContainerScannerPluginTest {
             return mock(FileResource.class);
         }
 
-        public List<FileDescriptor> getContains() {
+        List<FileDescriptor> getProvides() {
+            return provides;
+        }
+
+        List<FileDescriptor> getContains() {
             return contains;
         }
 
-        public List<FileDescriptor> getRequires() {
+        List<FileDescriptor> getRequires() {
             return requires;
         }
     }

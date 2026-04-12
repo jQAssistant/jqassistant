@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.model.source.ArtifactLocation;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
 import lombok.NoArgsConstructor;
@@ -22,7 +22,8 @@ public class FileSourceHelper {
     public static Optional<FileLocation> getSourceLocation(FileDescriptor descriptor, Optional<Integer> startLine, Optional<Integer> endLine) {
         String fileName = descriptor.getFileName();
         if (fileName != null) {
-            FileLocation.FileLocationBuilder<?, ?> fileLocationBuilder = FileLocation.builder().fileName(fileName);
+            FileLocation.FileLocationBuilder<?, ?> fileLocationBuilder = FileLocation.builder()
+                .fileName(fileName);
             fileLocationBuilder.startLine(startLine);
             fileLocationBuilder.endLine(endLine);
             fileLocationBuilder.parent(getParentLocation(descriptor));
@@ -33,17 +34,19 @@ public class FileSourceHelper {
 
     public static Optional<ArtifactLocation> getParentLocation(FileDescriptor descriptor) {
         for (FileDescriptor parentDescriptor : descriptor.getParents()) {
-            if (parentDescriptor instanceof ArtifactFileDescriptor) {
-                ArtifactFileDescriptor parentArtifactFileDescriptor = (ArtifactFileDescriptor) parentDescriptor;
+            if (parentDescriptor instanceof ArtifactDescriptor) {
+                ArtifactDescriptor parentArtifactDescriptor = (ArtifactDescriptor) parentDescriptor;
                 // fileName
                 ArtifactLocation.ArtifactLocationBuilder<?, ?> artifactLocationBuilder = ArtifactLocation.builder()
-                        .fileName(parentArtifactFileDescriptor.getFileName());
+                    .fileName(parentArtifactDescriptor.getFileName());
                 // optional Maven coordinates
-                artifactLocationBuilder.group(ofNullable(parentArtifactFileDescriptor.getGroup())).name(ofNullable(parentArtifactFileDescriptor.getName()))
-                        .version(ofNullable(parentArtifactFileDescriptor.getVersion())).type(ofNullable(parentArtifactFileDescriptor.getType()))
-                        .classifier(ofNullable(parentArtifactFileDescriptor.getClassifier()));
+                artifactLocationBuilder.group(ofNullable(parentArtifactDescriptor.getGroup()))
+                    .name(ofNullable(parentArtifactDescriptor.getName()))
+                    .version(ofNullable(parentArtifactDescriptor.getVersion()))
+                    .type(ofNullable(parentArtifactDescriptor.getType()))
+                    .classifier(ofNullable(parentArtifactDescriptor.getClassifier()));
                 // optional parent(s)
-                artifactLocationBuilder.parent(getParentLocation(parentArtifactFileDescriptor));
+                artifactLocationBuilder.parent(getParentLocation(parentArtifactDescriptor));
                 return of(artifactLocationBuilder.build());
             }
         }
