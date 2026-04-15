@@ -11,7 +11,7 @@ public class GenericLanguageElementTest extends AbstractLanguageElementTest {
 
     @Test
     void namedElement() {
-        ArtifactDescriptor descriptor = mock(ArtifactDescriptor.class);
+        ArtifactFileDescriptor descriptor = mock(ArtifactFileDescriptor.class);
         doReturn("test").when(descriptor)
             .getName();
         doReturn("/test.txt").when(descriptor)
@@ -35,7 +35,7 @@ public class GenericLanguageElementTest extends AbstractLanguageElementTest {
 
     @Test
     void artifactFileElement() {
-        ArtifactDescriptor descriptor = mock(ArtifactDescriptor.class);
+        ArtifactFileDescriptor descriptor = mock(ArtifactFileDescriptor.class);
         doReturn("/test.txt").when(descriptor)
             .getFileName();
         doReturn("group:name:type:version").when(descriptor)

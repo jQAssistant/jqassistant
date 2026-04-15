@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.model.source.ArtifactLocation;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
 import lombok.NoArgsConstructor;
@@ -34,8 +34,8 @@ public class FileSourceHelper {
 
     public static Optional<ArtifactLocation> getParentLocation(FileDescriptor descriptor) {
         for (FileDescriptor parentDescriptor : descriptor.getParents()) {
-            if (parentDescriptor instanceof ArtifactDescriptor) {
-                ArtifactDescriptor parentArtifactDescriptor = (ArtifactDescriptor) parentDescriptor;
+            if (parentDescriptor instanceof ArtifactFileDescriptor) {
+                ArtifactFileDescriptor parentArtifactDescriptor = (ArtifactFileDescriptor) parentDescriptor;
                 // fileName
                 ArtifactLocation.ArtifactLocationBuilder<?, ?> artifactLocationBuilder = ArtifactLocation.builder()
                     .fileName(parentArtifactDescriptor.getFileName());

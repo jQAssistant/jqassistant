@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.api.model;
 
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Cypher;
 /**
  * Defines a Java artifact.
  */
-public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactDescriptor {
+public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFileDescriptor {
 
     /**
      * Determine the number of dependencies of this artifact.

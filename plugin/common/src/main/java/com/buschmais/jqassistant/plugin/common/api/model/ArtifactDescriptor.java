@@ -22,7 +22,7 @@ import static com.buschmais.jqassistant.plugin.common.api.report.Generic.Generic
  */
 @Label(value = "Artifact", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 @Generic(Artifact)
-public interface ArtifactDescriptor extends FileContainerDescriptor, NamedDescriptor, FullQualifiedNameDescriptor {
+public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDescriptor {
 
     /**
      * @return the group
@@ -32,7 +32,7 @@ public interface ArtifactDescriptor extends FileContainerDescriptor, NamedDescri
 
     /**
      * @param group
-     *            the group to set
+     *     the group to set
      */
     void setGroup(String group);
 
@@ -45,7 +45,7 @@ public interface ArtifactDescriptor extends FileContainerDescriptor, NamedDescri
 
     /**
      * @param name
-     *            the name to set
+     *     the name to set
      */
     @Override
     void setName(String name);
@@ -58,7 +58,7 @@ public interface ArtifactDescriptor extends FileContainerDescriptor, NamedDescri
 
     /**
      * @param version
-     *            the version to set
+     *     the version to set
      */
     void setVersion(String version);
 
@@ -82,11 +82,11 @@ public interface ArtifactDescriptor extends FileContainerDescriptor, NamedDescri
      * Create a dependency to another {@link ArtifactDescriptor}.
      *
      * @param dependency
-     *            The {@link ArtifactDescriptor} representing the dependency.
+     *     The {@link ArtifactDescriptor} representing the dependency.
      * @param scope
-     *            The scope.
+     *     The scope.
      * @param optional
-     *            <code>true</code> if the dependency is optional.
+     *     <code>true</code> if the dependency is optional.
      */
     @ResultOf
     @Cypher("MATCH (artifact:Artifact),(dependency:Artifact) WHERE id(artifact)=$this and id(dependency)=$dependency MERGE (artifact)-[dependsOn:DEPENDS_ON{scope:$scope,optional:$optional}]->(dependency) RETURN dependsOn")

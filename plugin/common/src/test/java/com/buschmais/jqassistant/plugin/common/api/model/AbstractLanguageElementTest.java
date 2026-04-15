@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 abstract public class AbstractLanguageElementTest {
 
     protected ArtifactDescriptor getArtifactFileDescriptor() {
-        ArtifactDescriptor artifactFileDescriptor = mock(ArtifactDescriptor.class);
+        ArtifactFileDescriptor artifactFileDescriptor = mock(ArtifactFileDescriptor.class);
         doReturn("test.jar").when(artifactFileDescriptor)
             .getFileName();
         doReturn("groupId").when(artifactFileDescriptor)
