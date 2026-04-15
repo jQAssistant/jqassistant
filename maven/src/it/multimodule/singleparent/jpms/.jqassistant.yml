@@ -1,0 +1,7 @@
+jqassistant:
+  scan:
+    properties:
+      maven3.dependencies.scan: true
+  analyze:
+    groups:
+      - it
