@@ -344,7 +344,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (:Artifact)-[:CONTAINS]->(type:Java:Type)
+              (:Artifact)-[:PROVIDES]->(type:Java:Type)
             SET
               type.javaVersion=
                 CASE type.byteCodeVersion
@@ -563,8 +563,8 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (a1:Artifact)-[:CONTAINS]->(:Java:Type)-[dependsOn:DEPENDS_ON]->(t1:Java:Type),
-              (a2:Artifact)-[:CONTAINS]->(t2:Java:Type)
+              (a1:Artifact)-[:PROVIDES]->(:Java:Type)-[dependsOn:DEPENDS_ON]->(t1:Java:Type),
+              (a2:Artifact)-[:PROVIDES]->(t2:Java:Type)
             WHERE
               a1 <> a2
               and t1.fqn = t2.fqn
@@ -621,7 +621,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (artifact:Artifact)-[:CONTAINS]->(testClass:Java:Type)-[:DECLARES]->(testMethod:Java:Method:Test)
+              (artifact:Artifact)-[:PROVIDES]->(testClass:Java:Type)-[:DECLARES]->(testMethod:Java:Method:Test)
             RETURN
               artifact as Artifact, testClass as TestClass, count(testMethod) as TestMethods
             ORDER BY
@@ -636,7 +636,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (artifact:Artifact)-[:CONTAINS]->(testClass:Java:Type)-[:DECLARES]->(:Java:Method:Test)
+              (artifact:Artifact)-[:PROVIDES]->(testClass:Java:Type)-[:DECLARES]->(:Java:Method:Test)
             SET
               testClass:Test
             RETURN

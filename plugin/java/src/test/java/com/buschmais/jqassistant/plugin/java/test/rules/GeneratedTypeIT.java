@@ -29,7 +29,7 @@ class GeneratedTypeIT extends AbstractJavaPluginIT {
         assertThat(result.getStatus()).isEqualTo(SUCCESS);
         assertThat(result.getRows()).isEmpty();
         TestResult query = query(
-            "MATCH (artifact:Artifact)-[:CONTAINS]->(generatedType:Java:Type:Generated) RETURN artifact as Artifact, count(generatedType) as GeneratedTypes ORDER BY GeneratedTypes desc");
+            "MATCH (artifact:Artifact)-[:PROVIDES]->(generatedType:Java:Type:Generated) RETURN artifact as Artifact, count(generatedType) as GeneratedTypes ORDER BY GeneratedTypes desc");
         List<Map<String, Object>> rows = query.getRows();
         assertThat(rows).hasSize(1);
         Map<String, Object> row = rows.get(0);
