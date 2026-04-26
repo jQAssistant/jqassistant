@@ -35,18 +35,18 @@ public class FileSourceHelper {
     public static Optional<ArtifactLocation> getParentLocation(FileDescriptor descriptor) {
         for (FileDescriptor parentDescriptor : descriptor.getParents()) {
             if (parentDescriptor instanceof ArtifactFileDescriptor) {
-                ArtifactFileDescriptor parentArtifactDescriptor = (ArtifactFileDescriptor) parentDescriptor;
+                ArtifactFileDescriptor parentArtifactFileDescriptor = (ArtifactFileDescriptor) parentDescriptor;
                 // fileName
                 ArtifactLocation.ArtifactLocationBuilder<?, ?> artifactLocationBuilder = ArtifactLocation.builder()
-                    .fileName(parentArtifactDescriptor.getFileName());
+                    .fileName(parentArtifactFileDescriptor.getFileName());
                 // optional Maven coordinates
-                artifactLocationBuilder.group(ofNullable(parentArtifactDescriptor.getGroup()))
-                    .name(ofNullable(parentArtifactDescriptor.getName()))
-                    .version(ofNullable(parentArtifactDescriptor.getVersion()))
-                    .type(ofNullable(parentArtifactDescriptor.getType()))
-                    .classifier(ofNullable(parentArtifactDescriptor.getClassifier()));
+                artifactLocationBuilder.group(ofNullable(parentArtifactFileDescriptor.getGroup()))
+                    .name(ofNullable(parentArtifactFileDescriptor.getName()))
+                    .version(ofNullable(parentArtifactFileDescriptor.getVersion()))
+                    .type(ofNullable(parentArtifactFileDescriptor.getType()))
+                    .classifier(ofNullable(parentArtifactFileDescriptor.getClassifier()));
                 // optional parent(s)
-                artifactLocationBuilder.parent(getParentLocation(parentArtifactDescriptor));
+                artifactLocationBuilder.parent(getParentLocation(parentArtifactFileDescriptor));
                 return of(artifactLocationBuilder.build());
             }
         }
