@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
@@ -26,7 +26,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  * @param <D>
  *     The descriptor type.
  */
-public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor> extends AbstractResourceScannerPlugin<I, D> {
+public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDescriptor> extends AbstractResourceScannerPlugin<I, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
