@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
 import org.junit.jupiter.api.Test;
@@ -13,9 +13,9 @@ public class ContainerFileResolverIT extends AbstractPluginIT {
     @Test
     public void requireFile() {
         store.beginTransaction();
-        FileContainerDescriptor container = store.create(FileContainerDescriptor.class);
-        container.setFileName("/");
-        ContainerFileResolver resolver = new ContainerFileResolver(getScanner().getContext(), container);
+        DirectoryDescriptor directoryDescriptor = store.create(DirectoryDescriptor.class);
+        directoryDescriptor.setFileName("/");
+        ContainerFileResolver resolver = new ContainerFileResolver(getScanner().getContext(), directoryDescriptor);
 
         FileDescriptor required1 = resolver.require("/file", FileDescriptor.class, getScanner().getContext());
         assertThat(required1.getFileName()).isEqualTo("/file");
@@ -30,14 +30,14 @@ public class ContainerFileResolverIT extends AbstractPluginIT {
     @Test
     public void nestedContainer() {
         store.beginTransaction();
-        FileContainerDescriptor parent = store.create(FileContainerDescriptor.class);
+        DirectoryDescriptor parent = store.create(DirectoryDescriptor.class);
         parent.setFileName("/parentContainer");
         ContainerFileResolver parentResolver = new ContainerFileResolver(getScanner().getContext(), parent);
 
         FileDescriptor parentFile = parentResolver.require("/file", FileDescriptor.class, getScanner().getContext());
         assertThat(parentFile.getFileName()).isEqualTo("/file");
 
-        FileContainerDescriptor child = parentResolver.require("/childContainer", FileContainerDescriptor.class, getScanner().getContext());
+        DirectoryDescriptor child = parentResolver.require("/childContainer", DirectoryDescriptor.class, getScanner().getContext());
         assertThat(child.getFileName()).isEqualTo("/childContainer");
 
         ContainerFileResolver childResolver = new ContainerFileResolver(getScanner().getContext(), child);

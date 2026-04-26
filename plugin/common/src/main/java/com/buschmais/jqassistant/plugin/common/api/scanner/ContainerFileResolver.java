@@ -6,8 +6,8 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     private static final String CACHE_KEY = ContainerFileResolver.class.getName();
 
-    private FileContainerDescriptor fileContainerDescriptor;
+    private DirectoryDescriptor directoryDescriptor;
 
     private final ScannerContext scannerContext;
 
@@ -30,12 +30,18 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     private final Map<String, FileDescriptor> providedFiles;
 
-    public ContainerFileResolver(ScannerContext scannerContext, FileContainerDescriptor artifactDirectoryDescriptor) {
-        super(CACHE_KEY + "/" + artifactDirectoryDescriptor.getId());
-        this.fileContainerDescriptor = artifactDirectoryDescriptor;
+    public ContainerFileResolver(ScannerContext scannerContext, DirectoryDescriptor directoryDescriptor) {
+        super(CACHE_KEY + "/" + directoryDescriptor.getId());
+        this.directoryDescriptor = directoryDescriptor;
         this.scannerContext = scannerContext;
-        this.providedFiles = getCache(artifactDirectoryDescriptor.getProvides());
-        this.requiredFiles = getCache(artifactDirectoryDescriptor.getRequires());
+        if (directoryDescriptor instanceof ArtifactFileDescriptor) {
+            ArtifactFileDescriptor artifactFileDescriptor = (ArtifactFileDescriptor) directoryDescriptor;
+            this.providedFiles = getCache(artifactFileDescriptor.getProvides());
+            this.requiredFiles = getCache(artifactFileDescriptor.getRequires());
+        } else {
+            this.providedFiles = new HashMap<>();
+            this.requiredFiles = new HashMap<>();
+        }
     }
 
     @Override
@@ -63,20 +69,24 @@ public class ContainerFileResolver extends AbstractFileResolver {
      */
     public void flush() {
         createHierarchy();
-        sync(fileContainerDescriptor.getRequires(), requiredFiles);
-        sync(fileContainerDescriptor.getProvides(), providedFiles);
+        if (directoryDescriptor instanceof ArtifactFileDescriptor) {
+            ArtifactFileDescriptor artifactFileDescriptor = (ArtifactFileDescriptor) directoryDescriptor;
+            sync(artifactFileDescriptor.getRequires(), requiredFiles);
+            sync(artifactFileDescriptor.getProvides(), providedFiles);
+        }
         // to be removed in 3.0 to avoid ambiguity, see https://github.com/jQAssistant/jqassistant/issues/1093
-        sync(fileContainerDescriptor.getContains(), providedFiles);
-        scannerContext.getStore().invalidateCache(CACHE_KEY);
+        sync(directoryDescriptor.getContains(), providedFiles);
+        scannerContext.getStore()
+            .invalidateCache(CACHE_KEY);
     }
 
     /**
      * Sync the given target collection with the new state from the cache map.
      *
      * @param target
-     *            The target collection.
+     *     The target collection.
      * @param after
-     *            The new state to sync to.
+     *     The new state to sync to.
      */
     private void sync(Collection<FileDescriptor> target, Map<String, FileDescriptor> after) {
         Map<String, FileDescriptor> before = getCache(target);
@@ -100,7 +110,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
      * Creates cache map from the given collection of file descriptors.
      *
      * @param fileDescriptors
-     *            The collection of file descriptors.
+     *     The collection of file descriptors.
      * @return The cache map.
      */
     private Map<String, FileDescriptor> getCache(Iterable<FileDescriptor> fileDescriptors) {
@@ -110,7 +120,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
                 FileDescriptor fileDescriptor = (FileDescriptor) descriptor;
                 cache.put(fileDescriptor.getFileName(), fileDescriptor);
             } else {
-                LOGGER.warn("{} is not a file descriptor, container={}", descriptor, fileContainerDescriptor);
+                LOGGER.warn("{} is not a file descriptor, container={}", descriptor, directoryDescriptor);
             }
         }
         return cache;
@@ -129,7 +139,8 @@ public class ContainerFileResolver extends AbstractFileResolver {
                 String parentName = relativePath.substring(0, separatorIndex);
                 FileDescriptor parentDescriptor = providedFiles.get(parentName);
                 if (parentDescriptor instanceof DirectoryDescriptor) {
-                    ((DirectoryDescriptor) parentDescriptor).getContains().add(fileDescriptor);
+                    ((DirectoryDescriptor) parentDescriptor).getContains()
+                        .add(fileDescriptor);
                 }
             }
         }
@@ -139,9 +150,9 @@ public class ContainerFileResolver extends AbstractFileResolver {
      * Adds a file to the container.
      *
      * @param path
-     *            The path of the file.
+     *     The path of the file.
      * @param fileDescriptor
-     *            The file descriptor.
+     *     The file descriptor.
      */
     public void put(String path, FileDescriptor fileDescriptor) {
         providedFiles.put(path, fileDescriptor);

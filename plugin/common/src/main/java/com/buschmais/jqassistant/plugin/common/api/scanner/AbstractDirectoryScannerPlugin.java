@@ -14,7 +14,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
-import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.BufferedFileResource;
@@ -28,7 +28,7 @@ import static java.nio.file.Files.walkFileTree;
  * Abstract base implementation for directory scanners.
  */
 @Slf4j
-public abstract class AbstractDirectoryScannerPlugin<D extends FileContainerDescriptor> extends AbstractContainerScannerPlugin<File, File, D> {
+public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescriptor> extends AbstractContainerScannerPlugin<File, File, D> {
 
     public static final String PROPERTY_FOLLOW_SYMLINKS = "directory.follow-symbolic-links";
 
