@@ -22,7 +22,8 @@ public class FileSourceHelper {
     public static Optional<FileLocation> getSourceLocation(FileDescriptor descriptor, Optional<Integer> startLine, Optional<Integer> endLine) {
         String fileName = descriptor.getFileName();
         if (fileName != null) {
-            FileLocation.FileLocationBuilder<?, ?> fileLocationBuilder = FileLocation.builder().fileName(fileName);
+            FileLocation.FileLocationBuilder<?, ?> fileLocationBuilder = FileLocation.builder()
+                .fileName(fileName);
             fileLocationBuilder.startLine(startLine);
             fileLocationBuilder.endLine(endLine);
             fileLocationBuilder.parent(getParentLocation(descriptor));
@@ -37,11 +38,13 @@ public class FileSourceHelper {
                 ArtifactFileDescriptor parentArtifactFileDescriptor = (ArtifactFileDescriptor) parentDescriptor;
                 // fileName
                 ArtifactLocation.ArtifactLocationBuilder<?, ?> artifactLocationBuilder = ArtifactLocation.builder()
-                        .fileName(parentArtifactFileDescriptor.getFileName());
+                    .fileName(parentArtifactFileDescriptor.getFileName());
                 // optional Maven coordinates
-                artifactLocationBuilder.group(ofNullable(parentArtifactFileDescriptor.getGroup())).name(ofNullable(parentArtifactFileDescriptor.getName()))
-                        .version(ofNullable(parentArtifactFileDescriptor.getVersion())).type(ofNullable(parentArtifactFileDescriptor.getType()))
-                        .classifier(ofNullable(parentArtifactFileDescriptor.getClassifier()));
+                artifactLocationBuilder.group(ofNullable(parentArtifactFileDescriptor.getGroup()))
+                    .name(ofNullable(parentArtifactFileDescriptor.getName()))
+                    .version(ofNullable(parentArtifactFileDescriptor.getVersion()))
+                    .type(ofNullable(parentArtifactFileDescriptor.getType()))
+                    .classifier(ofNullable(parentArtifactFileDescriptor.getClassifier()));
                 // optional parent(s)
                 artifactLocationBuilder.parent(getParentLocation(parentArtifactFileDescriptor));
                 return of(artifactLocationBuilder.build());

@@ -7,6 +7,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
+import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Verifies scanning of ZIP arichves.
  */
-class ZipScannerIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
+class ZipScannerIT extends AbstractPluginIT {
 
     @Test
     void zipFile() throws Exception {

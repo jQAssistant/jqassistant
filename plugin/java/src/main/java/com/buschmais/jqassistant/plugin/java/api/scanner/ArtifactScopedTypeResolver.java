@@ -48,7 +48,7 @@ public class ArtifactScopedTypeResolver implements TypeResolver {
         this.artifact = artifact;
         this.hasDependencies = artifact.getNumberOfDependencies() > 0;
         this.typeCache = new TypeCache();
-        addToCache(artifact.getContains());
+        addToCache(artifact.getProvides());
         addToCache(artifact.getRequires());
     }
 

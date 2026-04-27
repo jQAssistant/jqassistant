@@ -1,17 +1,17 @@
 package com.buschmais.jqassistant.plugin.common.test.matcher;
 
 import com.buschmais.jqassistant.core.test.matcher.AbstractDescriptorMatcher;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 
 import org.hamcrest.Matcher;
 
 /**
- * A matcher for {@link ArtifactFileDescriptor}s.
+ * A matcher for {@link ArtifactDescriptor}s.
  *
  * @deprecated Replaced by {@link com.buschmais.jqassistant.plugin.common.test.assertj.ArtifactDescriptorCondition}
  */
 @Deprecated
-public class ArtifactDescriptorMatcher extends AbstractDescriptorMatcher<ArtifactFileDescriptor> {
+public class ArtifactDescriptorMatcher extends AbstractDescriptorMatcher<ArtifactDescriptor> {
 
     /**
      * Constructor.
@@ -20,7 +20,7 @@ public class ArtifactDescriptorMatcher extends AbstractDescriptorMatcher<Artifac
      *     The expected artifact id.
      */
     protected ArtifactDescriptorMatcher(String id) {
-        super(ArtifactFileDescriptor.class, id);
+        super(ArtifactDescriptor.class, id);
     }
 
     /**
@@ -30,7 +30,7 @@ public class ArtifactDescriptorMatcher extends AbstractDescriptorMatcher<Artifac
      *     The artifact id.
      * @return The {@link ArtifactDescriptorMatcher}.
      */
-    public static Matcher<? super ArtifactFileDescriptor> artifactDescriptor(String id) {
+    public static Matcher<? super ArtifactDescriptor> artifactDescriptor(String id) {
         return new ArtifactDescriptorMatcher(id);
     }
 }

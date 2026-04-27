@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
@@ -20,13 +20,13 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  * elements like directories, archives, etc.
  *
  * @param <I>
- *            The container type.
+ *     The container type.
  * @param <E>
- *            The element type.
+ *     The element type.
  * @param <D>
- *            The descriptor type.
+ *     The descriptor type.
  */
-public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor> extends AbstractResourceScannerPlugin<I, D> {
+public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDescriptor> extends AbstractResourceScannerPlugin<I, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
@@ -69,9 +69,9 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * Return the descriptor representing the artifact.
      *
      * @param container
-     *            The container.
+     *     The container.
      * @param scannerContext
-     *            The scanner context.
+     *     The scanner context.
      * @return The artifact descriptor.
      */
     protected abstract D getContainerDescriptor(I container, ScannerContext scannerContext);
@@ -83,10 +83,10 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * </p>
      *
      * @param container
-     *            The container.
+     *     The container.
      * @return The iterable of entries.
      * @throws IOException
-     *             If the entries cannot be determined.
+     *     If the entries cannot be determined.
      */
     protected abstract Iterable<? extends E> getEntries(I container) throws IOException;
 
@@ -94,7 +94,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * Return the normalized path to the container.
      *
      * @param container
-     *            The container.
+     *     The container.
      * @return The normalized path.
      */
     protected abstract String getContainerPath(I container, String path);
@@ -112,9 +112,9 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * </p>
      *
      * @param container
-     *            The container.
+     *     The container.
      * @param entry
-     *            The entry.
+     *     The entry.
      * @return The relative path.
      */
     protected abstract String getRelativePath(I container, E entry);
@@ -124,11 +124,11 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * return classpath scope.
      *
      * @param container
-     *            The container.
+     *     The container.
      * @param containerDescriptor
-     *            The container descriptor.
+     *     The container descriptor.
      * @param scannerContext
-     *            The scanner context.
+     *     The scanner context.
      */
     protected abstract void enterContainer(I container, D containerDescriptor, ScannerContext scannerContext) throws IOException;
 
@@ -136,11 +136,11 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * Destroy the container dependent scope.
      *
      * @param container
-     *            The container.
+     *     The container.
      * @param containerDescriptor
-     *            The container descriptor
+     *     The container descriptor
      * @param scannerContext
-     *            The scanner context.
+     *     The scanner context.
      */
     protected abstract void leaveContainer(I container, D containerDescriptor, ScannerContext scannerContext) throws IOException;
 
@@ -148,12 +148,12 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * Return a {@link Resource} representing an entry.
      *
      * @param container
-     *            The container.
+     *     The container.
      * @param entry
-     *            The entry.
+     *     The entry.
      * @return The
-     *         {@link com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource}
-     *         .
+     * {@link com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource}
+     * .
      */
     protected abstract Resource getEntry(I container, E entry);
 

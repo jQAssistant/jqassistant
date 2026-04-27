@@ -8,7 +8,6 @@ import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
@@ -135,7 +134,7 @@ class DependencyIT extends AbstractJavaPluginIT {
             Map.of("artifact", from)).getRows();
         assertThat(rows).hasSize(1);
         Map<String, Object> row = rows.get(0);
-        assertThat((ArtifactFileDescriptor) row.get("a2"), artifactDescriptor(to));
+        assertThat((ArtifactDescriptor) row.get("a2"), artifactDescriptor(to));
         assertThat(row).containsEntry("weight", 1L);
     }
 

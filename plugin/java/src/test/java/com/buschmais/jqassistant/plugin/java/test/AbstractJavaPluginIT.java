@@ -14,7 +14,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.ContainerFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
@@ -23,29 +22,29 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
      * Get or create an
-     * {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor}
+     * {@link JavaArtifactFileDescriptor}
      * .
      *
      * @param artifactId
-     *            The artifact id.
+     *     The artifact id.
      * @return The
-     *         {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor}
-     *         .
+     * {@link JavaArtifactFileDescriptor}
+     * .
      */
-    protected JavaClassesDirectoryDescriptor getArtifactDescriptor(String artifactId) {
+    protected JavaArtifactFileDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
         if (artifact == null) {
-            artifact = store.create(JavaClassesDirectoryDescriptor.class, artifactId);
+            artifact = store.create(JavaArtifactFileDescriptor.class, artifactId);
             artifact.setFullQualifiedName(artifactId);
         }
-        return JavaClassesDirectoryDescriptor.class.cast(artifact);
+        return JavaArtifactFileDescriptor.class.cast(artifact);
     }
 
     /**
      * Scans the given classes.
      *
      * @param classes
-     *            The classes.
+     *     The classes.
      */
     protected void scanClasses(Class<?>... classes) {
         this.scanClasses(ARTIFACT_ID, classes);
@@ -55,9 +54,9 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      * Scans the given classes.
      *
      * @param outerClass
-     *            The outer classes.
+     *     The outer classes.
      * @param innerClassName
-     *            The outer classes.
+     *     The outer classes.
      */
     protected void scanInnerClass(Class<?> outerClass, String innerClassName) throws ClassNotFoundException {
         Class<?> innerClass = getInnerClass(outerClass, innerClassName);
@@ -68,25 +67,26 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      * Loads an inner class.
      *
      * @param outerClass
-     *            The out class.
+     *     The out class.
      * @param innerClassName
-     *            The name of the inner class.
+     *     The name of the inner class.
      * @return The inner class.
      * @throws ClassNotFoundException
-     *             If the class cannot be loaded.
+     *     If the class cannot be loaded.
      */
     protected Class<?> getInnerClass(Class<?> outerClass, String innerClassName) throws ClassNotFoundException {
         String className = outerClass.getName() + "$" + innerClassName;
-        return outerClass.getClassLoader().loadClass(className);
+        return outerClass.getClassLoader()
+            .loadClass(className);
     }
 
     /**
      * Scans the given classes.
      *
      * @param artifactId
-     *            The id of the containing artifact.
+     *     The id of the containing artifact.
      * @param classes
-     *            The classes.
+     *     The classes.
      */
     protected void scanClasses(String artifactId, final Class<?>... classes) {
         execute(artifactId, (artifact, scanner) -> {
@@ -120,7 +120,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      * Scans the a directory.
      *
      * @param directory
-     *            The directory.
+     *     The directory.
      */
     protected void scanClassPathDirectory(File directory) {
         scanClassPathDirectory(ARTIFACT_ID, directory);
@@ -130,13 +130,13 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      * Scans the a directory.
      *
      * @param artifactId
-     *            The artifact to use.
+     *     The artifact to use.
      * @param directory
-     *            The directory.
+     *     The directory.
      */
     protected void scanClassPathDirectory(String artifactId, final File directory) {
         store.beginTransaction();
-        JavaClassesDirectoryDescriptor artifactDescriptor = getArtifactDescriptor(artifactId);
+        JavaArtifactFileDescriptor artifactDescriptor = getArtifactDescriptor(artifactId);
         execute(artifactDescriptor, (artifact, scanner) -> {
             scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
             return Collections.emptyList();
@@ -148,9 +148,9 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      * Executes the given scan operation.
      *
      * @param artifactId
-     *            The artifact id of the artifact to push on the context.
+     *     The artifact id of the artifact to push on the context.
      * @param operation
-     *            The operation.
+     *     The operation.
      */
     protected List<? extends FileDescriptor> execute(String artifactId, ScanClassPathOperation operation) {
         Scanner scanner = getScanner();
@@ -193,9 +193,9 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
          * Perform the scan.
          *
          * @param artifact
-         *            The artifact.
+         *     The artifact.
          * @param scanner
-         *            The scanner.
+         *     The scanner.
          */
         List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner);
     }

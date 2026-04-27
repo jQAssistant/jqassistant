@@ -16,14 +16,20 @@ import static org.mockito.Mockito.mock;
 
 abstract public class AbstractLanguageElementTest {
 
-    protected ArtifactFileDescriptor getArtifactFileDescriptor() {
+    protected ArtifactDescriptor getArtifactFileDescriptor() {
         ArtifactFileDescriptor artifactFileDescriptor = mock(ArtifactFileDescriptor.class);
-        doReturn("test.jar").when(artifactFileDescriptor).getFileName();
-        doReturn("groupId").when(artifactFileDescriptor).getGroup();
-        doReturn("artifactId").when(artifactFileDescriptor).getName();
-        doReturn("jar").when(artifactFileDescriptor).getType();
-        doReturn("jdk8").when(artifactFileDescriptor).getClassifier();
-        doReturn("1.0.0").when(artifactFileDescriptor).getVersion();
+        doReturn("test.jar").when(artifactFileDescriptor)
+            .getFileName();
+        doReturn("groupId").when(artifactFileDescriptor)
+            .getGroup();
+        doReturn("artifactId").when(artifactFileDescriptor)
+            .getName();
+        doReturn("jar").when(artifactFileDescriptor)
+            .getType();
+        doReturn("jdk8").when(artifactFileDescriptor)
+            .getClassifier();
+        doReturn("1.0.0").when(artifactFileDescriptor)
+            .getVersion();
         return artifactFileDescriptor;
     }
 
@@ -32,14 +38,14 @@ abstract public class AbstractLanguageElementTest {
     }
 
     protected <D extends Descriptor> void verify(D descriptor, LanguageElement languageElement, String expectedName, String expectedSourceFile,
-            Optional<Integer> expectedStartLine, Optional<Integer> expectedEndLine) {
+        Optional<Integer> expectedStartLine, Optional<Integer> expectedEndLine) {
         SourceProvider<D> sourceProvider = languageElement.getSourceProvider();
         assertThat(sourceProvider.getName(descriptor)).isEqualTo(expectedName);
         verifySourceLocation(descriptor, sourceProvider, expectedSourceFile, expectedStartLine, expectedEndLine);
     }
 
     private <D extends Descriptor> void verifySourceLocation(D descriptor, SourceProvider<D> sourceProvider, String expectedSourceFile,
-            Optional<Integer> expectedStartLine, Optional<Integer> expectedEndLine) {
+        Optional<Integer> expectedStartLine, Optional<Integer> expectedEndLine) {
         Optional<FileLocation> optionalSourceLocation = sourceProvider.getSourceLocation(descriptor);
         assertThat(optionalSourceLocation.isPresent()).isEqualTo(true);
         FileLocation fileLocation = optionalSourceLocation.get();

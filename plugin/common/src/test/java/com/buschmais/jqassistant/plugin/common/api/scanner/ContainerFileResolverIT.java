@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
+import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
@@ -7,14 +8,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ContainerFileResolverIT extends com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT {
+public class ContainerFileResolverIT extends AbstractPluginIT {
 
     @Test
     public void requireFile() {
         store.beginTransaction();
-        DirectoryDescriptor container = store.create(DirectoryDescriptor.class);
-        container.setFileName("/");
-        ContainerFileResolver resolver = new ContainerFileResolver(getScanner().getContext(), container);
+        DirectoryDescriptor directoryDescriptor = store.create(DirectoryDescriptor.class);
+        directoryDescriptor.setFileName("/");
+        ContainerFileResolver resolver = new ContainerFileResolver(getScanner().getContext(), directoryDescriptor);
 
         FileDescriptor required1 = resolver.require("/file", FileDescriptor.class, getScanner().getContext());
         assertThat(required1.getFileName()).isEqualTo("/file");

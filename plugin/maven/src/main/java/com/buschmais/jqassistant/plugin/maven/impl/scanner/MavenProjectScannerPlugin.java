@@ -22,7 +22,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven.api.model.*;
 import com.buschmais.jqassistant.plugin.maven.api.scanner.MavenScope;
@@ -421,7 +420,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     private void scanArtifact(ArtifactDescriptor artifactDescriptor, File file, String path, Scanner scanner) {
         JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext()
             .getStore()
-            .addDescriptorType(artifactDescriptor, JavaClassesDirectoryDescriptor.class);
+            .addDescriptorType(artifactDescriptor, JavaArtifactFileDescriptor.class);
         ScannerContext context = scanner.getContext();
         context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
         try {

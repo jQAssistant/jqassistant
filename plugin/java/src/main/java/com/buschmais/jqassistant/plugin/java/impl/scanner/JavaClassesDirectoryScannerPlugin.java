@@ -8,7 +8,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
@@ -17,7 +16,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
  * A scanner plugin for directories containing java classes.
  */
 public class JavaClassesDirectoryScannerPlugin
-        extends AbstractDirectoryScannerPlugin<JavaClassesDirectoryDescriptor> {
+        extends AbstractDirectoryScannerPlugin<JavaArtifactFileDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {
@@ -25,26 +24,26 @@ public class JavaClassesDirectoryScannerPlugin
     }
 
     @Override
-    protected void enterContainer(File directory, JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
+    protected void enterContainer(File directory, JavaArtifactFileDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
         context.push(TypeResolver.class, new ArtifactScopedTypeResolver(javaClassesDirectoryDescriptor));
     }
 
     @Override
-    protected void leaveContainer(File directory, JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
+    protected void leaveContainer(File directory, JavaArtifactFileDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
         context.pop(TypeResolver.class);
     }
 
     @Override
-    protected JavaClassesDirectoryDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
+    protected JavaArtifactFileDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
         JavaArtifactFileDescriptor javaArtifactDescriptor = scannerContext.peekOrDefault(JavaArtifactFileDescriptor.class, null);
         Store store = scannerContext.getStore();
         if (javaArtifactDescriptor == null) {
-            return store.create(JavaClassesDirectoryDescriptor.class);
+            return store.create(JavaArtifactFileDescriptor.class);
         }
-        if (JavaClassesDirectoryDescriptor.class.isAssignableFrom(javaArtifactDescriptor.getClass())) {
-            return JavaClassesDirectoryDescriptor.class.cast(javaArtifactDescriptor);
+        if (JavaArtifactFileDescriptor.class.isAssignableFrom(javaArtifactDescriptor.getClass())) {
+            return JavaArtifactFileDescriptor.class.cast(javaArtifactDescriptor);
         }
-        throw new IllegalStateException("Expected an instance of " + JavaClassesDirectoryDescriptor.class.getName() + " but got "
+        throw new IllegalStateException("Expected an instance of " + JavaArtifactFileDescriptor.class.getName() + " but got "
                 + Arrays.asList(javaArtifactDescriptor.getClass().getInterfaces()));
     }
 }

@@ -12,7 +12,7 @@
             WITH
               a1, t1, t1.fqn AS fqn
             MATCH
-              (a2:Artifact)-[:CONTAINS]->(t2:Java:Type)
+              (a2:Artifact)-[:PROVIDES]->(t2:Java:Type)
             WHERE
               t2.fqn = t1.fqn
             CALL {

@@ -1,0 +1,18 @@
+package com.buschmais.jqassistant.maven.it.jpms.module1.impl;
+
+import com.buschmais.jqassistant.maven.it.jpms.module1.api.MyService;
+
+public class MyServiceImpl implements MyService {
+
+    public void run() {
+    }
+
+    public static class InnerServiceImpl implements MyService.InnerService {
+
+        @Override
+        public void run() {
+        }
+
+    }
+
+}

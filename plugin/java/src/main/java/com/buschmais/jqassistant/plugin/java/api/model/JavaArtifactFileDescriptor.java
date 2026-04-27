@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.api.model;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
@@ -9,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Cypher;
 /**
  * Defines a Java artifact.
  */
-public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFileDescriptor, FileContainerDescriptor {
+public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFileDescriptor {
 
     /**
      * Determine the number of dependencies of this artifact.
@@ -29,7 +28,7 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
      */
     @ResultOf
     @Cypher("MATCH\n" +
-        "  (dependency:Artifact)-[:CONTAINS|REQUIRES]->(type:Type{fqn:$fqn})\n" +
+        "  (dependency:Artifact)-[:PROVIDES|REQUIRES]->(type:Type{fqn:$fqn})\n" +
         "WITH\n" +
         "  dependency, type\n" +
         "MATCH\n" +
@@ -51,7 +50,7 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
      */
     @ResultOf
     @Cypher("MATCH\n" +
-        "  (dependency:Artifact)-[:CONTAINS|REQUIRES]->(module:Java:Module{fqn:$moduleName})\n" +
+        "  (dependency:Artifact)-[:PROVIDES|REQUIRES]->(module:Java:Module{fqn:$moduleName})\n" +
         "WITH\n" +
         "  dependency, module\n" +
         "MATCH\n" +

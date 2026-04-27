@@ -1,9 +1,12 @@
 package com.buschmais.jqassistant.plugin.maven.api.model;
 
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 
 /**
- * Describes a maven artifact which is represented by a file.
+ * Describes a maven artifact.
+ *
+ * @author ronald.kunzmann@buschmais.com
  */
-public interface MavenArtifactFileDescriptor extends MavenArtifactDescriptor, FileDescriptor {
+public interface MavenArtifactFileDescriptor extends MavenArtifactDescriptor, ArtifactFileDescriptor {
+
 }

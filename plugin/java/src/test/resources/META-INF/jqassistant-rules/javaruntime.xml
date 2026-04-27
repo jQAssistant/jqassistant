@@ -3,7 +3,7 @@
         <description>Creates the missing package structure of the JRE.</description>
         <cypher><![CDATA[
         MATCH
-            (:Artifact)-[:CONTAINS]->(t:Type)
+            (:Artifact)-[:PROVIDES]->(t:Type)
         WHERE
             t.fqn is not null
         WITH
@@ -11,7 +11,7 @@
         MERGE
             (p:Package{fqn:packageName})
         MERGE
-            (p)-[:CONTAINS]->(t)
+            (p)-[:PROVIDES]->(t)
         RETURN
             p.fqn, count(t)
         ]]></cypher>

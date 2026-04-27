@@ -1,12 +1,28 @@
 package com.buschmais.jqassistant.plugin.common.api.model;
 
-import com.buschmais.jqassistant.plugin.common.api.report.Generic;
+import java.util.List;
+
+import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**
- * Describes an artifact as a file.
- *
- * @author Herklotz
+ * Represents an artifact directory providing/requiring files
  */
-@Generic(Generic.GenericLanguageElement.ArtifactFile)
-public interface ArtifactFileDescriptor extends ArtifactDescriptor, FileDescriptor {
+public interface ArtifactFileDescriptor extends ArtifactDescriptor, DirectoryDescriptor {
+
+    /**
+     * Return the provided descriptors.
+     *
+     * @return The provided descriptors.
+     */
+    @Relation("PROVIDES")
+    List<FileDescriptor> getProvides();
+
+    /**
+     * Return the required descriptors.
+     *
+     * @return The required descriptors.
+     */
+    @Relation("REQUIRES")
+    List<FileDescriptor> getRequires();
+
 }

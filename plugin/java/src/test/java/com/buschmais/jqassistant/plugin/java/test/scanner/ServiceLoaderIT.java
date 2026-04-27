@@ -7,7 +7,6 @@ import java.util.ServiceLoader;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -69,7 +68,7 @@ class ServiceLoaderIT extends AbstractJavaPluginIT {
         final File propsFile = new File(file, "META-INF/test.properties");
         final String path = "META-INF/services/test.properties";
         store.beginTransaction();
-        JavaClassesDirectoryDescriptor artifactDescriptor = getArtifactDescriptor("a1");
+        JavaArtifactFileDescriptor artifactDescriptor = getArtifactDescriptor("a1");
         execute(artifactDescriptor, new ScanClassPathOperation() {
             @Override
             public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {

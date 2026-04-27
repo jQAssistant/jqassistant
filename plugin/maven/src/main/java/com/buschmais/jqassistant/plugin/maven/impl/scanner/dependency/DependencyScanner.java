@@ -8,8 +8,7 @@ import java.util.Set;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.maven.api.artifact.ArtifactFilter;
 import com.buschmais.jqassistant.plugin.maven.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven.api.artifact.MavenArtifactCoordinates;
@@ -62,18 +61,21 @@ public class DependencyScanner {
 
     private void scanDependencyArtifacts(DependencyNode rootNode, Map<Artifact, Set<Artifact>> dependencies, ArtifactFilter dependencyFilter,
         ArtifactRepository localRepository, Scanner scanner) {
-        List<Artifact> artifacts = DependencyResolver.newInstance(dependencies.keySet(), artifact -> dependencies.getOrDefault(artifact, emptySet())).resolve();
-        ArtifactResolver artifactResolver = scanner.getContext().peek(ArtifactResolver.class);
+        List<Artifact> artifacts = DependencyResolver.newInstance(dependencies.keySet(), artifact -> dependencies.getOrDefault(artifact, emptySet()))
+            .resolve();
+        ArtifactResolver artifactResolver = scanner.getContext()
+            .peek(ArtifactResolver.class);
         for (Artifact artifact : artifacts) {
             // scan only dependencies, the root node represents the artifact to be created
             // by the current module and will be scanned separately.
             if (!artifact.equals(rootNode.getArtifact()) && dependencyFilter.match(artifact)) {
-                File artifactFile = localRepository.find(artifact).getFile();
-                FileDescriptor fileDescriptor = artifactResolver.resolve(new MavenArtifactCoordinates(artifact, false), FileDescriptor.class,
-                    scanner.getContext());
+                File artifactFile = localRepository.find(artifact)
+                    .getFile();
+                MavenArtifactDescriptor artifactDescriptor = artifactResolver.resolve(new MavenArtifactCoordinates(artifact, false),
+                    MavenArtifactDescriptor.class, scanner.getContext());
                 // The dependency might have been scanned before within another module, so check
-                // if it is not yet a FileContainerDescriptor (directory, JAR, etc.)
-                if (artifactFile != null && !(fileDescriptor instanceof FileContainerDescriptor)) {
+                // if it is not yet a JavaArtifactFileDescriptor
+                if (artifactFile != null && !(artifactDescriptor instanceof JavaArtifactFileDescriptor)) {
                     scanner.scan(artifactFile, artifactFile.getAbsolutePath(), DefaultScope.NONE);
                 }
             }

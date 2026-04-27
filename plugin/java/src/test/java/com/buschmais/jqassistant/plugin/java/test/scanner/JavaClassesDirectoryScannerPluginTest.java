@@ -8,7 +8,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.JavaClassesDirectoryScannerPlugin;
 
@@ -43,7 +42,8 @@ class JavaClassesDirectoryScannerPluginTest {
     void before() throws IOException {
         when(scanner.getContext()).thenReturn(context);
         when(context.getStore()).thenReturn(store);
-        directory = Files.createTempDirectory("directory").toFile();
+        directory = Files.createTempDirectory("directory")
+            .toFile();
         this.plugin = new JavaClassesDirectoryScannerPlugin();
         this.plugin.configure(context, emptyMap());
     }
@@ -60,18 +60,18 @@ class JavaClassesDirectoryScannerPluginTest {
      * context.
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     void createArtifact() throws IOException {
-        JavaClassesDirectoryDescriptor artifact = mock(JavaClassesDirectoryDescriptor.class);
+        JavaArtifactFileDescriptor artifact = mock(JavaArtifactFileDescriptor.class);
         when(context.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(null);
-        when(store.create(JavaClassesDirectoryDescriptor.class)).thenReturn(artifact);
+        when(store.create(JavaArtifactFileDescriptor.class)).thenReturn(artifact);
 
-        JavaClassesDirectoryDescriptor descriptor = plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
+        JavaArtifactFileDescriptor descriptor = plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
 
         verify(context).peekOrDefault(JavaArtifactFileDescriptor.class, null);
-        verify(store).create(JavaClassesDirectoryDescriptor.class);
+        verify(store).create(JavaArtifactFileDescriptor.class);
 
         assertThat(descriptor).isEqualTo(artifact);
     }
@@ -81,18 +81,19 @@ class JavaClassesDirectoryScannerPluginTest {
      * context (e.g. for dependency resolution).
      *
      * @throws IOException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     void useArtifactFromContext() throws IOException {
-        File directory = Files.createTempDirectory("directory").toFile();
-        JavaClassesDirectoryDescriptor artifact = mock(JavaClassesDirectoryDescriptor.class);
+        File directory = Files.createTempDirectory("directory")
+            .toFile();
+        JavaArtifactFileDescriptor artifact = mock(JavaArtifactFileDescriptor.class);
         when(context.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(artifact);
 
-        JavaClassesDirectoryDescriptor descriptor = plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
+        JavaArtifactFileDescriptor descriptor = plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
 
         verify(context).peekOrDefault(JavaArtifactFileDescriptor.class, null);
-        verify(store, never()).create(JavaClassesDirectoryDescriptor.class);
+        verify(store, never()).create(JavaArtifactFileDescriptor.class);
 
         assertThat(descriptor).isEqualTo(artifact);
     }

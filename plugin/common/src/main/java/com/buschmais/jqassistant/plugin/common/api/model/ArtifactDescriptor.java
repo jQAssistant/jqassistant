@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.common.api.model;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.report.Generic;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
@@ -11,6 +12,8 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
+import static com.buschmais.jqassistant.plugin.common.api.report.Generic.GenericLanguageElement.Artifact;
+
 /**
  * Describes an artifact.
  *
@@ -18,6 +21,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  *
  */
 @Label(value = "Artifact", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
+@Generic(Artifact)
 public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDescriptor {
 
     /**
@@ -28,7 +32,7 @@ public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDe
 
     /**
      * @param group
-     *            the group to set
+     *     the group to set
      */
     void setGroup(String group);
 
@@ -41,7 +45,7 @@ public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDe
 
     /**
      * @param name
-     *            the name to set
+     *     the name to set
      */
     @Override
     void setName(String name);
@@ -54,7 +58,7 @@ public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDe
 
     /**
      * @param version
-     *            the version to set
+     *     the version to set
      */
     void setVersion(String version);
 
@@ -78,11 +82,11 @@ public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDe
      * Create a dependency to another {@link ArtifactDescriptor}.
      *
      * @param dependency
-     *            The {@link ArtifactDescriptor} representing the dependency.
+     *     The {@link ArtifactDescriptor} representing the dependency.
      * @param scope
-     *            The scope.
+     *     The scope.
      * @param optional
-     *            <code>true</code> if the dependency is optional.
+     *     <code>true</code> if the dependency is optional.
      */
     @ResultOf
     @Cypher("MATCH (artifact:Artifact),(dependency:Artifact) WHERE id(artifact)=$this and id(dependency)=$dependency MERGE (artifact)-[dependsOn:DEPENDS_ON{scope:$scope,optional:$optional}]->(dependency) RETURN dependsOn")
