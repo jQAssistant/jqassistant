@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineRepository;
@@ -29,7 +31,6 @@ import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
@@ -49,7 +50,7 @@ public class AnalyzeMojo extends AbstractMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzeMojo.class);
 
-    @Component
+    @Inject
     private MavenProjectHelper mavenProjectHelper;
 
     @Override

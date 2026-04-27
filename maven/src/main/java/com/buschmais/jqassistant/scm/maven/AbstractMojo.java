@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.scm.maven;
 import java.util.List;
 import java.util.Properties;
 
+import javax.inject.Inject;
+
 import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.shared.aether.AetherArtifactProvider;
@@ -15,7 +17,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.rtinfo.RuntimeInformation;
@@ -68,22 +69,22 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * The store repository.
      */
-    @Component
+    @Inject
     protected CachingStoreProvider cachingStoreProvider;
 
     /**
      * The Maven runtime information.
      */
-    @Component
+    @Inject
     private RuntimeInformation runtimeInformation;
 
-    @Component
+    @Inject
     private ConfigurationFileLoaderProvider configurationFileLoaderProvider;
 
-    @Component
+    @Inject
     private PluginRepositoryProvider pluginRepositoryProvider;
 
-    @Component
+    @Inject
     private RepositorySystem repositorySystem;
 
     @Parameter(defaultValue = "${repositorySystemSession}", readonly = true, required = true)
