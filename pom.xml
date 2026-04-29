@@ -382,13 +382,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.doxia</groupId>
-                            <artifactId>doxia-module-markdown</artifactId>
-                            <version>${doxia-markdown.version}</version>
-                        </dependency>
-                    </dependencies>
                     <configuration>
                         <skipDeploy>true</skipDeploy>
                     </configuration>
