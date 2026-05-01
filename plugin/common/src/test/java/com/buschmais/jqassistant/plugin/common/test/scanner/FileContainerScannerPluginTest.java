@@ -89,7 +89,7 @@ public class FileContainerScannerPluginTest {
 
         verify(artifactFileDescriptor).setFileName("/");
 
-        List<FileDescriptor> provides = scannerPlugin.getProvides();
+        List<FileDescriptor> provides = artifactFileDescriptor.getProvides();
         assertThat(provides.size()).isEqualTo(3);
         assertThat(provides).isEqualTo(artifactFileDescriptor.getContains());
         FileDescriptor a = provides.get(0);
@@ -99,9 +99,9 @@ public class FileContainerScannerPluginTest {
         FileDescriptor c = provides.get(2);
         verify(c).setFileName("/B/C");
 
-        assertThat(scannerPlugin.getContains()).isEqualTo(provides);
+        assertThat(artifactFileDescriptor.getContains()).isEqualTo(provides);
 
-        List<FileDescriptor> requires = scannerPlugin.getRequires();
+        List<FileDescriptor> requires = artifactFileDescriptor.getRequires();
         assertThat(requires.size()).isEqualTo(1);
         assertThat(requires).isEqualTo(artifactFileDescriptor.getRequires());
         FileDescriptor requiredFileDescriptor = requires.get(0);
@@ -116,7 +116,7 @@ public class FileContainerScannerPluginTest {
 
         verify(artifactFileDescriptor).setFileName("/");
 
-        List<FileDescriptor> provides = scannerPlugin.getProvides();
+        List<FileDescriptor> provides = artifactFileDescriptor.getProvides();
         assertThat(provides.size()).isEqualTo(2);
         assertThat(provides).isEqualTo(artifactFileDescriptor.getContains());
         FileDescriptor a = provides.get(0);
@@ -124,18 +124,12 @@ public class FileContainerScannerPluginTest {
         FileDescriptor b = provides.get(1);
         verify(b).setFileName("/R");
 
-        List<FileDescriptor> requires = scannerPlugin.getRequires();
+        List<FileDescriptor> requires = artifactFileDescriptor.getRequires();
         assertThat(requires.size()).isEqualTo(0);
         assertThat(requires).isEqualTo(artifactFileDescriptor.getRequires());
     }
 
     private static class TestFileContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, ArtifactFileDescriptor> {
-
-        private final List<FileDescriptor> provides = new ArrayList<>();
-
-        private final List<FileDescriptor> contains = new ArrayList<>();
-
-        private final List<FileDescriptor> requires = new ArrayList<>();
 
         @Override
         public boolean accepts(Collection<String> item, String path, Scope scope) {
@@ -145,9 +139,9 @@ public class FileContainerScannerPluginTest {
         @Override
         protected ArtifactFileDescriptor getContainerDescriptor(Collection<String> container, ScannerContext scannerContext) {
             ArtifactFileDescriptor artifactFileDescriptor = mock(ArtifactFileDescriptor.class);
-            when(artifactFileDescriptor.getProvides()).thenReturn(provides);
-            when(artifactFileDescriptor.getContains()).thenReturn(contains);
-            when(artifactFileDescriptor.getRequires()).thenReturn(requires);
+            when(artifactFileDescriptor.getProvides()).thenReturn(new ArrayList<>());
+            when(artifactFileDescriptor.getContains()).thenReturn(new ArrayList<>());
+            when(artifactFileDescriptor.getRequires()).thenReturn(new ArrayList<>());
             return artifactFileDescriptor;
         }
 
@@ -179,18 +173,6 @@ public class FileContainerScannerPluginTest {
         @Override
         protected Resource getEntry(Collection<String> container, String entry) {
             return mock(FileResource.class);
-        }
-
-        List<FileDescriptor> getProvides() {
-            return provides;
-        }
-
-        List<FileDescriptor> getContains() {
-            return contains;
-        }
-
-        List<FileDescriptor> getRequires() {
-            return requires;
         }
     }
 }
