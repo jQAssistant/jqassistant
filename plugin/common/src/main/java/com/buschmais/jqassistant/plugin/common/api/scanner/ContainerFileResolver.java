@@ -74,8 +74,6 @@ public class ContainerFileResolver extends AbstractFileResolver {
             sync(artifactFileDescriptor.getRequires(), requiredFiles);
             sync(artifactFileDescriptor.getProvides(), providedFiles);
         }
-        // to be removed in 3.0 to avoid ambiguity, see https://github.com/jQAssistant/jqassistant/issues/1093
-        sync(directoryDescriptor.getContains(), providedFiles);
         scannerContext.getStore()
             .invalidateCache(CACHE_KEY);
     }
