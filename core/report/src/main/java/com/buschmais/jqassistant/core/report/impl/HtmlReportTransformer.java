@@ -8,6 +8,8 @@ import javax.xml.transform.stream.StreamSource;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 
+import net.sf.saxon.TransformerFactoryImpl;
+
 public class HtmlReportTransformer implements ReportTransformer {
 
     @Override
@@ -20,26 +22,24 @@ public class HtmlReportTransformer implements ReportTransformer {
         transform(source, target, HtmlReportTransformer.class.getResourceAsStream("/META-INF/xsl/jqassistant-report-standalone.xsl"));
     }
 
-    /**
-     *
      /** Transforms the source to an HTML fragment which may be embedded into
      * other documents.
      *
      * @param source
-     *            The source.
+     *     The source.
      * @param target
-     *            The target.
+     *     The target.
      * @param template
-     *            The input stream for the template.
+     *     The input stream for the template.
      * @throws ReportTransformerException
-     *             If transformation fails.
+     *     If transformation fails.
      */
     private void transform(Source source, Result target, InputStream template) throws ReportTransformerException {
         Source xsl = new StreamSource(template);
         TransformerFactory transformerFactory;
         Transformer transformer;
         try {
-            transformerFactory = TransformerFactory.newInstance();
+            transformerFactory = new TransformerFactoryImpl();
             transformerFactory.setURIResolver((href, base) -> new StreamSource(HtmlReportTransformer.class.getResourceAsStream(href)));
             transformer = transformerFactory.newTransformer(xsl);
         } catch (TransformerConfigurationException e) {
