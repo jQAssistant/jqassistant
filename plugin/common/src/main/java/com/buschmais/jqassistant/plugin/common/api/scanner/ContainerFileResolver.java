@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -22,7 +22,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     private static final String CACHE_KEY = ContainerFileResolver.class.getName();
 
-    private DirectoryDescriptor directoryDescriptor;
+    private final DirectoryDescriptor directoryDescriptor;
 
     private final ScannerContext scannerContext;
 
@@ -39,8 +39,8 @@ public class ContainerFileResolver extends AbstractFileResolver {
             this.providedFiles = getCache(artifactFileDescriptor.getProvides());
             this.requiredFiles = getCache(artifactFileDescriptor.getRequires());
         } else {
-            this.providedFiles = new HashMap<>();
-            this.requiredFiles = new HashMap<>();
+            this.providedFiles = new TreeMap<>();
+            this.requiredFiles = new TreeMap<>();
         }
     }
 
@@ -90,7 +90,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
      */
     private void sync(Collection<FileDescriptor> target, Map<String, FileDescriptor> after) {
         Map<String, FileDescriptor> before = getCache(target);
-        Map<String, FileDescriptor> all = new HashMap<>();
+        Map<String, FileDescriptor> all = new TreeMap<>();
         all.putAll(before);
         all.putAll(after);
         for (Map.Entry<String, FileDescriptor> entry : all.entrySet()) {
@@ -114,7 +114,7 @@ public class ContainerFileResolver extends AbstractFileResolver {
      * @return The cache map.
      */
     private Map<String, FileDescriptor> getCache(Iterable<FileDescriptor> fileDescriptors) {
-        Map<String, FileDescriptor> cache = new HashMap<>();
+        Map<String, FileDescriptor> cache = new TreeMap<>();
         for (Descriptor descriptor : fileDescriptors) {
             if (descriptor instanceof FileDescriptor) {
                 FileDescriptor fileDescriptor = (FileDescriptor) descriptor;
