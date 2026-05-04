@@ -6,6 +6,7 @@ on:
     branches:
       - "1193-Integrate-SARIF-report-into-jQA-build"
       - "bugfix/*"
+      - "master"
     tags-ignore:
       - "*"
   pull_request:
