@@ -219,7 +219,7 @@
             <dependency>
                 <groupId>org.takes</groupId>
                 <artifactId>takes</artifactId>
-                <version>1.25.0</version>
+                <version>1.25.1</version>
             </dependency>
             <!-- Java APIs -->
             <dependency>
