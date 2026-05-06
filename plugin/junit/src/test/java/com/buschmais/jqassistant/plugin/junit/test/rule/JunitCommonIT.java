@@ -2,15 +2,19 @@ package com.buschmais.jqassistant.plugin.junit.test.rule;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.assertj.TypeDescriptorCondition;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
@@ -22,20 +26,22 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutMessage;
 
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.core.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.test.matcher.ResultMatcher.result;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.assertj.MethodDescriptorCondition.methodDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.assertj.TypeDescriptorCondition.typeDescriptor;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 
 public class JunitCommonIT extends AbstractJunitIT {
 
@@ -94,6 +100,96 @@ public class JunitCommonIT extends AbstractJunitIT {
         verifyUniqueRelation("IMPLEMENTED_BY", 4);
         verifyUniqueRelation("DEFINED_BY", 5);
         store.commitTransaction();
+    }
+
+    @Test
+    public void conceptDisabled() throws Exception {
+        scanClasses(DisabledTestWithMessage.class, DisabledTestWithoutMessage.class);
+        final Result<Concept> conceptResult = applyConcept("junit:Disabled");
+        assertThat(conceptResult.getStatus(), equalTo(SUCCESS));
+        assertThat(conceptResult.getRows()).hasSize(4);
+
+        store.beginTransaction();
+        assertDisabledElements(conceptResult.getRows().stream()
+            .map(JunitCommonIT::unpackRow)
+            .collect(toList()));
+
+        final TestResult queryResult = query("MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:Inactive) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
+        assertThat(queryResult.getRows()).hasSize(4);
+        assertDisabledElements(queryResult.getRows());
+
+        store.commitTransaction();
+    }
+
+    @Test
+    public void conceptIgnore() throws Exception {
+        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class);
+        final Result<Concept> conceptResult = applyConcept("junit:Ignore");
+        assertThat(conceptResult.getStatus(), equalTo(SUCCESS));
+        assertThat(conceptResult.getRows()).hasSize(4);
+
+        store.beginTransaction();
+        assertIgnoredElements(conceptResult.getRows().stream()
+            .map(JunitCommonIT::unpackRow)
+            .collect(toList()));
+
+        final TestResult queryResult = query("MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:Inactive) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
+        assertThat(queryResult.getRows()).hasSize(4);
+        assertIgnoredElements(queryResult.getRows());
+
+        store.commitTransaction();
+    }
+
+    @Test
+    public void abstractConceptInactive() throws Exception {
+        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class, DisabledTestWithMessage.class, DisabledTestWithoutMessage.class);
+        final Result<Concept> conceptResult = applyConcept("junit:Inactive");
+        assertThat(conceptResult.getStatus(), equalTo(SUCCESS));
+        assertThat(conceptResult.getRows()).hasSize(8);
+
+        store.beginTransaction();
+        assertIgnoredElements(conceptResult.getRows().stream()
+            .map(JunitCommonIT::unpackRow)
+            .collect(toList()));
+        assertDisabledElements(conceptResult.getRows().stream()
+            .map(JunitCommonIT::unpackRow)
+            .collect(toList()));
+
+        store.commitTransaction();
+    }
+
+    private static void assertDisabledElements(List<Map<String, Object>> rows) throws NoSuchMethodException {
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutMessage.class), typeDescriptor(DisabledTestWithoutMessage.class), TypeDescriptor.class, null);
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutMessage.class), methodDescriptor(DisabledTestWithoutMessage.class, "iHaveNoMessage"), MethodDescriptor.class, null);
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithMessage.class), typeDescriptor(DisabledTestWithMessage.class), TypeDescriptor.class, "message");
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithMessage.class), methodDescriptor(DisabledTestWithMessage.class, "iHaveAMessage"), MethodDescriptor.class, "message");
+    }
+
+    private static void assertIgnoredElements(List<Map<String, Object>> rows) throws NoSuchMethodException {
+        assertInactiveElement(rows, typeDescriptor(IgnoredTest.class), typeDescriptor(IgnoredTest.class), TypeDescriptor.class, null);
+        assertInactiveElement(rows, typeDescriptor(IgnoredTest.class), methodDescriptor(IgnoredTest.class, "ignoredTest"), MethodDescriptor.class, null);
+        assertInactiveElement(rows, typeDescriptor(IgnoredTestWithMessage.class), typeDescriptor(IgnoredTestWithMessage.class), TypeDescriptor.class, "ignored");
+        assertInactiveElement(rows, typeDescriptor(IgnoredTestWithMessage.class), methodDescriptor(IgnoredTestWithMessage.class, "ignoredTestWithMessage"), MethodDescriptor.class, "ignored");
+    }
+
+    private static Map<String, Object> unpackRow(Row row) {
+        final HashMap<String, Object> result = new HashMap<>();
+        for(String key : row.getColumns().keySet()) {
+            final Object value = row.getColumns().get(key) == null ? null : row.getColumns().get(key).getValue();
+            result.put(key, value);
+        }
+        return result;
+    }
+
+    private static <T> void  assertInactiveElement(List<Map<String, Object>> rows, TypeDescriptorCondition declaringType, Condition<T> elementCondition, Class<T> elementType, String reason) {
+        final List<Map<String, Object>> sublist = rows.stream()
+            .filter(row -> elementType.isInstance(row.get("Element")))
+            .filter(row -> elementCondition.matches(elementType.cast(row.get("Element"))))
+            .collect(toList());
+
+        assertThat(sublist).hasSize(1);
+        assertThat(sublist.get(0).get("DeclaringType")).asInstanceOf(type(TypeDescriptor.class)).is(declaringType);
+        assertThat(sublist.get(0).get("Reason")).isEqualTo(reason);
     }
 
     /**
@@ -181,14 +277,12 @@ public class JunitCommonIT extends AbstractJunitIT {
                 .getValue())
             .map(MethodDescriptor.class::cast)
             .collect(toList());
-        assertThat(methods.size(), equalTo(5));
-
-        assertThat(methods, containsInAnyOrder(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion"),
-            methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion"),
-            methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class),
-            methodDescriptor(Assertions4Junit5.class, "testWithDeepNestedAssertion"),
-            methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")));
-
+        assertThat(methods).hasSize(5);
+        assertThat(methods).haveExactly(1, methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion"));
+        assertThat(methods).haveExactly(1, methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion"));
+        assertThat(methods).haveExactly(1, methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class));
+        assertThat(methods).haveExactly(1, methodDescriptor(Assertions4Junit5.class, "testWithDeepNestedAssertion"));
+        assertThat(methods).haveExactly(1, methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion"));
         store.commitTransaction();
     }
 }
