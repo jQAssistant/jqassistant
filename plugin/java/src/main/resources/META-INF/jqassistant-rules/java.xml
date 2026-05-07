@@ -732,14 +732,28 @@
         ]]></cypher>
     </concept>
 
+    <concept id="java:Inactive">
+        <description>Abstract concept returning all elements labeled with :Inactive and the according reason.</description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Type)-[:DECLARES*0..1]->(e:Inactive)
+            RETURN
+               t AS DeclaringType, e AS Element, e.inactiveReason AS Reason
+    ]]></cypher>
+    </concept>
+
     <constraint id="java:TestMethodWithoutAssertion">
         <requiresConcept refId="java:MethodPerformsAssertion"/>
-        <description>All test methods must perform at least one assertion.</description>
+        <requiresConcept refId="java:Inactive"/>
+        <description>All active test methods must perform at least one assertion.</description>
         <cypher><![CDATA[
             MATCH
               (testClass:Java:Type)-[:DECLARES]->(testMethod:Test:Method)
-            WHERE NOT
+            WHERE NOT (
               (testMethod)-[:PERFORMS_ASSERTION]->(:Assert)
+              OR testClass:Inactive
+              OR testMethod:Inactive
+            )
             RETURN
               distinct testClass AS TestClass, testMethod AS TestMethod
             ORDER BY

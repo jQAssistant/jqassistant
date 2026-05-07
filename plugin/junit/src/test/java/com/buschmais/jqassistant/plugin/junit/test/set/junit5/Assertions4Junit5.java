@@ -44,6 +44,11 @@ public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
     public void testWithoutAssertion() {
     }
 
+    @Disabled("Good reason")
+    @Test
+    public void disabledTestWithoutAssertion() {
+    }
+
     @Test
     public void testWithAssertion() {
         assertTrue(true);

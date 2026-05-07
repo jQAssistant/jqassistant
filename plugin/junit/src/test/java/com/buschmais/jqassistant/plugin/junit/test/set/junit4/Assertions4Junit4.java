@@ -29,6 +29,11 @@ public class Assertions4Junit4 {
     public void testWithoutAssertion() {
     }
 
+    @Ignore("Good reason")
+    @Test
+    public void ignoredTestWithoutAssertion() {
+    }
+
     @Test
     public void testWithAssertion() {
         assertTrue("Condition must be true", true);

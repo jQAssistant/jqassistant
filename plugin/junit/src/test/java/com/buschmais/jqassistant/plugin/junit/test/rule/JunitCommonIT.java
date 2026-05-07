@@ -143,7 +143,7 @@ public class JunitCommonIT extends AbstractJunitIT {
     @Test
     public void abstractConceptInactive() throws Exception {
         scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class, DisabledTestWithMessage.class, DisabledTestWithoutMessage.class);
-        final Result<Concept> conceptResult = applyConcept("junit:Inactive");
+        final Result<Concept> conceptResult = applyConcept("java:Inactive");
         assertThat(conceptResult.getStatus(), equalTo(SUCCESS));
         assertThat(conceptResult.getRows()).hasSize(8);
 
@@ -260,20 +260,33 @@ public class JunitCommonIT extends AbstractJunitIT {
      */
     @Test
     public void testMethodWithoutAssertion() throws Exception {
-        scanClasses(Assertions4Junit4.class, Assertions4Junit5.class, AbstractAssertions4Junit5.class);
-        testMethodWithoutAssertion("java:TestMethodWithoutAssertion", "TestMethod");
-    }
 
-    private void testMethodWithoutAssertion(String constraintId, String testMethodColumn) throws RuleException, NoSuchMethodException {
-        assertThat(validateConstraint(constraintId).getStatus(), equalTo(FAILURE));
+        /*
+         Test classes belonging to our test set are ignored or disable for technical reasons. To validate this
+         constraint, we have to remove the according label from the class nodes.
+         */
+
+        scanClasses(Assertions4Junit4.class, Assertions4Junit5.class, AbstractAssertions4Junit5.class);
+
+        // Execute the required concept explicitly
+        applyConcept("java:Inactive");
+
+        // Remove the labels from class nodes
+        final String query = "MATCH (t:Type:JUnit:Inactive {fqn: \"%s\"}) REMOVE t:JUnit:Inactive";
+        query(String.format(query, Assertions4Junit4.class.getName()));
+        query(String.format(query, Assertions4Junit5.class.getName()));
+        query(String.format(query, AbstractAssertions4Junit5.class.getName()));
+
+        // Execute the constraint
+        assertThat(validateConstraint("java:TestMethodWithoutAssertion").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         Result<Constraint> result = reportPlugin.getConstraintResults()
-            .get(constraintId);
-        assertThat(result, result(constraint(constraintId)));
+            .get("java:TestMethodWithoutAssertion");
+        assertThat(result, result(constraint("java:TestMethodWithoutAssertion")));
         List<MethodDescriptor> methods = result.getRows()
             .stream()
             .map(row -> row.getColumns()
-                .get(testMethodColumn)
+                .get("TestMethod")
                 .getValue())
             .map(MethodDescriptor.class::cast)
             .collect(toList());
@@ -284,5 +297,19 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(methods).haveExactly(1, methodDescriptor(Assertions4Junit5.class, "testWithDeepNestedAssertion"));
         assertThat(methods).haveExactly(1, methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion"));
         store.commitTransaction();
+    }
+
+    @Test
+    public void testMethodWithoutAssertionInaciveClasses() throws Exception {
+
+        /*
+         Test classes belonging to our test set are ignored or disable for technical reasons. Hence, there are no
+         violations of this constraint.
+         */
+
+        scanClasses(Assertions4Junit4.class, Assertions4Junit5.class, AbstractAssertions4Junit5.class);
+        final Result<Constraint> result = validateConstraint("java:TestMethodWithoutAssertion");
+        assertThat(result.getStatus(), equalTo(SUCCESS));
+        assertThat(result.getRows()).isEmpty();
     }
 }
