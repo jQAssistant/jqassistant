@@ -4,26 +4,30 @@ name: CI
 on:
   push:
     branches:
+      - "1193-Integrate-SARIF-report-into-jQA-build"
       - "master"
       - "bugfix/*"
     tags-ignore:
       - "*"
   pull_request:
     branches:
-      - "master"
+      - "1193-Integrate-SARIF-report-into-jQA-build"
       - "bugfix/*"
   workflow_dispatch: {}
 
 concurrency:
   group: build-java-${{ github.ref }}
   cancel-in-progress: true
+permissions: 
+  contents: write
+  security-events: write
 
 jobs:
   build:
-    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@main
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@1193-Integrate-SARIF-report-into-jQA-build
     with:
-      publish_snapshots: true
       pages: "./manual/target/generated-docs/"
+      publish_sarif: true
       sonar_project_key: "jqassistant_jqassistant"
       sonar_organization: "jqassistant"
     secrets:
