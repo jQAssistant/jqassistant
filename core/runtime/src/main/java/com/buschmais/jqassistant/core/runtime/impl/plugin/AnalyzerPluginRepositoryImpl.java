@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.configuration.Report;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepositoryException;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
 import org.jqassistant.schema.plugin.v2.IdClassListType;
 import org.jqassistant.schema.plugin.v2.IdClassType;
@@ -36,6 +37,7 @@ public class AnalyzerPluginRepositoryImpl extends AbstractPluginRepository imple
     /**
      * Constructor.
      */
+    @ToBeRemovedInVersion(major = 5, minor = 3)
     public AnalyzerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
     }
