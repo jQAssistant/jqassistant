@@ -35,6 +35,7 @@ public class IndentHelper {
      *     The text.
      * @return The text without trailing and leading  empty lines.
      */
+    @ToBeRemovedInVersion(major = 1, minor = 9) 
     private static String removeBlankLeadingAndTrailingLines(String text) {
         String[] lines = text.split("\\n");
 
