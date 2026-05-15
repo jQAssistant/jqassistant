@@ -1,4 +1,4 @@
-jqassistant: #commentcounter: 1
+jqassistant: #commentcounter: 2
   plugins:
     - group-id: com.buschmais.jqassistant.build
       artifact-id: jqassistant
