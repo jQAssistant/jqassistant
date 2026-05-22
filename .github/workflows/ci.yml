@@ -33,5 +33,6 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+      sonarcloud_token: ${{ secrets.SONARCLOUD_TOKEN }}
       confluence_username: ${{ secrets.CONFLUENCE_USERNAME }}
       confluence_password: ${{ secrets.CONFLUENCE_PASSWORD }}
