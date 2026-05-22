@@ -27,7 +27,6 @@ jobs:
       sonar_project_key: "jqassistant_jqassistant"
       sonar_organization: "jqassistant"
       publish_sarif: true
-      
     secrets:
       ossrh_username: ${{ secrets.OSSRH_USERNAME }}
       ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
