@@ -11,7 +11,7 @@ on:
       - "*"
   pull_request:
     branches:
-      - "1193-Integrate-SARIF-report-into-jQA-build"
+      - "master"
       - "bugfix/*"
   workflow_dispatch: {}
 
