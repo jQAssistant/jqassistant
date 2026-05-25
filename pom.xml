@@ -65,7 +65,7 @@
         <java.release>17</java.release>
         <!-- library versions -->
         <assertj.version>3.27.7</assertj.version>
-        <asm.version>9.10</asm.version>
+        <asm.version>9.10.1</asm.version>
         <caffeine.version>3.2.4</caffeine.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-codec.version>1.22.0</commons-codec.version>
