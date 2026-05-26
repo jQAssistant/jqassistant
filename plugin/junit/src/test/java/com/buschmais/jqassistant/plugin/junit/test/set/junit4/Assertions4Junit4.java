@@ -29,7 +29,7 @@ public class Assertions4Junit4 {
     public void testWithoutAssertion() {
     }
 
-    @Ignore("Good reason")
+    @Ignore("Some reason")
     @Test
     public void ignoredTestWithoutAssertion() {
     }
