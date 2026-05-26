@@ -114,7 +114,7 @@ public class JunitCommonIT extends AbstractJunitIT {
             .map(JunitCommonIT::unpackRow)
             .collect(toList()));
 
-        final TestResult queryResult = query("MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:InactiveTest) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
+        final TestResult queryResult = query("MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:Inactive:Test) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
         assertThat(queryResult.getRows()).hasSize(4);
         assertDisabledElements(queryResult.getRows());
 
@@ -133,7 +133,7 @@ public class JunitCommonIT extends AbstractJunitIT {
             .map(JunitCommonIT::unpackRow)
             .collect(toList()));
 
-        final TestResult queryResult = query("MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:InactiveTest) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
+        final TestResult queryResult = query("MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:Inactive:Test) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
         assertThat(queryResult.getRows()).hasSize(4);
         assertIgnoredElements(queryResult.getRows());
 
@@ -272,7 +272,7 @@ public class JunitCommonIT extends AbstractJunitIT {
         applyConcept("java:InactiveTest");
 
         // Remove the labels from class nodes
-        final String query = "MATCH (t:Type:JUnit:InactiveTest {fqn: \"%s\"}) REMOVE t:JUnit:InactiveTest";
+        final String query = "MATCH (t:Type:JUnit:Inactive:Test {fqn: \"%s\"}) REMOVE t:JUnit:Inactive:Test";
         query(String.format(query, Assertions4Junit4.class.getName()));
         query(String.format(query, Assertions4Junit5.class.getName()));
         query(String.format(query, AbstractAssertions4Junit5.class.getName()));

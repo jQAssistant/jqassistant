@@ -44,7 +44,7 @@
 
     <concept id="junit:Disabled">
         <providesConcept refId="java:InactiveTest" />
-        <description>Concept labeling all @Disabled-annotated elements with :JUnit:InactiveTest and setting the according reason.</description>
+        <description>Concept labeling all @Disabled-annotated elements with :JUnit:Inactive:Test and setting the according reason.</description>
         <cypher><![CDATA[
             MATCH
               (t:Type)-[:DECLARES*0..1]->(e),
@@ -52,7 +52,7 @@
             OPTIONAL MATCH
               (disabled)-[:HAS]->(value:Value {name:"value"})
             SET
-              e:JUnit:InactiveTest,
+              e:JUnit:Inactive:Test,
               e.inactiveReason = value.value
             RETURN
               t AS DeclaringType, e AS Element, e.inactiveReason AS Reason
@@ -61,7 +61,7 @@
 
     <concept id="junit:Ignore">
         <providesConcept refId="java:InactiveTest" />
-        <description>Concept labeling all @Ignore-annotated elements with :JUnit:InactiveTest and setting the according reason.</description>
+        <description>Concept labeling all @Ignore-annotated elements with :JUnit:Inactive:Test and setting the according reason.</description>
         <cypher><![CDATA[
             MATCH
               (t:Type)-[:DECLARES*0..1]->(e),
@@ -69,7 +69,7 @@
             OPTIONAL MATCH
               (disabled)-[:HAS]->(value:Value {name:"value"})
             SET
-              e:JUnit:InactiveTest,
+              e:JUnit:Inactive:Test,
               e.inactiveReason = value.value
             RETURN
               t AS DeclaringType, e AS Element, e.inactiveReason AS Reason
@@ -81,7 +81,7 @@
         <description>Inactive tests must be provided with an according reason.</description>
         <cypher><![CDATA[
             MATCH
-              (t:Type)-[:DECLARES*0..1]->(e:InactiveTest)
+              (t:Type)-[:DECLARES*0..1]->(e:Inactive:Test)
             WHERE
               e.inactiveReason IS NULL
             RETURN
