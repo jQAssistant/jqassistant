@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @Disabled
-public class DisabledTestWithoutMessage {
+public class DisabledTestWithoutReason {
     @Disabled
     @Test
     void iHaveNoMessage() {

@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
 
 <group id="junit:Default">
-        <includeConstraint refId="junit:IgnoreWithoutMessage"/>
+        <includeConstraint refId="junit:InactiveTestWithoutReason"/>
     </group>
 
     <concept id="junit:TestCaseDefinedByClass">
@@ -76,7 +76,7 @@
     ]]></cypher>
     </concept>
 
-    <constraint id="junit:IgnoreWithoutMessage">
+    <constraint id="junit:InactiveTestWithoutReason">
         <requiresConcept refId="java:InactiveTest" />
         <description>Inactive tests must be provided with an according reason.</description>
         <cypher><![CDATA[
@@ -85,8 +85,8 @@
             WHERE
               e.inactiveReason IS NULL
             RETURN
-              t AS DeclaringClass, e AS IgnoreWithoutMessage
+              t AS DeclaringClass, e AS InactiveTestWithoutReason
         ]]></cypher>
-        <report primaryColumn="IgnoreWithoutMessage"/>
+        <report primaryColumn="InactiveTestWithoutReason"/>
     </constraint>
 </jqassistant-rules>

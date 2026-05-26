@@ -18,13 +18,13 @@ import com.buschmais.jqassistant.plugin.java.test.assertj.TypeDescriptorConditio
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithReason;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.AbstractAssertions4Junit5;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithMessage;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutMessage;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithReason;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutReason;
 
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
@@ -104,7 +104,7 @@ public class JunitCommonIT extends AbstractJunitIT {
 
     @Test
     public void conceptDisabled() throws Exception {
-        scanClasses(DisabledTestWithMessage.class, DisabledTestWithoutMessage.class);
+        scanClasses(DisabledTestWithReason.class, DisabledTestWithoutReason.class);
         final Result<Concept> conceptResult = applyConcept("junit:Disabled");
         assertThat(conceptResult.getStatus(), equalTo(SUCCESS));
         assertThat(conceptResult.getRows()).hasSize(4);
@@ -123,7 +123,7 @@ public class JunitCommonIT extends AbstractJunitIT {
 
     @Test
     public void conceptIgnore() throws Exception {
-        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class);
+        scanClasses(IgnoredTest.class, IgnoredTestWithReason.class);
         final Result<Concept> conceptResult = applyConcept("junit:Ignore");
         assertThat(conceptResult.getStatus(), equalTo(SUCCESS));
         assertThat(conceptResult.getRows()).hasSize(4);
@@ -142,7 +142,7 @@ public class JunitCommonIT extends AbstractJunitIT {
 
     @Test
     public void abstractConceptInactive() throws Exception {
-        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class, DisabledTestWithMessage.class, DisabledTestWithoutMessage.class);
+        scanClasses(IgnoredTest.class, IgnoredTestWithReason.class, DisabledTestWithReason.class, DisabledTestWithoutReason.class);
         final Result<Concept> conceptResult = applyConcept("java:InactiveTest");
         assertThat(conceptResult.getStatus(), equalTo(SUCCESS));
         assertThat(conceptResult.getRows()).hasSize(8);
@@ -159,17 +159,17 @@ public class JunitCommonIT extends AbstractJunitIT {
     }
 
     private static void assertDisabledElements(List<Map<String, Object>> rows) throws NoSuchMethodException {
-        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutMessage.class), typeDescriptor(DisabledTestWithoutMessage.class), TypeDescriptor.class, null);
-        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutMessage.class), methodDescriptor(DisabledTestWithoutMessage.class, "iHaveNoMessage"), MethodDescriptor.class, null);
-        assertInactiveElement(rows, typeDescriptor(DisabledTestWithMessage.class), typeDescriptor(DisabledTestWithMessage.class), TypeDescriptor.class, "message");
-        assertInactiveElement(rows, typeDescriptor(DisabledTestWithMessage.class), methodDescriptor(DisabledTestWithMessage.class, "iHaveAMessage"), MethodDescriptor.class, "message");
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutReason.class), typeDescriptor(DisabledTestWithoutReason.class), TypeDescriptor.class, null);
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutReason.class), methodDescriptor(DisabledTestWithoutReason.class, "iHaveNoMessage"), MethodDescriptor.class, null);
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithReason.class), typeDescriptor(DisabledTestWithReason.class), TypeDescriptor.class, "message");
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithReason.class), methodDescriptor(DisabledTestWithReason.class, "iHaveAMessage"), MethodDescriptor.class, "message");
     }
 
     private static void assertIgnoredElements(List<Map<String, Object>> rows) throws NoSuchMethodException {
         assertInactiveElement(rows, typeDescriptor(IgnoredTest.class), typeDescriptor(IgnoredTest.class), TypeDescriptor.class, null);
         assertInactiveElement(rows, typeDescriptor(IgnoredTest.class), methodDescriptor(IgnoredTest.class, "ignoredTest"), MethodDescriptor.class, null);
-        assertInactiveElement(rows, typeDescriptor(IgnoredTestWithMessage.class), typeDescriptor(IgnoredTestWithMessage.class), TypeDescriptor.class, "ignored");
-        assertInactiveElement(rows, typeDescriptor(IgnoredTestWithMessage.class), methodDescriptor(IgnoredTestWithMessage.class, "ignoredTestWithMessage"), MethodDescriptor.class, "ignored");
+        assertInactiveElement(rows, typeDescriptor(IgnoredTestWithReason.class), typeDescriptor(IgnoredTestWithReason.class), TypeDescriptor.class, "ignored");
+        assertInactiveElement(rows, typeDescriptor(IgnoredTestWithReason.class), methodDescriptor(IgnoredTestWithReason.class, "ignoredTestWithMessage"), MethodDescriptor.class, "ignored");
     }
 
     private static Map<String, Object> unpackRow(Row row) {
@@ -193,7 +193,7 @@ public class JunitCommonIT extends AbstractJunitIT {
     }
 
     /**
-     * Verifies the concept "junit4:IgnoreWithoutMessage".
+     * Verifies the concept "junit:InactiveTestWithoutReason".
      *
      * @throws IOException
      *     If the test fails.
@@ -201,15 +201,15 @@ public class JunitCommonIT extends AbstractJunitIT {
      *     If the test fails.
      */
     @Test
-    public void ignoreWithoutMessage() throws Exception {
-        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class, DisabledTestWithMessage.class, DisabledTestWithoutMessage.class);
-        assertThat(validateConstraint("junit:IgnoreWithoutMessage").getStatus(), equalTo(FAILURE));
+    public void inactiveTestWithoutReason() throws Exception {
+        scanClasses(IgnoredTest.class, IgnoredTestWithReason.class, DisabledTestWithReason.class, DisabledTestWithoutReason.class);
+        assertThat(validateConstraint("junit:InactiveTestWithoutReason").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportPlugin.getConstraintResults()
             .values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
-        assertThat(result, result(constraint("junit:IgnoreWithoutMessage")));
+        assertThat(result, result(constraint("junit:InactiveTestWithoutReason")));
         List<Row> rows = result.getRows();
         List<Map.Entry<String, String>> typesAndIgnoredType = new ArrayList<>();
 
@@ -219,21 +219,21 @@ public class JunitCommonIT extends AbstractJunitIT {
                 .getValue()).getName();
 
             String ignoredType;
-            Object ignoreWithoutMessage = row.getColumns()
-                .get("IgnoreWithoutMessage")
+            Object inactiveTestWithoutReason = row.getColumns()
+                .get("InactiveTestWithoutReason")
                 .getValue();
-            if (ignoreWithoutMessage instanceof ClassTypeDescriptor) {
-                ignoredType = ((ClassTypeDescriptor) ignoreWithoutMessage).getName();
+            if (inactiveTestWithoutReason instanceof ClassTypeDescriptor) {
+                ignoredType = ((ClassTypeDescriptor) inactiveTestWithoutReason).getName();
             } else {
-                ignoredType = ((MethodDescriptor) ignoreWithoutMessage).getName();
+                ignoredType = ((MethodDescriptor) inactiveTestWithoutReason).getName();
             }
             typesAndIgnoredType.add(Map.entry(type, ignoredType));
         }
         assertThat(typesAndIgnoredType.size()).isEqualTo(4);
         assertThat(typesAndIgnoredType).contains(Map.entry("IgnoredTest", "IgnoredTest"));
         assertThat(typesAndIgnoredType).contains(Map.entry("IgnoredTest", "ignoredTest"));
-        assertThat(typesAndIgnoredType).contains(Map.entry("DisabledTestWithoutMessage", "DisabledTestWithoutMessage"));
-        assertThat(typesAndIgnoredType).contains(Map.entry("DisabledTestWithoutMessage", "iHaveNoMessage"));
+        assertThat(typesAndIgnoredType).contains(Map.entry("DisabledTestWithoutReason", "DisabledTestWithoutReason"));
+        assertThat(typesAndIgnoredType).contains(Map.entry("DisabledTestWithoutReason", "iHaveNoMessage"));
 
         store.commitTransaction();
     }
@@ -247,7 +247,7 @@ public class JunitCommonIT extends AbstractJunitIT {
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
         assertThat(constraintViolations, aMapWithSize(1));
         assertThat(constraintViolations.keySet(),
-            hasItems("junit:IgnoreWithoutMessage"));
+            hasItems("junit:InactiveTestWithoutReason"));
     }
 
     /**

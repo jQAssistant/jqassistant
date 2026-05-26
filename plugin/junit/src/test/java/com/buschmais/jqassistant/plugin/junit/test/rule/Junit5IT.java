@@ -439,7 +439,7 @@ public class Junit5IT extends AbstractJunitIT {
             .map(r -> (MethodDescriptor) r.getColumns()
                 .get("Method")
                 .getValue())
-            .collect(Collectors.toList()), containsInAnyOrder(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage"),
+            .collect(Collectors.toList()), containsInAnyOrder(methodDescriptor(Assertions4Junit5.class, "assertWithoutReason"),
             methodDescriptor(Assertions4Junit5.class, "testWithAssertion"), methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn")));
         store.commitTransaction();
     }
@@ -465,7 +465,7 @@ public class Junit5IT extends AbstractJunitIT {
                 .getValue())
             .collect(Collectors.toList());
         assertThat(rows.size(), equalTo(8));
-        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage")),
+        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit4.class, "assertWithoutReason")),
             is(methodDescriptor(Assertions4Junit4.class, "assertWithMessage")),
             is(methodDescriptor(Assertions4Junit4.class, "testWithoutAssertion")),
             is(methodDescriptor(Assertions4Junit4.class, "ignoredTestWithoutAssertion")),
@@ -496,7 +496,7 @@ public class Junit5IT extends AbstractJunitIT {
                 .getValue())
             .collect(Collectors.toList());
         assertThat(rows.size(), equalTo(5));
-        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage")),
+        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit4.class, "assertWithoutReason")),
             is(methodDescriptor(Assertions4Junit4.class, "assertWithMessage")), is(methodDescriptor(Assertions4Junit4.class, "testWithAssertion")),
             is(methodDescriptor(Assertions4Junit4.class, "testWithNestedAssertion")),
             is(methodDescriptor(Assertions4Junit4.class, "assertWithMessageButNonVoidReturnType"))));
