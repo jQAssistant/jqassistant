@@ -4,8 +4,8 @@ name: CI
 on:
   push:
     branches:
-      - "bugfix/*"
       - "master"
+      - "bugfix/*"
     tags-ignore:
       - "*"
   pull_request:
