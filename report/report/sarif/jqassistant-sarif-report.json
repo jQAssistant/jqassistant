@@ -1,0 +1,254 @@
+{
+  "$schema" : "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "version" : "2.1.0",
+  "runs" : [ {
+    "tool" : {
+      "driver" : {
+        "name" : "jQAssistant"
+      }
+    },
+    "results" : [ {
+      "ruleId" : "a40b0d353f451838dfaf70ac973a51259c06a137b4f1174d03180835349f4df6",
+      "level" : "warning",
+      "message" : {
+        "text" : "A jQAssistant project must have exactly one license specified in\nits Maven POM. This project has one or more then one license\nspecified.",
+        "markdown" : "|Project: jQAssistant Parent\n|groupId: com.buschmais.jqassistant\n|artifactId: parent\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-legal:license:only-one-in-pom"
+      }
+    }, {
+      "ruleId" : "5fcea30f498f24e4ea19ae7b0990269f915e68d0000a330baf5d2e97d54a4114",
+      "level" : "warning",
+      "message" : {
+        "text" : "A jQAssistant project must have exactly one license specified in\nits Maven POM. This project has one or more then one license\nspecified.",
+        "markdown" : "|Project: jQAssistant Java Annotations.\n|groupId: com.buschmais.jqassistant.plugin\n|artifactId: java-annotation\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-legal:license:only-one-in-pom"
+      }
+    }, {
+      "ruleId" : "2ddb9b9d94b81315e8ea8a087d5232c50f2040c761ed513f9f86e4ef06a3ab66",
+      "level" : "warning",
+      "message" : {
+        "text" : "There should be an Asciidoctor document for the release notes of this version.",
+        "markdown" : "|Project: jQAssistant Parent\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-project-layout:documentation:releasenotes-exists"
+      }
+    }, {
+      "ruleId" : "0d09c83058b48db0b9df8d00e43db7636bfc47e0e57b6795a32b775030549d2f",
+      "level" : "error",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" should have been removed in given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.core.rule.api.source.RuleSource\n|Member: java.io.InputStream getInputStream()\n|MajorVersion: 2\n|MinorVersion: 6\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemoved"
+      }
+    }, {
+      "ruleId" : "6c98bd45940a84c7b0e330c92b448fd2d838e1a4bd7a624416db5efa3712c141",
+      "level" : "error",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" should have been removed in given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.core.store.api.Store\n|Member: com.buschmais.jqassistant.core.store.api.model.Descriptor find(java.lang.Class,java.lang.String)\n|MajorVersion: 1\n|MinorVersion: 9\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemoved"
+      }
+    }, {
+      "ruleId" : "a7e7ac295e65e7949c57018c435d7b652ca894d4177fd7955aeecc80ebbf9cff",
+      "level" : "warning",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" will be removed in the given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.core.report.api.model.source.AbstractLocation\n|Member: \n|MajorVersion: 3\n|MinorVersion: 0\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
+      }
+    }, {
+      "ruleId" : "99736b70389ca94ed974f30f8e0168e98888e5123936a5d48ee97d17262a68c7",
+      "level" : "warning",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" will be removed in the given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.core.shared.map.MapBuilder\n|Member: \n|MajorVersion: 3\n|MinorVersion: 0\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
+      }
+    }, {
+      "ruleId" : "6208402a71f65f5775d52de33d2484269644d31d14a1911156e5126a3211dbb3",
+      "level" : "error",
+      "message" : {
+        "text" : "Technical debt should be removed from code elements annotated by \"@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt\".",
+        "markdown" : "|Priority: 0\n|Type: com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample\n|Member: debtField\n|Description: technicalDebt:Field with debts\n|Issue: 859\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]java:TechnicalDebt"
+      }
+    }, {
+      "ruleId" : "ec903743db1098548f70e4110d5b3b3c831d5ae3354b8af84a0bfe05e3a20223",
+      "level" : "error",
+      "message" : {
+        "text" : "Technical debt should be removed from code elements annotated by \"@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt\".",
+        "markdown" : "|Priority: 1\n|Type: com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample\n|Member: \n|Description: technicalDebt:Class with debts\n|Issue: 284\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]java:TechnicalDebt"
+      }
+    }, {
+      "ruleId" : "63c437e80c27b62c16073dfd2e8101c5916ff7b5fb9f51e6d81359f7affff3e5",
+      "level" : "error",
+      "message" : {
+        "text" : "Technical debt should be removed from code elements annotated by \"@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt\".",
+        "markdown" : "|Priority: 1\n|Type: com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample\n|Member: \n|Description: technicalDebt:Class with defaults\n|Issue: \n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]java:TechnicalDebt"
+      }
+    }, {
+      "ruleId" : "851dce24f9f189ee4bb707430073b6fcf7a378979b0d43633348ca6474beb9c1",
+      "level" : "error",
+      "message" : {
+        "text" : "Technical debt should be removed from code elements annotated by \"@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt\".",
+        "markdown" : "|Priority: 2\n|Type: com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample\n|Member: doSomething\n|Description: technicalDebt:Method with debts\n|Issue: 3\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]java:TechnicalDebt"
+      }
+    } ]
+  } ]
+}
