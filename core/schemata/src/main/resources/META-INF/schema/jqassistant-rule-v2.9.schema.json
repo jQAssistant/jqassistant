@@ -102,9 +102,9 @@
                         "boolean", "byte", "char", "double", "float",
                         "int", "long", "short", "String"
                       ]
-                    },
-                    "required": [ "name", "type" ]
+                    }
                   },
+                  "required": [ "name", "type" ],
                   "additionalProperties": false
                 }
               },
