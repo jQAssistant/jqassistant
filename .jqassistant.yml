@@ -3,6 +3,9 @@ jqassistant:
     - group-id: com.buschmais.jqassistant.build
       artifact-id: jqassistant
       version: ${jqassistant.build.version}
+    - group-id: org.jqassistant.plugin
+      artifact-id: jqassistant-sarif-report-plugin
+      version: 1.0.0-M1
   scan:
     include:
       files:
@@ -17,4 +20,10 @@ jqassistant:
       - jqa-*
     report:
       continue-on-failure: true
+      properties:
+        sarif:
+          report:
+            message:
+              text: title
+              markdown: details
 
