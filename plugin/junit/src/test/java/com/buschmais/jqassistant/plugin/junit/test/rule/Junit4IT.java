@@ -322,7 +322,7 @@ public class Junit4IT extends AbstractJunitIT {
         assertThat((MethodDescriptor) rows.get(0)
             .getColumns()
             .get("Method")
-            .getValue(), methodDescriptor(Assertions4Junit4.class, "assertWithoutMessage"));
+            .getValue(), methodDescriptor(Assertions4Junit4.class, "assertWithoutReason"));
         store.commitTransaction();
     }
 
@@ -346,12 +346,14 @@ public class Junit4IT extends AbstractJunitIT {
                 .get("TestMethod")
                 .getValue())
             .collect(Collectors.toList());
-        assertThat(rows.size(), equalTo(13));
-        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
+        assertThat(rows.size(), equalTo(14));
+        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit5.class, "assertWithoutReason")),
             is(methodDescriptor(Assertions4Junit5.class, "assertWithMessageSupplier")), is(methodDescriptor(Assertions4Junit5.class, "assertWithMessage")),
             is(methodDescriptor(Assertions4Junit5.class, "repeatedTestWithoutAssertion")),
             is(methodDescriptor(Assertions4Junit5.class, "parameterizedTestWithoutAssertion", String.class)),
-            is(methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")), is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")),
+            is(methodDescriptor(Assertions4Junit5.class, "testWithoutAssertion")),
+            is(methodDescriptor(Assertions4Junit5.class, "disabledTestWithoutAssertion")),
+            is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")),
             is(methodDescriptor(Assertions4Junit5.class, "testWithNestedAssertion")),
             is(methodDescriptor(Assertions4Junit5.class, "testWithDeepNestedAssertion")),
             is(methodDescriptor(Assertions4Junit5.class, "testWithDeepAndShallowAssertion")),
@@ -382,7 +384,7 @@ public class Junit4IT extends AbstractJunitIT {
                 .getValue())
             .collect(Collectors.toList());
         assertThat(rows.size(), equalTo(8));
-        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit5.class, "assertWithoutMessage")),
+        assertThat(rows, containsInAnyOrder(is(methodDescriptor(Assertions4Junit5.class, "assertWithoutReason")),
             is(methodDescriptor(Assertions4Junit5.class, "assertWithMessageSupplier")), is(methodDescriptor(Assertions4Junit5.class, "assertWithMessage")),
             is(methodDescriptor(Assertions4Junit5.class, "testWithAssertion")), is(methodDescriptor(Assertions4Junit5.class, "testWithNestedAssertion")),
             is(methodDescriptor(Assertions4Junit5.class, "assertWithNonVoidReturn")), is(methodDescriptor(Assertions4Junit5.class, "testWithDeepAndShallowAssertion")),

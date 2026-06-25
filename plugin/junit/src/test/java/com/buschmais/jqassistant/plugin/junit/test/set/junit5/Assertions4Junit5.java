@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
 
     @Test
-    public void assertWithoutMessage() {
+    public void assertWithoutReason() {
         assertTrue(true);
     }
 
@@ -42,6 +42,11 @@ public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
 
     @Test
     public void testWithoutAssertion() {
+    }
+
+    @Disabled("Some reason")
+    @Test
+    public void disabledTestWithoutAssertion() {
     }
 
     @Test

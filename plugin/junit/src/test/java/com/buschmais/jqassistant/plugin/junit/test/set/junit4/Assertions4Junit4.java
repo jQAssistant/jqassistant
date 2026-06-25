@@ -11,7 +11,7 @@ import static org.junit.Assert.fail;
 public class Assertions4Junit4 {
 
     @Test
-    public void assertWithoutMessage() {
+    public void assertWithoutReason() {
         assertTrue(true);
     }
 
@@ -27,6 +27,11 @@ public class Assertions4Junit4 {
 
     @Test
     public void testWithoutAssertion() {
+    }
+
+    @Ignore("Some reason")
+    @Test
+    public void ignoredTestWithoutAssertion() {
     }
 
     @Test
