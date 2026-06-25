@@ -6970,6 +6970,9 @@ The annotation is evaluated by the constraint <code>java:TechnicalDebt</code> to
 <p><a href="#java:TestMethodPerformsAnnotationAssertion">Concept <code>java:TestMethodPerformsAnnotationAssertion</code></a></p>
 </li>
 <li>
+<p><a href="#java:InactiveTest">Concept <code>java:InactiveTest</code></a></p>
+</li>
+<li>
 <p><a href="#java-classpath:ResolveType">Concept <code>java-classpath:ResolveType</code></a></p>
 </li>
 <li>
@@ -7978,16 +7981,33 @@ ORDER BY
 </div>
 </div>
 <div class="sect4">
+<h5 id="java:InactiveTest"><a class="link" href="#java:InactiveTest">Concept <code>java:InactiveTest</code></a></h5>
+<div class="paragraph">
+<p>Abstract concept returning all elements labeled with :Inactive:Test and the according reason.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:DECLARES*0..1]-&gt;(e:Inactive:Test)
+RETURN
+   t AS DeclaringType, e AS Element, e.inactiveReason AS Reason</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
 <h5 id="java:TestMethodWithoutAssertion"><a class="link" href="#java:TestMethodWithoutAssertion">Constraint <code>java:TestMethodWithoutAssertion</code></a></h5>
 <div class="paragraph">
-<p>All test methods must perform at least one assertion.</p>
+<p>All active test methods must perform at least one assertion.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
   (testClass:Java:Type)-[:DECLARES]-&gt;(testMethod:Test:Method)
-WHERE NOT
+WHERE NOT (
   (testMethod)-[:PERFORMS_ASSERTION]-&gt;(:Assert)
+  OR testClass:Inactive:Test
+  OR testMethod:Inactive:Test
+)
 RETURN
   distinct testClass AS TestClass, testMethod AS TestMethod
 ORDER BY
@@ -8001,6 +8021,9 @@ ORDER BY
 <ul>
 <li>
 <p><a href="#java:MethodPerformsAssertion">java:MethodPerformsAssertion</a></p>
+</li>
+<li>
+<p><a href="#java:InactiveTest">java:InactiveTest</a></p>
 </li>
 </ul>
 </div>
@@ -9526,7 +9549,7 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 <p><a href="#junit5:UsageOfJUnit4TestApi">Constraint <code>junit5:UsageOfJUnit4TestApi</code></a></p>
 </li>
 <li>
-<p><a href="#junit:IgnoreWithoutMessage">Constraint <code>junit:IgnoreWithoutMessage</code></a></p>
+<p><a href="#junit:InactiveTestWithoutReason">Constraint <code>junit:InactiveTestWithoutReason</code></a></p>
 </li>
 <li>
 <p><a href="#junit3:TestClass">Concept <code>junit3:TestClass</code></a></p>
@@ -9635,6 +9658,12 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 </li>
 <li>
 <p><a href="#junit:TestCaseImplementedByMethod">Concept <code>junit:TestCaseImplementedByMethod</code></a></p>
+</li>
+<li>
+<p><a href="#junit:Disabled">Concept <code>junit:Disabled</code></a></p>
+</li>
+<li>
+<p><a href="#junit:Ignore">Concept <code>junit:Ignore</code></a></p>
 </li>
 </ul>
 </div>
@@ -10913,7 +10942,7 @@ RETURN DISTINCT
 <div class="ulist">
 <ul>
 <li>
-<p><a href="#junit:IgnoreWithoutMessage">junit:IgnoreWithoutMessage</a></p>
+<p><a href="#junit:InactiveTestWithoutReason">junit:InactiveTestWithoutReason</a></p>
 </li>
 </ul>
 </div>
@@ -10971,30 +11000,89 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:IgnoreWithoutMessage"><a class="link" href="#junit:IgnoreWithoutMessage">7.4.2.46. Constraint <code>junit:IgnoreWithoutMessage</code></a></h5>
+<h5 id="junit:Disabled"><a class="link" href="#junit:Disabled">7.4.2.46. Concept <code>junit:Disabled</code></a></h5>
 <div class="paragraph">
-<p>All @Ignore and @Disabled annotations must provide a message.</p>
+<p>Concept labeling all @Disabled-annotated elements with :JUnit:Inactive:Test and setting the according reason.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
   (t:Type)-[:DECLARES*0..1]-&gt;(e),
-  (e)-[:ANNOTATED_BY]-&gt;(ignore:Annotation)-[:OF_TYPE]-&gt;(ignoreType:Type)
-WHERE
-  ignoreType.fqn= &quot;org.junit.Ignore&quot;
-  AND NOT (ignore)-[:HAS]-&gt;(:Value{name:&quot;value&quot;})
+  (e)-[:ANNOTATED_BY]-&gt;(disabled:Annotation)-[:OF_TYPE]-&gt;(ignoreType:Type {fqn: &quot;org.junit.jupiter.api.Disabled&quot;})
+OPTIONAL MATCH
+  (disabled)-[:HAS]-&gt;(value:Value {name:&quot;value&quot;})
+SET
+  e:JUnit:Inactive:Test,
+  e.inactiveReason = value.value
 RETURN
-  t AS DeclaringClass, e AS IgnoreWithoutMessage
-UNION
-MATCH
-  (t:Type)-[:DECLARES*0..1]-&gt;(e),
-  (e)-[:ANNOTATED_BY]-&gt;(disabled:Annotation)-[:OF_TYPE]-&gt;(disabledType:Type)
-WHERE
-  disabledType.fqn = &quot;org.junit.jupiter.api.Disabled&quot;
-  AND NOT (disabled)-[:HAS]-&gt;(:Value{name:&quot;value&quot;})
-RETURN
-  t AS DeclaringClass, e AS IgnoreWithoutMessage</code></pre>
+  t AS DeclaringType, e AS Element, e.inactiveReason AS Reason</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:InactiveTest">java:InactiveTest</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="junit:Ignore"><a class="link" href="#junit:Ignore">7.4.2.47. Concept <code>junit:Ignore</code></a></h5>
+<div class="paragraph">
+<p>Concept labeling all @Ignore-annotated elements with :JUnit:Inactive:Test and setting the according reason.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:DECLARES*0..1]-&gt;(e),
+  (e)-[:ANNOTATED_BY]-&gt;(disabled:Annotation)-[:OF_TYPE]-&gt;(ignoreType:Type {fqn: &quot;org.junit.Ignore&quot;})
+OPTIONAL MATCH
+  (disabled)-[:HAS]-&gt;(value:Value {name:&quot;value&quot;})
+SET
+  e:JUnit:Inactive:Test,
+  e.inactiveReason = value.value
+RETURN
+  t AS DeclaringType, e AS Element, e.inactiveReason AS Reason</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:InactiveTest">java:InactiveTest</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="junit:InactiveTestWithoutReason"><a class="link" href="#junit:InactiveTestWithoutReason">7.4.2.48. Constraint <code>junit:InactiveTestWithoutReason</code></a></h5>
+<div class="paragraph">
+<p>Inactive tests must be provided with an according reason.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (t:Type)-[:DECLARES*0..1]-&gt;(e:Inactive:Test)
+WHERE
+  e.inactiveReason IS NULL
+RETURN
+  t AS DeclaringClass, e AS InactiveTestWithoutReason</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:InactiveTest">java:InactiveTest</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -12740,7 +12828,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-06-24 06:49:25 UTC
+Last updated 2026-06-25 13:34:11 UTC
 </div>
 </div>
 </body>
