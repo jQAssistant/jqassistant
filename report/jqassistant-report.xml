@@ -3,11 +3,11 @@
   <context>
     <build>
       <name>jQAssistant Parent</name>
-      <timestamp>2026-06-24T06:49:28.562Z</timestamp>
+      <timestamp>2026-06-25T13:34:22.603Z</timestamp>
       <properties></properties>
     </build>
   </context>
-  <group id="jqa-legal" date="2026-06-24T07:10:32">
+  <group id="jqa-legal" date="2026-06-25T13:55:38">
     <constraint id="jqa-legal:license:is-correctly-defined">
       <description>The license definition seems to be wrong. Please ensure
 to declare the license in this project as follows:
@@ -44,7 +44,7 @@ to declare the license in this project as follows:
       </verificationResult>
       <status>success</status>
       <severity level="2">major</severity>
-      <duration>192</duration>
+      <duration>227</duration>
     </constraint>
     <constraint id="jqa-legal:license:only-one-in-pom">
       <description>A jQAssistant project must have exactly one license specified in
@@ -87,7 +87,7 @@ specified.</description>
       </verificationResult>
       <status>warning</status>
       <severity level="3">minor</severity>
-      <duration>105</duration>
+      <duration>147</duration>
     </constraint>
     <concept id="jqa-maven-constraints:mark-root-project" abstract="false">
       <description>This concept labels the parent Maven POM of a Maven Project with
@@ -113,7 +113,7 @@ on the root Maven POM of a Maven project.</description>
       </verificationResult>
       <status>success</status>
       <severity level="0">blocker</severity>
-      <duration>104</duration>
+      <duration>152</duration>
     </concept>
     <constraint id="jqa-legal:license:exists">
       <description>It must exist in the root directory of the project a
@@ -142,14 +142,14 @@ the project uses.</description>
       </verificationResult>
       <status>success</status>
       <severity level="3">minor</severity>
-      <duration>37</duration>
+      <duration>44</duration>
       <required-concept id="jqa-maven-constraints:mark-root-project">
         <status>success</status>
       </required-concept>
     </constraint>
-    <duration>647</duration>
+    <duration>822</duration>
   </group>
-  <group id="jqa-logging" date="2026-06-24T07:10:33">
+  <group id="jqa-logging" date="2026-06-25T13:55:39">
     <constraint id="jqa-logging:IllegalUsageOfSystemOutAndErr">
       <description>System.out or System.err should not be used for logging</description>
       <verificationResult>
@@ -158,7 +158,7 @@ the project uses.</description>
       </verificationResult>
       <status>success</status>
       <severity level="2">major</severity>
-      <duration>146</duration>
+      <duration>160</duration>
     </constraint>
     <concept id="jqa-logging:OSSLogger" abstract="false">
       <description>The classes org.slf4j.Logger, org.apache.commons.logging.Log and java.util.logging.Logger are logging frameworks and labeled as Logger.</description>
@@ -180,7 +180,7 @@ the project uses.</description>
       </verificationResult>
       <status>success</status>
       <severity level="4">info</severity>
-      <duration>63</duration>
+      <duration>65</duration>
     </concept>
     <concept id="jqa-logging:Logger" abstract="false">
       <description>Abstract anchor for all logging framework providers.</description>
@@ -215,7 +215,7 @@ the project uses.</description>
       </verificationResult>
       <status>success</status>
       <severity level="4">info</severity>
-      <duration>49</duration>
+      <duration>38</duration>
       <required-concept id="jqa-logging:Logger">
         <status>success</status>
       </required-concept>
@@ -228,14 +228,14 @@ the project uses.</description>
       </verificationResult>
       <status>success</status>
       <severity level="2">major</severity>
-      <duration>135</duration>
+      <duration>97</duration>
       <required-concept id="jqa-logging:Slf4j">
         <status>success</status>
       </required-concept>
     </constraint>
-    <duration>449</duration>
+    <duration>420</duration>
   </group>
-  <group id="jqa-maven-constraints" date="2026-06-24T07:10:33">
+  <group id="jqa-maven-constraints" date="2026-06-25T13:55:39">
     <constraint id="jqa-maven-constraints:project-name">
       <description>The name of the project must be given in the Maven project. Furthermore
 the name must start with JQAssistant.
@@ -250,7 +250,7 @@ present in the parent POM:
       </verificationResult>
       <status>success</status>
       <severity level="3">minor</severity>
-      <duration>56</duration>
+      <duration>51</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:java-compiler-target-version">
       <description>The Maven Compiler plugin must NOT define a Java bytecode target version other than
@@ -300,7 +300,7 @@ in the toplevel POM of the Maven project.
       </verificationResult>
       <status>success</status>
       <severity level="2">major</severity>
-      <duration>218</duration>
+      <duration>207</duration>
       <required-concept id="jqa-maven-constraints:mark-root-project">
         <status>success</status>
       </required-concept>
@@ -331,7 +331,7 @@ Example: &lt;version&gt;1.9&lt;/version&gt;</description>
       </verificationResult>
       <status>success</status>
       <severity level="3">minor</severity>
-      <duration>181</duration>
+      <duration>186</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:homepage">
       <description>The homepage of jQAssistant must be defined as the homepage of
@@ -345,7 +345,7 @@ present in the parent POM:
       </verificationResult>
       <status>success</status>
       <severity level="3">minor</severity>
-      <duration>187</duration>
+      <duration>181</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:scm-connection-declaration">
       <description>The SCM section of this jQAssistant project seems to be not correct. Please
@@ -377,7 +377,7 @@ The SCM section of this project should be similar to this one:
       </verificationResult>
       <status>success</status>
       <severity level="0">blocker</severity>
-      <duration>90</duration>
+      <duration>88</duration>
     </constraint>
     <concept id="jqa-maven-constraints:jQAssistantArtifact" abstract="false">
       <description>This concept labels all artifacts with a groupId starting with "com.buschmais.jqassistant" with "jQAssistant".</description>
@@ -1850,7 +1850,7 @@ The SCM section of this project should be similar to this one:
       </verificationResult>
       <status>success</status>
       <severity level="0">blocker</severity>
-      <duration>85</duration>
+      <duration>73</duration>
     </concept>
     <constraint id="jqa-maven-constraints:AvoidDependenciesTojQAssistantTestArtifacts">
       <description>The main artifact created by a jQAssistant Maven project must not depend on
@@ -1899,11 +1899,11 @@ Example:
       </verificationResult>
       <status>success</status>
       <severity level="3">minor</severity>
-      <duration>126</duration>
+      <duration>146</duration>
     </constraint>
-    <duration>1302</duration>
+    <duration>1285</duration>
   </group>
-  <group id="jqa-plugin:Default" date="2026-06-24T07:10:35">
+  <group id="jqa-plugin:Default" date="2026-06-25T13:55:40">
     <concept id="jqa-plugin:Label" abstract="false">
       <description>Adds the labels "XO" and "Label" to all interfaces representing XO labels.</description>
       <result>
@@ -1911,14 +1911,9 @@ Example:
           <column>label.fqn</column>
         </columns>
         <rows count="396">
-          <row key="8a56e0507402136b8ed87aba087e6d77c95eed538ad04183b8bf886cc7f1457c">
+          <row key="bdcb18b337decc4f3dbd0ab6fc4d9ab78786b2bd40d0a817450fbfcb23674511">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</value>
-            </column>
-          </row>
-          <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
             </column>
           </row>
           <row key="cadec0682fd0ffe6795ffd3cd75ecd141f8c0e734de9a93c989be77c96d997e4">
@@ -1931,9 +1926,9 @@ Example:
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</value>
             </column>
           </row>
-          <row key="bb6d59e585f1a9f13e06ec2a862c12ce8245e350f73bf8844695fe9a17ee1bab">
+          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
             </column>
           </row>
           <row key="cc524977eacead6d4b333e64ee5bc26e5d483e9f20f02dc5f6587bf113fc5adc">
@@ -1941,54 +1936,14 @@ Example:
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
             </column>
           </row>
-          <row key="1c88fe38f08057d6352a10251c45604bd6f4870f7fc8fead13f1098c7e8209d5">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</value>
-            </column>
-          </row>
-          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
-            </column>
-          </row>
-          <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
-            </column>
-          </row>
-          <row key="f87ecdc883cbbe34aafc78d6977d946fb5bf62520cc6b98ce79e66f4d3bf24a7">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
-            </column>
-          </row>
           <row key="d0e6ed8ce3bf7e96bf667eef24214c16aebdcc9f8174e822bfd2b50f43a1b68b">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
             </column>
           </row>
-          <row key="838412130ac51ce1acd7aefc7fd381c23a0e6bc3e62ec7727849208b438847c0">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</value>
-            </column>
-          </row>
           <row key="ae92490dc0164a87fe86f7136c2b72aee03bf0f7ed0ee9e5f25fd813ae00ad44">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
-            </column>
-          </row>
-          <row key="fe708ed22261730db0f12e98c8d938bae0d2d9711fd12a8cedba0a82511ae7b9">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</value>
-            </column>
-          </row>
-          <row key="bdcb18b337decc4f3dbd0ab6fc4d9ab78786b2bd40d0a817450fbfcb23674511">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
-            </column>
-          </row>
-          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
             </column>
           </row>
           <row key="071051230d3be3d6904c45ae7c1a8914cd4dfa2b51a882dc6a83b9db33e5a741">
@@ -1996,9 +1951,94 @@ Example:
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDescriptor</value>
             </column>
           </row>
+          <row key="ae92490dc0164a87fe86f7136c2b72aee03bf0f7ed0ee9e5f25fd813ae00ad44">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
+            </column>
+          </row>
+          <row key="1c88fe38f08057d6352a10251c45604bd6f4870f7fc8fead13f1098c7e8209d5">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</value>
+            </column>
+          </row>
+          <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
+            </column>
+          </row>
+          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
+            </column>
+          </row>
+          <row key="f87ecdc883cbbe34aafc78d6977d946fb5bf62520cc6b98ce79e66f4d3bf24a7">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
+            </column>
+          </row>
+          <row key="cadec0682fd0ffe6795ffd3cd75ecd141f8c0e734de9a93c989be77c96d997e4">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</value>
+            </column>
+          </row>
+          <row key="64f1d92fd814d46cab2004cae1ee1d61d1f3bb3a678af4cb41db88375575fd65">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</value>
+            </column>
+          </row>
+          <row key="bb6d59e585f1a9f13e06ec2a862c12ce8245e350f73bf8844695fe9a17ee1bab">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
+            </column>
+          </row>
+          <row key="838412130ac51ce1acd7aefc7fd381c23a0e6bc3e62ec7727849208b438847c0">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</value>
+            </column>
+          </row>
+          <row key="fe708ed22261730db0f12e98c8d938bae0d2d9711fd12a8cedba0a82511ae7b9">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</value>
+            </column>
+          </row>
+          <row key="cc524977eacead6d4b333e64ee5bc26e5d483e9f20f02dc5f6587bf113fc5adc">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
+            </column>
+          </row>
+          <row key="d0e6ed8ce3bf7e96bf667eef24214c16aebdcc9f8174e822bfd2b50f43a1b68b">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
+            </column>
+          </row>
           <row key="8a56e0507402136b8ed87aba087e6d77c95eed538ad04183b8bf886cc7f1457c">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</value>
+            </column>
+          </row>
+          <row key="043cff3393254bb69e4a39e038058c955437c337e397374a74d1d00cfbb2c822">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</value>
+            </column>
+          </row>
+          <row key="bdcb18b337decc4f3dbd0ab6fc4d9ab78786b2bd40d0a817450fbfcb23674511">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
+            </column>
+          </row>
+          <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
+            </column>
+          </row>
+          <row key="fe708ed22261730db0f12e98c8d938bae0d2d9711fd12a8cedba0a82511ae7b9">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</value>
+            </column>
+          </row>
+          <row key="f87ecdc883cbbe34aafc78d6977d946fb5bf62520cc6b98ce79e66f4d3bf24a7">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
             </column>
           </row>
           <row key="838412130ac51ce1acd7aefc7fd381c23a0e6bc3e62ec7727849208b438847c0">
@@ -2011,34 +2051,19 @@ Example:
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</value>
             </column>
           </row>
-          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
-            </column>
-          </row>
           <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
             </column>
           </row>
-          <row key="d0e6ed8ce3bf7e96bf667eef24214c16aebdcc9f8174e822bfd2b50f43a1b68b">
+          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
             </column>
           </row>
-          <row key="f87ecdc883cbbe34aafc78d6977d946fb5bf62520cc6b98ce79e66f4d3bf24a7">
+          <row key="8a56e0507402136b8ed87aba087e6d77c95eed538ad04183b8bf886cc7f1457c">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
-            </column>
-          </row>
-          <row key="bdcb18b337decc4f3dbd0ab6fc4d9ab78786b2bd40d0a817450fbfcb23674511">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
-            </column>
-          </row>
-          <row key="cadec0682fd0ffe6795ffd3cd75ecd141f8c0e734de9a93c989be77c96d997e4">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</value>
             </column>
           </row>
           <row key="bb6d59e585f1a9f13e06ec2a862c12ce8245e350f73bf8844695fe9a17ee1bab">
@@ -2046,34 +2071,49 @@ Example:
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
             </column>
           </row>
-          <row key="043cff3393254bb69e4a39e038058c955437c337e397374a74d1d00cfbb2c822">
+          <row key="810391c63a9c91b0543bd68f676e5757545be81bd450a4aa9bf17035269b5a65">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
             </column>
           </row>
-          <row key="ae92490dc0164a87fe86f7136c2b72aee03bf0f7ed0ee9e5f25fd813ae00ad44">
+          <row key="6904e19c6342584988d306ed6e4f414aba428f8968c347fb8216658f41aff88d">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</value>
             </column>
           </row>
-          <row key="fe708ed22261730db0f12e98c8d938bae0d2d9711fd12a8cedba0a82511ae7b9">
+          <row key="270546bc5ea6a69ca2ae65e14cd0ff8065719e5baecb65738710e8174df189dc">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</value>
             </column>
           </row>
-          <row key="64f1d92fd814d46cab2004cae1ee1d61d1f3bb3a678af4cb41db88375575fd65">
+          <row key="71982ac22ea97302ee909c7f8792e4b3fa8f11ee13aa5a13b0752065060e25d5">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
             </column>
           </row>
-          <row key="cc524977eacead6d4b333e64ee5bc26e5d483e9f20f02dc5f6587bf113fc5adc">
+          <row key="cf7c1abb617e7e9ac2e111990b4acaef7fe8084ee99ee9992c38e10e0e2608a5">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
             </column>
           </row>
-          <row key="3b46dcf3c018393eecbc715ab18b7a81b795410fbd10568972d2f3e47735293a">
+          <row key="d3147f8bc057b345a9c5dd0e75a4a3f948d0a90b849d7aef5d040720b024b65e">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
+            </column>
+          </row>
+          <row key="8153458f8db2208790ccf100b595f9e2186ce10fbdfc5fc59c9883db0dc8e406">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</value>
+            </column>
+          </row>
+          <row key="6b14b2e5b3e17488f045a53630c0427e5030d3ae9f6a33a9d4bb05c7a86e7882">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
+            </column>
+          </row>
+          <row key="e47f2e1fa957921d5d48553ef8214e37fcd8a3ca84f83cc525d2aefba8178600">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
             </column>
           </row>
           <row key="a733f35d7152a1e5de91d1bd4ff5f4f14ffd172d4f339bbd1cac58eaaf4dd4a9">
@@ -2081,24 +2121,14 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
             </column>
           </row>
-          <row key="9d6edbe63916fc560d0b29b76192f50c59fc8e31991adff2d5e8d521ff877778">
+          <row key="835c2a102632f17a6a542801a69889dd5e9b6b420195d406f1723de9a784aa21">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</value>
             </column>
           </row>
-          <row key="cfa01706431d7c812d2efe6076b26870d1e136c17c74d3e3c10ed98306c7428f">
+          <row key="da1b9d87c791feb01a9bd709d107598d230c0213a8754e1adced937a8a15ea53">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
-            </column>
-          </row>
-          <row key="df1e745a8494738eb0af054416605f244d2c8657cc40600aaa519198995f8480">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
-            </column>
-          </row>
-          <row key="befc8a1b9a2b13ce7a883c9410dc9b36f20344e843ad20b797b40e4966363122">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
             </column>
           </row>
           <row key="7a23081db38b83ce9aa3c04ddfbadc9cd14ec53094ddd6903997ebd882f55e7c">
@@ -2106,14 +2136,74 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</value>
             </column>
           </row>
+          <row key="1f50511c2d85aec2cc098d0eab2862fedf60091a1de09ed96b47d43513a7a043">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
+            </column>
+          </row>
+          <row key="d9b9a0a240a78643d317c94ccad95774a41d562544e678236a59682318e78441">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
+            </column>
+          </row>
+          <row key="cfa01706431d7c812d2efe6076b26870d1e136c17c74d3e3c10ed98306c7428f">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
+            </column>
+          </row>
+          <row key="a7de53e88a1c4f04ea422be9f4291350b5adcc71b7b6fa3914208d645fb8e3a2">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor</value>
+            </column>
+          </row>
+          <row key="a733f35d7152a1e5de91d1bd4ff5f4f14ffd172d4f339bbd1cac58eaaf4dd4a9">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
+            </column>
+          </row>
+          <row key="890446ba7436e01694375cad0b87c156cb13f20ec00f33cba3124bd430b7c852">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</value>
+            </column>
+          </row>
+          <row key="9d6edbe63916fc560d0b29b76192f50c59fc8e31991adff2d5e8d521ff877778">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor</value>
+            </column>
+          </row>
+          <row key="d9b9a0a240a78643d317c94ccad95774a41d562544e678236a59682318e78441">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
+            </column>
+          </row>
+          <row key="da1b9d87c791feb01a9bd709d107598d230c0213a8754e1adced937a8a15ea53">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
+            </column>
+          </row>
+          <row key="df1e745a8494738eb0af054416605f244d2c8657cc40600aaa519198995f8480">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
+            </column>
+          </row>
+          <row key="0301ea01e856890ec003713b1d66c4ab3142d946418ae8dccb4e1a60d2eb5b8a">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</value>
+            </column>
+          </row>
+          <row key="34f9165d4bfbbd9529aa1aa47bd41bdf728034b520c60729f1b0e44bb2ba4912">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
+            </column>
+          </row>
           <row key="fea4c24f405425b4a16b93724055a1f2a8d0390efce99a687ee16cb7b97be69b">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</value>
             </column>
           </row>
-          <row key="ee45386768a36355475b51e7321a7ab768c81cb8018c1032ae1f81dcf4962547">
+          <row key="cfa01706431d7c812d2efe6076b26870d1e136c17c74d3e3c10ed98306c7428f">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
             </column>
           </row>
           <row key="8153458f8db2208790ccf100b595f9e2186ce10fbdfc5fc59c9883db0dc8e406">
@@ -2141,31 +2231,6 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
             </column>
           </row>
-          <row key="810391c63a9c91b0543bd68f676e5757545be81bd450a4aa9bf17035269b5a65">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
-            </column>
-          </row>
-          <row key="e47f2e1fa957921d5d48553ef8214e37fcd8a3ca84f83cc525d2aefba8178600">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
-            </column>
-          </row>
-          <row key="71982ac22ea97302ee909c7f8792e4b3fa8f11ee13aa5a13b0752065060e25d5">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
-            </column>
-          </row>
-          <row key="da1b9d87c791feb01a9bd709d107598d230c0213a8754e1adced937a8a15ea53">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
-            </column>
-          </row>
-          <row key="87e8c04e5d0c3e4e1fbe8d485caa99447a7a4203dda0cdc3e5624f40f124d236">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
-            </column>
-          </row>
           <row key="cf7c1abb617e7e9ac2e111990b4acaef7fe8084ee99ee9992c38e10e0e2608a5">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
@@ -2174,101 +2239,6 @@ Example:
           <row key="a070383b61eea91e207bf8c8d2fd9e9b079ec54bf59cca7d5e3b33d6e98dd527">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</value>
-            </column>
-          </row>
-          <row key="a7de53e88a1c4f04ea422be9f4291350b5adcc71b7b6fa3914208d645fb8e3a2">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor</value>
-            </column>
-          </row>
-          <row key="890446ba7436e01694375cad0b87c156cb13f20ec00f33cba3124bd430b7c852">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</value>
-            </column>
-          </row>
-          <row key="a733f35d7152a1e5de91d1bd4ff5f4f14ffd172d4f339bbd1cac58eaaf4dd4a9">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
-            </column>
-          </row>
-          <row key="0301ea01e856890ec003713b1d66c4ab3142d946418ae8dccb4e1a60d2eb5b8a">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</value>
-            </column>
-          </row>
-          <row key="34f9165d4bfbbd9529aa1aa47bd41bdf728034b520c60729f1b0e44bb2ba4912">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
-            </column>
-          </row>
-          <row key="6904e19c6342584988d306ed6e4f414aba428f8968c347fb8216658f41aff88d">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</value>
-            </column>
-          </row>
-          <row key="270546bc5ea6a69ca2ae65e14cd0ff8065719e5baecb65738710e8174df189dc">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</value>
-            </column>
-          </row>
-          <row key="626790e43ec026da3dba238303e3e34bb6abfab820b2c51967868a3e44548566">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
-            </column>
-          </row>
-          <row key="6b14b2e5b3e17488f045a53630c0427e5030d3ae9f6a33a9d4bb05c7a86e7882">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
-            </column>
-          </row>
-          <row key="d3147f8bc057b345a9c5dd0e75a4a3f948d0a90b849d7aef5d040720b024b65e">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
-            </column>
-          </row>
-          <row key="835c2a102632f17a6a542801a69889dd5e9b6b420195d406f1723de9a784aa21">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</value>
-            </column>
-          </row>
-          <row key="d9b9a0a240a78643d317c94ccad95774a41d562544e678236a59682318e78441">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
-            </column>
-          </row>
-          <row key="e47f2e1fa957921d5d48553ef8214e37fcd8a3ca84f83cc525d2aefba8178600">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
-            </column>
-          </row>
-          <row key="71982ac22ea97302ee909c7f8792e4b3fa8f11ee13aa5a13b0752065060e25d5">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
-            </column>
-          </row>
-          <row key="810391c63a9c91b0543bd68f676e5757545be81bd450a4aa9bf17035269b5a65">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
-            </column>
-          </row>
-          <row key="6b14b2e5b3e17488f045a53630c0427e5030d3ae9f6a33a9d4bb05c7a86e7882">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
-            </column>
-          </row>
-          <row key="626790e43ec026da3dba238303e3e34bb6abfab820b2c51967868a3e44548566">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
-            </column>
-          </row>
-          <row key="890446ba7436e01694375cad0b87c156cb13f20ec00f33cba3124bd430b7c852">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</value>
-            </column>
-          </row>
-          <row key="cfa01706431d7c812d2efe6076b26870d1e136c17c74d3e3c10ed98306c7428f">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
             </column>
           </row>
           <row key="7a23081db38b83ce9aa3c04ddfbadc9cd14ec53094ddd6903997ebd882f55e7c">
@@ -2276,24 +2246,9 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</value>
             </column>
           </row>
-          <row key="8153458f8db2208790ccf100b595f9e2186ce10fbdfc5fc59c9883db0dc8e406">
+          <row key="626790e43ec026da3dba238303e3e34bb6abfab820b2c51967868a3e44548566">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</value>
-            </column>
-          </row>
-          <row key="befc8a1b9a2b13ce7a883c9410dc9b36f20344e843ad20b797b40e4966363122">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
-            </column>
-          </row>
-          <row key="df1e745a8494738eb0af054416605f244d2c8657cc40600aaa519198995f8480">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
-            </column>
-          </row>
-          <row key="cf7c1abb617e7e9ac2e111990b4acaef7fe8084ee99ee9992c38e10e0e2608a5">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
             </column>
           </row>
           <row key="6904e19c6342584988d306ed6e4f414aba428f8968c347fb8216658f41aff88d">
@@ -2306,54 +2261,24 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</value>
             </column>
           </row>
+          <row key="e47f2e1fa957921d5d48553ef8214e37fcd8a3ca84f83cc525d2aefba8178600">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
+            </column>
+          </row>
           <row key="835c2a102632f17a6a542801a69889dd5e9b6b420195d406f1723de9a784aa21">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</value>
             </column>
           </row>
-          <row key="d3147f8bc057b345a9c5dd0e75a4a3f948d0a90b849d7aef5d040720b024b65e">
+          <row key="ee45386768a36355475b51e7321a7ab768c81cb8018c1032ae1f81dcf4962547">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
             </column>
           </row>
-          <row key="fea4c24f405425b4a16b93724055a1f2a8d0390efce99a687ee16cb7b97be69b">
+          <row key="71982ac22ea97302ee909c7f8792e4b3fa8f11ee13aa5a13b0752065060e25d5">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</value>
-            </column>
-          </row>
-          <row key="d9b9a0a240a78643d317c94ccad95774a41d562544e678236a59682318e78441">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
-            </column>
-          </row>
-          <row key="a7de53e88a1c4f04ea422be9f4291350b5adcc71b7b6fa3914208d645fb8e3a2">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor</value>
-            </column>
-          </row>
-          <row key="890446ba7436e01694375cad0b87c156cb13f20ec00f33cba3124bd430b7c852">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</value>
-            </column>
-          </row>
-          <row key="a733f35d7152a1e5de91d1bd4ff5f4f14ffd172d4f339bbd1cac58eaaf4dd4a9">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
-            </column>
-          </row>
-          <row key="a070383b61eea91e207bf8c8d2fd9e9b079ec54bf59cca7d5e3b33d6e98dd527">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</value>
-            </column>
-          </row>
-          <row key="da1b9d87c791feb01a9bd709d107598d230c0213a8754e1adced937a8a15ea53">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
-            </column>
-          </row>
-          <row key="1f50511c2d85aec2cc098d0eab2862fedf60091a1de09ed96b47d43513a7a043">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
             </column>
           </row>
           <row key="87e8c04e5d0c3e4e1fbe8d485caa99447a7a4203dda0cdc3e5624f40f124d236">
@@ -2361,9 +2286,49 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
             </column>
           </row>
-          <row key="ee45386768a36355475b51e7321a7ab768c81cb8018c1032ae1f81dcf4962547">
+          <row key="6b14b2e5b3e17488f045a53630c0427e5030d3ae9f6a33a9d4bb05c7a86e7882">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
+            </column>
+          </row>
+          <row key="d3147f8bc057b345a9c5dd0e75a4a3f948d0a90b849d7aef5d040720b024b65e">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
+            </column>
+          </row>
+          <row key="befc8a1b9a2b13ce7a883c9410dc9b36f20344e843ad20b797b40e4966363122">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
+            </column>
+          </row>
+          <row key="810391c63a9c91b0543bd68f676e5757545be81bd450a4aa9bf17035269b5a65">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
+            </column>
+          </row>
+          <row key="a7de53e88a1c4f04ea422be9f4291350b5adcc71b7b6fa3914208d645fb8e3a2">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectParticipantDescriptor</value>
+            </column>
+          </row>
+          <row key="a733f35d7152a1e5de91d1bd4ff5f4f14ffd172d4f339bbd1cac58eaaf4dd4a9">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
+            </column>
+          </row>
+          <row key="890446ba7436e01694375cad0b87c156cb13f20ec00f33cba3124bd430b7c852">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</value>
+            </column>
+          </row>
+          <row key="a070383b61eea91e207bf8c8d2fd9e9b079ec54bf59cca7d5e3b33d6e98dd527">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</value>
+            </column>
+          </row>
+          <row key="890446ba7436e01694375cad0b87c156cb13f20ec00f33cba3124bd430b7c852">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</value>
             </column>
           </row>
           <row key="0301ea01e856890ec003713b1d66c4ab3142d946418ae8dccb4e1a60d2eb5b8a">
@@ -2374,6 +2339,61 @@ Example:
           <row key="34f9165d4bfbbd9529aa1aa47bd41bdf728034b520c60729f1b0e44bb2ba4912">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
+            </column>
+          </row>
+          <row key="87e8c04e5d0c3e4e1fbe8d485caa99447a7a4203dda0cdc3e5624f40f124d236">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
+            </column>
+          </row>
+          <row key="befc8a1b9a2b13ce7a883c9410dc9b36f20344e843ad20b797b40e4966363122">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
+            </column>
+          </row>
+          <row key="626790e43ec026da3dba238303e3e34bb6abfab820b2c51967868a3e44548566">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
+            </column>
+          </row>
+          <row key="3b46dcf3c018393eecbc715ab18b7a81b795410fbd10568972d2f3e47735293a">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</value>
+            </column>
+          </row>
+          <row key="ee45386768a36355475b51e7321a7ab768c81cb8018c1032ae1f81dcf4962547">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
+            </column>
+          </row>
+          <row key="fea4c24f405425b4a16b93724055a1f2a8d0390efce99a687ee16cb7b97be69b">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</value>
+            </column>
+          </row>
+          <row key="df1e745a8494738eb0af054416605f244d2c8657cc40600aaa519198995f8480">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
+            </column>
+          </row>
+          <row key="da2aacd085b8a7930e32249e9783009c5ed66a23ac41064be0adb07c3b199730">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor</value>
+            </column>
+          </row>
+          <row key="1a26fe32607f3bd20604af63fe40ebdb53b5db33069c1dbed5d6fb8a4b964b28">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</value>
+            </column>
+          </row>
+          <row key="2013f22ef84c39c4b45d767682370e8a97601e2551cac67d58c6585f9e9f5cee">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</value>
+            </column>
+          </row>
+          <row key="082c20f17d551871459ffa78420a2eb9d6141f829e88a5590f041879bc016dc2">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</value>
             </column>
           </row>
           <row key="58dfafa7a1b599611526001557bc444f223cfb0e4db94da40281beca632c7ef7">
@@ -2386,26 +2406,6 @@ Example:
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</value>
             </column>
           </row>
-          <row key="da2aacd085b8a7930e32249e9783009c5ed66a23ac41064be0adb07c3b199730">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor</value>
-            </column>
-          </row>
-          <row key="082c20f17d551871459ffa78420a2eb9d6141f829e88a5590f041879bc016dc2">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</value>
-            </column>
-          </row>
-          <row key="1a26fe32607f3bd20604af63fe40ebdb53b5db33069c1dbed5d6fb8a4b964b28">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</value>
-            </column>
-          </row>
-          <row key="2013f22ef84c39c4b45d767682370e8a97601e2551cac67d58c6585f9e9f5cee">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</value>
-            </column>
-          </row>
           <row key="101d063671dc216b17cf53c5b1bf3213d30c3835c3e4c9f39f39f7c55b5f9d09">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</value>
@@ -2416,11 +2416,6 @@ Example:
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor</value>
             </column>
           </row>
-          <row key="082c20f17d551871459ffa78420a2eb9d6141f829e88a5590f041879bc016dc2">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</value>
-            </column>
-          </row>
           <row key="1a26fe32607f3bd20604af63fe40ebdb53b5db33069c1dbed5d6fb8a4b964b28">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</value>
@@ -2431,19 +2426,14 @@ Example:
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</value>
             </column>
           </row>
-          <row key="1a26fe32607f3bd20604af63fe40ebdb53b5db33069c1dbed5d6fb8a4b964b28">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</value>
-            </column>
-          </row>
           <row key="082c20f17d551871459ffa78420a2eb9d6141f829e88a5590f041879bc016dc2">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</value>
             </column>
           </row>
-          <row key="2013f22ef84c39c4b45d767682370e8a97601e2551cac67d58c6585f9e9f5cee">
+          <row key="082c20f17d551871459ffa78420a2eb9d6141f829e88a5590f041879bc016dc2">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</value>
             </column>
           </row>
           <row key="4dc3b946ba23df9256948cc86e99b5325adc6590414b4f46b5c4baccc87a16ec">
@@ -2451,19 +2441,19 @@ Example:
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</value>
             </column>
           </row>
-          <row key="89b24c579b29bb63f7220852a16047acdcc513fb87578341147a100bdec926dc">
+          <row key="1a26fe32607f3bd20604af63fe40ebdb53b5db33069c1dbed5d6fb8a4b964b28">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</value>
             </column>
           </row>
-          <row key="70de14a16577238454565b5b72a9cfdf12a4df00900cd9378922c12f26d91644">
+          <row key="2013f22ef84c39c4b45d767682370e8a97601e2551cac67d58c6585f9e9f5cee">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</value>
             </column>
           </row>
-          <row key="e2a381c937365093a03d245aad34367ba9f898a10035f3a59ece05db43ce1e23">
+          <row key="806cc1b451fc91f934597264696952c8fdb334e3b20b7c72f8863d5984d76020">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</value>
             </column>
           </row>
           <row key="44beba5976d63a41d0aebb6ffbbf843b81880dc9b40c4fcd9eb8faf06d8030b8">
@@ -2471,14 +2461,24 @@ Example:
               <value>com.buschmais.jqassistant.plugin.junit.api.model.JUnitDescriptor</value>
             </column>
           </row>
-          <row key="70de14a16577238454565b5b72a9cfdf12a4df00900cd9378922c12f26d91644">
+          <row key="806cc1b451fc91f934597264696952c8fdb334e3b20b7c72f8863d5984d76020">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</value>
             </column>
           </row>
           <row key="a004002f1a1c6b939d9d5859c430b4c7c69ca12df19185f3085a1369014dc438">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</value>
+            </column>
+          </row>
+          <row key="89b24c579b29bb63f7220852a16047acdcc513fb87578341147a100bdec926dc">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</value>
+            </column>
+          </row>
+          <row key="70de14a16577238454565b5b72a9cfdf12a4df00900cd9378922c12f26d91644">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</value>
             </column>
           </row>
           <row key="e2a381c937365093a03d245aad34367ba9f898a10035f3a59ece05db43ce1e23">
@@ -2491,19 +2491,19 @@ Example:
               <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</value>
             </column>
           </row>
-          <row key="806cc1b451fc91f934597264696952c8fdb334e3b20b7c72f8863d5984d76020">
+          <row key="e2a381c937365093a03d245aad34367ba9f898a10035f3a59ece05db43ce1e23">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</value>
-            </column>
-          </row>
-          <row key="806cc1b451fc91f934597264696952c8fdb334e3b20b7c72f8863d5984d76020">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</value>
             </column>
           </row>
           <row key="a004002f1a1c6b939d9d5859c430b4c7c69ca12df19185f3085a1369014dc438">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</value>
+            </column>
+          </row>
+          <row key="70de14a16577238454565b5b72a9cfdf12a4df00900cd9378922c12f26d91644">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor</value>
             </column>
           </row>
           <row key="7db16c8f05d30aabda738a4b69d7716b309be9b37b225ad0895522b1315c2fea">
@@ -3899,7 +3899,7 @@ Example:
       </verificationResult>
       <status>success</status>
       <severity level="4">info</severity>
-      <duration>220</duration>
+      <duration>262</duration>
     </concept>
     <concept id="jqa-plugin:PluginDescriptor" abstract="false">
       <description>Adds a label "PluginDescriptor" to classpath resources "/META-INF/jqassistant-plugin.xml".</description>
@@ -3997,7 +3997,7 @@ Example:
       </verificationResult>
       <status>success</status>
       <severity level="4">info</severity>
-      <duration>66</duration>
+      <duration>71</duration>
     </concept>
     <concept id="jqa-plugin:PluginDescriptorRegistersModel" abstract="false">
       <description>Creates a relationship REGISTERS_MODEL from /model/class-XML nodes to the corresponding model types.</description>
@@ -4121,99 +4121,14 @@ Example:
               <value>com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</value>
             </column>
           </row>
-          <row key="f71d90240aeef22afcdb549e00981be850c9380e7fe5fff0812ee19c9069a5dc">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</value>
-            </column>
-          </row>
-          <row key="1e0296dada1ac9b9ef3dc4cc31ae067382a17a9e2bed30eb364186ffc5fc681d">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</value>
-            </column>
-          </row>
-          <row key="49c5e44918c29fe982841d13cb38d26d6a95cc69218ea540e0dbe04aad2a46bc">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</value>
-            </column>
-          </row>
-          <row key="c889c9ef6fc83db1f8fd0a88a658e36c1ecad1939ec7a91c1a389c2b7018f049">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</value>
-            </column>
-          </row>
-          <row key="54df4a3c04c993c4a11541ec757428c595ba71b9f73037b00ea447a0e359b8f9">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor</value>
-            </column>
-          </row>
-          <row key="140bce6bfa9125e3fc9fbc7a34a539b3a9874c2bf3b15d27b730374e0bd50051">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</value>
-            </column>
-          </row>
-          <row key="d0c3e51fc8ce6b739889d156cf6bff4921702ef1383c8a9e61d71f22172a8b51">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</value>
-            </column>
-          </row>
-          <row key="378affb5df398ce9997dc27d9b27eb933c89b0005400907a7d32259ba8ea6adf">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</value>
-            </column>
-          </row>
-          <row key="7e894f77be3675e509daca7d82759ed61a0d9bbcd0e2e035a98f44c551aa3fc7">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ModuleClassFileDescriptor</value>
-            </column>
-          </row>
-          <row key="88b50874369ef444c49ae4f1d5b17ff42633bbf7df9ecdaab9a5f827d6231d38">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</value>
-            </column>
-          </row>
           <row key="e24fec4b978a473caf347c5796596f5f86c45da77eb8c14250723610a023dc0a">
             <column name="Type">
               <value>com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor</value>
             </column>
           </row>
-          <row key="b140589ea5d87e41768ee07babdc74bf85512cccae5a40a3e117eb8a28abd7ec">
+          <row key="b53892fd6a4639f6beaea4ec5154a0fc98fcdea18b1dc4654a343893f94257e7">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.RequiresDescriptor</value>
-            </column>
-          </row>
-          <row key="7b71e7f8791151cebac12b8e7531b36bcee930d9bf9c8af4b6323b98cdd7395d">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</value>
-            </column>
-          </row>
-          <row key="efdf61762f345c6427135ffa3751dcbf506b0887f12c8f2c949a010a4b97c11d">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDependsOnDescriptor</value>
-            </column>
-          </row>
-          <row key="c0d01fa8c884e7e982c43cec126a1fe7684e70a0922abee527ea2ee77fa47a6a">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</value>
-            </column>
-          </row>
-          <row key="39308d9bf759fb59d2b9d14214f8b0cc6282cda29b746c866fac6f974cd3fe9b">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor</value>
-            </column>
-          </row>
-          <row key="123a84e826c05ebfc945ea2cc3587fc990e6f5514613af4b5bbf30352878acb1">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</value>
-            </column>
-          </row>
-          <row key="41b7478fddb1677682151feaf1c76ab02918b7bb7b4d384623457853f19290d0">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</value>
-            </column>
-          </row>
-          <row key="ecb34e75914699c251c18e735a15edc82876fd14065bfb1fbaf4f67b2540da6d">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</value>
             </column>
           </row>
           <row key="eac1413f61f2818b6467505c3b9f79d3809c0b751a38140e9d60964c21a5dd45">
@@ -4221,9 +4136,114 @@ Example:
               <value>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericArrayTypeDescriptor</value>
             </column>
           </row>
-          <row key="14f04393c4c5caaeaf244e773d8ffade5ee593587a797ba2053bc337308d5e28">
+          <row key="b140589ea5d87e41768ee07babdc74bf85512cccae5a40a3e117eb8a28abd7ec">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.java.api.model.RequiresDescriptor</value>
+            </column>
+          </row>
+          <row key="c5448428216d40e5439d7003817186573347ff61c9f9991b9fef0660ef579c19">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</value>
+            </column>
+          </row>
+          <row key="f71d90240aeef22afcdb549e00981be850c9380e7fe5fff0812ee19c9069a5dc">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.VariableDescriptor</value>
+            </column>
+          </row>
+          <row key="4b00fd9e517991f464e483abcbda22343700d1e4d8083abe476bc17e7d353cab">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.CatchesDescriptor</value>
+            </column>
+          </row>
+          <row key="14132c2b1aa0e3bcb03230ded5d24fcf5336d1a1c9f26c864e01100acc341651">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</value>
+            </column>
+          </row>
+          <row key="93abc68fd62d346963d285e54ddfcb0657414d3fe9af2f5873d92a9f30330460">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</value>
+            </column>
+          </row>
+          <row key="606cf5fd8ed1520a0a35340df5b8db067ac7456c66e795f458edb6b4475dd93d">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor</value>
+            </column>
+          </row>
+          <row key="49c5e44918c29fe982841d13cb38d26d6a95cc69218ea540e0dbe04aad2a46bc">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</value>
+            </column>
+          </row>
+          <row key="925f1483dadbfbce0dc06c8c64e79b220d9f0b8df099b455bb4e01e0486c54fd">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</value>
+            </column>
+          </row>
+          <row key="3e78a7389908ec9b6539d502c2a53453ff89e5630857edb3fdd56cad5be02605">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</value>
+            </column>
+          </row>
+          <row key="ecb34e75914699c251c18e735a15edc82876fd14065bfb1fbaf4f67b2540da6d">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ProvidedServiceDescriptor</value>
+            </column>
+          </row>
+          <row key="7e894f77be3675e509daca7d82759ed61a0d9bbcd0e2e035a98f44c551aa3fc7">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ModuleClassFileDescriptor</value>
+            </column>
+          </row>
+          <row key="c889c9ef6fc83db1f8fd0a88a658e36c1ecad1939ec7a91c1a389c2b7018f049">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.RecordTypeDescriptor</value>
+            </column>
+          </row>
+          <row key="88b50874369ef444c49ae4f1d5b17ff42633bbf7df9ecdaab9a5f827d6231d38">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</value>
+            </column>
+          </row>
+          <row key="123a84e826c05ebfc945ea2cc3587fc990e6f5514613af4b5bbf30352878acb1">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</value>
+            </column>
+          </row>
+          <row key="49b8cf6b055a79503b6f133f37967d623d201636c7a6a7178a4c0550a1456fbb">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</value>
+            </column>
+          </row>
+          <row key="d0c3e51fc8ce6b739889d156cf6bff4921702ef1383c8a9e61d71f22172a8b51">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.ParameterizedTypeDescriptor</value>
+            </column>
+          </row>
+          <row key="41b7478fddb1677682151feaf1c76ab02918b7bb7b4d384623457853f19290d0">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.WildcardTypeDescriptor</value>
+            </column>
+          </row>
+          <row key="e3dafa53853eedbee602b00bb5e68a382bafae91b865533ca0e41d0097d80594">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</value>
+            </column>
+          </row>
+          <row key="7b71e7f8791151cebac12b8e7531b36bcee930d9bf9c8af4b6323b98cdd7395d">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor</value>
+            </column>
+          </row>
+          <row key="a93194b6f7b56310868e4c3e46fd2c22a33e9ebccd7acc67c5b209a87a021ed3">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</value>
+            </column>
+          </row>
+          <row key="39308d9bf759fb59d2b9d14214f8b0cc6282cda29b746c866fac6f974cd3fe9b">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ThrowsDescriptor</value>
             </column>
           </row>
           <row key="ccbf626d3a4e86ae9223aa7355618025f13a8775b9744e7f7680adcdbb81b8cf">
@@ -4236,44 +4256,19 @@ Example:
               <value>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</value>
             </column>
           </row>
-          <row key="1d5118795c39617b21834367e9dba30c3275403abe46fefc3e0c4c1d117b43f1">
+          <row key="54df4a3c04c993c4a11541ec757428c595ba71b9f73037b00ea447a0e359b8f9">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.HasActualTypeArgumentDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor</value>
             </column>
           </row>
-          <row key="606cf5fd8ed1520a0a35340df5b8db067ac7456c66e795f458edb6b4475dd93d">
+          <row key="1e0296dada1ac9b9ef3dc4cc31ae067382a17a9e2bed30eb364186ffc5fc681d">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</value>
             </column>
           </row>
-          <row key="9bf73dd37c7918580b93ac4d94e782ee9e5242f5e8d8384882b97ce106ad0ac5">
+          <row key="378affb5df398ce9997dc27d9b27eb933c89b0005400907a7d32259ba8ea6adf">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</value>
-            </column>
-          </row>
-          <row key="4b00fd9e517991f464e483abcbda22343700d1e4d8083abe476bc17e7d353cab">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.CatchesDescriptor</value>
-            </column>
-          </row>
-          <row key="925f1483dadbfbce0dc06c8c64e79b220d9f0b8df099b455bb4e01e0486c54fd">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor</value>
-            </column>
-          </row>
-          <row key="93abc68fd62d346963d285e54ddfcb0657414d3fe9af2f5873d92a9f30330460">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</value>
-            </column>
-          </row>
-          <row key="c5448428216d40e5439d7003817186573347ff61c9f9991b9fef0660ef579c19">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</value>
-            </column>
-          </row>
-          <row key="286f35a072e631e0502df4ba8793bd94e0e96cb0d27d0b6e10fc343d3429870c">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDeclaresTypeParameter</value>
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</value>
             </column>
           </row>
           <row key="d7b2edcd7bf054325bacef3053861a5e60d2664d775f7268019ba9ea7928c9f1">
@@ -4281,44 +4276,19 @@ Example:
               <value>com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor</value>
             </column>
           </row>
-          <row key="8779006b5010217fc7171a6f7a4eebc49fe7f02fcb1b994d8d5adcb043683bab">
+          <row key="14f04393c4c5caaeaf244e773d8ffade5ee593587a797ba2053bc337308d5e28">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor</value>
             </column>
           </row>
-          <row key="49b8cf6b055a79503b6f133f37967d623d201636c7a6a7178a4c0550a1456fbb">
+          <row key="286f35a072e631e0502df4ba8793bd94e0e96cb0d27d0b6e10fc343d3429870c">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.GenericDeclarationDeclaresTypeParameter</value>
             </column>
           </row>
-          <row key="b53892fd6a4639f6beaea4ec5154a0fc98fcdea18b1dc4654a343893f94257e7">
+          <row key="140bce6bfa9125e3fc9fbc7a34a539b3a9874c2bf3b15d27b730374e0bd50051">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</value>
-            </column>
-          </row>
-          <row key="a93194b6f7b56310868e4c3e46fd2c22a33e9ebccd7acc67c5b209a87a021ed3">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor</value>
-            </column>
-          </row>
-          <row key="3e78a7389908ec9b6539d502c2a53453ff89e5630857edb3fdd56cad5be02605">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</value>
-            </column>
-          </row>
-          <row key="e3dafa53853eedbee602b00bb5e68a382bafae91b865533ca0e41d0097d80594">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.OpenPackageDescriptor</value>
-            </column>
-          </row>
-          <row key="3682004eb3f1b71f59b8ae6d726b820696606562138070f9110af7b01485baac">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</value>
-            </column>
-          </row>
-          <row key="14132c2b1aa0e3bcb03230ded5d24fcf5336d1a1c9f26c864e01100acc341651">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</value>
             </column>
           </row>
           <row key="00ef01d2b996c77de4250314e782d4240433485ef749929098392bbb751b7a91">
@@ -4326,9 +4296,39 @@ Example:
               <value>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</value>
             </column>
           </row>
+          <row key="9bf73dd37c7918580b93ac4d94e782ee9e5242f5e8d8384882b97ce106ad0ac5">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ExportedPackageDescriptor</value>
+            </column>
+          </row>
+          <row key="8779006b5010217fc7171a6f7a4eebc49fe7f02fcb1b994d8d5adcb043683bab">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor</value>
+            </column>
+          </row>
+          <row key="3682004eb3f1b71f59b8ae6d726b820696606562138070f9110af7b01485baac">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ThrowableDescriptor</value>
+            </column>
+          </row>
+          <row key="c0d01fa8c884e7e982c43cec126a1fe7684e70a0922abee527ea2ee77fa47a6a">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor</value>
+            </column>
+          </row>
+          <row key="efdf61762f345c6427135ffa3751dcbf506b0887f12c8f2c949a010a4b97c11d">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ClassFileDependsOnDescriptor</value>
+            </column>
+          </row>
           <row key="b53892fd6a4639f6beaea4ec5154a0fc98fcdea18b1dc4654a343893f94257e7">
             <column name="Type">
               <value>com.buschmais.jqassistant.plugin.java.api.model.generics.TypeVariableDescriptor</value>
+            </column>
+          </row>
+          <row key="1d5118795c39617b21834367e9dba30c3275403abe46fefc3e0c4c1d117b43f1">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.generics.HasActualTypeArgumentDescriptor</value>
             </column>
           </row>
           <row key="042873f002b5eccb323e44f6632674b8e1023793688e5f2b3e96f56de81a7ed3">
@@ -4336,14 +4336,14 @@ Example:
               <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor</value>
             </column>
           </row>
-          <row key="5f5909702ef7a30475b4f8d30fe1528654a4dcc18c2d70d90b13ffb033ceaf9f">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</value>
-            </column>
-          </row>
           <row key="0d2937e3071f8f9ceaaf65daca1e6c6bf5dcc5b8eab6b1e9f60e3fdec2b13377">
             <column name="Type">
               <value>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</value>
+            </column>
+          </row>
+          <row key="5f5909702ef7a30475b4f8d30fe1528654a4dcc18c2d70d90b13ffb033ceaf9f">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</value>
             </column>
           </row>
           <row key="dcde56e8fb8974dd888b31467de9d7ae325ab4874422f947435eaca8ddd919ab">
@@ -4356,29 +4356,9 @@ Example:
               <value>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</value>
             </column>
           </row>
-          <row key="863eb81e752afe873293ba8e108385e96c1af7d6491b4ef5c5512a8747d2d3bc">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</value>
-            </column>
-          </row>
           <row key="d92e507a05bf7b1eaa761cba380e1405d2b72f5b7541c777d48269359c7e19a5">
             <column name="Type">
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</value>
-            </column>
-          </row>
-          <row key="a02d474687ebe5072136160f3372fb88f2a50930dd0bba3c28be3b10de81afcc">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</value>
-            </column>
-          </row>
-          <row key="2e902030337d747a0e8b172a76ba0441d728cca93266d2ad28ab5ea1ad537859">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</value>
-            </column>
-          </row>
-          <row key="5bf7b780581e593e7ab0ae3f9f641e104673d1a03ec66ffe572c03841805c06b">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</value>
             </column>
           </row>
           <row key="dab01eb516555654049a3475f7b2625ec5a6d6fa919142cd732fb46cfcfd2d10">
@@ -4386,24 +4366,24 @@ Example:
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</value>
             </column>
           </row>
-          <row key="b1000528547f66e77707e1ffc4e190c83f73f3073ea34fc98817e19fcb2c2f71">
+          <row key="a02d474687ebe5072136160f3372fb88f2a50930dd0bba3c28be3b10de81afcc">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</value>
             </column>
           </row>
-          <row key="72ac8ed98cb3d1fd9692899d8dc30ffa3776023222c17f582cdced4def691fc3">
+          <row key="5bf7b780581e593e7ab0ae3f9f641e104673d1a03ec66ffe572c03841805c06b">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</value>
             </column>
           </row>
-          <row key="d5cb500598fe5cbd85d03883d27b8391af18fb790288650b315c2e4e1b07b6a2">
+          <row key="2e902030337d747a0e8b172a76ba0441d728cca93266d2ad28ab5ea1ad537859">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor</value>
             </column>
           </row>
-          <row key="8925b9437aed0da68f9cab78bea841dcedbb9100db9c1f8f4773ceb28bf16ff9">
+          <row key="863eb81e752afe873293ba8e108385e96c1af7d6491b4ef5c5512a8747d2d3bc">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</value>
             </column>
           </row>
           <row key="3fa9acc39a10683e935eb653319418420dad36420111d6fb1b4b36225865a947">
@@ -4411,29 +4391,14 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</value>
             </column>
           </row>
-          <row key="7bc5556d334498251f2898462b7c3050db119cf98f176960acf880a4ada760ee">
+          <row key="72ac8ed98cb3d1fd9692899d8dc30ffa3776023222c17f582cdced4def691fc3">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
             </column>
           </row>
-          <row key="c482068653c970d663baf6a39beea1caf56396dbd09119c195b809309650bae3">
+          <row key="b1000528547f66e77707e1ffc4e190c83f73f3073ea34fc98817e19fcb2c2f71">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
-            </column>
-          </row>
-          <row key="c64d4234870c0f7adf9cc05e4507ae5ea0b1f3238d36cc1f49c1eb29f2cd4709">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
-            </column>
-          </row>
-          <row key="9f604e51022c0eda827fd308695f2972cb99df08d3231ad56a392ba5bd571e4a">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</value>
-            </column>
-          </row>
-          <row key="0ee3ea8fb53a5195122428912fceb42a590f55559be7879529e90a15aaab5ee6">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</value>
             </column>
           </row>
           <row key="9b6d39aa2e9faffc88c49a0425745ba2f9f7a6068c74a63c2769c077336f2bda">
@@ -4441,19 +4406,19 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor</value>
             </column>
           </row>
-          <row key="7ce80005677a9b6b06c85576936ec259fdca09582cf6aeda9ef2f5242c76319d">
+          <row key="9f604e51022c0eda827fd308695f2972cb99df08d3231ad56a392ba5bd571e4a">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</value>
             </column>
           </row>
-          <row key="26abd9df417bfcc99eefdae9ea163b952cfccf79d012f113fe0740d97ffd63fd">
+          <row key="e643200387a23914cf73765605d6f37e94ebf0c4c486b71481ce22cabbaab118">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
             </column>
           </row>
-          <row key="e78992eb080ccff2455ea115efbadc3932c40aaca2c2c4e33e305eca260b4d9e">
+          <row key="de9a92be77d9657e85feba08a5c64a910344e21ecb990208abd130f61d4bc238">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
             </column>
           </row>
           <row key="af25db8d746794e4dc9431402cfa7095bc7d741fa77e99fbac3dad47e5c9507b">
@@ -4461,9 +4426,74 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
             </column>
           </row>
-          <row key="e643200387a23914cf73765605d6f37e94ebf0c4c486b71481ce22cabbaab118">
+          <row key="32aba9bf6d0d2f6d0f239c4cbafc637e53790ffc8aeedb0c0f0ed205a41cf4d7">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
+            </column>
+          </row>
+          <row key="8925b9437aed0da68f9cab78bea841dcedbb9100db9c1f8f4773ceb28bf16ff9">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
+            </column>
+          </row>
+          <row key="84e46d9b8a831b8e67d880ef8ed1c4e225165bacb32fcb1163f8d63ef6157bf8">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
+            </column>
+          </row>
+          <row key="4b286493f2a4b06d892c081b8ff9e0525bcbf4fb23bcd6e0b8309c1b4cdc0295">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
+            </column>
+          </row>
+          <row key="4c780638a985a96b6c744bcef54d9d64ada9235aae4a5c007c12790122e2f555">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</value>
+            </column>
+          </row>
+          <row key="7bc5556d334498251f2898462b7c3050db119cf98f176960acf880a4ada760ee">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</value>
+            </column>
+          </row>
+          <row key="e78992eb080ccff2455ea115efbadc3932c40aaca2c2c4e33e305eca260b4d9e">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
+            </column>
+          </row>
+          <row key="7ce80005677a9b6b06c85576936ec259fdca09582cf6aeda9ef2f5242c76319d">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
+            </column>
+          </row>
+          <row key="61ad89c1917449a3d54a87fe35451b84c598b37a82f5a46a0ca8c79c6b243205">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
+            </column>
+          </row>
+          <row key="0ee3ea8fb53a5195122428912fceb42a590f55559be7879529e90a15aaab5ee6">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
+            </column>
+          </row>
+          <row key="d5cb500598fe5cbd85d03883d27b8391af18fb790288650b315c2e4e1b07b6a2">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</value>
+            </column>
+          </row>
+          <row key="c64d4234870c0f7adf9cc05e4507ae5ea0b1f3238d36cc1f49c1eb29f2cd4709">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
+            </column>
+          </row>
+          <row key="32f166454f6982135861c87cebb321c845863ce36f793d3027ac68aa9f9dadc3">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</value>
+            </column>
+          </row>
+          <row key="2ffe9749c1a63aa37ea20c6f8cd64ea15ccc78dbc0716eab1fad078680d499a2">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
             </column>
           </row>
           <row key="1539c5532e0c29349b561a6182e26a86b78645e963e2df41f8de011172e7e961">
@@ -4476,44 +4506,14 @@ Example:
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
             </column>
           </row>
-          <row key="84e46d9b8a831b8e67d880ef8ed1c4e225165bacb32fcb1163f8d63ef6157bf8">
+          <row key="c482068653c970d663baf6a39beea1caf56396dbd09119c195b809309650bae3">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
             </column>
           </row>
-          <row key="4c780638a985a96b6c744bcef54d9d64ada9235aae4a5c007c12790122e2f555">
+          <row key="26abd9df417bfcc99eefdae9ea163b952cfccf79d012f113fe0740d97ffd63fd">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</value>
-            </column>
-          </row>
-          <row key="de9a92be77d9657e85feba08a5c64a910344e21ecb990208abd130f61d4bc238">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
-            </column>
-          </row>
-          <row key="32aba9bf6d0d2f6d0f239c4cbafc637e53790ffc8aeedb0c0f0ed205a41cf4d7">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
-            </column>
-          </row>
-          <row key="2ffe9749c1a63aa37ea20c6f8cd64ea15ccc78dbc0716eab1fad078680d499a2">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
-            </column>
-          </row>
-          <row key="32f166454f6982135861c87cebb321c845863ce36f793d3027ac68aa9f9dadc3">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</value>
-            </column>
-          </row>
-          <row key="4b286493f2a4b06d892c081b8ff9e0525bcbf4fb23bcd6e0b8309c1b4cdc0295">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
-            </column>
-          </row>
-          <row key="61ad89c1917449a3d54a87fe35451b84c598b37a82f5a46a0ca8c79c6b243205">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
             </column>
           </row>
           <row key="ff79169355bbda6cfc2f9ee03c6cfd55638a37fc56fb9eb6d9ddfdc9012d5a10">
@@ -4521,24 +4521,9 @@ Example:
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
             </column>
           </row>
-          <row key="70a238b1f504eedde84bf7cea4eadd53d07fbca2416b35c5b567c8788f62b85c">
+          <row key="574ed01362fde2b4ab73177c56f9cba21797001841fd4138fb3893719c299880">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
-            </column>
-          </row>
-          <row key="6e450a423783c2b4ccbe09a7ddef0d0b345e34222f56b032f2fad3c5ade1876f">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
-            </column>
-          </row>
-          <row key="c8fd0e40843f11c49bc6c19b738feb5b4e432d660b806beffce8fcff7da69eb7">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</value>
-            </column>
-          </row>
-          <row key="bd43f859844e8b3cc523632fc441c8b935b94e19b3628e26d1f1fce86cc92adf">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</value>
             </column>
           </row>
           <row key="9847d29cf9e4c67fe94e295b90a076ecdf494450995087223aa1dace9ebd9725">
@@ -4546,19 +4531,9 @@ Example:
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</value>
             </column>
           </row>
-          <row key="9285ff8123ab611362192d97cf77a4d1716421c44e8b25d5592aa335179d3629">
+          <row key="bd43f859844e8b3cc523632fc441c8b935b94e19b3628e26d1f1fce86cc92adf">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
-            </column>
-          </row>
-          <row key="c28b24cb6c4a810169df4be2dfb4173bda3f7cc784ce51eb1da3d1a1330f5937">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
-            </column>
-          </row>
-          <row key="574ed01362fde2b4ab73177c56f9cba21797001841fd4138fb3893719c299880">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
             </column>
           </row>
           <row key="9c79f06c3407dcf090a2dc1c5e9970f31591d87ce711e1c1cf1a8ce736096f2e">
@@ -4566,9 +4541,29 @@ Example:
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
             </column>
           </row>
+          <row key="70a238b1f504eedde84bf7cea4eadd53d07fbca2416b35c5b567c8788f62b85c">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
+            </column>
+          </row>
+          <row key="76082039432347b41a6bd216944205abf328813373e8af6b78c1e658f68a7f27">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
+            </column>
+          </row>
+          <row key="9285ff8123ab611362192d97cf77a4d1716421c44e8b25d5592aa335179d3629">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
+            </column>
+          </row>
           <row key="ed88b19debe655a2ee6348ca584f5dc711641c9f24ab5cf5f5f42b20e0d53c95">
             <column name="Type">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</value>
+            </column>
+          </row>
+          <row key="c8fd0e40843f11c49bc6c19b738feb5b4e432d660b806beffce8fcff7da69eb7">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</value>
             </column>
           </row>
           <row key="215ae54e20a0dd9a69604edf6331dace6b7a109dc3318a60a2b95cb83f7c504f">
@@ -4576,14 +4571,19 @@ Example:
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</value>
             </column>
           </row>
+          <row key="6e450a423783c2b4ccbe09a7ddef0d0b345e34222f56b032f2fad3c5ade1876f">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
+            </column>
+          </row>
+          <row key="c28b24cb6c4a810169df4be2dfb4173bda3f7cc784ce51eb1da3d1a1330f5937">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
+            </column>
+          </row>
           <row key="d7b9147ff8be9dcd3de121507562d9ae12a22761dae53bb94f82bd831536e7f9">
             <column name="Type">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</value>
-            </column>
-          </row>
-          <row key="76082039432347b41a6bd216944205abf328813373e8af6b78c1e658f68a7f27">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
             </column>
           </row>
         </rows>
@@ -4594,7 +4594,7 @@ Example:
       </verificationResult>
       <status>success</status>
       <severity level="4">info</severity>
-      <duration>615</duration>
+      <duration>572</duration>
       <required-concept id="jqa-plugin:PluginDescriptor">
         <status>success</status>
       </required-concept>
@@ -4693,7 +4693,7 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
               <value>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</value>
             </column>
           </row>
-          <row key="e31b81ca0e0dd3e714fd4652724d332b848e3aee8de10bea0fdfe4443ce48eea">
+          <row key="4b04a83a0b64c6d954a9ae1f3deb90a45880e6f2acbe5e2f9f1d80141b288012">
             <column name="Label">
               <element language="Java">Type</element>
               <source fileName="/com/buschmais/jqassistant/plugin/json/api/model/JSONDescriptor.java">
@@ -4702,7 +4702,7 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
               <value>com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</value>
             </column>
             <column name="SubLabels">
-              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor</value>
             </column>
           </row>
         </rows>
@@ -4713,7 +4713,7 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
       </verificationResult>
       <status>success</status>
       <severity level="4">info</severity>
-      <duration>96</duration>
+      <duration>91</duration>
       <required-concept id="jqa-plugin:PluginDescriptorRegistersModel">
         <status>success</status>
       </required-concept>
@@ -4729,7 +4729,7 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
       </verificationResult>
       <status>success</status>
       <severity level="2">major</severity>
-      <duration>147</duration>
+      <duration>163</duration>
       <required-concept id="jqa-plugin:PluginDescriptorRegistersModel">
         <status>success</status>
       </required-concept>
@@ -4755,14 +4755,14 @@ descriptor must look like this
       </verificationResult>
       <status>success</status>
       <severity level="2">major</severity>
-      <duration>99</duration>
+      <duration>133</duration>
       <required-concept id="jqa-plugin:PluginDescriptor">
         <status>success</status>
       </required-concept>
     </constraint>
-    <duration>1284</duration>
+    <duration>1338</duration>
   </group>
-  <group id="jqa-project-layout" date="2026-06-24T07:10:36">
+  <group id="jqa-project-layout" date="2026-06-25T13:55:42">
     <constraint id="jqa-project-layout:documentation:releasenotes-exists">
       <description>There should be an Asciidoctor document for the release notes of this version.</description>
       <result>
@@ -4783,7 +4783,7 @@ descriptor must look like this
       </verificationResult>
       <status>warning</status>
       <severity level="3">minor</severity>
-      <duration>163</duration>
+      <duration>149</duration>
     </constraint>
     <constraint id="jqa-project-layout:readme:exists">
       <description>It must exist in the root directory of the project a
@@ -4817,7 +4817,7 @@ the repositories.</description>
       </verificationResult>
       <status>success</status>
       <severity level="3">minor</severity>
-      <duration>63</duration>
+      <duration>78</duration>
     </constraint>
     <constraint id="jqa-project-layout:editorconfig:exists">
       <description>Each repository should contain an editor config configuration file
@@ -4849,11 +4849,11 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status>success</status>
       <severity level="3">minor</severity>
-      <duration>61</duration>
+      <duration>75</duration>
     </constraint>
-    <duration>308</duration>
+    <duration>318</duration>
   </group>
-  <group id="jqa-technical-debt" date="2026-06-24T07:10:36">
+  <group id="jqa-technical-debt" date="2026-06-25T13:55:42">
     <constraint id="jqa-technical-debt:CodeElementToBeRemoved">
       <description>Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in given version.</description>
       <result>
@@ -4916,7 +4916,7 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status>failure</status>
       <severity level="2">major</severity>
-      <duration>1125</duration>
+      <duration>1182</duration>
     </constraint>
     <constraint id="jqa-technical-debt:CodeElementToBeRemovedInVersion">
       <description>Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" will be removed in the given version.</description>
@@ -5061,8 +5061,8 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status>failure</status>
       <severity level="2">major</severity>
-      <duration>407</duration>
+      <duration>382</duration>
     </constraint>
-    <duration>2393</duration>
+    <duration>2424</duration>
   </group>
 </jqassistant-report>
