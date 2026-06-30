@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @Disabled("message")
-public class DisabledTestWithMessage {
+public class DisabledTestWithReason {
     @Disabled("message")
     @Test
     void iHaveAMessage() {

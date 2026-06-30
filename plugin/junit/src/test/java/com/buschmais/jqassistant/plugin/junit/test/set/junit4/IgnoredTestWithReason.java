@@ -8,7 +8,7 @@ import org.junit.Test;
  * class and method level and providing message.
  */
 @Ignore("ignored")
-public class IgnoredTestWithMessage {
+public class IgnoredTestWithReason {
 
     @Test
     @Ignore("ignored")
