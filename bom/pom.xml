@@ -249,6 +249,12 @@
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${jaxb-runtime.version}</version>
             </dependency>
+            <!-- SAXON -->
+            <dependency>
+                <groupId>net.sf.saxon</groupId>
+                <artifactId>Saxon-HE</artifactId>
+                <version>12.9</version>
+            </dependency>
 
             <!-- SmallRye Config -->
             <dependency>
