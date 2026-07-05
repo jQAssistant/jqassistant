@@ -97,9 +97,8 @@
         <neo4j_4x.version>4.4.48</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
         <neo4j_5x.version>5.26.28</neo4j_5x.version>
-        <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles
-         This default setting is required by Jenkins for parsing the Maven model -->
-        <neo4j.version>5.26.28</neo4j.version>
+        <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles -->
+        <neo4j.version/>
         <neo4j.neo4j-java-driver.version>4.4.26</neo4j.neo4j-java-driver.version>
         <neo4j-browser.version>5.24.0</neo4j-browser.version>
         <slf4j.version>2.0.18</slf4j.version>
