@@ -16,7 +16,7 @@
     </description>
 
     <properties>
-        <org.apache.groovy.version>5.0.6</org.apache.groovy.version>
+        <org.apache.groovy.version>5.0.7</org.apache.groovy.version>
         <org.jruby.version>9.4.15.0</org.jruby.version>
         <org.openjdk.nashorn.version>15.7</org.openjdk.nashorn.version>
         <commons-compress.version>1.28.0</commons-compress.version>
