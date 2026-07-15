@@ -98,7 +98,7 @@
             <plugin>
                 <groupId>org.sahli.asciidoc.confluence.publisher</groupId>
                 <artifactId>asciidoc-confluence-publisher-maven-plugin</artifactId>
-                <version>0.34.0</version>
+                <version>0.35.0</version>
                 <executions>
                     <execution>
                         <id>default-cli</id>
