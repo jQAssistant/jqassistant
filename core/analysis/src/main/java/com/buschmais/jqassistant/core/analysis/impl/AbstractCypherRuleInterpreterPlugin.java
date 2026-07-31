@@ -50,7 +50,7 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
                 columnNames = unmodifiableList(rowObject.getColumns());
                 primaryColumn = context.getPrimaryColumn(executableRule, columnNames);
             }
-            rows.add(getRow(executableRule, columnNames, primaryColumn, rowObject, context));
+            rows.add(getRow(executableRule, columnNames, primaryColumn, rowObject, severity, context));
         }
         VerificationResult verificationResult = context.verify(executableRule, columnNames, rows);
         Status status = context.getStatus(verificationResult, severity);
@@ -65,14 +65,16 @@ public abstract class AbstractCypherRuleInterpreterPlugin implements RuleInterpr
             .build();
     }
 
-    private Row getRow(ExecutableRule<?> rule, List<String> columnNames, Optional<String> primaryColumn, Query.Result.CompositeRowObject rowObject,
-        AnalyzerContext context) {
+    private Row getRow(ExecutableRule<?> executableRule, List<String> columnNames, Optional<String> primaryColumn, Query.Result.CompositeRowObject rowObject,
+        Severity severity, AnalyzerContext context) throws RuleException {
         Map<String, Column<?>> columns = new LinkedHashMap<>();
         for (String columnName : columnNames) {
             Object columnValue = rowObject.get(columnName, Object.class);
             columns.put(columnName, context.toColumn(columnValue));
         }
-        return context.toRow(rule, columns, primaryColumn);
+        VerificationResult verificationResult = context.verifyRow(executableRule, columnNames, columns);
+        Status status = context.getStatus(verificationResult, severity);
+        return context.toRow(executableRule, columns, primaryColumn, status);
     }
 
 }

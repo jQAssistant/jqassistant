@@ -72,7 +72,14 @@ class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn) {
+    public VerificationResult verifyRow(ExecutableRule<?> executableRule, List<String> columnNames, Map<String, Column<?>> columns) throws RuleException {
+        Verification verification = getVerification(executableRule);
+        VerificationStrategy verificationStrategy = getVerificationStrategy(verification);
+        return verificationStrategy.verifyColumns(executableRule, verification, columnNames, columns);
+    }
+
+    @Override
+    public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn, Result.Status status) {
         if (rule.getReport() != null) {
             Hidden hidden = Hidden.builder()
                 .build();
@@ -113,10 +120,10 @@ class AnalyzerContextImpl implements AnalyzerContext {
             if (hidden.getSuppression()
                 .isPresent() || hidden.getBaseline()
                 .isPresent()) {
-                return ReportHelper.toRow(rule, columns, Optional.of(hidden));
+                return ReportHelper.toRow(rule, columns, status, Optional.of(hidden));
             }
         }
-        return ReportHelper.toRow(rule, columns, empty());
+        return ReportHelper.toRow(rule, columns, status, empty());
     }
 
     public boolean validateSuppressUntilDate(LocalDate until) {
@@ -130,20 +137,29 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     @Override
     public <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException {
-        Verification verification = executable.getVerification();
-        if (verification == null) {
-            log.debug("Using default verification for '{}'.", executable);
-            verification = DEFAULT_VERIFICATION;
-        }
+        List<Row> filteredRows = rows.stream()
+            .filter(row -> !row.isHidden())
+            .collect(Collectors.toList());
+        VerificationStrategy strategy = getVerificationStrategy(getVerification(executable));
+        return strategy.verifyRows(executable, getVerification(executable), columnNames, filteredRows);
+    }
+
+    private VerificationStrategy getVerificationStrategy(Verification verification) throws RuleException {
         VerificationStrategy strategy = verificationStrategies.get(verification.getClass());
         if (strategy == null) {
             throw new RuleException("Result verification not supported: " + verification.getClass()
                 .getName());
         }
-        List<Row> filteredRows = rows.stream()
-            .filter(row -> !row.isHidden())
-            .collect(Collectors.toList());
-        return strategy.verify(executable, verification, columnNames, filteredRows);
+        return strategy;
+    }
+
+    private static <T extends ExecutableRule<?>> Verification getVerification(T executable) {
+        Verification verification = executable.getVerification();
+        if (verification == null) {
+            log.debug("Using default verification for '{}'.", executable);
+            verification = DEFAULT_VERIFICATION;
+        }
+        return verification;
     }
 
     @Override

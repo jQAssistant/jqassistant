@@ -282,13 +282,14 @@ public class XmlReportPlugin implements ReportPlugin {
                 if (!row.isHidden() || this.includeHiddenRows) {
                     xmlStreamWriter.writeStartElement("row");
                     xmlStreamWriter.writeAttribute("key", row.getKey());
-                    writeHidden(row);
                     for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
                         .entrySet()) {
                         String columnName = rowEntry.getKey();
                         Column<?> column = rowEntry.getValue();
                         writeColumn(columnName, column);
                     }
+                    writeStatus(row.getStatus()); // status
+                    writeHidden(row);
                     xmlStreamWriter.writeEndElement();
                 }
             }

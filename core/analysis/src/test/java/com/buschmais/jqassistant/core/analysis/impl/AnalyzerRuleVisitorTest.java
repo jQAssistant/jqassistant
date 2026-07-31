@@ -131,8 +131,9 @@ class AnalyzerRuleVisitorTest {
         languagePlugins.add(new CypherRuleInterpreterPlugin());
         ruleInterpreterPlugins.put("cypher", languagePlugins);
 
-        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1), Optional.empty())).when(analyzerContext)
-            .toRow(any(), anyMap(), any());
+        doAnswer(invocation -> ReportHelper.toRow(invocation.getArgument(0), invocation.getArgument(1), invocation.getArgument(3), Optional.empty())).when(
+                analyzerContext)
+            .toRow(any(), anyMap(), any(), any());
         doAnswer(invocation -> ReportHelper.toColumn(invocation.getArgument(0))).when(analyzerContext)
             .toColumn(any());
 
@@ -152,18 +153,25 @@ class AnalyzerRuleVisitorTest {
             return toColumn(value);
         }).when(analyzerContext)
             .toColumn(any());
+        doReturn(VerificationResult.builder()
+            .success(true)
+            .build()).when(analyzerContext)
+            .verifyRow(any(), any(), any());
+        doReturn(SUCCESS).when(analyzerContext)
+            .getStatus(any(), any());
         doAnswer(i -> {
             ExecutableRule<?> rule = i.getArgument(0);
             Map<String, Column<?>> columns = i.getArgument(1);
-            return toRow(rule, columns, Optional.empty());
+            Result.Status status = i.getArgument(3);
+            return toRow(rule, columns, status, Optional.empty());
         }).when(analyzerContext)
-            .toRow(any(ExecutableRule.class), anyMap(), any());
+            .toRow(any(ExecutableRule.class), anyMap(), any(), any());
 
         analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
 
         ArgumentCaptor<Result<Concept>> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
-        verify(analyzerContext).toRow(any(ExecutableRule.class), anyMap(), any());
+        verify(analyzerContext).toRow(any(ExecutableRule.class), anyMap(), any(), any());
         Result<Concept> capturedResult = resultCaptor.getValue();
         assertThat(capturedResult.getColumnNames()).as("The reported column names must match the given column names.")
             .isEqualTo(columnNames);
@@ -182,6 +190,8 @@ class AnalyzerRuleVisitorTest {
             .success(true)
             .build();
         doReturn(verificationResult).when(analyzerContext)
+            .verifyRow(eq(concept), anyList(), anyMap());
+        doReturn(verificationResult).when(analyzerContext)
             .verify(eq(concept), anyList(), anyList());
         doReturn(SUCCESS).when(analyzerContext)
             .getStatus(verificationResult, MAJOR);
@@ -196,7 +206,7 @@ class AnalyzerRuleVisitorTest {
         assertThat(parameters).containsEntry(PARAMETER_WITHOUT_DEFAULT, "value")
             .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
 
-        verify(analyzerContext).getStatus(verificationResult, MAJOR);
+        verify(analyzerContext, times(2)).getStatus(verificationResult, MAJOR);
         verify(reportWriter).beginConcept(eq(concept), anyMap(), anyMap());
         verifyConceptResult(SUCCESS, MAJOR);
     }
@@ -256,6 +266,8 @@ class AnalyzerRuleVisitorTest {
             .success(false)
             .build();
         doReturn(verificationResult).when(analyzerContext)
+            .verifyRow(eq(constraint), anyList(), anyMap());
+        doReturn(verificationResult).when(analyzerContext)
             .verify(eq(constraint), anyList(), anyList());
         doReturn(FAILURE).when(analyzerContext)
             .getStatus(verificationResult, BLOCKER);
@@ -268,7 +280,7 @@ class AnalyzerRuleVisitorTest {
         assertThat(parameters).containsEntry(PARAMETER_WITHOUT_DEFAULT, "value")
             .containsEntry(PARAMETER_WITH_DEFAULT, "defaultValue");
 
-        verify(analyzerContext).getStatus(verificationResult, BLOCKER);
+        verify(analyzerContext, times(2)).getStatus(verificationResult, BLOCKER);
         verify(reportWriter).beginConstraint(constraint, emptyMap());
         verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
     }
@@ -326,6 +338,8 @@ class AnalyzerRuleVisitorTest {
             .success(true)
             .build();
         doReturn(verificationResult).when(analyzerContext)
+            .verifyRow(eq(concept), anyList(), anyMap());
+        doReturn(verificationResult).when(analyzerContext)
             .verify(eq(concept), anyList(), anyList());
         doReturn(SUCCESS).when(analyzerContext)
             .getStatus(verificationResult, MINOR);
@@ -334,7 +348,7 @@ class AnalyzerRuleVisitorTest {
 
         assertThat(analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap())).isEqualTo(SUCCESS);
 
-        verify(analyzerContext).getStatus(verificationResult, MINOR);
+        verify(analyzerContext, times(2)).getStatus(verificationResult, MINOR);
         verify(reportWriter).beginConcept(concept, emptyMap(), emptyMap());
     }
 

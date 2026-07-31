@@ -25,6 +25,8 @@ import static com.buschmais.jqassistant.core.report.api.ReportContext.ReportType
 import static com.buschmais.jqassistant.core.report.api.ReportContext.ReportType.LINK;
 import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
 import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.of;
 import static org.mockito.Mockito.mock;
@@ -92,7 +94,7 @@ public final class XmlReportTestHelper {
         xmlReportPlugin.beginGroup(group);
         xmlReportPlugin.beginConcept(concept);
         List<Row> rows = new ArrayList<>();
-        rows.add(createRow(concept));
+        rows.add(createRow(concept, FAILURE));
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
             .verificationResult(VerificationResult.builder()
@@ -143,6 +145,7 @@ public final class XmlReportTestHelper {
                 .value(value)
                 .label(value)
                 .build()))
+            .status(SUCCESS)
             .build());
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
@@ -192,14 +195,14 @@ public final class XmlReportTestHelper {
         xmlReportPlugin.beginGroup(group);
         xmlReportPlugin.beginConstraint(constraint);
         List<Row> rows = new ArrayList<>();
-        rows.add(createRow(constraint));
+        rows.add(createRow(constraint, FAILURE));
         Result<Constraint> result = Result.<Constraint>builder()
             .rule(constraint)
             .verificationResult(VerificationResult.builder()
                 .success(false)
                 .rowCount(rows.size())
                 .build())
-            .status(Result.Status.FAILURE)
+            .status(FAILURE)
             .severity(Severity.CRITICAL)
             .columnNames(Arrays.asList(C1, C2))
             .primaryColumn(of(C1))
@@ -241,14 +244,14 @@ public final class XmlReportTestHelper {
         for (Constraint constraint : allConstraints) {
             xmlReportPlugin.beginConstraint(constraint);
             List<Row> rows = new ArrayList<>();
-            rows.add(createRow(constraint));
+            rows.add(createRow(constraint, FAILURE));
             Result<Constraint> result = Result.<Constraint>builder()
                 .rule(constraint)
                 .verificationResult(VerificationResult.builder()
                     .success(false)
                     .rowCount(rows.size())
                     .build())
-                .status(Result.Status.FAILURE)
+                .status(FAILURE)
                 .severity(Severity.CRITICAL)
                 .columnNames(Arrays.asList(C1, C2))
                 .primaryColumn(of(C1))
@@ -272,7 +275,7 @@ public final class XmlReportTestHelper {
             .build();
 
         xmlReportPlugin.beginConstraint(constraint);
-        createRow(constraint);
+        createRow(constraint, FAILURE);
         xmlReportPlugin.endConstraint();
         xmlReportPlugin.end();
 
@@ -335,6 +338,7 @@ public final class XmlReportTestHelper {
                 .value("suppression")
                 .label("suppression")
                 .build()))
+            .status(SUCCESS)
             .hidden(of(hiddenBySuppression))
             .build());
         rows.add(Row.builder()
@@ -343,6 +347,7 @@ public final class XmlReportTestHelper {
                 .value("baseline")
                 .label("baseline")
                 .build()))
+                .status(FAILURE)
             .hidden(of(hiddenByBaseline))
             .build());
         rows.add(Row.builder()
@@ -351,6 +356,7 @@ public final class XmlReportTestHelper {
                 .value("bothSuppressionTypes")
                 .label("bothSuppressionTypes")
                 .build()))
+            .status(FAILURE)
             .hidden(of(bothSuppressionTypes))
             .build());
         rows.add(Row.builder()
@@ -359,6 +365,7 @@ public final class XmlReportTestHelper {
                 .value("nothing")
                 .label("nothing")
                 .build()))
+            .status(FAILURE)
             .hidden(Optional.empty())
             .build());
 
@@ -381,7 +388,7 @@ public final class XmlReportTestHelper {
         return xmlReportPlugin.getXmlReportFile();
     }
 
-    private static Row createRow(ExecutableRule<?> rule) {
+    private static Row createRow(ExecutableRule<?> rule, Result.Status status) {
         Map<String, Column<?>> columns = new HashMap<>();
         columns.put(C1, toColumn("simpleValue"));
         TestDescriptorWithLanguageElement testDescriptor = new TestDescriptorWithLanguageElement() {
@@ -406,6 +413,6 @@ public final class XmlReportTestHelper {
             }
         };
         columns.put(C2, toColumn(testDescriptor));
-        return toRow(rule, columns, Optional.empty());
+        return toRow(rule, columns, status, Optional.empty());
     }
 }

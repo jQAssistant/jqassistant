@@ -22,6 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.core.rule.api.model.Severity.BLOCKER;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
@@ -76,9 +78,9 @@ class AnalyzerContextImplTest {
             .id("id2")
             .build();
 
-        Row row1_1 = analyzerContext.toRow(concept1, Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v2")), of("c1"));
-        Row row1_2 = analyzerContext.toRow(concept1, Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v3")), of("c1"));
-        Row row2_1 = analyzerContext.toRow(concept2, Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v2")), of("c1"));
+        Row row1_1 = analyzerContext.toRow(concept1, Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v2")), of("c1"), SUCCESS);
+        Row row1_2 = analyzerContext.toRow(concept1, Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v3")), of("c1"), SUCCESS);
+        Row row2_1 = analyzerContext.toRow(concept2, Map.of("c1", analyzerContext.toColumn("v1"), "c2", analyzerContext.toColumn("v2")), of("c1"), SUCCESS);
 
         Set<String> rowKeys = Stream.of(row1_1, row1_2, row2_1)
             .map(Row::getKey)
@@ -94,19 +96,19 @@ class AnalyzerContextImplTest {
             .report(com.buschmais.jqassistant.core.rule.api.model.Report.builder()
                 .keyColumns(null)
                 .build())
-            .build(), columns, of("c1"));
+            .build(), columns, of("c1"), SUCCESS);
         Row rowUsingEmptyKeyColumns = analyzerContext.toRow(Concept.builder()
             .id("id")
             .report(com.buschmais.jqassistant.core.rule.api.model.Report.builder()
                 .keyColumns(emptyList())
                 .build())
-            .build(), columns, of("c1"));
+            .build(), columns, of("c1"), SUCCESS);
         Row rowUsingExplicitKeyColumns = analyzerContext.toRow(Concept.builder()
             .id("id")
             .report(com.buschmais.jqassistant.core.rule.api.model.Report.builder()
                 .keyColumns(new ArrayList<>(columns.keySet()))
                 .build())
-            .build(), columns, of("c1"));
+            .build(), columns, of("c1"), SUCCESS);
 
         assertThat(rowUsingNoKeyColumns.getKey()).isEqualTo(rowUsingExplicitKeyColumns.getKey());
         assertThat(rowUsingEmptyKeyColumns.getKey()).isEqualTo(rowUsingExplicitKeyColumns.getKey());
@@ -116,7 +118,7 @@ class AnalyzerContextImplTest {
     void withoutSuppression() {
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value1_1"), SECONDARY_COLUMN, analyzerContext.toColumn("value1_2")), of(PRIMARY_COLUMN));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value1_1"), SECONDARY_COLUMN, analyzerContext.toColumn("value1_2")), of(PRIMARY_COLUMN), FAILURE);
 
         assertThat(row.isHidden()).isFalse();
     }
@@ -127,7 +129,7 @@ class AnalyzerContextImplTest {
         Constraint constraint = getConstraint();
 
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
 
         assertThat(row.isHidden()).isTrue();
         assertThat(row.getHidden()
@@ -144,7 +146,7 @@ class AnalyzerContextImplTest {
         Constraint constraint = getConstraint();
 
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value"), SECONDARY_COLUMN, analyzerContext.toColumn(suppressedValue)), of(PRIMARY_COLUMN));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value"), SECONDARY_COLUMN, analyzerContext.toColumn(suppressedValue)), of(PRIMARY_COLUMN), FAILURE);
 
         assertThat(row.isHidden()).isTrue();
     }
@@ -154,7 +156,7 @@ class AnalyzerContextImplTest {
         Suppress suppressedValue = createSuppressedValue(empty(), empty(), empty(), "otherConstraint");
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
 
         assertThat(row.isHidden()).isFalse();
     }
@@ -164,7 +166,7 @@ class AnalyzerContextImplTest {
         Suppress suppressedValue = createSuppressedValue(empty(), of(VALID_DATE), of(REASON), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
 
         assertThat(row.isHidden()).isTrue();
     }
@@ -174,7 +176,7 @@ class AnalyzerContextImplTest {
         Suppress suppressedValue = createSuppressedValue(empty(), of(INVALID_DATE), empty(), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
 
         assertThat(row.isHidden()).isFalse();
     }
@@ -184,7 +186,7 @@ class AnalyzerContextImplTest {
         Suppress suppressedValue = createSuppressedValue(empty(), of(VALID_DATE), of(REASON), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN));
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
 
         assertThat(row.isHidden()).isTrue();
         assertThat(row.getHidden()
@@ -212,10 +214,11 @@ class AnalyzerContextImplTest {
         String key = ReportHelper.getRowKey(rule, columns);
         Row row = Row.builder()
             .key(key)
+            .status(FAILURE)
             .columns(columns)
             .build();
         when(baselineManager.isExisting(rule, key, row.getColumns())).thenReturn(true);
-        Row suppressedRow = analyzerContext.toRow(rule, row.getColumns(), of("c1"));
+        Row suppressedRow = analyzerContext.toRow(rule, row.getColumns(), of("c1"), FAILURE);
         assertThat(suppressedRow.isHidden()).isTrue();
         assertThat(suppressedRow.getHidden()
             .isPresent()).isTrue();
@@ -229,10 +232,10 @@ class AnalyzerContextImplTest {
     void getStatus() {
         assertThat(analyzerContext.getStatus(VerificationResult.builder()
             .success(true)
-            .build(), BLOCKER)).isEqualTo(Result.Status.SUCCESS);
+            .build(), BLOCKER)).isEqualTo(SUCCESS);
         assertThat(analyzerContext.getStatus(VerificationResult.builder()
             .success(false)
-            .build(), Severity.INFO)).isEqualTo(Result.Status.SUCCESS);
+            .build(), Severity.INFO)).isEqualTo(SUCCESS);
         assertThat(analyzerContext.getStatus(VerificationResult.builder()
             .success(false)
             .build(), Severity.MINOR)).isEqualTo(Result.Status.WARNING);

@@ -167,6 +167,7 @@
     <xs:complexType name="RowType">
         <xs:sequence>
             <xs:element name="column" type="tns:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="status" type="tns:StatusEnumType"/>
             <xs:element name="hidden" type="tns:HiddenType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="key" type="xs:string" use="required"/>

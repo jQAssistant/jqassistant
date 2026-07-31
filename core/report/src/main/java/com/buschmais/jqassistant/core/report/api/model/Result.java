@@ -27,6 +27,7 @@ public class Result<T extends ExecutableRule> {
     /**
      * The defined status for the result of a rule.
      */
+    // TODO Consider moving this to a separate class as this enum is also used to report the status of a row.
     public enum Status {
         SUCCESS,
         FAILURE,

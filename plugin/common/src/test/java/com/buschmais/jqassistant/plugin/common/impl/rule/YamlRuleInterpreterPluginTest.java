@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.impl.rule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.report.api.model.Column;
@@ -25,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
 import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,20 +44,27 @@ public class YamlRuleInterpreterPluginTest {
     public void javaRule() throws RuleException {
         String source = "java-rule: " + TestJavaRule.class.getName() + "\nconfiguration:\n  testProperty: testValue";
         SourceExecutable<String> executable = new SourceExecutable("yaml", source, String.class);
-        Concept concept = Concept.builder().id("test-java-rule").executable(executable).severity(Severity.MINOR).build();
+        Concept concept = Concept.builder()
+            .id("test-java-rule")
+            .executable(executable)
+            .severity(Severity.MINOR)
+            .build();
 
         Result<Concept> result = plugin.execute(concept, emptyMap(), Severity.MAJOR, analyzerContext);
 
         assertThat(result).isNotNull();
         assertThat(result.getRule()).isEqualTo(concept);
         assertThat(result.getSeverity()).isEqualTo(Severity.MAJOR);
-        assertThat(result.getStatus()).isEqualTo(Result.Status.SUCCESS);
+        assertThat(result.getStatus()).isEqualTo(SUCCESS);
         assertThat(result.getColumnNames()).isEqualTo(asList("Property", "Value"));
         List<Row> rows = result.getRows();
         assertThat(rows.size()).isEqualTo(1);
-        Map<String, Column<?>> row = rows.get(0).getColumns();
-        assertThat(row.get("Property").getValue()).isEqualTo("testProperty");
-        assertThat(row.get("Value").getValue()).isEqualTo("testValue");
+        Map<String, Column<?>> row = rows.get(0)
+            .getColumns();
+        assertThat(row.get("Property")
+            .getValue()).isEqualTo("testProperty");
+        assertThat(row.get("Value")
+            .getValue()).isEqualTo("testValue");
     }
 
     /**
@@ -69,18 +73,18 @@ public class YamlRuleInterpreterPluginTest {
     public static class TestJavaRule implements JavaRule {
         @Override
         public <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Map<String, Object> configuration, Map<String, Object> ruleParameters,
-                Severity severity, AnalyzerContext context) {
+            Severity severity, AnalyzerContext context) {
             List<Row> rows = new ArrayList<>();
             for (Map.Entry<String, Object> entry : configuration.entrySet()) {
                 Map<String, Column<?>> columns = new HashMap<>();
                 columns.put("Property", toColumn(entry.getKey()));
                 columns.put("Value", toColumn(entry.getValue()));
-                rows.add(toRow(executableRule, columns, Optional.empty()));
+                rows.add(toRow(executableRule, columns, SUCCESS, Optional.empty()));
             }
             return Result.<T>builder()
                 .rule(executableRule)
                 .severity(severity)
-                .status(Result.Status.SUCCESS)
+                .status(SUCCESS)
                 .columnNames(asList("Property", "Value"))
                 .rows(rows)
                 .build();
