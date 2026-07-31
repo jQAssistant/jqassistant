@@ -20,6 +20,7 @@ import static com.buschmais.jqassistant.core.report.api.ReportHelper.toColumn;
 import static com.buschmais.jqassistant.core.report.api.ReportHelper.toRow;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -27,6 +28,16 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 class AggregationVerificationStrategyTest {
 
     static final List<String> COLUMN_NAMES = asList("c0", "c1");
+
+    static final Map<String, Column<?>> COLUMNS = Map.of("c0", Column.builder()
+        .value(1)
+        .label("1")
+        .sourceLocation(empty())
+        .build(), "c1", Column.builder()
+        .value("hello")
+        .label("hello")
+        .sourceLocation(empty())
+        .build());
 
     @Mock
     private Concept concept;
@@ -44,10 +55,16 @@ class AggregationVerificationStrategyTest {
     }
 
     @Test
-    void defaultConcept() throws RuleException {
+    void defaultConfiguration() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder()
             .build();
+        // Columns
+        assertThat(strategy.verifyColumns(concept, aggregationVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+        assertThat(strategy.verifyColumns(constraint, aggregationVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isFalse();
 
+        // Rows
         result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verifyRows(concept, aggregationVerification, COLUMN_NAMES, result)
             .isSuccess()).isFalse();
@@ -73,6 +90,13 @@ class AggregationVerificationStrategyTest {
             .min(1)
             .build();
 
+        // Columns
+        assertThat(strategy.verifyColumns(concept, aggregationVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+        assertThat(strategy.verifyColumns(constraint, aggregationVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+
+        // Rows
         result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verifyRows(concept, aggregationVerification, COLUMN_NAMES, result)
             .isSuccess()).isFalse();
@@ -98,6 +122,13 @@ class AggregationVerificationStrategyTest {
             .max(0)
             .build();
 
+        // Columns
+        assertThat(strategy.verifyColumns(concept, aggregationVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isFalse();
+        assertThat(strategy.verifyColumns(constraint, aggregationVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isFalse();
+
+        // Rows
         result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verifyRows(concept, aggregationVerification, COLUMN_NAMES, result)
             .isSuccess()).isTrue();
@@ -124,6 +155,13 @@ class AggregationVerificationStrategyTest {
             .max(1)
             .build();
 
+        // Columns
+        assertThat(strategy.verifyColumns(concept, aggregationVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+        assertThat(strategy.verifyColumns(constraint, aggregationVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+
+        // Rows
         result = asList(createRow(concept, 0), createRow(concept, 0));
         assertThat(strategy.verifyRows(concept, aggregationVerification, COLUMN_NAMES, result)
             .isSuccess()).isFalse();
@@ -156,7 +194,7 @@ class AggregationVerificationStrategyTest {
     }
 
     @Test
-    void colum() throws RuleException {
+    void explicitPrimaryColumn() throws RuleException {
         AggregationVerification aggregationVerification = AggregationVerification.builder()
             .column("c1")
             .build();
@@ -168,7 +206,7 @@ class AggregationVerificationStrategyTest {
     }
 
     @Test
-    void unknownColumn() {
+    void unknownPrimaryColumn() {
         AggregationVerification aggregationVerification = AggregationVerification.builder()
             .column("cx")
             .build();

@@ -78,7 +78,10 @@ class CypherRuleInterpreterPluginTest {
         Result<Constraint> result = interpreterPlugin.execute("MATCH n RETURN n", constraint, emptyMap(), MAJOR, analyzerContext);
 
         assertThat(result.getRows()).hasSize(2);
+        verify(analyzerContext,times(2)).verifyRow(eq(constraint), anyList(), anyMap());
         verify(analyzerContext, times(2)).toRow(eq(constraint), anyMap(), any(), any());
+        verify(analyzerContext, times(3)).getStatus(any(VerificationResult.class), any(Severity.class));
+        verify(analyzerContext).verify(eq(constraint), anyList(), anyList());
     }
 
     private Constraint prepareConstraint(Map<String, Object>... resultRows) {

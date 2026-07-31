@@ -95,6 +95,7 @@ class XmlReportTest {
                 assertThat(source.getEndLine()).isEqualTo(2);
             }
         }
+        assertThat(rowType.getStatus()).isEqualTo(StatusEnumType.SUCCESS);
         // Reports
         ReportsType reports = ruleType.getReports();
         assertThat(reports).isNotNull();

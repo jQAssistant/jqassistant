@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.List;
+import java.util.Map;
 
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
@@ -14,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +24,12 @@ import static org.mockito.Mockito.when;
 class RowCountVerificationStrategyTest {
 
     static final List<String> COLUMN_NAMES = singletonList("a");
+
+    static final Map<String, Column<?>> COLUMNS = Map.of("a", Column.builder()
+        .value("hello")
+        .label("hello")
+        .sourceLocation(empty())
+        .build());
 
     @Mock
     private Concept concept;
@@ -43,6 +52,13 @@ class RowCountVerificationStrategyTest {
         RowCountVerification rowCountVerification = RowCountVerification.builder()
             .build();
 
+        // Columns
+        assertThat(strategy.verifyColumns(concept, rowCountVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+        assertThat(strategy.verifyColumns(constraint, rowCountVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isFalse();
+
+        // Rows
         when(result.size()).thenReturn(0);
         assertThat(strategy.verifyRows(concept, rowCountVerification, COLUMN_NAMES, result)
             .isSuccess()).isFalse();
@@ -62,6 +78,13 @@ class RowCountVerificationStrategyTest {
             .min(1)
             .build();
 
+        // Columns
+        assertThat(strategy.verifyColumns(concept, rowCountVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+        assertThat(strategy.verifyColumns(constraint, rowCountVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+
+        // Rows
         when(result.size()).thenReturn(0);
         assertThat(strategy.verifyRows(concept, rowCountVerification, COLUMN_NAMES, result)
             .isSuccess()).isFalse();
@@ -81,6 +104,13 @@ class RowCountVerificationStrategyTest {
             .max(0)
             .build();
 
+        // Columns
+        assertThat(strategy.verifyColumns(concept, rowCountVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isFalse();
+        assertThat(strategy.verifyColumns(constraint, rowCountVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isFalse();
+
+        // Rows
         when(result.size()).thenReturn(0);
         assertThat(strategy.verifyRows(concept, rowCountVerification, COLUMN_NAMES, result)
             .isSuccess()).isTrue();
@@ -101,6 +131,13 @@ class RowCountVerificationStrategyTest {
             .max(1)
             .build();
 
+        // Columns
+        assertThat(strategy.verifyColumns(concept, rowCountVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+        assertThat(strategy.verifyColumns(constraint, rowCountVerification, COLUMN_NAMES, COLUMNS)
+            .isSuccess()).isTrue();
+
+        // Rows
         when(result.size()).thenReturn(0);
         assertThat(strategy.verifyRows(concept, rowCountVerification, COLUMN_NAMES, result)
             .isSuccess()).isFalse();

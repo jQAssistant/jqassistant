@@ -94,7 +94,7 @@ public final class XmlReportTestHelper {
         xmlReportPlugin.beginGroup(group);
         xmlReportPlugin.beginConcept(concept);
         List<Row> rows = new ArrayList<>();
-        rows.add(createRow(concept, FAILURE));
+        rows.add(createRow(concept, SUCCESS));
         Result<Concept> result = Result.<Concept>builder()
             .rule(concept)
             .verificationResult(VerificationResult.builder()
