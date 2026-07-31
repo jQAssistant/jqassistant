@@ -67,8 +67,7 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
         if (!Number.class.isAssignableFrom(value.getClass())) {
             throw new RuleException("The value in column '" + aggregationColumnName + "' must be a numeric value but was '" + value + "'");
         }
-        return Number.class.cast(value)
-            .intValue();
+        return ((Number) value).intValue();
     }
 
 }
