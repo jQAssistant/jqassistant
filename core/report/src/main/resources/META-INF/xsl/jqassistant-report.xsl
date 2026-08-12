@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:tns="http://schema.jqassistant.org/report/v2.10">
-    <xsl:output method="html" version="1.0" encoding="UTF-8"
+    <xsl:output method="html" version="5.0" encoding="UTF-8"
                 indent="yes"/>
     <xsl:template name="content">
         <script type="text/javascript" xmlns:tns="http://schema.jqassistant.org/report/v2.10">
