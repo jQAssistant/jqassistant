@@ -234,17 +234,10 @@
                     <div>Count</div>
                     <div>Constraint</div>
                 </div>
-                <xsl:apply-templates select="//tns:constraint[tns:status='failure']">
+                <xsl:apply-templates select="//tns:constraint">
+                    <xsl:sort select="tns:status/@level"/>
                     <xsl:sort select="tns:severity/@level"/>
-                    <xsl:sort select="@id"/>
-                </xsl:apply-templates>
-                <xsl:apply-templates select="//tns:constraint[tns:status='warning']">
-                    <xsl:sort select="tns:severity/@level"/>
-                    <xsl:sort select="@id"/>
-                </xsl:apply-templates>
-                <xsl:apply-templates select="//tns:constraint[not(tns:status='failure' or tns:status='warning')]">
                     <xsl:sort select="tns:verificationResult/tns:success"/>
-                    <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
             </section>
@@ -268,17 +261,10 @@
                     <div>Count</div>
                     <div>Concept</div>
                 </div>
-                <xsl:apply-templates select="//tns:concept[tns:status='failure']">
+                <xsl:apply-templates select="//tns:concept">
+                    <xsl:sort select="tns:status/@level"/>
                     <xsl:sort select="tns:severity/@level"/>
-                    <xsl:sort select="@id"/>
-                </xsl:apply-templates>
-                <xsl:apply-templates select="//tns:concept[tns:status='warning']">
-                    <xsl:sort select="tns:severity/@level"/>
-                    <xsl:sort select="@id"/>
-                </xsl:apply-templates>
-                <xsl:apply-templates select="//tns:concept[not(tns:status='failure' or tns:status='warning')]">
                     <xsl:sort select="tns:verificationResult/tns:success"/>
-                    <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="@id"/>
                 </xsl:apply-templates>
             </section>
@@ -383,19 +369,27 @@
                     </xsl:choose>
                     <xsl:choose>
                         <xsl:when test="tns:status='failure'">
-                            <span title="Failure (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2718;</span>
+                            <span title="Failure (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2718;&#160;</span>
                         </xsl:when>
                         <xsl:when test="tns:status='warning'">
-                            <span title="Warning (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x1F785;</span>
+                            <span title="Warning (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x1F785;&#160;</span>
                         </xsl:when>
                         <xsl:when test="tns:status='success'">
-                            <span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2714;</span>
+                            <span title="Success (Result evaluation according to warn-on-severity/fail-on-severity thresholds)">&#x2714;&#160;</span>
                         </xsl:when>
                     </xsl:choose>
+                    <xsl:if test="tns:verificationResult/tns:hiddenRowCount > 0">
+                        <span title="Hidden Rows (Baseline or Suppression)">&#x2691;&#160;</span>
+                    </xsl:if>
                 </div>
 
                 <div><xsl:value-of select="tns:severity/text()"/></div>
-                <div><xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/></div>
+                <div>
+                    <span title="Row Count"><xsl:value-of select="tns:verificationResult/tns:rowCount/text()"/>&#160;</span>
+                    <xsl:if test="tns:verificationResult/tns:hiddenRowCount > 0">
+                        <span title="Hidden Row Count">(<xsl:value-of select="tns:verificationResult/tns:hiddenRowCount/text()"/>)&#160;</span>
+                    </xsl:if>
+                </div>
 
                 <div>
                     <span>

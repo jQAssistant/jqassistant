@@ -89,6 +89,7 @@
         <xs:sequence>
             <xs:element name="success" type="xs:boolean" />
             <xs:element name="rowCount" type="xs:int" />
+            <xs:element name="hiddenRowCount" type="xs:int" />
         </xs:sequence>
     </xs:complexType>
 

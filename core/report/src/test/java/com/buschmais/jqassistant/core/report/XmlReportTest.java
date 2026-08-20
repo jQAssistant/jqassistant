@@ -168,16 +168,28 @@ class XmlReportTest {
         File xmlReport = xmlReportTestHelper.createXmlReportWithKeyColumns();
         JqassistantReport report = readReport(xmlReport);
         ExecutableRuleType ruleType1 = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
-                .get(0);
+            .get(0);
         ExecutableRuleType ruleType2 = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
-                .get(1);
+            .get(1);
         ExecutableRuleType ruleType3 = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
-                .get(2);
-       String rowKey1 = ruleType1.getResult().getRows().getRow().get(0).getKey();
-       String rowKey2 = ruleType2.getResult().getRows().getRow().get(0).getKey();
-       String rowKey3 = ruleType3.getResult().getRows().getRow().get(0).getKey();
-       assertThat(rowKey1).isNotEqualTo(rowKey2);
-       assertThat(rowKey2).isEqualTo(rowKey3);
+            .get(2);
+        String rowKey1 = ruleType1.getResult()
+            .getRows()
+            .getRow()
+            .get(0)
+            .getKey();
+        String rowKey2 = ruleType2.getResult()
+            .getRows()
+            .getRow()
+            .get(0)
+            .getKey();
+        String rowKey3 = ruleType3.getResult()
+            .getRows()
+            .getRow()
+            .get(0)
+            .getKey();
+        assertThat(rowKey1).isNotEqualTo(rowKey2);
+        assertThat(rowKey2).isEqualTo(rowKey3);
     }
 
     @Test
@@ -306,7 +318,6 @@ class XmlReportTest {
 
         List<String> overriddenC = new LinkedList<>();
         overriddenC.add("overridden-GroupC");
-
 
         Concept overridingConcept = Concept.builder()
             .id("overriding-Concept")
@@ -448,53 +459,53 @@ class XmlReportTest {
         List<ReferencableRuleType> groupOrConceptOrConstraint = report.getGroupOrConceptOrConstraint();
         assertThat(groupOrConceptOrConstraint).hasSize(1);
         ExecutableRuleType ruleType = (ExecutableRuleType) report.getGroupOrConceptOrConstraint()
-                .get(0);
+            .get(0);
+        VerificationResultType verificationResult = ruleType.getVerificationResult();
+        assertThat(verificationResult).isNotNull();
+        assertThat(verificationResult.isSuccess()).isTrue();
+        assertThat(verificationResult.getRowCount()).isEqualTo(1);
+        assertThat(verificationResult.getHiddenRowCount()).isEqualTo(3);
 
         RowType row0 = ruleType.getResult()
-                .getRows()
-                .getRow().get(0);
+            .getRows()
+            .getRow()
+            .get(0);
         RowType row1 = ruleType.getResult()
-                .getRows()
-                .getRow().get(1);
+            .getRows()
+            .getRow()
+            .get(1);
         RowType row2 = ruleType.getResult()
-                .getRows()
-                .getRow().get(2);
+            .getRows()
+            .getRow()
+            .get(2);
 
-        assertThat(row0
-                .getHidden()
-                .getSuppression()).isNotNull();
-        assertThat(row0
-                .getHidden()
-                .getBaseline()).isNull();
-        assertThat(row0
-                .getHidden()
-                .getSuppression()
-                .getReason()).isEqualTo("Reason for suppressing");
-        assertThat(row0
-                .getHidden()
-                .getSuppression()
-                .getUntil()
-                .toString()).isEqualTo("2067-03-15");
+        assertThat(row0.getHidden()
+            .getSuppression()).isNotNull();
+        assertThat(row0.getHidden()
+            .getBaseline()).isNull();
+        assertThat(row0.getHidden()
+            .getSuppression()
+            .getReason()).isEqualTo("Reason for suppressing");
+        assertThat(row0.getHidden()
+            .getSuppression()
+            .getUntil()
+            .toString()).isEqualTo("2067-03-15");
 
-        assertThat(row1
-                .getHidden()
-                .getSuppression()).isNull();
-        assertThat(row1
-                .getHidden()
-                .getBaseline()).isNotNull();
+        assertThat(row1.getHidden()
+            .getSuppression()).isNull();
+        assertThat(row1.getHidden()
+            .getBaseline()).isNotNull();
 
-        assertThat(row2
-                .getHidden()
-                .getSuppression()).isNotNull();
-        assertThat(row2
-                .getHidden()
-                .getBaseline()).isNotNull();
+        assertThat(row2.getHidden()
+            .getSuppression()).isNotNull();
+        assertThat(row2.getHidden()
+            .getBaseline()).isNotNull();
 
         assertThat(ruleType.getResult()
-                .getRows()
-                .getRow()
-                .get(3)
-                .getHidden()).isNull();
+            .getRows()
+            .getRow()
+            .get(3)
+            .getHidden()).isNull();
     }
 
 }

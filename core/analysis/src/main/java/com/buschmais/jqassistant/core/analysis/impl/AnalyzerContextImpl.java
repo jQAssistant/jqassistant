@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
@@ -137,11 +136,8 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     @Override
     public <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException {
-        List<Row> filteredRows = rows.stream()
-            .filter(row -> !row.isHidden())
-            .collect(Collectors.toList());
         VerificationStrategy strategy = getVerificationStrategy(getVerification(executable));
-        return strategy.verifyRows(executable, getVerification(executable), columnNames, filteredRows);
+        return strategy.verifyRows(executable, getVerification(executable), columnNames, rows);
     }
 
     private VerificationStrategy getVerificationStrategy(Verification verification) throws RuleException {

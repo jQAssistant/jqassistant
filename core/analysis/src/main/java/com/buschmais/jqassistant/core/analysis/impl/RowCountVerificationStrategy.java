@@ -19,12 +19,20 @@ public class RowCountVerificationStrategy extends AbstractMinMaxVerificationStra
     @Override
     public <T extends ExecutableRule> VerificationResult verifyColumns(T executable, RowCountVerification verification, List<String> columnNames,
         Map<String, Column<?>> columns) {
-        return getStatus(executable, 1, verification.getMin(), verification.getMax());
+        return getStatus(executable, 1, 0, verification.getMin(), verification.getMax());
     }
 
     @Override
     public <T extends ExecutableRule> VerificationResult verifyRows(T executable, RowCountVerification verification, List<String> columnNames, List<Row> rows) {
-        return getStatus(executable, rows.size(), verification.getMin(), verification.getMax());
+        int rowCount = 0;
+        int hiddenRowCount = 0;
+        for (Row row : rows) {
+            if (row.isHidden()) {
+                hiddenRowCount++;
+            } else {
+                rowCount++;
+            }
+        }
+        return getStatus(executable, rowCount, hiddenRowCount, verification.getMin(), verification.getMax());
     }
-
 }

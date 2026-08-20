@@ -27,23 +27,25 @@ public class AggregationVerificationStrategy extends AbstractMinMaxVerificationS
         Map<String, Column<?>> columns) throws RuleException {
         String aggregationColumnName = getAggregationColumnName(verification, columnNames);
         Integer aggregationValue = getAggregationValue(columns, aggregationColumnName);
-        return getStatus(executable, aggregationValue, verification.getMin(), verification.getMax());
+        return getStatus(executable, aggregationValue, 0, verification.getMin(), verification.getMax());
     }
 
     @Override
     public <T extends ExecutableRule> VerificationResult verifyRows(T executable, AggregationVerification verification, List<String> columnNames,
         List<Row> rows) throws RuleException {
         LOGGER.debug("Verifying result of {}", executable);
-        if (rows.isEmpty()) {
-            return getStatus(executable, 0, verification.getMin(), verification.getMax());
-        }
         String columnName = getAggregationColumnName(verification, columnNames);
-        int aggregatedValue = 0;
+        int rowCount = 0;
+        int hiddenRowCount = 0;
         for (Row row : rows) {
-            Integer value = getAggregationValue(row.getColumns(), columnName);
-            aggregatedValue = aggregatedValue + value;
+            int value = getAggregationValue(row.getColumns(), columnName);
+            if (row.isHidden()) {
+                hiddenRowCount = hiddenRowCount + value;
+            } else {
+                rowCount = rowCount + value;
+            }
         }
-        return getStatus(executable, aggregatedValue, verification.getMin(), verification.getMax());
+        return getStatus(executable, rowCount, hiddenRowCount, verification.getMin(), verification.getMax());
     }
 
     private static String getAggregationColumnName(AggregationVerification verification, List<String> columnNames) throws RuleException {
