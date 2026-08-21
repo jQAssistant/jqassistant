@@ -66,7 +66,7 @@ public interface Analyze {
     String EXECUTE_APPLIED_CONCEPTS = "execute-applied-concepts";
 
     @Description("Execute concepts even if they have already been applied before.")
-    @WithDefault("false")
+    @WithDefault("true")
     boolean executeAppliedConcepts();
 
     String WARN_ON_EXECUTION_TIME_SECONDS = "warn-on-rule-execution-time-seconds";
