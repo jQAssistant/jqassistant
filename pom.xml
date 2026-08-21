@@ -75,11 +75,11 @@
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <commons-text.version>1.12.0</commons-text.version>
-        <guava.version>33.6.0-jre</guava.version>
+        <guava.version>33.7.0-jre</guava.version>
         <guice.version>7.0.0</guice.version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
         <httpcore.version>4.4.16</httpcore.version>
-        <jackson.version>2.22.1</jackson.version>
+        <jackson.version>2.22.2</jackson.version>
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
@@ -96,18 +96,18 @@
         <model-assert.version>1.1.0</model-assert.version>
         <neo4j_4x.version>4.4.48</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
-        <neo4j_5x.version>5.26.28</neo4j_5x.version>
+        <neo4j_5x.version>5.26.29</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the neo4jv4/neo4jv5 profiles -->
         <neo4j.version/>
-        <neo4j.neo4j-java-driver.version>4.4.26</neo4j.neo4j-java-driver.version>
+        <neo4j.neo4j-java-driver.version>4.4.27</neo4j.neo4j-java-driver.version>
         <neo4j-browser.version>5.24.0</neo4j-browser.version>
         <slf4j.version>2.0.18</slf4j.version>
         <smallrye-config.version>3.10.2</smallrye-config.version>
         <maven-resolver.version>1.9.27</maven-resolver.version>
         <snakeyaml.version>2.6</snakeyaml.version>
-        <snakeyaml-engine.version>3.0.1</snakeyaml-engine.version>
+        <snakeyaml-engine.version>3.1.1</snakeyaml-engine.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <xmlunit-assertj.version>2.12.0</xmlunit-assertj.version>
+        <xmlunit-assertj.version>2.13.0</xmlunit-assertj.version>
         <xo.version>2.6.6</xo.version>
         <!-- Maven plugin versions -->
         <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
