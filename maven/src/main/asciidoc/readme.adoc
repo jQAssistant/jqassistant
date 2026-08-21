@@ -1,4 +1,3 @@
-:toc:
 == Maven Plugin
 
 jQAssistant provides a plugin for http://maven.apache.org[Apache Maven] which can be used to provide either fully automated scanning and analysis during the build
