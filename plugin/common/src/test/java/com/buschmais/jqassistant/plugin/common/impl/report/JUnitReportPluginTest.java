@@ -189,9 +189,9 @@ public class JUnitReportPluginTest extends AbstractReportPluginTest {
 
     @Override
     protected <T extends ExecutableRule<?>> Result<T> getResult(T rule, Result.Status status) {
-        Row r1 = toRow(rule, Map.of("c", toColumn("foo")), Optional.empty());
-        Row r2 = toRow(rule, Map.of("c", toColumn("bar")), Optional.empty());
-        Row r3 = toRow(rule, Map.of("c", toColumn("woo")), of(Hidden.builder()
+        Row r1 = toRow(rule, Map.of("c", toColumn("foo")), status, Optional.empty());
+        Row r2 = toRow(rule, Map.of("c", toColumn("bar")), status, Optional.empty());
+        Row r3 = toRow(rule, Map.of("c", toColumn("woo")), status, of(Hidden.builder()
             .baseline(of(Hidden.Baseline.builder()
                 .build()))
             .build()));

@@ -257,6 +257,7 @@ public class XmlReportPlugin implements ReportPlugin {
         xmlStreamWriter.writeStartElement("verificationResult");
         writeElementWithCharacters("success", Boolean.toString(verificationResult.isSuccess()));
         writeElementWithCharacters("rowCount", Integer.toString(verificationResult.getRowCount()));
+        writeElementWithCharacters("hiddenRowCount", Integer.toString(verificationResult.getHiddenRowCount()));
         xmlStreamWriter.writeEndElement(); // verificationResult
     }
 
@@ -282,13 +283,14 @@ public class XmlReportPlugin implements ReportPlugin {
                 if (!row.isHidden() || this.includeHiddenRows) {
                     xmlStreamWriter.writeStartElement("row");
                     xmlStreamWriter.writeAttribute("key", row.getKey());
-                    writeHidden(row);
                     for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
                         .entrySet()) {
                         String columnName = rowEntry.getKey();
                         Column<?> column = rowEntry.getValue();
                         writeColumn(columnName, column);
                     }
+                    writeStatus(row.getStatus()); // status
+                    writeHidden(row);
                     xmlStreamWriter.writeEndElement();
                 }
             }
@@ -335,8 +337,12 @@ public class XmlReportPlugin implements ReportPlugin {
      *     If a problem occurs.
      */
     private void writeStatus(Result.Status status) throws XMLStreamException {
-        writeElementWithCharacters("status", status.name()
+        xmlStreamWriter.writeStartElement("status");
+        xmlStreamWriter.writeAttribute("level", status.getLevel()
+            .toString());
+        xmlStreamWriter.writeCharacters(status.name()
             .toLowerCase());
+        xmlStreamWriter.writeEndElement();
     }
 
     /**
@@ -375,7 +381,7 @@ public class XmlReportPlugin implements ReportPlugin {
         xmlStreamWriter.writeEndElement(); // column
     }
 
-    private <P extends SourceLocation> void writeSourceLocation(SourceLocation<? extends SourceLocation<?>> sourceLocation) throws XMLStreamException {
+    private void writeSourceLocation(SourceLocation<? extends SourceLocation<?>> sourceLocation) throws XMLStreamException {
         xmlStreamWriter.writeAttribute("fileName", sourceLocation.getFileName());
         if (sourceLocation instanceof FileLocation) {
             FileLocation fileLocation = (FileLocation) sourceLocation;

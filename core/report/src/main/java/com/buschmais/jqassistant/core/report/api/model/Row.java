@@ -18,6 +18,9 @@ public class Row {
     @NonNull
     private final Map<String, Column<?>> columns;
 
+    @NonNull
+    private final Result.Status status;
+
     @Builder.Default
     private Optional<Hidden> hidden = Optional.empty();
 
