@@ -1958,20 +1958,23 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 </li>
 <li><a href="#_maven_plugin">5. Maven Plugin</a>
 <ul class="sectlevel2">
-<li><a href="#_setup">5.1. Setup</a></li>
-<li><a href="#ProjectScope">5.2. Project Scope</a></li>
-<li><a href="#_plugin_configuration">5.3. Plugin Configuration</a></li>
-<li><a href="#_command_line_3">5.4. Command Line</a></li>
-<li><a href="#_goals">5.5. Goals</a></li>
-<li><a href="#scan">5.6. jqassistant:scan</a></li>
-<li><a href="#available-scopes">5.7. jqassistant:available-scopes</a></li>
-<li><a href="#reset">5.8. jqassistant:reset</a></li>
-<li><a href="#server">5.9. jqassistant:server</a></li>
-<li><a href="#analyze">5.10. jqassistant:analyze</a></li>
-<li><a href="#effective-configuration">5.11. jqassistant:effective-configuration</a></li>
-<li><a href="#effective-rules">5.12. jqassistant:effective-rules</a></li>
-<li><a href="#available-rules">5.13. jqassistant:available-rules</a></li>
-<li><a href="#report">5.14. jqassistant:report</a></li>
+<li><a href="#_plugin_configuration">5.1. Plugin Configuration</a></li>
+<li><a href="#_command_line_3">5.2. Command Line</a></li>
+<li><a href="#_goals">5.3. Goals</a>
+<ul class="sectlevel3">
+<li><a href="#scan">jqassistant:scan</a></li>
+<li><a href="#available-scopes">jqassistant:available-scopes</a></li>
+<li><a href="#reset">jqassistant:reset</a></li>
+<li><a href="#server">jqassistant:server</a></li>
+<li><a href="#analyze">jqassistant:analyze</a></li>
+<li><a href="#effective-configuration">jqassistant:effective-configuration</a></li>
+<li><a href="#effective-rules">jqassistant:effective-rules</a></li>
+<li><a href="#available-rules">jqassistant:available-rules</a></li>
+<li><a href="#report">jqassistant:report</a></li>
+</ul>
+</li>
+<li><a href="#_multiple_projects_per_reactor">5.4. Multiple projects per reactor</a></li>
+<li><a href="#_maven_build_cache_extension">5.5. Maven Build Cache Extension</a></li>
 </ul>
 </li>
 <li><a href="#core:Configuration">6. Configuration</a>
@@ -3660,102 +3663,7 @@ jqassistant scan -u maven:repository::http://my.maven.repository</code></pre>
 process or manual execution from a command line.</p>
 </div>
 <div class="sect2">
-<h3 id="_setup"><a class="link" href="#_setup">5.1. Setup</a></h3>
-
-</div>
-<div class="sect2">
-<h3 id="ProjectScope"><a class="link" href="#ProjectScope">5.2. Project Scope</a></h3>
-<div class="paragraph">
-<p>The jQAssistant Maven plugins uses a root Maven module where the following items will be searched or created:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the set of rules to apply (from the directory "jqassistant/")</p>
-</li>
-<li>
-<p>the database, default "{project.build.directory}/jqassistant/store"</p>
-</li>
-<li>
-<p>the generated native XML report, default: "{project.build.directory}/jqassistant/jqassistant-report.xml")</p>
-</li>
-<li>
-<p>the generated HTML report, default "{project.build.directory}/site/jqassistant.html")</p>
-</li>
-<li>
-<p>additional reports (e.g. CSV), default: "{project.build.directory}/jqassistant/report")</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>By default the root module is the directory, where the <code>mvn</code> command has been executed.</p>
-</div>
-<div class="paragraph">
-<p>For reactors where multiple projects are built requiring different databases, rule sets, etc. the flag
-<code>jqassistant.use-execution-root-as-project-root</code> can be set to <code>false</code>.
-The jQAssistant Maven plugin will then detect the different project roots by searching within the module tree starting from the current module following the
-parent relation until either a module is found where a directory "jqassistant/" exists or no further parent is defined.
-The following examples demonstrate different scenarios, the root modules as detected by jQAssistant are marked using asterisks.</p>
-</div>
-<div class="listingblock">
-<div class="title">Single project consisting of two modules</div>
-<div class="content">
-<pre class="CodeRay highlight"><code>root*
-   |-pom.xml
-   |
-   |-jqassistant
-   |           |-rules.xml
-   |
-   |-module1
-   |       |-pom.xml
-   |
-   |-module2
-           |-pom.xml</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Multiple projects, each consisting of two modules</div>
-<div class="content">
-<pre class="CodeRay highlight"><code>root
-   |-pom.xml
-   |
-   |-project1*
-   |        |-jqassistant
-   |        |           |-rules1.xml
-   |        |
-   |        |-pom.xml
-   |        |-module1
-   |        |       |-pom.xml
-   |        |
-   |        |-module2
-   |                |-pom.xml
-   |
-   |-project2*
-            |-jqassistant
-            |           |-rules2.xml
-            |-pom.xml
-            |-module1
-            |       |-pom.xml
-            |
-            |-module2
-                    |-pom.xml</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-The described mechanism is designed to work for Maven module structures which are organized in hierarchies with consistent parent relations.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_plugin_configuration"><a class="link" href="#_plugin_configuration">5.3. Plugin Configuration</a></h3>
+<h3 id="_plugin_configuration"><a class="link" href="#_plugin_configuration">5.1. Plugin Configuration</a></h3>
 <div class="paragraph">
 <p>The recommended way of configuring the jQAssistant Maven plugin is using files call <code>.jqassistant.yml</code>.
 These are usually located in root directory of the reactor (i.e. where the 'mvn' command is executed) but can as well be placed into modules to add specific configurations (e.g. to include files for scanning).
@@ -3969,7 +3877,7 @@ Maven properties (e.g. <code>project.basedir</code>) or user properties defined 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_command_line_3"><a class="link" href="#_command_line_3">5.4. Command Line</a></h3>
+<h3 id="_command_line_3"><a class="link" href="#_command_line_3">5.2. Command Line</a></h3>
 <div class="paragraph">
 <p>Goals may also be executed from the command line:</p>
 </div>
@@ -3998,7 +3906,7 @@ Maven properties (e.g. <code>project.basedir</code>) or user properties defined 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_goals"><a class="link" href="#_goals">5.5. Goals</a></h3>
+<h3 id="_goals"><a class="link" href="#_goals">5.3. Goals</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -4030,34 +3938,33 @@ Maven properties (e.g. <code>project.basedir</code>) or user properties defined 
 </li>
 </ul>
 </div>
-</div>
-<div class="sect2">
-<h3 id="scan"><a class="link" href="#scan">5.6. jqassistant:scan</a></h3>
+<div class="sect3">
+<h4 id="scan"><a class="link" href="#scan">jqassistant:scan</a></h4>
 <div class="paragraph">
 <p>Scans the project directories according to the given configuration (e.g. compiled classes and test classes) and stores the
 gathered information in the database.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="available-scopes"><a class="link" href="#available-scopes">5.7. jqassistant:available-scopes</a></h3>
+<div class="sect3">
+<h4 id="available-scopes"><a class="link" href="#available-scopes">jqassistant:available-scopes</a></h4>
 <div class="paragraph">
 <p>List all available scopes which may be specified for scanInclude properties.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="reset"><a class="link" href="#reset">5.8. jqassistant:reset</a></h3>
+<div class="sect3">
+<h4 id="reset"><a class="link" href="#reset">jqassistant:reset</a></h4>
 <div class="paragraph">
 <p>Resets the database by deleting all nodes and relationships.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="server"><a class="link" href="#server">5.9. jqassistant:server</a></h3>
+<div class="sect3">
+<h4 id="server"><a class="link" href="#server">jqassistant:server</a></h4>
 <div class="paragraph">
 <p>Starts the integrated Neo4j web server (default address: <a href="http://localhost:7474" class="bare">http://localhost:7474</a>).</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="analyze"><a class="link" href="#analyze">5.10. jqassistant:analyze</a></h3>
+<div class="sect3">
+<h4 id="analyze"><a class="link" href="#analyze">jqassistant:analyze</a></h4>
 <div class="paragraph">
 <p>Executes an analysis.</p>
 </div>
@@ -4077,28 +3984,159 @@ In a similar way for deploying the report archive to a remote repository <code>d
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="effective-configuration"><a class="link" href="#effective-configuration">5.11. jqassistant:effective-configuration</a></h3>
+<div class="sect3">
+<h4 id="effective-configuration"><a class="link" href="#effective-configuration">jqassistant:effective-configuration</a></h4>
 <div class="paragraph">
 <p>Print the current configuration as YAML representation on the console.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="effective-rules"><a class="link" href="#effective-rules">5.12. jqassistant:effective-rules</a></h3>
+<div class="sect3">
+<h4 id="effective-rules"><a class="link" href="#effective-rules">jqassistant:effective-rules</a></h4>
 <div class="paragraph">
 <p>List the rules which would be executed for an analysis and the given concepts, constraints or groups.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="available-rules"><a class="link" href="#available-rules">5.13. jqassistant:available-rules</a></h3>
+<div class="sect3">
+<h4 id="available-rules"><a class="link" href="#available-rules">jqassistant:available-rules</a></h4>
 <div class="paragraph">
 <p>List all available rules.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="report"><a class="link" href="#report">5.14. jqassistant:report</a></h3>
+<div class="sect3">
+<h4 id="report"><a class="link" href="#report">jqassistant:report</a></h4>
 <div class="paragraph">
 <p>Transforms the XML report into HTML (i.e. for generating a Maven site).</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_multiple_projects_per_reactor"><a class="link" href="#_multiple_projects_per_reactor">5.4. Multiple projects per reactor</a></h3>
+<div class="paragraph">
+<p>The jQAssistant Maven plugin uses a root Maven module where the following items are expected or created:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the set of rules to apply (from the directory "jqassistant/")</p>
+</li>
+<li>
+<p>the database, default "{project.build.directory}/jqassistant/store"</p>
+</li>
+<li>
+<p>the generated native XML report, default: "{project.build.directory}/jqassistant/jqassistant-report.xml")</p>
+</li>
+<li>
+<p>the generated HTML report, default "{project.build.directory}/site/jqassistant.html")</p>
+</li>
+<li>
+<p>additional reports (e.g. CSV), default: "{project.build.directory}/jqassistant/report")</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>By default, the root module is the directory where the <code>mvn</code> command has been executed.</p>
+</div>
+<div class="paragraph">
+<p>For reactors where multiple projects are built requiring different databases, rule sets, etc. the flag
+<code>jqassistant.use-execution-root-as-project-root</code> can be set to <code>false</code>.
+The jQAssistant Maven plugin will then detect the different project roots by searching within the module tree starting from the current module following the
+parent relation until either a module is found where a directory "jqassistant/" exists or no further parent is defined.
+The following examples demonstrate different scenarios, the root modules as detected by jQAssistant are marked using asterisks.</p>
+</div>
+<div class="listingblock">
+<div class="title">Single project consisting of two modules</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>root*
+   |-pom.xml
+   |
+   |-jqassistant
+   |           |-rules.xml
+   |
+   |-module1
+   |       |-pom.xml
+   |
+   |-module2
+           |-pom.xml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Multiple projects, each consisting of two modules</div>
+<div class="content">
+<pre class="CodeRay highlight"><code>root
+   |-pom.xml
+   |
+   |-project1*
+   |        |-jqassistant
+   |        |           |-rules1.xml
+   |        |
+   |        |-pom.xml
+   |        |-module1
+   |        |       |-pom.xml
+   |        |
+   |        |-module2
+   |                |-pom.xml
+   |
+   |-project2*
+            |-jqassistant
+            |           |-rules2.xml
+            |-pom.xml
+            |-module1
+            |       |-pom.xml
+            |
+            |-module2
+                    |-pom.xml</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The described mechanism is designed to work for Maven module structures which are organized in hierarchies with consistent parent relations.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_maven_build_cache_extension"><a class="link" href="#_maven_build_cache_extension">5.5. Maven Build Cache Extension</a></h3>
+<div class="paragraph">
+<p>The use of the <a href="https://maven.apache.org/extensions/maven-build-cache-extension">Maven Build Cache Extension</a> (e.g. for large reactors) in combination with the jQAssistant Maven plugin requires the following setup in the cache configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">mvn/maven-build-cache-config.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;cache</span>
+    <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/BUILD-CACHE-CONFIG/1.2.0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
+    <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/BUILD-CACHE-CONFIG/1.2.0 https://maven.apache.org/xsd/build-cache-config-1.2.0.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+
+    <span class="tag">&lt;configuration&gt;</span>
+        <span class="tag">&lt;attachedOutputs&gt;</span>
+            <span class="comment">&lt;!-- jQAssistant scans the classes directories which are not cached by default --&gt;</span>
+            <span class="tag">&lt;dirNames&gt;</span>
+                <span class="tag">&lt;dirName&gt;</span>classes<span class="tag">&lt;/dirName&gt;</span>
+                <span class="tag">&lt;dirName&gt;</span>test-classes<span class="tag">&lt;/dirName&gt;</span>
+            <span class="tag">&lt;/dirNames&gt;</span>
+        <span class="tag">&lt;/attachedOutputs&gt;</span>
+    <span class="tag">&lt;/configuration&gt;</span>
+
+    <span class="tag">&lt;executionControl&gt;</span>
+        <span class="tag">&lt;runAlways&gt;</span>
+            <span class="tag">&lt;goalsLists&gt;</span>
+                <span class="comment">&lt;!-- Ensures that the jQAssistant plugin is always executed --&gt;</span>
+                <span class="tag">&lt;goalsList</span> <span class="attribute-name">groupId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">com.buschmais.jqassistant</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">artifactId</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">jqassistant-maven-plugin</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;goals&gt;</span>
+                        <span class="tag">&lt;goal&gt;</span>scan<span class="tag">&lt;/goal&gt;</span>
+                        <span class="tag">&lt;goal&gt;</span>analyze<span class="tag">&lt;/goal&gt;</span>
+                    <span class="tag">&lt;/goals&gt;</span>
+                <span class="tag">&lt;/goalsList&gt;</span>
+            <span class="tag">&lt;/goalsLists&gt;</span>
+        <span class="tag">&lt;/runAlways&gt;</span>
+    <span class="tag">&lt;/executionControl&gt;</span>
+<span class="tag">&lt;/cache&gt;</span></code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -12828,7 +12866,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-08-21 10:40:40 UTC
+Last updated 2026-08-21 19:59:20 UTC
 </div>
 </div>
 </body>
