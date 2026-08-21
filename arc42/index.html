@@ -979,12 +979,6 @@ building block instances depicted in this diagram.&gt;</em></p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#jqassistant_java:TechnicalDebt">java:TechnicalDebt</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MAJOR</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="red">FAILURE</span></p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#jqassistant_jqa-technical-debt:CodeElementToBeRemoved">jqa-technical-debt:CodeElementToBeRemoved</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in given version.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MAJOR</p></td>
@@ -1009,6 +1003,12 @@ specified.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" will be removed in the given version.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MINOR</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="yellow">WARNING</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#jqassistant_java:TechnicalDebt">java:TechnicalDebt</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MAJOR</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="green">SUCCESS</span></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#jqassistant_jqa-legal:license:exists">jqa-legal:license:exists</a></p></td>
@@ -1176,74 +1176,6 @@ the repositories.</p></td>
 <div class="sect2">
 <h3 id="_11_2_details">11.2. Details</h3>
 <div class="sect3">
-<h4 id="jqassistant_java:TechnicalDebt">java:TechnicalDebt</h4>
-<div class="sidebarblock">
-<div class="content">
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<div class="title">🔥 ERROR</div>
-</td>
-<td class="content">
-Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".<br>
-Status: <span class="red">FAILURE</span>, Severity: MAJOR
-</td>
-</tr>
-</table>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Priority</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Member</th>
-<th class="tableblock halign-left valign-top">Description</th>
-<th class="tableblock halign-left valign-top">Issue</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">debtField</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">technicalDebt:Field with debts</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">859</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">technicalDebt:Class with debts</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">284</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">technicalDebt:Class with defaults</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">doSomething</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">technicalDebt:Method with debts</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div class="sect3">
 <h4 id="jqassistant_jqa-technical-debt:CodeElementToBeRemoved">jqa-technical-debt:CodeElementToBeRemoved</h4>
 <div class="sidebarblock">
 <div class="content">
@@ -1410,6 +1342,12 @@ Status: <span class="yellow">WARNING</span>, Severity: MINOR
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.core.analysis.api.AnalyzerContext</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.core.report.api.model.Row toRow(com.buschmais.jqassistant.core.rule.api.model.ExecutableRule,java.util.Map)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.core.report.api.model.source.AbstractLocation</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
@@ -1420,6 +1358,74 @@ Status: <span class="yellow">WARNING</span>, Severity: MINOR
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="jqassistant_java:TechnicalDebt">java:TechnicalDebt</h4>
+<div class="sidebarblock">
+<div class="content">
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">✅ SUCCESS</div>
+</td>
+<td class="content">
+Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".<br>
+Status: <span class="green">SUCCESS</span>, Severity: MAJOR
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Priority</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Member</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Issue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">debtField</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">technicalDebt:Field with debts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">859</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">technicalDebt:Class with debts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">284</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">technicalDebt:Class with defaults</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">doSomething</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">technicalDebt:Method with debts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
 </tr>
 </tbody>
 </table>
@@ -1875,7 +1881,7 @@ Status: <span class="green">SUCCESS</span>, Severity: INFO</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor, com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor, com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor, com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor, com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor, com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</p></td>
@@ -1891,7 +1897,7 @@ Status: <span class="green">SUCCESS</span>, Severity: INFO</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor, com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor, com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</p></td>
@@ -1903,7 +1909,7 @@ Status: <span class="green">SUCCESS</span>, Severity: INFO</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</p></td>
 </tr>
 </tbody>
 </table>
@@ -2080,7 +2086,7 @@ Status: <span class="green">SUCCESS</span>, Severity: MINOR</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.0 EN<br>
-Last updated 2026-08-20 07:24:11 UTC
+Last updated 2026-08-21 10:40:40 UTC
 </div>
 </div>
 </body>
