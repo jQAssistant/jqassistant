@@ -65,7 +65,7 @@ class ConfigurationSerializerTest {
         String yaml = toYaml(configuration);
 
         YamlConfigSource yamlConfigSource = new YamlConfigSource("yaml", yaml);
-        assertThat(yamlConfigSource.getValue("jqassistant.analyze.execute-applied-concepts")).isEqualTo("false");
+        assertThat(yamlConfigSource.getValue("jqassistant.analyze.execute-applied-concepts")).isEqualTo("true");
         Configuration restoredConfiguration = ConfigurationMappingLoader.builder(Configuration.class)
             .load(yamlConfigSource);
         Scan scan = restoredConfiguration.scan();
