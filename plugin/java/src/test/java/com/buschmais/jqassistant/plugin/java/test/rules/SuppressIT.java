@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
-import static com.buschmais.jqassistant.core.report.api.model.Result.Status.WARNING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SuppressIT extends AbstractJavaPluginIT {
@@ -25,7 +24,7 @@ public class SuppressIT extends AbstractJavaPluginIT {
 
     @Test
     void suppressUntilWithMonthsLimit() throws RuleException {
-        Result<Constraint> result = validateConstraint("suppress:suppressUntilMustNotExceedMonthsLimit");
+        Result<Constraint> result = validateConstraint("java-suppress:SuppressUntilMustNotExceedMonthsLimit");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
             .size()).isEqualTo(3);
@@ -42,7 +41,7 @@ public class SuppressIT extends AbstractJavaPluginIT {
 
     @Test
     void suppressUntilMustNotBeInThePast() throws RuleException {
-        Result<Constraint> result = validateConstraint("suppress:suppressUntilMustNotBeInThePast");
+        Result<Constraint> result = validateConstraint("java-suppress:SuppressUntilMustNotBeInThePast");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
             .size()).isEqualTo(2);
@@ -60,8 +59,8 @@ public class SuppressIT extends AbstractJavaPluginIT {
         LocalDate dateInTwoWeeks = LocalDate.now()
             .plusWeeks(2);
         query("MATCH (n:Java:jQASuppress {name: 'suppressedValue'}) SET n.suppressUntil = date('"+ dateInTwoWeeks + "') RETURN n");
-        Result<Constraint> result = validateConstraint("suppress:suppressExpiresInLessThanMonthsLimit");
-        assertThat(result.getStatus()).isEqualTo(WARNING);
+        Result<Constraint> result = validateConstraint("java-suppress:SuppressExpiresInLessThanMonthsLimit");
+        assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
             .size()).isEqualTo(1);
 
@@ -73,7 +72,7 @@ public class SuppressIT extends AbstractJavaPluginIT {
 
     @Test
     void suppressFieldsMustProvideAReason() throws RuleException{
-        Result<Constraint> result = validateConstraint("suppress:suppressElementMustProvideAReason");
+        Result<Constraint> result = validateConstraint("java-suppress:SuppressElementMustProvideAReason");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
         assertThat(result.getRows()
             .size()).isEqualTo(4);

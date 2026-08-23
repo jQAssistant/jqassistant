@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 http://schema.jqassistant.org/rule/jqassistant-rule-v2.7.xsd">
 
 
-    <constraint id="suppress:suppressElementMustProvideAReason">
+    <constraint id="java-suppress:SuppressElementMustProvideAReason">
         <description>Elements annotated with @jQASuppress must provide a suppression reason.</description>
         <cypher><![CDATA[
             MATCH
@@ -16,7 +16,7 @@
     </constraint>
 
 
-    <constraint id="suppress:suppressUntilMustNotExceedMonthsLimit">
+    <constraint id="java-suppress:SuppressUntilMustNotExceedMonthsLimit">
         <requiresParameter name="suppressUntilMonthsLimit" type="int" defaultValue="12"/>
         <description>The provided expiration date exceeds the allowed limit (default: 12 months).</description>
         <cypher><![CDATA[
@@ -30,7 +30,7 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="suppress:suppressUntilMustNotBeInThePast">
+    <constraint id="java-suppress:SuppressUntilMustNotBeInThePast">
         <description>The provided expiration date must not be in the past.</description>
         <cypher><![CDATA[
         MATCH
@@ -43,7 +43,7 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="suppress:suppressExpiresInLessThanMonthsLimit" severity="minor">
+    <constraint id="java-suppress:SuppressExpiresInLessThanMonthsLimit">
         <requiresParameter name="suppressWarnBeforeMonths" type="int" defaultValue="1"/>
         <description>The provided expiration date falls within the timeframe for soon expiring (default: 1 month). </description>
         <cypher><![CDATA[
