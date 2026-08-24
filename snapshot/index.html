@@ -4401,7 +4401,7 @@ The locations can be overridden by command line parameters of the Command Line U
       <span class="comment"># The default severity of concepts without an explicit severity.</span>
       <span class="comment">#</span>
       <span class="comment"># -Djqassistant.analyze.rule.default-concept-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER</span>
-      <span class="key">default-concept-severity</span>: <span class="string"><span class="content">MINOR</span></span>
+      <span class="key">default-concept-severity</span>: <span class="string"><span class="content">INFO</span></span>
 
       <span class="comment"># The default severity of constraint without an explicit severity.</span>
       <span class="comment">#</span>
@@ -4520,7 +4520,7 @@ The locations can be overridden by command line parameters of the Command Line U
     <span class="comment"># Execute concepts even if they have already been applied before</span>
     <span class="comment">#</span>
     <span class="comment"># -Djqassistant.analyze.execute-applied-concepts: true|false</span>
-    <span class="key">execute-applied-concepts</span>: <span class="string"><span class="content">false</span></span>
+    <span class="key">execute-applied-concepts</span>: <span class="string"><span class="content">true</span></span>
 
     <span class="comment"># The execution time [seconds] for rules (concepts/constraints) to show a warning. Can be used as a hint for optimization.</span>
     <span class="comment">#</span>
@@ -6894,16 +6894,16 @@ The annotation is evaluated by the constraint <code>java:TechnicalDebt</code> to
 <p><a href="#java:TechnicalDebt">Constraint <code>java:TechnicalDebt</code></a></p>
 </li>
 <li>
-<p><a href="#suppress:suppressElementMustProvideAReason">Constraint <code>suppress:suppressElementMustProvideAReason</code></a></p>
+<p><a href="#java-suppress:SuppressElementMustProvideAReason">Constraint <code>java-suppress:SuppressElementMustProvideAReason</code></a></p>
 </li>
 <li>
-<p><a href="#suppress:suppressUntilMustNotExceedMonthsLimit">Constraint <code>suppress:suppressUntilMustNotExceedMonthsLimit</code></a></p>
+<p><a href="#java-suppress:SuppressUntilMustNotExceedMonthsLimit">Constraint <code>java-suppress:SuppressUntilMustNotExceedMonthsLimit</code></a></p>
 </li>
 <li>
-<p><a href="#suppress:suppressUntilMustNotBeInThePast">Constraint <code>suppress:suppressUntilMustNotBeInThePast</code></a></p>
+<p><a href="#java-suppress:SuppressUntilMustNotBeInThePast">Constraint <code>java-suppress:SuppressUntilMustNotBeInThePast</code></a></p>
 </li>
 <li>
-<p><a href="#suppress:suppressExpiresInLessThanMonthsLimit">Constraint <code>suppress:suppressExpiresInLessThanMonthsLimit</code></a></p>
+<p><a href="#java-suppress:SuppressExpiresInLessThanMonthsLimit">Constraint <code>java-suppress:SuppressExpiresInLessThanMonthsLimit</code></a></p>
 </li>
 <li>
 <p><a href="#java:InnerType">Concept <code>java:InnerType</code></a></p>
@@ -7573,12 +7573,17 @@ RETURN
 <div class="sect4">
 <h5 id="java:PostConstruct"><a class="link" href="#java:PostConstruct">Concept <code>java:PostConstruct</code></a></h5>
 <div class="paragraph">
-<p>Labels methods annotated <code>@javax.annotation.PostConstruct</code> with 'PostConstruct'.</p>
+<p>Labels methods annotated by <code>@javax.annotation.PostConstruct</code> or <code>@jakarta.annotation.PostConstruct</code> with 'PostConstruct'.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (postConstruct:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(:Java:Type{fqn:&quot;javax.annotation.PostConstruct&quot;})
+  (postConstruct:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Java:Type)
+WHERE
+  annotationType.fqn in [
+    &quot;javax.annotation.PostConstruct&quot;,
+    &quot;jakarta.annotation.PostConstruct&quot;
+  ]
 SET
   postConstruct:PostConstruct
 RETURN
@@ -7589,12 +7594,17 @@ RETURN
 <div class="sect4">
 <h5 id="java:PreDestroy"><a class="link" href="#java:PreDestroy">Concept <code>java:PreDestroy</code></a></h5>
 <div class="paragraph">
-<p>Labels methods annotated <code>@javax.annotation.PreDestroy</code> with 'PreDestroy'.</p>
+<p>Labels methods annotated by <code>@javax.annotation.PreDestroy</code> or <code>@jakarta.annotation.PreDestroy</code> with 'PreDestroy'.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (preDestroy:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(:Java:Type{fqn:&quot;javax.annotation.PreDestroy&quot;})
+  (preDestroy:Method)-[:ANNOTATED_BY]-&gt;()-[:OF_TYPE]-&gt;(annotationType:Java:Type)
+WHERE
+  annotationType.fqn in [
+    &quot;javax.annotation.PreDestroy&quot;,
+    &quot;jakarta.annotation.PreDestroy&quot;
+  ]
 SET
   preDestroy:PreDestroy
 RETURN
@@ -8713,7 +8723,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="suppress:suppressElementMustProvideAReason"><a class="link" href="#suppress:suppressElementMustProvideAReason">Constraint <code>suppress:suppressElementMustProvideAReason</code></a></h5>
+<h5 id="java-suppress:SuppressElementMustProvideAReason"><a class="link" href="#java-suppress:SuppressElementMustProvideAReason">Constraint <code>java-suppress:SuppressElementMustProvideAReason</code></a></h5>
 <div class="paragraph">
 <p>Elements annotated with @jQASuppress must provide a suppression reason.</p>
 </div>
@@ -8729,7 +8739,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="suppress:suppressUntilMustNotExceedMonthsLimit"><a class="link" href="#suppress:suppressUntilMustNotExceedMonthsLimit">Constraint <code>suppress:suppressUntilMustNotExceedMonthsLimit</code></a></h5>
+<h5 id="java-suppress:SuppressUntilMustNotExceedMonthsLimit"><a class="link" href="#java-suppress:SuppressUntilMustNotExceedMonthsLimit">Constraint <code>java-suppress:SuppressUntilMustNotExceedMonthsLimit</code></a></h5>
 <div class="paragraph">
 <p>The provided expiration date exceeds the allowed limit (default: 12 months).</p>
 </div>
@@ -8746,7 +8756,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="suppress:suppressUntilMustNotBeInThePast"><a class="link" href="#suppress:suppressUntilMustNotBeInThePast">Constraint <code>suppress:suppressUntilMustNotBeInThePast</code></a></h5>
+<h5 id="java-suppress:SuppressUntilMustNotBeInThePast"><a class="link" href="#java-suppress:SuppressUntilMustNotBeInThePast">Constraint <code>java-suppress:SuppressUntilMustNotBeInThePast</code></a></h5>
 <div class="paragraph">
 <p>The provided expiration date must not be in the past.</p>
 </div>
@@ -8763,7 +8773,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="suppress:suppressExpiresInLessThanMonthsLimit"><a class="link" href="#suppress:suppressExpiresInLessThanMonthsLimit">Constraint <code>suppress:suppressExpiresInLessThanMonthsLimit</code></a></h5>
+<h5 id="java-suppress:SuppressExpiresInLessThanMonthsLimit"><a class="link" href="#java-suppress:SuppressExpiresInLessThanMonthsLimit">Constraint <code>java-suppress:SuppressExpiresInLessThanMonthsLimit</code></a></h5>
 <div class="paragraph">
 <p>The provided expiration date falls within the timeframe for soon expiring (default: 1 month).</p>
 </div>
@@ -12866,7 +12876,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-08-24 06:36:32 UTC
+Last updated 2026-08-24 11:07:40 UTC
 </div>
 </div>
 </body>
