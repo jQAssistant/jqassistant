@@ -93,12 +93,12 @@ class SuppressIT extends AbstractJavaPluginIT {
     private void verifySuppress(Class<?> classToScan, String constraintId, String conceptId, String column) throws RuleException {
         scanClasses(classToScan);
         assertThat(validateConstraint(constraintId).getStatus()).isEqualTo(SUCCESS);
-        Result<Concept> supressedItems = applyConcept(conceptId);
-        assertThat(supressedItems.getStatus()).isEqualTo(SUCCESS);
+        Result<Concept> suppressedItems = applyConcept(conceptId);
+        assertThat(suppressedItems.getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
-        assertThat(supressedItems.getRows()
+        assertThat(suppressedItems.getRows()
             .size()).isEqualTo(1);
-        Row row = supressedItems.getRows()
+        Row row = suppressedItems.getRows()
             .get(0);
         JavaSuppressDescriptor suppressDescriptor = (JavaSuppressDescriptor) row.getColumns()
             .get(column)
