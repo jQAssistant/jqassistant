@@ -87,35 +87,7 @@ class AnalyzerContextImpl implements AnalyzerContext {
                 hidden.setBaseline(Optional.of(Hidden.Baseline.builder()
                     .build()));
             }
-            for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
-                String columnName = entry.getKey();
-                Column<?> column = entry.getValue();
-                Object columnValue = column.getValue();
-                if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
-                    Suppress suppress = (Suppress) columnValue;
-                    String suppressColumn = suppress.getSuppressColumn();
-                    if ((suppressColumn != null && suppressColumn.equals(columnName)) || (primaryColumn.isPresent() && primaryColumn.get()
-                        .equals(columnName))) {
-                        String[] suppressIds = suppress.getSuppressIds();
-                        if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
-                            for (String suppressId : suppressIds) {
-                                if (rule.getId()
-                                    .equals(suppressId)) {
-                                    Hidden.Suppression suppression = Hidden.Suppression.builder()
-                                        .build();
-                                    if (StringUtils.isNotEmpty(suppress.getSuppressReason())) {
-                                        suppression.setSuppressReason(suppress.getSuppressReason());
-                                    }
-                                    if (suppress.getSuppressUntil() != null) {
-                                        suppression.setSuppressUntil(suppress.getSuppressUntil());
-                                    }
-                                    hidden.setSuppression(Optional.of(suppression));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            evaluateSuppressions(rule, columns, primaryColumn, hidden);
             if (hidden.getSuppression()
                 .isPresent() || hidden.getBaseline()
                 .isPresent()) {
@@ -123,6 +95,45 @@ class AnalyzerContextImpl implements AnalyzerContext {
             }
         }
         return ReportHelper.toRow(rule, columns, status, empty());
+    }
+
+    private void evaluateSuppressions(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn, Hidden hidden) {
+        for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
+            String columnName = entry.getKey();
+            Column<?> column = entry.getValue();
+            Object columnValue = column.getValue();
+            if (columnValue != null && SuppressDescriptor.class.isAssignableFrom(columnValue.getClass())) {
+                SuppressDescriptor suppressDescriptor = (SuppressDescriptor) columnValue;
+                for (SuppressionDescriptor suppressionDescriptor : suppressDescriptor.getSuppressions()) {
+                    evaluateSuppression(rule, columnName, primaryColumn, suppressionDescriptor, hidden);
+                }
+            }
+        }
+    }
+
+    private void evaluateSuppression(ExecutableRule<?> rule, String columnName, Optional<String> primaryColumn, SuppressionDescriptor suppressionDescriptor,
+        Hidden hidden) {
+        String suppressRuleId = suppressionDescriptor.getRuleId();
+        String suppressColumn = suppressionDescriptor.getColumn();
+        String suppressReason = suppressionDescriptor.getReason();
+        LocalDate suppressUntil = suppressionDescriptor.getUntil();
+        if ((suppressColumn != null && suppressColumn.equals(columnName)) || (primaryColumn.isPresent() && primaryColumn.get()
+            .equals(columnName))) {
+            if (validateSuppressUntilDate(suppressUntil)) {
+                if (rule.getId()
+                    .equals(suppressRuleId)) {
+                    Hidden.Suppression suppression = Hidden.Suppression.builder()
+                        .build();
+                    if (StringUtils.isNotEmpty(suppressReason)) {
+                        suppression.setSuppressReason(suppressReason);
+                    }
+                    if (suppressUntil != null) {
+                        suppression.setSuppressUntil(suppressUntil);
+                    }
+                    hidden.setSuppression(Optional.of(suppression));
+                }
+            }
+        }
     }
 
     public boolean validateSuppressUntilDate(LocalDate until) {

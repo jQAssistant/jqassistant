@@ -6,11 +6,13 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.report.api.model.SuppressionDescriptor;
 import com.buschmais.jqassistant.plugin.java.annotation.jQASuppress;
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.objectweb.asm.AnnotationVisitor;
 
 /**
@@ -19,7 +21,9 @@ import org.objectweb.asm.AnnotationVisitor;
 @Slf4j
 class SuppressAnnotationVisitor extends AnnotationVisitor {
 
-    private final JavaSuppressDescriptor suppressDescriptor;
+    private final AnnotatedDescriptor annotatedDescriptor;
+
+    private final ClassFileVisitorContext classFileVisitorContext;
 
     private String currentAttribute;
 
@@ -33,8 +37,8 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
 
     public SuppressAnnotationVisitor(AnnotatedDescriptor annotatedDescriptor, ClassFileVisitorContext classFileVisitorContext) {
         super(ClassFileVisitorContext.ASM_OPCODES);
-        this.suppressDescriptor = classFileVisitorContext.getStore()
-            .addDescriptorType(annotatedDescriptor, JavaSuppressDescriptor.class);
+        this.annotatedDescriptor = annotatedDescriptor;
+        this.classFileVisitorContext = classFileVisitorContext;
     }
 
     @Override
@@ -76,9 +80,28 @@ class SuppressAnnotationVisitor extends AnnotationVisitor {
 
     @Override
     public void visitEnd() {
-        suppressDescriptor.setSuppressIds(suppressIds.toArray(new String[0]));
-        suppressDescriptor.setSuppressColumn(suppressColumn);
-        suppressDescriptor.setSuppressUntil(suppressUntil);
-        suppressDescriptor.setSuppressReason(suppressReason);
+        JavaSuppressDescriptor javaSuppressDescriptor = classFileVisitorContext.getStore()
+            .addDescriptorType(annotatedDescriptor, JavaSuppressDescriptor.class);
+        for (String suppressId : suppressIds) {
+            SuppressionDescriptor suppressionDescriptor = getSuppressionDescriptor(javaSuppressDescriptor, suppressId);
+            suppressionDescriptor.setColumn(suppressColumn);
+            suppressionDescriptor.setUntil(suppressUntil);
+            suppressionDescriptor.setReason(suppressReason);
+        }
+    }
+
+    private @NonNull SuppressionDescriptor getSuppressionDescriptor(JavaSuppressDescriptor javaSuppressDescriptor, String suppressId) {
+        return javaSuppressDescriptor.getSuppressions()
+            .stream()
+            .filter(suppression -> suppressId.equals(suppression.getRuleId()))
+            .findAny()
+            .orElseGet(() -> {
+                SuppressionDescriptor suppressionDescriptor = classFileVisitorContext.getStore()
+                    .create(SuppressionDescriptor.class);
+                javaSuppressDescriptor.getSuppressions()
+                    .add(suppressionDescriptor);
+                suppressionDescriptor.setRuleId(suppressId);
+                return suppressionDescriptor;
+            });
     }
 }
