@@ -194,8 +194,8 @@ class RowCountVerificationStrategyTest {
             .status(SUCCESS)
             .hidden(hidden ?
                 Optional.of(Hidden.builder()
-                    .suppression(Optional.of(Hidden.Suppression.builder()
-                        .build()))
+                    .suppression(Hidden.Suppression.builder()
+                        .build())
                     .build()) :
                 empty())
             .build();

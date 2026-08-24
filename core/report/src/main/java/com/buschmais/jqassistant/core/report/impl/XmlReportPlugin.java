@@ -505,38 +505,40 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private void writeHidden(Row row) throws XMLStreamException {
-        Optional<Hidden> hidden = row.getHidden();
-        if (hidden != null && hidden.isPresent()) {
+        Optional<Hidden> optionalHidden = row.getHidden();
+        if (optionalHidden != null && optionalHidden.isPresent()) {
+            Hidden hidden = optionalHidden.get();
             xmlStreamWriter.writeStartElement("hidden");
-            Optional<Hidden.Suppression> suppression = hidden.get()
-                .getSuppression();
-            if (suppression.isPresent()) {
-                xmlStreamWriter.writeStartElement("suppression");
-                if (StringUtils.isNotEmpty(suppression.get()
-                    .getSuppressReason())) {
-                    xmlStreamWriter.writeStartElement("reason");
-                    xmlStreamWriter.writeCharacters(suppression.get()
-                        .getSuppressReason());
-                    xmlStreamWriter.writeEndElement();
-                }
-                if (suppression.get()
-                    .getSuppressUntil() != null && StringUtils.isNotEmpty(suppression.get()
-                    .getSuppressUntil()
-                    .toString())) {
-                    xmlStreamWriter.writeStartElement("until");
-                    xmlStreamWriter.writeCharacters(suppression.get()
-                        .getSuppressUntil()
-                        .format(DateTimeFormatter.ISO_LOCAL_DATE));
-                    xmlStreamWriter.writeEndElement();
-                }
-                xmlStreamWriter.writeEndElement(); //suppression
-            }
-            if (hidden.get()
-                .getBaseline()
-                .isPresent()) {
-                xmlStreamWriter.writeEmptyElement("baseline");
-            }
+            writeBaseline(hidden);
+            writeSuppressions(hidden);
             xmlStreamWriter.writeEndElement(); //hidden
+        }
+    }
+
+    private void writeSuppressions(Hidden hidden) throws XMLStreamException {
+        List<Hidden.Suppression> suppressions = hidden.getSuppressions();
+        for (Hidden.Suppression suppression : suppressions) {
+            xmlStreamWriter.writeStartElement("suppression");
+            if (StringUtils.isNotEmpty(suppression.getReason())) {
+                xmlStreamWriter.writeStartElement("reason");
+                xmlStreamWriter.writeCharacters(suppression.getReason());
+                xmlStreamWriter.writeEndElement();
+            }
+            if (suppression.getUntil() != null && StringUtils.isNotEmpty(suppression.getUntil()
+                .toString())) {
+                xmlStreamWriter.writeStartElement("until");
+                xmlStreamWriter.writeCharacters(suppression.getUntil()
+                    .format(DateTimeFormatter.ISO_LOCAL_DATE));
+                xmlStreamWriter.writeEndElement();
+            }
+            xmlStreamWriter.writeEndElement(); //suppression
+        }
+    }
+
+    private void writeBaseline(Hidden hidden) throws XMLStreamException {
+        if (hidden.getBaseline()
+            .isPresent()) {
+            xmlStreamWriter.writeEmptyElement("baseline");
         }
     }
 

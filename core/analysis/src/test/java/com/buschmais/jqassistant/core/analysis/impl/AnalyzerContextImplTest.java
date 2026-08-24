@@ -196,16 +196,13 @@ class AnalyzerContextImplTest {
             .isPresent()).isTrue();
         Hidden hidden = row.getHidden()
             .get();
-        assertThat(hidden.getSuppression()
-            .isPresent()).isTrue();
         assertThat(hidden.getBaseline()
             .isPresent()).isFalse();
-        assertThat(hidden.getSuppression()
-            .get()
-            .getSuppressUntil()).isEqualTo(LocalDate.parse("2065-06-01"));
-        assertThat(hidden.getSuppression()
-            .get()
-            .getSuppressReason()).isEqualTo("This is the reason of suppression.");
+        List<Hidden.Suppression> suppressions = hidden.getSuppressions();
+        assertThat(suppressions).hasSize(1);
+        Hidden.Suppression suppression = suppressions.get(0);
+        assertThat(suppression.getUntil()).isEqualTo(LocalDate.parse("2065-06-01"));
+        assertThat(suppression.getReason()).isEqualTo("This is the reason of suppression.");
     }
 
     @Test

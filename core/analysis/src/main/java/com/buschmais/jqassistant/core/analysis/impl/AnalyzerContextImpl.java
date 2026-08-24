@@ -80,16 +80,16 @@ class AnalyzerContextImpl implements AnalyzerContext {
     @Override
     public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn, Result.Status status) {
         if (rule.getReport() != null) {
-            Hidden hidden = Hidden.builder()
-                .build();
+            Hidden.HiddenBuilder hiddenBuilder = Hidden.builder();
             String rowKey = ReportHelper.getRowKey(rule, columns);
             if (baselineManager.isExisting(rule, rowKey, columns)) {
-                hidden.setBaseline(Optional.of(Hidden.Baseline.builder()
+                hiddenBuilder.baseline(Optional.of(Hidden.Baseline.builder()
                     .build()));
             }
-            evaluateSuppressions(rule, columns, primaryColumn, hidden);
-            if (hidden.getSuppression()
-                .isPresent() || hidden.getBaseline()
+            evaluateSuppressions(rule, columns, primaryColumn, hiddenBuilder);
+            Hidden hidden = hiddenBuilder.build();
+            if (!hidden.getSuppressions()
+                .isEmpty() || hidden.getBaseline()
                 .isPresent()) {
                 return ReportHelper.toRow(rule, columns, status, Optional.of(hidden));
             }
@@ -97,7 +97,8 @@ class AnalyzerContextImpl implements AnalyzerContext {
         return ReportHelper.toRow(rule, columns, status, empty());
     }
 
-    private void evaluateSuppressions(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn, Hidden hidden) {
+    private void evaluateSuppressions(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn,
+        Hidden.HiddenBuilder hiddenBuilder) {
         for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
             String columnName = entry.getKey();
             Column<?> column = entry.getValue();
@@ -105,34 +106,31 @@ class AnalyzerContextImpl implements AnalyzerContext {
             if (columnValue != null && SuppressDescriptor.class.isAssignableFrom(columnValue.getClass())) {
                 SuppressDescriptor suppressDescriptor = (SuppressDescriptor) columnValue;
                 for (SuppressionDescriptor suppressionDescriptor : suppressDescriptor.getSuppressions()) {
-                    evaluateSuppression(rule, columnName, primaryColumn, suppressionDescriptor, hidden);
+                    evaluateSuppression(rule, columnName, primaryColumn, suppressionDescriptor, hiddenBuilder);
                 }
             }
         }
     }
 
     private void evaluateSuppression(ExecutableRule<?> rule, String columnName, Optional<String> primaryColumn, SuppressionDescriptor suppressionDescriptor,
-        Hidden hidden) {
+        Hidden.HiddenBuilder hiddenBuilder) {
         String suppressRuleId = suppressionDescriptor.getRuleId();
         String suppressColumn = suppressionDescriptor.getColumn();
         String suppressReason = suppressionDescriptor.getReason();
         LocalDate suppressUntil = suppressionDescriptor.getUntil();
-        if ((suppressColumn != null && suppressColumn.equals(columnName)) || (primaryColumn.isPresent() && primaryColumn.get()
-            .equals(columnName))) {
-            if (validateSuppressUntilDate(suppressUntil)) {
-                if (rule.getId()
-                    .equals(suppressRuleId)) {
-                    Hidden.Suppression suppression = Hidden.Suppression.builder()
-                        .build();
-                    if (StringUtils.isNotEmpty(suppressReason)) {
-                        suppression.setSuppressReason(suppressReason);
-                    }
-                    if (suppressUntil != null) {
-                        suppression.setSuppressUntil(suppressUntil);
-                    }
-                    hidden.setSuppression(Optional.of(suppression));
-                }
+        if (suppressRuleId.equals(rule.getId())  //
+            && ((suppressColumn != null && suppressColumn.equals(columnName)) || (primaryColumn.isPresent() //
+            && primaryColumn.get()
+            .equals(columnName))) //
+            && validateSuppressUntilDate(suppressUntil)) {
+            Hidden.Suppression.SuppressionBuilder suppressionBuilder = Hidden.Suppression.builder();
+            if (StringUtils.isNotEmpty(suppressReason)) {
+                suppressionBuilder.reason(suppressReason);
             }
+            if (suppressUntil != null) {
+                suppressionBuilder.until(suppressUntil);
+            }
+            hiddenBuilder.suppression(suppressionBuilder.build());
         }
     }
 
