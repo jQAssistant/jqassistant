@@ -205,7 +205,7 @@ jqassistant:
       # The default severity of concepts without an explicit severity.
       #
       # -Djqassistant.analyze.rule.default-concept-severity: INFO|MINOR|MAJOR|CRITICAL|BLOCKER
-      default-concept-severity: MINOR
+      default-concept-severity: INFO
 
       # The default severity of constraint without an explicit severity.
       #
