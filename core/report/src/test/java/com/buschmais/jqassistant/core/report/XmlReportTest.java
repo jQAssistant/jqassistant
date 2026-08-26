@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.report;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,7 +111,7 @@ class XmlReportTest {
         assertThat(link).isInstanceOf(LinkType.class);
         assertThat(link.getValue()).isEqualTo("file:report.csv");
 
-        File htmlReport = new File(xmlReport.getParent(), XmlReportPlugin.REPORT_FILE_HTML);
+        File htmlReport = new File(xmlReport.getParent(), XmlReportPlugin.DEFAULT_XML_REPORT_HTML_FILE);
         assertThat(htmlReport).exists();
     }
 
@@ -134,8 +135,26 @@ class XmlReportTest {
         File xmlReport = xmlReportTestHelper.createXmlReport(Map.of(XmlReportPlugin.PROPERTY_XML_REPORT_TRANSFORM_TO_HTML, "false"));
 
         assertThat(xmlReport).exists();
-        File htmlReport = new File(xmlReport.getParent(), XmlReportPlugin.REPORT_FILE_HTML);
+        File htmlReport = new File(xmlReport.getParent(), XmlReportPlugin.DEFAULT_XML_REPORT_HTML_FILE);
         assertThat(htmlReport).doesNotExist();
+    }
+
+    @Test
+    void writeReportToCustomFiles() throws ReportException, IOException {
+        File xmlFile = new File("target/test1/jqa-report.xml");
+        if (xmlFile.exists()) {
+            FileUtils.delete(xmlFile);
+        }
+        File htmlFile = new File("target/test2/jqa-report.html");
+        if (htmlFile.exists()) {
+            FileUtils.delete(htmlFile);
+        }
+
+        xmlReportTestHelper.createXmlReport(
+            Map.of(XmlReportPlugin.PROPERTY_XML_REPORT_FILE, xmlFile.getPath(), XmlReportPlugin.PROPERTY_XML_REPORT_HTML_FILE, htmlFile.getPath()));
+
+        assertThat(xmlFile).exists();
+        assertThat(htmlFile).exists();
     }
 
     @Test
