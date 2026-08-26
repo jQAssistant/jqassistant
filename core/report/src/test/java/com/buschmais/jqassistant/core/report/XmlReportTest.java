@@ -57,7 +57,8 @@ class XmlReportTest {
         VerificationResultType verificationResult = ruleType.getVerificationResult();
         assertThat(verificationResult.isSuccess()).isTrue();
         assertThat(verificationResult.getRowCount()).isEqualTo(1);
-        assertThat(ruleType.getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+        assertThat(ruleType.getStatus()
+            .getValue()).isEqualTo(StatusEnumType.SUCCESS);
         assertThat(ruleType).isInstanceOf(ConceptType.class);
         assertThat(ruleType.getId()).isEqualTo("my:concept");
         assertThat(ruleType.getDescription()).isEqualTo("My concept description");
@@ -96,7 +97,8 @@ class XmlReportTest {
                 assertThat(source.getEndLine()).isEqualTo(2);
             }
         }
-        assertThat(rowType.getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+        assertThat(rowType.getStatus()
+            .getValue()).isEqualTo(StatusEnumType.SUCCESS);
         // Reports
         ReportsType reports = ruleType.getReports();
         assertThat(reports).isNotNull();
@@ -172,7 +174,8 @@ class XmlReportTest {
         assertThat(ruleType.getId()).isEqualTo("my:Constraint");
         assertThat(ruleType.getSeverity()
             .getValue()).isEqualTo("critical");
-        assertThat(ruleType.getStatus()).isEqualTo(StatusEnumType.FAILURE);
+        assertThat(ruleType.getStatus()
+            .getValue()).isEqualTo(StatusEnumType.FAILURE);
         ResultType result = ruleType.getResult();
         assertThat(result).isNotNull();
         ColumnsHeaderType columnsHeader = result.getColumns();
@@ -304,14 +307,16 @@ class XmlReportTest {
             .getId()).isEqualTo("required-concept");
         assertThat(abstractConceptType.getRequiredConcept()
             .get(0)
-            .getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+            .getStatus()
+            .getValue()).isEqualTo(StatusEnumType.SUCCESS);
         assertThat(abstractConceptType.getProvidingConcept()).hasSize(1);
         assertThat(abstractConceptType.getProvidingConcept()
             .get(0)
             .getId()).isEqualTo("providing-concept");
         assertThat(abstractConceptType.getProvidingConcept()
             .get(0)
-            .getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+            .getStatus()
+            .getValue()).isEqualTo(StatusEnumType.SUCCESS);
 
         ConstraintType constraintType = (ConstraintType) groupOrConceptOrConstraint.get(3);
         assertThat(constraintType.getId()).isEqualTo("constraint");
@@ -321,7 +326,8 @@ class XmlReportTest {
             .getId()).isEqualTo("required-concept");
         assertThat(constraintType.getRequiredConcept()
             .get(0)
-            .getStatus()).isEqualTo(StatusEnumType.SUCCESS);
+            .getStatus()
+            .getValue()).isEqualTo(StatusEnumType.SUCCESS);
     }
 
     @Test
