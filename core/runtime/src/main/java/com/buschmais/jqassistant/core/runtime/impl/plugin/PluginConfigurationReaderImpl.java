@@ -1,10 +1,11 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 import javax.xml.validation.Schema;
@@ -31,13 +32,16 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
 
     private final JAXBHelper<JqassistantPlugin> jaxbHelper;
 
-    private List<JqassistantPlugin> plugins = null;
+    /**
+     * Map of pLugin descriptors identified by the plugin base URL
+     */
+    private Map<URL, JqassistantPlugin> plugins = null;
 
     /**
      * Constructor.
      *
      * @param pluginClassLoader
-     *         The class loader to use for detecting plugins.
+     *     The class loader to use for detecting plugins.
      */
     public PluginConfigurationReaderImpl(PluginClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
@@ -53,7 +57,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      * Read the catalogs from an {@link URL}.
      *
      * @param pluginUrl
-     *         The {@link URL}.
+     *     The {@link URL}.
      * @return The {@link JqassistantPlugin}.
      */
     protected JqassistantPlugin readPlugin(URL pluginUrl) {
@@ -71,30 +75,33 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      * @return The plugins which can be resolved from the current classpath.
      */
     @Override
-    public List<JqassistantPlugin> getPlugins() {
+    public Map<URL, JqassistantPlugin> getPlugins() {
         if (this.plugins == null) {
             LOGGER.info("Scanning for jQAssistant plugins...");
 
             PluginIdGenerator idGenerator = new PluginIdGenerator();
             TreeSet<String> ids = new TreeSet<>();
             Enumeration<URL> resources = getPluginClassLoaderResources();
-            this.plugins = new ArrayList<>();
+            this.plugins = new HashMap<>();
 
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
+                URL pluginBaseURL = getPluginBaseURL(url);
+
                 LOGGER.debug("Reading plugin descriptor from '{}'.", url);
                 JqassistantPlugin plugin = idGenerator.apply(readPlugin(url));
 
                 if (ids.add(plugin.getId())) {
-                    plugins.add(plugin);
+                    plugins.put(pluginBaseURL, plugin);
                 } else {
-                    JqassistantPlugin loadedPlugin = plugins.stream()
-                            .filter(p -> p.getId()
-                                    .equals(plugin.getId()))
-                            .findFirst()
-                            .get();
+                    JqassistantPlugin loadedPlugin = plugins.values()
+                        .stream()
+                        .filter(p -> p.getId()
+                            .equals(plugin.getId()))
+                        .findFirst()
+                        .get();
                     LOGGER.warn("Skipping plugin '{}' with id '{}' as it uses the same id as the already loaded plugin '{}'.", plugin.getName(), plugin.getId(),
-                            loadedPlugin.getName());
+                        loadedPlugin.getName());
                 }
             }
         }
@@ -106,6 +113,15 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
             return pluginClassLoader.getResources(PLUGIN_RESOURCE);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot get plugin resources.", e);
+        }
+    }
+
+    private static URL getPluginBaseURL(URL url) {
+        String value = url.toString();
+        try {
+            return new URL(value.substring(0, value.lastIndexOf(PluginConfigurationReader.PLUGIN_RESOURCE)));
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException("Cannot create plugin base URL from " + value, e);
         }
     }
 }

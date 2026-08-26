@@ -3,12 +3,16 @@ package com.buschmais.jqassistant.core.rule.api.source;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A rule source which is provided from a classpath resource.
  */
+@Slf4j
 public class ClasspathRuleSource extends RuleSource {
 
     /**
@@ -16,17 +20,21 @@ public class ClasspathRuleSource extends RuleSource {
      */
     public static final String RULE_RESOURCE_PATH = "META-INF/jqassistant-rules";
 
-    private final ClassLoader classLoader;
     private final String relativePath;
     private final URL resource;
 
-    public ClasspathRuleSource(ClassLoader classLoader, String relativePath) {
-        this.classLoader = classLoader;
+    public ClasspathRuleSource(URL pluginBaseUrl, String relativePath) {
         this.relativePath = relativePath;
-        String classpathResource = RULE_RESOURCE_PATH + "/" + relativePath;
-        this.resource = getClassLoader().getResource(classpathResource);
-        if (this.resource == null) {
-            throw new IllegalArgumentException("Cannot find rule resource in classpath: " + classpathResource);
+        this.resource = getResource(pluginBaseUrl, relativePath);
+    }
+
+    private URL getResource(URL pluginBaseUrl, String relativePath) {
+        try {
+            URL url = new URL(pluginBaseUrl.toString() + RULE_RESOURCE_PATH + "/" + relativePath);
+            log.debug("Resolved rule resource from plugin base url '{}' and relative path '{}' to '{}'.", pluginBaseUrl, relativePath, url);
+            return url;
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException("Cannot resolve rule resource from plugin classpath: " + relativePath, e);
         }
     }
 
@@ -52,10 +60,10 @@ public class ClasspathRuleSource extends RuleSource {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return resource.openStream();
-    }
-
-    private ClassLoader getClassLoader() {
-        return classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
+        InputStream inputStream = resource.openStream();
+        if (inputStream == null) {
+            throw new IOException("Cannot open rule resource: " + resource);
+        }
+        return inputStream;
     }
 }

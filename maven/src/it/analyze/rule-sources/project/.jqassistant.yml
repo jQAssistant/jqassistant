@@ -1,0 +1,14 @@
+jqassistant:
+  plugins:
+    - group-id: com.buschmais.jqassistant.analyze.it.rule-sources
+      artifact-id: plugin1
+      version: ${project.version}
+    - group-id: com.buschmais.jqassistant.analyze.it.rule-sources
+      artifact-id: plugin2
+      version: ${project.version}
+  analyze:
+    groups:
+      - it
+    report:
+      properties:
+        customReport.fileName: ${project.build.directory}/customReport.txt
