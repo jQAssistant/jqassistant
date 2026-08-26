@@ -93,14 +93,17 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:simpleType name="StatusEnumType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="success"/>
-            <xs:enumeration value="warning"/>
-            <xs:enumeration value="failure"/>
-            <xs:enumeration value="skipped"/>
-        </xs:restriction>
-    </xs:simpleType>
+    <xs:complexType name="StatusEnumType">
+        <xs:simpleContent>
+            <xs:restriction base="xs:string">
+               <xs:enumeration value="success"/>
+                <xs:enumeration value="warning"/>
+                <xs:enumeration value="failure"/>
+                <xs:enumeration value="skipped"/>
+                <xs:attribute name="level" type="xs:int" use="required"/>
+            </xs:restriction>
+        </xs:simpleContent>
+    </xs:complexType>
 
     <xs:complexType name="SeverityType">
         <xs:simpleContent>
