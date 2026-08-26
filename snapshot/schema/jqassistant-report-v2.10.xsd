@@ -76,7 +76,7 @@
                     <xs:element name="result" type="tns:ResultType" minOccurs="0"/>
                     <xs:element name="reports" type="tns:ReportsType" minOccurs="0"/>
                     <xs:element name="verificationResult" type="tns:VerificationResultType"/>
-                    <xs:element name="status" type="tns:StatusEnumType"/>
+                    <xs:element name="status" type="tns:StatusType"/>
                     <xs:element name="severity" type="tns:SeverityType"/>
                     <xs:element name="duration" type="xs:int"/>
                     <xs:element name="required-concept" type="tns:ConceptReferenceType" minOccurs="0" maxOccurs="unbounded"/>
@@ -101,6 +101,14 @@
             <xs:enumeration value="skipped"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="StatusType">
+        <xs:simpleContent>
+            <xs:extension base="tns:StatusEnumType">
+                <xs:attribute name="level" type="xs:integer" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
 
     <xs:complexType name="SeverityType">
         <xs:simpleContent>
@@ -134,7 +142,7 @@
 
     <xs:complexType name="ConceptReferenceType">
         <xs:sequence>
-            <xs:element name="status" type="tns:StatusEnumType"/>
+            <xs:element name="status" type="tns:StatusType"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
     </xs:complexType>
@@ -168,7 +176,7 @@
     <xs:complexType name="RowType">
         <xs:sequence>
             <xs:element name="column" type="tns:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="status" type="tns:StatusEnumType"/>
+            <xs:element name="status" type="tns:StatusType"/>
             <xs:element name="hidden" type="tns:HiddenType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="key" type="xs:string" use="required"/>
