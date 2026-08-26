@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
@@ -35,9 +37,9 @@ public class StorePluginRepositoryImpl extends AbstractPluginRepository implemen
         return descriptorTypes;
     }
 
-    private List<Class<?>> getTypes(List<JqassistantPlugin> plugins, Function<JqassistantPlugin, ClassListType> classListSupplier) {
+    private List<Class<?>> getTypes(Map<URL, JqassistantPlugin> plugins, Function<JqassistantPlugin, ClassListType> classListSupplier) {
         List<Class<?>> types = new ArrayList<>();
-        for (JqassistantPlugin plugin : plugins) {
+        for (JqassistantPlugin plugin : plugins.values()) {
             ClassListType type = classListSupplier.apply(plugin);
             if (type != null) {
                 for (String typeName : type.getClazz()) {

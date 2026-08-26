@@ -13,10 +13,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 abstract class AbstractRuleSourceTest {
 
     @Test
-    void classpathRuleSource() throws IOException {
+    void existingRuleSources() throws IOException {
         List<RuleSource> ruleSources = getRuleSources();
 
-        Map<String, RuleSource> sources = ruleSources.stream().collect(toMap(k -> k.getRelativePath(), v -> v));
+        Map<String, RuleSource> sources = ruleSources.stream().collect(toMap(RuleSource::getRelativePath, v -> v));
         assertThat(sources).hasSize(4);
 
         assertThat(sources.keySet()).containsExactlyInAnyOrder("rules.xml", "index.adoc", "readme.md", "subdirectory/rules.xml");

@@ -65,7 +65,7 @@ public class AnalyzerPluginRepositoryImpl extends AbstractPluginRepository imple
 
     @Override
     public void initialize() {
-        for (JqassistantPlugin plugin : plugins) {
+        for (JqassistantPlugin plugin : plugins.values()) {
             IdClassListType reportTypes = plugin.getReport();
             initializeReportPlugins(reportTypes);
             initializeRuleInterpreterPlugins(plugin);
@@ -100,11 +100,7 @@ public class AnalyzerPluginRepositoryImpl extends AbstractPluginRepository imple
                 RuleInterpreterPlugin ruleInterpreterPlugin = createInstance(pluginType.getValue());
                 ruleInterpreterPlugin.initialize();
                 for (String language : ruleInterpreterPlugin.getLanguages()) {
-                    Collection<RuleInterpreterPlugin> plugins = ruleInterpreterPlugins.get(language.toLowerCase());
-                    if (plugins == null) {
-                        plugins = new ArrayList<>();
-                        ruleInterpreterPlugins.put(language.toLowerCase(), plugins);
-                    }
+                    Collection<RuleInterpreterPlugin> plugins = ruleInterpreterPlugins.computeIfAbsent(language.toLowerCase(), k -> new ArrayList<>());
                     plugins.add(ruleInterpreterPlugin);
                 }
             }
@@ -123,7 +119,7 @@ public class AnalyzerPluginRepositoryImpl extends AbstractPluginRepository imple
             });
         ruleInterpreterPlugins.values()
             .stream()
-            .flatMap(plugins -> plugins.stream())
-            .forEach(plugin -> plugin.destroy());
+            .flatMap(Collection::stream)
+            .forEach(RuleInterpreterPlugin::destroy);
     }
 }
