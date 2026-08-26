@@ -1,8 +1,10 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
@@ -67,27 +69,23 @@ public class SuppressIT extends AbstractJavaPluginIT {
     void suppressUntilMustNotBeInThePast() throws RuleException {
         Result<Constraint> result = validateConstraint("java-suppress:SuppressUntilMustNotBeInThePast");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
-        assertThat(result.getRows()
-            .size()).isEqualTo(2);
+        List<Row> rows = result.getRows();
+        assertThat(rows.size()).isEqualTo(2);
 
         store.beginTransaction();
-        assertThat(((NamedDescriptor) result.getRows()
-            .get(0)
+        assertThat(((NamedDescriptor) rows.get(0)
             .getColumns()
             .get("Element")
             .getValue()).getName()).isEqualTo("SuppressRules$ClassWithoutReason");
-        assertThat(((NamedDescriptor) result.getRows()
-            .get(1)
+        assertThat(((NamedDescriptor) rows.get(1)
             .getColumns()
             .get("Element")
             .getValue()).getName()).isEqualTo("expiredValue");
-        assertThat(result.getRows()
-            .get(0)
+        assertThat(rows.get(0)
             .getColumns()
             .get("ExpirationDate")
             .getValue()).isEqualTo(LocalDate.parse("2025-02-14"));
-        assertThat(result.getRows()
-            .get(1)
+        assertThat(rows.get(1)
             .getColumns()
             .get("ExpirationDate")
             .getValue()).isEqualTo(LocalDate.parse("2024-08-25"));
@@ -102,8 +100,8 @@ public class SuppressIT extends AbstractJavaPluginIT {
             + dateInTwoWeeks + "')");
         Result<Constraint> result = validateConstraint("java-suppress:SuppressExpiresInLessThanMonthsLimit");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
-        assertThat(result.getRows()
-            .size()).isEqualTo(1);
+        List<Row> rows = result.getRows();
+        assertThat(rows.size()).isEqualTo(1);
 
         store.beginTransaction();
         assertThat(((NamedDescriptor) result.getRows()
@@ -123,27 +121,23 @@ public class SuppressIT extends AbstractJavaPluginIT {
     void suppressFieldsMustProvideAReason() throws RuleException {
         Result<Constraint> result = validateConstraint("java-suppress:SuppressElementMustProvideAReason");
         assertThat(result.getStatus()).isEqualTo(FAILURE);
-        assertThat(result.getRows()
-            .size()).isEqualTo(4);
+        List<Row> rows = result.getRows();
+        assertThat(rows.size()).isEqualTo(4);
 
         store.beginTransaction();
-        assertThat(((NamedDescriptor) result.getRows()
-            .get(0)
+        assertThat(((NamedDescriptor) rows.get(0)
             .getColumns()
             .get("Element")
             .getValue()).getName()).isEqualTo("SuppressRules$ClassWithoutReason");
-        assertThat(((NamedDescriptor) result.getRows()
-            .get(1)
+        assertThat(((NamedDescriptor) rows.get(1)
             .getColumns()
             .get("Element")
             .getValue()).getName()).isEqualTo("expiredValue");
-        assertThat(((NamedDescriptor) result.getRows()
-            .get(2)
+        assertThat(((NamedDescriptor) rows.get(2)
             .getColumns()
             .get("Element")
             .getValue()).getName()).isEqualTo("suppressedValue");
-        assertThat(((NamedDescriptor) result.getRows()
-            .get(3)
+        assertThat(((NamedDescriptor) rows.get(3)
             .getColumns()
             .get("Element")
             .getValue()).getName()).isEqualTo("suppressedMethod");

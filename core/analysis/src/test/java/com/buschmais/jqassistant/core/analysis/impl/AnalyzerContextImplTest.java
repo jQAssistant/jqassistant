@@ -27,8 +27,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AnalyzerContextImplTest {
@@ -254,85 +253,22 @@ class AnalyzerContextImplTest {
             .build();
     }
 
-    private static SuppressDescriptor createSuppressedValue(Optional<String> suppressColumn, Optional<LocalDate> suppressUntil, Optional<String> suppressReason,
-        String... suppressIds) {
+    private static SuppressDescriptor createSuppressedValue(Optional<String> column, Optional<LocalDate> until, Optional<String> reason, String... ruleIds) {
         List<SuppressionDescriptor> suppressions = new ArrayList<>();
-        for (String suppressId : suppressIds) {
-            suppressions.add(new SuppressionDescriptor() {
-
-                @Override
-                public String getRuleId() {
-                    return suppressId;
-                }
-
-                @Override
-                public void setRuleId(String ruleId) {
-                }
-
-                @Override
-                public String getColumn() {
-                    return suppressColumn.orElse(null);
-                }
-
-                @Override
-                public void setColumn(String column) {
-                }
-
-                @Override
-                public LocalDate getUntil() {
-                    return suppressUntil.orElse(null);
-                }
-
-                @Override
-                public void setUntil(LocalDate until) {
-                }
-
-                @Override
-                public String getReason() {
-                    return suppressReason.orElse(null);
-                }
-
-                @Override
-                public void setReason(String reason) {
-                }
-
-                @Override
-                public <I> I getId() {
-                    return null;
-                }
-
-                @Override
-                public <D> D getDelegate() {
-                    return null;
-                }
-
-                @Override
-                public <T> T as(Class<T> type) {
-                    return null;
-                }
-            });
+        for (String ruleId : ruleIds) {
+            SuppressionDescriptor suppressionDescriptor = mock(SuppressionDescriptor.class);
+            doReturn(ruleId).when(suppressionDescriptor)
+                .getRuleId();
+            column.ifPresent(value -> doReturn(value).when(suppressionDescriptor)
+                .getColumn());
+            until.ifPresent(value -> doReturn(value).when(suppressionDescriptor)
+                .getUntil());
+            reason.ifPresent(value -> doReturn(value).when(suppressionDescriptor)
+                .getReason());
+            suppressions.add(suppressionDescriptor);
         }
-        return new SuppressDescriptor() {
-            @Override
-            public <I> I getId() {
-                return null;
-            }
-
-            @Override
-            public <T> T as(Class<T> type) {
-                return null;
-            }
-
-            @Override
-            public <D> D getDelegate() {
-                return null;
-            }
-
-            @Override
-            public List<SuppressionDescriptor> getSuppressions() {
-                return suppressions;
-            }
-        };
+        SuppressDescriptor suppressDescriptor = mock(SuppressDescriptor.class);
+        doReturn(suppressions).when(suppressDescriptor).getSuppressions();
+        return suppressDescriptor;
     }
-
 }

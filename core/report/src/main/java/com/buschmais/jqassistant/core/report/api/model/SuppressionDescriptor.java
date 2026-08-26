@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import com.buschmais.jqassistant.core.store.api.model.jQAssistantDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 
+/**
+ * Describes a suppression.
+ */
 @Label("jQASuppression")
 public interface SuppressionDescriptor extends jQAssistantDescriptor {
 
