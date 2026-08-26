@@ -8,14 +8,14 @@ systems. They are located in the bin/ directory of the distribution:
 
 The command line accepts tasks and their specific options:
 
-[source]
+[source,bash]
 ----
-jqassistant <task1> <task2> <task3> -<option1> -<option2>
+jqassistant <task1> <task2> <task3> -<shortOption> --<longOption2>
 ----
 
 The following example will scan the content of the directories classes/ and test-classes/:
 
-[source]
+[source,bash]
 ----
 jqassistant scan -f classes,test-classes
 ----
@@ -147,16 +147,16 @@ If multiple, partially overlapping configurations are provided then the followin
 === Options
 
 [[cli:configurationLocations]]
-* -configurationLocations <files> <directories>
+* --configurationLocations <files> <directories>
 ** the list of configuration locations, e.g. YAML files and directories
 ** default: `.jqassistant.yml, .jqassistant.yaml, .jqassistant/\*.yml, .jqassistant/**.yaml`
 
 [[cli:profiles]]
-* -profiles <comma-separated list of profiles>
+* --profiles <comma-separated list of profiles>
 ** activates configuration profiles in `.jqassistant.yml` and Maven `settings.xml` files
 
 [[cli:mavenSettings]]
-* -mavenSettings <file>
+* --mavenSettings <file>
 ** the location of a Maven settings.xml file to use for repository, proxy and mirror configurations
 
 [[cli:configurationProperty]]
@@ -180,7 +180,7 @@ If multiple, partially overlapping configurations are provided then the followin
 Scans files or directories and stores the gathered information in database. Files or URLs are accepted and may be
 specified further by scopes, e.g.
 
-[source]
+[source,bash]
 ----
 jqassistant scan -f lib/
 jqassistant scan -f java:classpath::classes/
