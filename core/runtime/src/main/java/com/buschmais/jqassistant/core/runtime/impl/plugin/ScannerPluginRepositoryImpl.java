@@ -1,6 +1,10 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
-import java.util.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -65,8 +69,8 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
         return scopes;
     }
 
-    private void getScannerPlugins(List<JqassistantPlugin> plugins) {
-        for (JqassistantPlugin plugin : plugins) {
+    private void getScannerPlugins(Map<URL, JqassistantPlugin> plugins) {
+        for (JqassistantPlugin plugin : plugins.values()) {
             IdClassListType scannerTypes = plugin.getScanner();
             if (scannerTypes != null) {
                 for (IdClassType classType : scannerTypes.getClazz()) {
@@ -84,9 +88,9 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
         }
     }
 
-    private Map<String, Scope> getScopes(List<JqassistantPlugin> plugins) {
+    private Map<String, Scope> getScopes(Map<URL, JqassistantPlugin> plugins) {
         Map<String, Scope> scopes = new HashMap<>();
-        for (JqassistantPlugin plugin : plugins) {
+        for (JqassistantPlugin plugin : plugins.values()) {
             ClassListType scopeTypes = plugin.getScope();
             if (scopeTypes != null) {
                 for (String scopePluginName : scopeTypes.getClazz()) {

@@ -1,75 +1,7 @@
-
 == Maven Plugin
 
 jQAssistant provides a plugin for http://maven.apache.org[Apache Maven] which can be used to provide either fully automated scanning and analysis during the build
 process or manual execution from a command line.
-
-=== Setup
-
-[[ProjectScope]]
-=== Project Scope
-
-The jQAssistant Maven plugins uses a root Maven module where the following items will be searched or created:
-
-- the set of rules to apply (from the directory "jqassistant/")
-- the database, default "{project.build.directory}/jqassistant/store"
-- the generated native XML report, default: "{project.build.directory}/jqassistant/jqassistant-report.xml")
-- the generated HTML report, default "{project.build.directory}/site/jqassistant.html")
-- additional reports (e.g. CSV), default: "{project.build.directory}/jqassistant/report")
-
-By default the root module is the directory, where the `mvn` command has been executed.
-
-For reactors where multiple projects are built requiring different databases, rule sets, etc. the flag
-`jqassistant.use-execution-root-as-project-root` can be set to `false`.
-The jQAssistant Maven plugin will then detect the different project roots by searching within the module tree starting from the current module following the
-parent relation until either a module is found where a directory "jqassistant/" exists or no further parent is defined.
-The following examples demonstrate different scenarios, the root modules as detected by jQAssistant are marked using asterisks.
-
-.Single project consisting of two modules
-[source]
-----
-root*
-   |-pom.xml
-   |
-   |-jqassistant
-   |           |-rules.xml
-   |
-   |-module1
-   |       |-pom.xml
-   |
-   |-module2
-           |-pom.xml
-----
-
-.Multiple projects, each consisting of two modules
-[source]
-----
-root
-   |-pom.xml
-   |
-   |-project1*
-   |        |-jqassistant
-   |        |           |-rules1.xml
-   |        |
-   |        |-pom.xml
-   |        |-module1
-   |        |       |-pom.xml
-   |        |
-   |        |-module2
-   |                |-pom.xml
-   |
-   |-project2*
-            |-jqassistant
-            |           |-rules2.xml
-            |-pom.xml
-            |-module1
-            |       |-pom.xml
-            |
-            |-module2
-                    |-pom.xml
-----
-
-NOTE: The described mechanism is designed to work for Maven module structures which are organized in hierarchies with consistent parent relations.
 
 === Plugin Configuration
 
@@ -251,28 +183,28 @@ mvn jqassistant:available-rules
 * <<report>>
 
 [[scan]]
-=== jqassistant:scan
+==== jqassistant:scan
 
 Scans the project directories according to the given configuration (e.g. compiled classes and test classes) and stores the
 gathered information in the database.
 
 [[available-scopes]]
-=== jqassistant:available-scopes
+==== jqassistant:available-scopes
 
 List all available scopes which may be specified for scanInclude properties.
 
 [[reset]]
-=== jqassistant:reset
+==== jqassistant:reset
 
 Resets the database by deleting all nodes and relationships.
 
 [[server]]
-=== jqassistant:server
+==== jqassistant:server
 
 Starts the integrated Neo4j web server (default address: http://localhost:7474).
 
 [[analyze]]
-=== jqassistant:analyze
+==== jqassistant:analyze
 
 Executes an analysis.
 
@@ -282,21 +214,122 @@ https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html[Maven In
 In a similar way for deploying the report archive to a remote repository `deployAtEnd` must be actived for the https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html[Maven Deploy Plugin].
 
 [[effective-configuration]]
-=== jqassistant:effective-configuration
+==== jqassistant:effective-configuration
 
 Print the current configuration as YAML representation on the console.
 
 [[effective-rules]]
-=== jqassistant:effective-rules
+==== jqassistant:effective-rules
 
 List the rules which would be executed for an analysis and the given concepts, constraints or groups.
 
 [[available-rules]]
-=== jqassistant:available-rules
+==== jqassistant:available-rules
 
 List all available rules.
 
 [[report]]
-=== jqassistant:report
+==== jqassistant:report
 
 Transforms the XML report into HTML (i.e. for generating a Maven site).
+
+=== Multiple projects per reactor
+
+The jQAssistant Maven plugin uses a root Maven module where the following items are expected or created:
+
+- the set of rules to apply (from the directory "jqassistant/")
+- the database, default "{project.build.directory}/jqassistant/store"
+- the generated native XML report, default: "{project.build.directory}/jqassistant/jqassistant-report.xml")
+- the generated HTML report, default "{project.build.directory}/site/jqassistant.html")
+- additional reports (e.g. CSV), default: "{project.build.directory}/jqassistant/report")
+
+By default, the root module is the directory where the `mvn` command has been executed.
+
+For reactors where multiple projects are built requiring different databases, rule sets, etc. the flag
+`jqassistant.use-execution-root-as-project-root` can be set to `false`.
+The jQAssistant Maven plugin will then detect the different project roots by searching within the module tree starting from the current module following the
+parent relation until either a module is found where a directory "jqassistant/" exists or no further parent is defined.
+The following examples demonstrate different scenarios, the root modules as detected by jQAssistant are marked using asterisks.
+
+.Single project consisting of two modules
+[source]
+----
+root*
+   |-pom.xml
+   |
+   |-jqassistant
+   |           |-rules.xml
+   |
+   |-module1
+   |       |-pom.xml
+   |
+   |-module2
+           |-pom.xml
+----
+
+.Multiple projects, each consisting of two modules
+[source]
+----
+root
+   |-pom.xml
+   |
+   |-project1*
+   |        |-jqassistant
+   |        |           |-rules1.xml
+   |        |
+   |        |-pom.xml
+   |        |-module1
+   |        |       |-pom.xml
+   |        |
+   |        |-module2
+   |                |-pom.xml
+   |
+   |-project2*
+            |-jqassistant
+            |           |-rules2.xml
+            |-pom.xml
+            |-module1
+            |       |-pom.xml
+            |
+            |-module2
+                    |-pom.xml
+----
+
+NOTE: The described mechanism is designed to work for Maven module structures which are organized in hierarchies with consistent parent relations.
+
+=== Maven Build Cache Extension
+
+The use of the https://maven.apache.org/extensions/maven-build-cache-extension[Maven Build Cache Extension] (e.g. for large reactors) in combination with the jQAssistant Maven plugin requires the following setup in the cache configuration:
+
+.mvn/maven-build-cache-config.xml
+[source,xml]
+----
+<cache
+	xmlns="http://maven.apache.org/BUILD-CACHE-CONFIG/1.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/BUILD-CACHE-CONFIG/1.2.0 https://maven.apache.org/xsd/build-cache-config-1.2.0.xsd">
+
+	<configuration>
+		<attachedOutputs>
+            <!-- jQAssistant scans the classes directories which are not cached by default -->
+			<dirNames>
+				<dirName>classes</dirName>
+				<dirName>test-classes</dirName>
+			</dirNames>
+		</attachedOutputs>
+	</configuration>
+
+	<executionControl>
+		<runAlways>
+			<goalsLists>
+                <!-- Ensures that the jQAssistant plugin is always executed -->
+				<goalsList groupId="com.buschmais.jqassistant" artifactId="jqassistant-maven-plugin">
+					<goals>
+						<goal>scan</goal>
+						<goal>analyze</goal>
+					</goals>
+				</goalsList>
+			</goalsLists>
+		</runAlways>
+	</executionControl>
+</cache>
+----

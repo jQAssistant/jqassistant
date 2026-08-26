@@ -18,13 +18,11 @@ import com.buschmais.jqassistant.plugin.java.test.assertj.TypeDescriptorConditio
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestClassWithoutAssertions;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithReason;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.AbstractExample;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.report.Example;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.AbstractAssertions4Junit5;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithReason;
-import com.buschmais.jqassistant.plugin.junit.test.set.junit5.DisabledTestWithoutReason;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit5.*;
 
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
@@ -110,11 +108,13 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(conceptResult.getRows()).hasSize(4);
 
         store.beginTransaction();
-        assertDisabledElements(conceptResult.getRows().stream()
+        assertDisabledElements(conceptResult.getRows()
+            .stream()
             .map(JunitCommonIT::unpackRow)
             .collect(toList()));
 
-        final TestResult queryResult = query("MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:Inactive:Test) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
+        final TestResult queryResult = query(
+            "MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:Inactive:Test) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
         assertThat(queryResult.getRows()).hasSize(4);
         assertDisabledElements(queryResult.getRows());
 
@@ -129,11 +129,13 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(conceptResult.getRows()).hasSize(4);
 
         store.beginTransaction();
-        assertIgnoredElements(conceptResult.getRows().stream()
+        assertIgnoredElements(conceptResult.getRows()
+            .stream()
             .map(JunitCommonIT::unpackRow)
             .collect(toList()));
 
-        final TestResult queryResult = query("MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:Inactive:Test) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
+        final TestResult queryResult = query(
+            "MATCH (t:Type)-[:DECLARES*0..1]->(e:JUnit:Inactive:Test) RETURN t AS DeclaringType, e AS Element, e.inactiveReason AS Reason");
         assertThat(queryResult.getRows()).hasSize(4);
         assertIgnoredElements(queryResult.getRows());
 
@@ -148,10 +150,12 @@ public class JunitCommonIT extends AbstractJunitIT {
         assertThat(conceptResult.getRows()).hasSize(8);
 
         store.beginTransaction();
-        assertIgnoredElements(conceptResult.getRows().stream()
+        assertIgnoredElements(conceptResult.getRows()
+            .stream()
             .map(JunitCommonIT::unpackRow)
             .collect(toList()));
-        assertDisabledElements(conceptResult.getRows().stream()
+        assertDisabledElements(conceptResult.getRows()
+            .stream()
             .map(JunitCommonIT::unpackRow)
             .collect(toList()));
 
@@ -159,37 +163,52 @@ public class JunitCommonIT extends AbstractJunitIT {
     }
 
     private static void assertDisabledElements(List<Map<String, Object>> rows) throws NoSuchMethodException {
-        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutReason.class), typeDescriptor(DisabledTestWithoutReason.class), TypeDescriptor.class, null);
-        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutReason.class), methodDescriptor(DisabledTestWithoutReason.class, "iHaveNoMessage"), MethodDescriptor.class, null);
-        assertInactiveElement(rows, typeDescriptor(DisabledTestWithReason.class), typeDescriptor(DisabledTestWithReason.class), TypeDescriptor.class, "message");
-        assertInactiveElement(rows, typeDescriptor(DisabledTestWithReason.class), methodDescriptor(DisabledTestWithReason.class, "iHaveAMessage"), MethodDescriptor.class, "message");
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutReason.class), typeDescriptor(DisabledTestWithoutReason.class), TypeDescriptor.class,
+            null);
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithoutReason.class), methodDescriptor(DisabledTestWithoutReason.class, "iHaveNoMessage"),
+            MethodDescriptor.class, null);
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithReason.class), typeDescriptor(DisabledTestWithReason.class), TypeDescriptor.class,
+            "message");
+        assertInactiveElement(rows, typeDescriptor(DisabledTestWithReason.class), methodDescriptor(DisabledTestWithReason.class, "iHaveAMessage"),
+            MethodDescriptor.class, "message");
     }
 
     private static void assertIgnoredElements(List<Map<String, Object>> rows) throws NoSuchMethodException {
         assertInactiveElement(rows, typeDescriptor(IgnoredTest.class), typeDescriptor(IgnoredTest.class), TypeDescriptor.class, null);
         assertInactiveElement(rows, typeDescriptor(IgnoredTest.class), methodDescriptor(IgnoredTest.class, "ignoredTest"), MethodDescriptor.class, null);
         assertInactiveElement(rows, typeDescriptor(IgnoredTestWithReason.class), typeDescriptor(IgnoredTestWithReason.class), TypeDescriptor.class, "ignored");
-        assertInactiveElement(rows, typeDescriptor(IgnoredTestWithReason.class), methodDescriptor(IgnoredTestWithReason.class, "ignoredTestWithMessage"), MethodDescriptor.class, "ignored");
+        assertInactiveElement(rows, typeDescriptor(IgnoredTestWithReason.class), methodDescriptor(IgnoredTestWithReason.class, "ignoredTestWithMessage"),
+            MethodDescriptor.class, "ignored");
     }
 
     private static Map<String, Object> unpackRow(Row row) {
         final HashMap<String, Object> result = new HashMap<>();
-        for(String key : row.getColumns().keySet()) {
-            final Object value = row.getColumns().get(key) == null ? null : row.getColumns().get(key).getValue();
+        for (String key : row.getColumns()
+            .keySet()) {
+            final Object value = row.getColumns()
+                .get(key) == null ?
+                null :
+                row.getColumns()
+                    .get(key)
+                    .getValue();
             result.put(key, value);
         }
         return result;
     }
 
-    private static <T> void  assertInactiveElement(List<Map<String, Object>> rows, TypeDescriptorCondition declaringType, Condition<T> elementCondition, Class<T> elementType, String reason) {
+    private static <T> void assertInactiveElement(List<Map<String, Object>> rows, TypeDescriptorCondition declaringType, Condition<T> elementCondition,
+        Class<T> elementType, String reason) {
         final List<Map<String, Object>> sublist = rows.stream()
             .filter(row -> elementType.isInstance(row.get("Element")))
             .filter(row -> elementCondition.matches(elementType.cast(row.get("Element"))))
             .collect(toList());
 
         assertThat(sublist).hasSize(1);
-        assertThat(sublist.get(0).get("DeclaringType")).asInstanceOf(type(TypeDescriptor.class)).is(declaringType);
-        assertThat(sublist.get(0).get("Reason")).isEqualTo(reason);
+        assertThat(sublist.get(0)
+            .get("DeclaringType")).asInstanceOf(type(TypeDescriptor.class))
+            .is(declaringType);
+        assertThat(sublist.get(0)
+            .get("Reason")).isEqualTo(reason);
     }
 
     /**
@@ -246,8 +265,7 @@ public class JunitCommonIT extends AbstractJunitIT {
         executeGroup("junit:Default");
         Map<String, Result<Constraint>> constraintViolations = reportPlugin.getConstraintResults();
         assertThat(constraintViolations, aMapWithSize(1));
-        assertThat(constraintViolations.keySet(),
-            hasItems("junit:InactiveTestWithoutReason"));
+        assertThat(constraintViolations.keySet(), hasItems("junit:InactiveTestWithoutReason"));
     }
 
     /**
@@ -260,22 +278,7 @@ public class JunitCommonIT extends AbstractJunitIT {
      */
     @Test
     public void testMethodWithoutAssertion() throws Exception {
-
-        /*
-         Test classes belonging to our test set are ignored or disable for technical reasons. To validate this
-         constraint, we have to remove the according label from the class nodes.
-         */
-
         scanClasses(Assertions4Junit4.class, Assertions4Junit5.class, AbstractAssertions4Junit5.class);
-
-        // Execute the required concept explicitly
-        applyConcept("java:InactiveTest");
-
-        // Remove the labels from class nodes
-        final String query = "MATCH (t:Type:JUnit:Inactive:Test {fqn: \"%s\"}) REMOVE t:JUnit:Inactive:Test";
-        query(String.format(query, Assertions4Junit4.class.getName()));
-        query(String.format(query, Assertions4Junit5.class.getName()));
-        query(String.format(query, AbstractAssertions4Junit5.class.getName()));
 
         // Execute the constraint
         assertThat(validateConstraint("java:TestMethodWithoutAssertion").getStatus(), equalTo(FAILURE));
@@ -300,14 +303,9 @@ public class JunitCommonIT extends AbstractJunitIT {
     }
 
     @Test
-    public void testMethodWithoutAssertionInaciveClasses() throws Exception {
+    public void testMethodWithoutAssertionInactiveClasses() throws Exception {
+        scanClasses(IgnoredTestClassWithoutAssertions.class, DisabledTestClassWithoutAssertion.class);
 
-        /*
-         Test classes belonging to our test set are ignored or disable for technical reasons. Hence, there are no
-         violations of this constraint.
-         */
-
-        scanClasses(Assertions4Junit4.class, Assertions4Junit5.class, AbstractAssertions4Junit5.class);
         final Result<Constraint> result = validateConstraint("java:TestMethodWithoutAssertion");
         assertThat(result.getStatus(), equalTo(SUCCESS));
         assertThat(result.getRows()).isEmpty();

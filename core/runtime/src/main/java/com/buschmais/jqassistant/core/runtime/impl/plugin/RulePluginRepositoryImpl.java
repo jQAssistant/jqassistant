@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.net.URL;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.rule.api.configuration.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
@@ -24,8 +22,6 @@ import org.jqassistant.schema.plugin.v2.RulesType;
  */
 public class RulePluginRepositoryImpl extends AbstractPluginRepository implements RulePluginRepository {
 
-    private final ClassLoader classLoader;
-
     private final List<RuleSource> sources;
 
     private final Collection<RuleParserPlugin> ruleParserPlugins = new LinkedList<>();
@@ -35,7 +31,6 @@ public class RulePluginRepositoryImpl extends AbstractPluginRepository implement
      */
     public RulePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
-        this.classLoader = pluginConfigurationReader.getClassLoader();
         this.sources = getRuleSources(pluginConfigurationReader.getPlugins());
     }
 
@@ -54,7 +49,7 @@ public class RulePluginRepositoryImpl extends AbstractPluginRepository implement
 
     @Override
     public void initialize() {
-        for (JqassistantPlugin plugin : plugins) {
+        for (JqassistantPlugin plugin : plugins.values()) {
             IdClassListType ruleParsers = plugin.getRuleParser();
             if (ruleParsers != null) {
                 for (IdClassType pluginType : ruleParsers.getClazz()) {
@@ -81,13 +76,15 @@ public class RulePluginRepositoryImpl extends AbstractPluginRepository implement
         }
     }
 
-    private List<RuleSource> getRuleSources(List<JqassistantPlugin> plugins) {
+    private List<RuleSource> getRuleSources(Map<URL, JqassistantPlugin> plugins) {
         List<RuleSource> sources = new ArrayList<>();
-        for (JqassistantPlugin plugin : plugins) {
+        for (Map.Entry<URL, JqassistantPlugin> pluginEntry : plugins.entrySet()) {
+            JqassistantPlugin plugin = pluginEntry.getValue();
             RulesType rulesType = plugin.getRules();
             if (rulesType != null) {
                 for (String relativePath : rulesType.getResource()) {
-                    sources.add(new ClasspathRuleSource(classLoader, relativePath));
+                    URL pluginBaseUrl = pluginEntry.getKey();
+                    sources.add(new ClasspathRuleSource(pluginBaseUrl, relativePath));
                 }
             }
         }

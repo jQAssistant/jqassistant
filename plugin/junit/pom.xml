@@ -16,8 +16,27 @@
         analyze JUnit related artifacts.
     </description>
 
+    <properties>
+        <!-- The package contains test classes for scans and rules, they are excluded from the build. -->
+        <test.excludes>com.buschmais.jqassistant.plugin.junit.test.set.**</test.excludes>
+    </properties>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>${test.excludes}</excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <excludes>${test.excludes}</excludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
