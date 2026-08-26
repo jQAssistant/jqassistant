@@ -33,7 +33,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     private final JAXBHelper<JqassistantPlugin> jaxbHelper;
 
     /**
-     * Map of pLugin descriptors identified by the plugin base URL
+     * Map of plugin descriptors identified by the plugin base URL
      */
     private Map<URL, JqassistantPlugin> plugins = null;
 
