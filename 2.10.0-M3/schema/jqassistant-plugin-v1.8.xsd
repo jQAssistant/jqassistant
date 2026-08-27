@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://schema.jqassistant.org/plugin/v1.8"
+           targetNamespace="http://schema.jqassistant.org/plugin/v1.8"
+           elementFormDefault="qualified">
+
+    <xs:element name="jqassistant-plugin">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="description" type="xs:string"/>
+                <xs:element name="model" type="tns:ClassListType" minOccurs="0"/>
+                <xs:element name="function" type="tns:ClassListType" minOccurs="0"/>
+                <xs:element name="procedure" type="tns:ClassListType" minOccurs="0"/>
+                <xs:element name="scope" type="tns:ClassListType" minOccurs="0"/>
+                <xs:element name="scanner" type="tns:IdClassListType" minOccurs="0"/>
+                <xs:element name="rules" type="tns:RulesType" minOccurs="0"/>
+                <xs:element name="ruleParser" type="tns:IdClassListType" minOccurs="0"/>
+                <xs:element name="ruleInterpreter" type="tns:IdClassListType" minOccurs="0"/>
+                <xs:element name="report" type="tns:IdClassListType" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ClassListType">
+        <xs:sequence>
+            <xs:element name="class" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="IdClassListType">
+        <xs:sequence>
+            <xs:element name="class" type="tns:IdClassType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="RulesType">
+        <xs:sequence>
+            <xs:element name="resource" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="IdClassType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="id" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+</xs:schema>
