@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
@@ -30,8 +27,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AnalyzerContextImplTest {
@@ -125,11 +121,12 @@ class AnalyzerContextImplTest {
 
     @Test
     void suppressByPrimaryColumn() {
-        Suppress suppressedValue = createSuppressedValue(empty(), empty(), empty(), CONSTRAINT_ID);
+        SuppressDescriptor suppressedValue = createSuppressedValue(empty(), empty(), empty(), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
 
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN),
+            FAILURE);
 
         assertThat(row.isHidden()).isTrue();
         assertThat(row.getHidden()
@@ -142,67 +139,69 @@ class AnalyzerContextImplTest {
 
     @Test
     void suppressByNonPrimaryColumn() {
-        Suppress suppressedValue = createSuppressedValue(of(SECONDARY_COLUMN), empty(), empty(), CONSTRAINT_ID);
+        SuppressDescriptor suppressedValue = createSuppressedValue(of(SECONDARY_COLUMN), empty(), empty(), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
 
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value"), SECONDARY_COLUMN, analyzerContext.toColumn(suppressedValue)), of(PRIMARY_COLUMN), FAILURE);
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn("value"), SECONDARY_COLUMN, analyzerContext.toColumn(suppressedValue)), of(PRIMARY_COLUMN),
+            FAILURE);
 
         assertThat(row.isHidden()).isTrue();
     }
 
     @Test
     void nonMatchingSuppressId() {
-        Suppress suppressedValue = createSuppressedValue(empty(), empty(), empty(), "otherConstraint");
+        SuppressDescriptor suppressedValue = createSuppressedValue(empty(), empty(), empty(), "otherConstraint");
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN),
+            FAILURE);
 
         assertThat(row.isHidden()).isFalse();
     }
 
     @Test
     void validSuppressUntilWithReason() {
-        Suppress suppressedValue = createSuppressedValue(empty(), of(VALID_DATE), of(REASON), CONSTRAINT_ID);
+        SuppressDescriptor suppressedValue = createSuppressedValue(empty(), of(VALID_DATE), of(REASON), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN),
+            FAILURE);
 
         assertThat(row.isHidden()).isTrue();
     }
 
     @Test
     void expiredSuppressUntil() {
-        Suppress suppressedValue = createSuppressedValue(empty(), of(INVALID_DATE), empty(), CONSTRAINT_ID);
+        SuppressDescriptor suppressedValue = createSuppressedValue(empty(), of(INVALID_DATE), empty(), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN),
+            FAILURE);
 
         assertThat(row.isHidden()).isFalse();
     }
 
     @Test
     void suppressBySuppression() {
-        Suppress suppressedValue = createSuppressedValue(empty(), of(VALID_DATE), of(REASON), CONSTRAINT_ID);
+        SuppressDescriptor suppressedValue = createSuppressedValue(empty(), of(VALID_DATE), of(REASON), CONSTRAINT_ID);
         Constraint constraint = getConstraint();
         Row row = analyzerContext.toRow(constraint,
-            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN), FAILURE);
+            Map.of(PRIMARY_COLUMN, analyzerContext.toColumn(suppressedValue), SECONDARY_COLUMN, analyzerContext.toColumn("value")), of(PRIMARY_COLUMN),
+            FAILURE);
 
         assertThat(row.isHidden()).isTrue();
         assertThat(row.getHidden()
             .isPresent()).isTrue();
         Hidden hidden = row.getHidden()
             .get();
-        assertThat(hidden.getSuppression()
-            .isPresent()).isTrue();
         assertThat(hidden.getBaseline()
             .isPresent()).isFalse();
-        assertThat(hidden.getSuppression()
-            .get()
-            .getSuppressUntil()).isEqualTo(LocalDate.parse("2065-06-01"));
-        assertThat(hidden.getSuppression()
-            .get()
-            .getSuppressReason()).isEqualTo("This is the reason of suppression.");
+        List<Hidden.Suppression> suppressions = hidden.getSuppressions();
+        assertThat(suppressions).hasSize(1);
+        Hidden.Suppression suppression = suppressions.get(0);
+        assertThat(suppression.getUntil()).isEqualTo(LocalDate.parse("2065-06-01"));
+        assertThat(suppression.getReason()).isEqualTo("This is the reason of suppression.");
     }
 
     @Test
@@ -254,44 +253,22 @@ class AnalyzerContextImplTest {
             .build();
     }
 
-    private static Suppress createSuppressedValue(Optional<String> suppressColumn, Optional<LocalDate> suppressUntil, Optional<String> suppressReason,
-        String... suppressIds) {
-        return new Suppress() {
-            @Override
-            public String[] getSuppressIds() {
-                return suppressIds;
-            }
-
-            @Override
-            public void setSuppressIds(String[] suppressIds1) {
-            }
-
-            @Override
-            public String getSuppressColumn() {
-                return suppressColumn.orElse(null);
-            }
-
-            @Override
-            public void setSuppressColumn(String suppressColumn1) {
-            }
-
-            @Override
-            public LocalDate getSuppressUntil() {
-                return suppressUntil.orElse(null);
-            }
-
-            @Override
-            public void setSuppressUntil(LocalDate suppressUntil) {
-            }
-
-            @Override
-            public String getSuppressReason() {
-                return suppressReason.orElse(null);
-            }
-
-            @Override
-            public void setSuppressReason(String suppressReason) {
-            }
-        };
+    private static SuppressDescriptor createSuppressedValue(Optional<String> column, Optional<LocalDate> until, Optional<String> reason, String... ruleIds) {
+        List<SuppressionDescriptor> suppressions = new ArrayList<>();
+        for (String ruleId : ruleIds) {
+            SuppressionDescriptor suppressionDescriptor = mock(SuppressionDescriptor.class);
+            doReturn(ruleId).when(suppressionDescriptor)
+                .getRuleId();
+            column.ifPresent(value -> doReturn(value).when(suppressionDescriptor)
+                .getColumn());
+            until.ifPresent(value -> doReturn(value).when(suppressionDescriptor)
+                .getUntil());
+            reason.ifPresent(value -> doReturn(value).when(suppressionDescriptor)
+                .getReason());
+            suppressions.add(suppressionDescriptor);
+        }
+        SuppressDescriptor suppressDescriptor = mock(SuppressDescriptor.class);
+        doReturn(suppressions).when(suppressDescriptor).getSuppressions();
+        return suppressDescriptor;
     }
 }

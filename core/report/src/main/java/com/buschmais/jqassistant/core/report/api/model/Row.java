@@ -5,7 +5,10 @@ import java.util.Optional;
 
 import com.buschmais.jqassistant.core.rule.api.model.Hidden;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.ToString;
 
 @Builder
 @Getter
@@ -25,12 +28,12 @@ public class Row {
     private Optional<Hidden> hidden = Optional.empty();
 
     public boolean isHidden() {
-        if (hidden.isEmpty()){
+        if (hidden.isEmpty()) {
             return false;
         }
-        return hidden.filter(value -> (value.getSuppression()
-                        .isPresent() || value.getBaseline()
-                        .isPresent()))
-                .isPresent();
+        return hidden.filter(value -> (!value.getSuppressions()
+                .isEmpty() || value.getBaseline()
+                .isPresent()))
+            .isPresent();
     }
 }

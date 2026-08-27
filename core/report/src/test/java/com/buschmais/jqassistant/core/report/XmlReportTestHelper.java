@@ -314,23 +314,24 @@ public final class XmlReportTestHelper {
 
         xmlReportPlugin.beginConstraint(constraint);
         List<Row> rows = new ArrayList<>();
-        Hidden hiddenBySuppression = Hidden.builder()
-            .build();
-        Hidden hiddenByBaseline = Hidden.builder()
-            .build();
         Hidden.Suppression suppression = Hidden.Suppression.builder()
+            .reason("Reason for suppressing")
+            .until(LocalDate.of(2067, 3, 15))
             .build();
-        suppression.setSuppressReason("Reason for suppressing");
-        suppression.setSuppressUntil(LocalDate.of(2067, 3, 15));
-        hiddenBySuppression.setSuppression(of(suppression));
+        Hidden hiddenBySuppression = Hidden.builder()
+            .suppression(suppression)
+            .build();
 
         Hidden.Baseline baseline = Hidden.Baseline.builder()
             .build();
-        hiddenByBaseline.setBaseline(of(baseline));
-        Hidden bothSuppressionTypes = Hidden.builder()
+        Hidden hiddenByBaseline = Hidden.builder()
+            .baseline(of(baseline))
             .build();
-        bothSuppressionTypes.setBaseline(of(baseline));
-        bothSuppressionTypes.setSuppression(of(suppression));
+
+        Hidden bothSuppressionTypes = Hidden.builder()
+            .baseline(of(baseline))
+            .suppression(suppression)
+            .build();
 
         rows.add(Row.builder()
             .key("0")
@@ -347,7 +348,7 @@ public final class XmlReportTestHelper {
                 .value("baseline")
                 .label("baseline")
                 .build()))
-                .status(FAILURE)
+            .status(FAILURE)
             .hidden(of(hiddenByBaseline))
             .build());
         rows.add(Row.builder()
