@@ -3340,7 +3340,7 @@ systems. They are located in the bin/ directory of the distribution:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code>jqassistant &lt;task1&gt; &lt;task2&gt; &lt;task3&gt; -&lt;option1&gt; -&lt;option2&gt;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">jqassistant &lt;task1&gt; &lt;task2&gt; &lt;task3&gt; -&lt;shortOption&gt; --&lt;longOption2&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3348,7 +3348,7 @@ systems. They are located in the bin/ directory of the distribution:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code>jqassistant scan -f classes,test-classes</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">jqassistant scan -f classes,test-classes</code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -3507,7 +3507,7 @@ Maven Central). If a file <code>~/.m2/settings.xml</code> exists (i.e. user spec
 <div id="cli:configurationLocations" class="ulist">
 <ul>
 <li>
-<p>-configurationLocations &lt;files&gt; &lt;directories&gt;</p>
+<p>--configurationLocations &lt;files&gt; &lt;directories&gt;</p>
 <div class="ulist">
 <ul>
 <li>
@@ -3524,7 +3524,7 @@ Maven Central). If a file <code>~/.m2/settings.xml</code> exists (i.e. user spec
 <div id="cli:profiles" class="ulist">
 <ul>
 <li>
-<p>-profiles &lt;comma-separated list of profiles&gt;</p>
+<p>--profiles &lt;comma-separated list of profiles&gt;</p>
 <div class="ulist">
 <ul>
 <li>
@@ -3538,7 +3538,7 @@ Maven Central). If a file <code>~/.m2/settings.xml</code> exists (i.e. user spec
 <div id="cli:mavenSettings" class="ulist">
 <ul>
 <li>
-<p>-mavenSettings &lt;file&gt;</p>
+<p>--mavenSettings &lt;file&gt;</p>
 <div class="ulist">
 <ul>
 <li>
@@ -3602,7 +3602,7 @@ specified further by scopes, e.g.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code>jqassistant scan -f lib/
+<pre class="CodeRay highlight"><code data-lang="bash">jqassistant scan -f lib/
 jqassistant scan -f java:classpath::classes/
 jqassistant scan -u http://host/artifact.jar
 jqassistant scan -u http://user:secret@host/artifact.jar
@@ -6824,6 +6824,18 @@ If not explicitly specified this is the first column specified in the return cla
 }</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+The <code>jQASuppress</code> annotation is repeatable.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect4">
 <h5 id="_technicaldebt"><a class="link" href="#_technicaldebt">@TechnicalDebt</a></h5>
@@ -6874,6 +6886,18 @@ The annotation is evaluated by the constraint <code>java:TechnicalDebt</code> to
 <span class="directive">public</span> <span class="type">class</span> <span class="class">ClassWithTechnicalDebt</span> {
 }</code></pre>
 </div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+The <code>TechnicalDebt</code> annotation is repeatable.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -8730,9 +8754,9 @@ RETURN
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-    (element:Java:jQASuppress)
+    (element:Java:jQASuppress)-[:HAS_SUPPRESSION]-&gt;(suppression:jQASuppression)
 WHERE
-    element.suppressReason IS NULL OR element.suppressReason = &quot;&quot;
+    suppression.reason IS NULL OR suppression.reason = &quot;&quot;
 RETURN
     element AS Element</code></pre>
 </div>
@@ -8746,8 +8770,9 @@ RETURN
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-    (element:Java:jQASuppress)
-WITH element, date(element.suppressUntil) AS until
+    (element:Java:jQASuppress)-[:HAS_SUPPRESSION]-&gt;(suppression:jQASuppression)
+WITH
+    element, date(suppression.until) AS until
 WHERE
     until &gt; date() + duration({months: $suppressUntilMonthsLimit})
 RETURN
@@ -8763,8 +8788,9 @@ RETURN
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-    (element:Java:jQASuppress)
-WITH element, date(element.suppressUntil) AS until
+    (element:Java:jQASuppress)-[:HAS_SUPPRESSION]-&gt;(suppression:jQASuppression)
+WITH
+   element, date(suppression.until) AS until
 WHERE
     until &lt; date()
 RETURN
@@ -8780,8 +8806,9 @@ RETURN
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-      (element:Java:jQASuppress)
-  WITH element, date(element.suppressUntil) AS until
+      (element:Java:jQASuppress)-[:HAS_SUPPRESSION]-&gt;(suppression:jQASuppression)
+  WITH
+    element, date(suppression.until) AS until
   WHERE
       until &lt; date() + duration({months: 1}) AND until &gt;= date()
   RETURN
@@ -12876,7 +12903,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-08-26 16:55:50 UTC
+Last updated 2026-08-27 08:51:04 UTC
 </div>
 </div>
 </body>
