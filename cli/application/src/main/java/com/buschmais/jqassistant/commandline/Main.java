@@ -45,11 +45,11 @@ import static java.util.stream.Collectors.*;
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "-configurationLocations";
+    private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "--configurationLocations";
 
-    private static final String CMDLINE_OPTION_MAVEN_SETTINGS = "-mavenSettings";
+    private static final String CMDLINE_OPTION_MAVEN_SETTINGS = "--mavenSettings";
 
-    private static final String CMDLINE_OPTION_PROFILES = "-profiles";
+    private static final String CMDLINE_OPTION_PROFILES = "--profiles";
 
     private static final Set<String> IGNORE_PROPERTIES = Set.of("jqassistant.opts", "jqassistant.home"); //  env variables provided by jqassistant shell scripts
 
