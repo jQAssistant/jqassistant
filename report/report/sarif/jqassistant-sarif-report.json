@@ -183,6 +183,50 @@
         "type" : "issue",
         "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
       }
+    }, {
+      "ruleId" : "70eb68f935efd05f2a45fce3996b76552d267ad05c13d6261e6245942ede5449",
+      "level" : "error",
+      "message" : {
+        "text" : "Technical debt should be removed from code elements annotated by \"@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt\".",
+        "markdown" : "|Priority: 0\n|Type: com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample\n|Member: java.lang.String debtField\n|Description: technicalDebt:Field with debts\n|Issue: 859\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]java:TechnicalDebt"
+      }
+    }, {
+      "ruleId" : "a4d1535de4a7830f7a5bb01f2e101919f70b1500e90dcd4d53d2be8f35122caa",
+      "level" : "error",
+      "message" : {
+        "text" : "Technical debt should be removed from code elements annotated by \"@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt\".",
+        "markdown" : "|Priority: 2\n|Type: com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample\n|Member: void doSomething()\n|Description: technicalDebt:Method with debts\n|Issue: 3\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]java:TechnicalDebt"
+      }
     } ]
   } ]
 }
