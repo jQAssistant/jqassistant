@@ -34,16 +34,24 @@ class JavaClassesDirectoryScannerPluginTest {
     @Mock
     private Store store;
 
+    private File projectDirectory;
+
     private File directory;
 
     private JavaClassesDirectoryScannerPlugin plugin;
 
     @BeforeEach
     void before() throws IOException {
-        when(scanner.getContext()).thenReturn(context);
-        when(context.getStore()).thenReturn(store);
-        directory = Files.createTempDirectory("directory")
+        projectDirectory = Files.createTempDirectory("project")
             .toFile();
+        directory = new File(projectDirectory, "directory");
+        directory.mkdir();
+        doReturn(context).when(scanner)
+            .getContext();
+        doReturn(store).when(context)
+            .getStore();
+        doReturn(projectDirectory).when(context)
+            .getProjectDirectory();
         this.plugin = new JavaClassesDirectoryScannerPlugin();
         this.plugin.configure(context, emptyMap());
     }

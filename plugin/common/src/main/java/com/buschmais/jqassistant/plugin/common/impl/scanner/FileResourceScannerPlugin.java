@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.common.api.scanner.LocalFileSystemFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
@@ -20,7 +19,6 @@ public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResourc
 
     @Override
     protected void configure() {
-        getScannerContext().push(FileResolver.class, new LocalFileSystemFileResolver());
         filePatternMatcher = FilePatternMatcher.builder()
             .include(getStringProperty(PROPERTY_INCLUDE, null))
             .exclude(getStringProperty(PROPERTY_EXCLUDE, null))

@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
@@ -34,7 +35,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
     public final D scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         D containerDescriptor = getContainerDescriptor(container, context);
-        String containerPath = getContainerPath(container, path);
+        String containerPath = getContainerPath(container, path, scanner.getContext());
         if (containerDescriptor.getFileName() == null) {
             // Plugins may re-use existing descriptor, don't overwrite their fileName
             containerDescriptor.setFileName(containerPath);
@@ -95,9 +96,30 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
      *
      * @param container
      *     The container.
+     * @param path
+     *     The provided path.
      * @return The normalized path.
      */
-    protected abstract String getContainerPath(I container, String path);
+    @ToBeRemovedInVersion(major = 3, minor = 0)
+    @Deprecated
+    protected String getContainerPath(I container, String path) {
+        return path;
+    };
+
+    /**
+     * Return the normalized path to the container.
+     *
+     * @param container
+     *     The container.
+     * @param path
+     *     The provided path.
+     * @param context
+     *     The {@link ScannerContext}
+     * @return The normalized path.
+     */
+    protected String getContainerPath(I container, String path, ScannerContext context) {
+        return getContainerPath(container, path);
+    }
 
     /**
      * Return the relative path of an element within the container.

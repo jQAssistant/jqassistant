@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.LocalDescriptor;
 import com.buschmais.xo.api.Query.Result;
 
 /**
@@ -28,12 +29,19 @@ public class LocalFileSystemFileResolver extends AbstractFileResolver {
     }
 
     private <D extends FileDescriptor> D resolve(String requiredPath, Class<D> type, ScannerContext context) {
-        return getOrCreateAs(requiredPath, type, s -> {
+        D fileDescriptor = getOrCreateAs(requiredPath, type, s -> {
             Map<String, Object> params = new HashMap<>();
             params.put("fileName", s);
-            Result<Result.CompositeRowObject> result = context.getStore().executeQuery("MATCH (file:File) WHERE file.fileName=$fileName RETURN file", params);
-            return result.hasResult() ? result.getSingleResult().get("file", FileDescriptor.class) : null;
+            Result<Result.CompositeRowObject> result = context.getStore()
+                .executeQuery("MATCH (file:File:Local) WHERE file.fileName=$fileName RETURN file", params);
+            return result.hasResult() ?
+                result.getSingleResult()
+                    .get("file", FileDescriptor.class) :
+                null;
         }, context);
+        return context.getStore()
+            .addDescriptorType(fileDescriptor, LocalDescriptor.class)
+            .as(type);
     }
 
 }

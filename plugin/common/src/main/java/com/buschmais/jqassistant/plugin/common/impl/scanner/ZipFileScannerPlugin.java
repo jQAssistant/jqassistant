@@ -46,11 +46,6 @@ public class ZipFileScannerPlugin
     }
 
     @Override
-    protected String getContainerPath(ZipFileResource container, String path) {
-        return path;
-    }
-
-    @Override
     protected String getRelativePath(ZipFileResource container, ZipArchiveEntry entry) {
         String name = entry.getName();
         if (entry.isDirectory()) {

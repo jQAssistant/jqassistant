@@ -40,46 +40,36 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
     }
 
     @Override
-    protected Iterable<? extends E> getEntries(final S container) throws IOException {
-        return new Iterable<E>() {
+    protected Iterable<? extends E> getEntries(final S container) {
+        return (Iterable<E>) () -> new Iterator<>() {
+
+            private E entry = null;
+
             @Override
-            public Iterator<E> iterator() {
-                return new Iterator<E>() {
-
-                    private E entry = null;
-
-                    @Override
-                    public boolean hasNext() {
-                        if (entry == null) {
-                            try {
-                                entry = getNextEntry(container);
-                            } catch (IOException e) {
-                                LOGGER.warn("Cannot get next entry from archive.", e);
-                            }
-                            return entry != null;
-                        }
-                        return true;
+            public boolean hasNext() {
+                if (entry == null) {
+                    try {
+                        entry = getNextEntry(container);
+                    } catch (IOException e) {
+                        LOGGER.warn("Cannot get next entry from archive.", e);
                     }
+                    return entry != null;
+                }
+                return true;
+            }
 
-                    @Override
-                    public E next() {
-                        E next = entry;
-                        entry = null;
-                        return next;
-                    }
+            @Override
+            public E next() {
+                E next = entry;
+                entry = null;
+                return next;
+            }
 
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                };
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
             }
         };
-    }
-
-    @Override
-    protected String getContainerPath(S container, String path) {
-        return path;
     }
 
     @Override

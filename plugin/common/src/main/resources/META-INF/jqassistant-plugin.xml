@@ -6,6 +6,7 @@
                     version="${project.version}">
     <description>Provides common elements to be re-used by other plugins.</description>
     <model>
+        <class>com.buschmais.jqassistant.plugin.common.api.model.LocalDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</class>
