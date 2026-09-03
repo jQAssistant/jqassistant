@@ -12,6 +12,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 public interface URIDescriptor extends Descriptor {
 
     String getUri();
+    
     void setUri(String uri);
 
 }

@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.FileScannerPlugin.LocalFileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -259,15 +260,17 @@ class TypeResolverIT extends AbstractJavaPluginIT {
         final String resource = "/" + A.class.getName()
             .replace(".", "/") + ".class";
         final File file = new File(directory, resource);
-        scanClasses("a1", B.class);
-        execute("a1", (artifact, scanner) -> {
-            List<FileDescriptor> result = new ArrayList<>();
-            FileDescriptor fileDescriptor1 = scanner.scan(file, "/1.0" + resource, JavaScope.CLASSPATH);
-            FileDescriptor fileDescriptor2 = scanner.scan(file, resource, JavaScope.CLASSPATH);
-            result.add(fileDescriptor1);
-            result.add(fileDescriptor2);
-            return result;
-        });
+        try (LocalFileResource localFileResource = new LocalFileResource(file)) {
+            scanClasses("a1", B.class);
+            execute("a1", (artifact, scanner) -> {
+                List<FileDescriptor> result = new ArrayList<>();
+                FileDescriptor fileDescriptor1 = scanner.scan(localFileResource, "/1.0" + resource, JavaScope.CLASSPATH);
+                FileDescriptor fileDescriptor2 = scanner.scan(localFileResource, resource, JavaScope.CLASSPATH);
+                result.add(fileDescriptor1);
+                result.add(fileDescriptor2);
+                return result;
+            });
+        }
         store.beginTransaction();
         List<? extends TypeClassFileDescriptor> descriptors = query("MATCH (t:Type) WHERE t.fqn ends with '.A' RETURN t ORDER BY t.fqn").getColumn("t");
 

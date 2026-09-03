@@ -16,8 +16,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.ZipFileRes
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
-public class ZipFileScannerPlugin
-        extends AbstractContainerScannerPlugin<ZipFileResource, ZipArchiveEntry, ZipArchiveDescriptor> {
+public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFileResource, ZipArchiveEntry, ZipArchiveDescriptor> {
 
     @Override
     public Class<? extends ZipFileResource> getType() {
@@ -40,8 +39,9 @@ public class ZipFileScannerPlugin
     }
 
     @Override
-    protected Iterable<? extends ZipArchiveEntry> getEntries(ZipFileResource container) throws IOException {
-        final Enumeration<? extends ZipArchiveEntry> entries = container.getZipFile().getEntriesInPhysicalOrder();
+    protected Iterable<? extends ZipArchiveEntry> getEntries(ZipFileResource container) {
+        final Enumeration<? extends ZipArchiveEntry> entries = container.getZipFile()
+            .getEntriesInPhysicalOrder();
         return new ZipArchiveEntryIterable(entries);
     }
 
@@ -57,7 +57,7 @@ public class ZipFileScannerPlugin
     }
 
     @Override
-    protected void enterContainer(ZipFileResource zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext context) throws IOException {
+    protected void enterContainer(ZipFileResource zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext context) {
     }
 
     @Override
@@ -84,10 +84,10 @@ public class ZipFileScannerPlugin
             this.entry = entry;
         }
 
-
         @Override
         public InputStream createStream() throws IOException {
-            return container.getZipFile().getInputStream(entry);
+            return container.getZipFile()
+                .getInputStream(entry);
         }
 
         @Override
@@ -113,7 +113,7 @@ public class ZipFileScannerPlugin
 
         @Override
         public Iterator<ZipArchiveEntry> iterator() {
-            return new Iterator<ZipArchiveEntry>() {
+            return new Iterator<>() {
                 @Override
                 public boolean hasNext() {
                     return entries.hasMoreElements();

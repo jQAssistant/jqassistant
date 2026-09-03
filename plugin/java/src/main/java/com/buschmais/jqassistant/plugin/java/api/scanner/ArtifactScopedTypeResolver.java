@@ -72,8 +72,8 @@ public class ArtifactScopedTypeResolver implements TypeResolver {
                 typeDescriptor = hasDependencies ? artifact.resolveRequiredType(fullQualifiedName) : null;
             }
             if (typeDescriptor == null) {
-                String requiredFileName = "/" + fullQualifiedName.replace(".", "/") + ".class";
-                typeDescriptor = require(requiredFileName, TypeClassFileDescriptor.class, context);
+                String requiredPath = "/" + fullQualifiedName.replace(".", "/") + ".class";
+                typeDescriptor = require(requiredPath, TypeClassFileDescriptor.class, context);
                 setTypeProperties(typeDescriptor, fullQualifiedName);
                 artifactTypes.put(fullQualifiedName, typeDescriptor);
             }

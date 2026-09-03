@@ -21,14 +21,14 @@ import org.slf4j.LoggerFactory;
  * Abstract base class for archive scanners based on commons compress.
  *
  * @param <S>
- *            The ArchiveInputStream type.
+ *     The ArchiveInputStream type.
  * @param <E>
- *            The ArchiveEntry type.
+ *     The ArchiveEntry type.
  * @param <D>
- *            The ArchiveDescriptor type.
+ *     The ArchiveDescriptor type.
  */
 public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveInputStream, E extends ArchiveEntry, D extends ArchiveDescriptor>
-        extends AbstractContainerScannerPlugin<S, E, D> {
+    extends AbstractContainerScannerPlugin<S, E, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArchiveInputStreamScannerPlugin.class);
 
@@ -84,17 +84,18 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
     }
 
     @Override
-    protected void enterContainer(S container, D containerDescriptor, ScannerContext scannerContext) throws IOException {
+    protected void enterContainer(S container, D containerDescriptor, ScannerContext scannerContext) {
     }
 
     @Override
-    protected void leaveContainer(S container, D containerDescriptor, ScannerContext scannerContext) throws IOException {
+    protected void leaveContainer(S container, D containerDescriptor, ScannerContext scannerContext) {
     }
 
     @Override
     protected Resource getEntry(final S container, final E entry) {
         if (entry.isDirectory()) {
-            return new AbstractDirectoryResource(container.toString()) {};
+            return new AbstractDirectoryResource(container.toString()) {
+            };
         } else {
             return new AbstractVirtualFileResource() {
                 @Override

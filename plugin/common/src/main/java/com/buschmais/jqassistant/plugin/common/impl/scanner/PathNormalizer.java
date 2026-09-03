@@ -20,11 +20,11 @@ public final class PathNormalizer {
      * @return The slashified path.
      */
     public static String normalize(File file, ScannerContext context) {
-        String path = getPath(file, context);
+        String path = getRelativePath(file, context);
         return path.replace('\\', '/');
     }
 
-    private static String getPath(File file, ScannerContext context) {
+    private static String getRelativePath(File file, ScannerContext context) {
         File projectDirectory = context.getProjectDirectory();
         Path projectPath = projectDirectory.toPath()
             .toAbsolutePath()
@@ -32,11 +32,6 @@ public final class PathNormalizer {
         Path filePath = file.toPath()
             .toAbsolutePath()
             .normalize();
-        if (filePath.startsWith(projectPath)) {
-            // TODO the leading "/" should be removed for relative paths
-            return "/" + projectPath.relativize(filePath);
-        }
-        return filePath.toString();
+        return "/" + projectPath.relativize(filePath);
     }
-
 }

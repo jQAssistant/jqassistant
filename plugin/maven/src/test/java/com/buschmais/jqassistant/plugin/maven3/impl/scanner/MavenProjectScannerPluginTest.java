@@ -135,7 +135,7 @@ class MavenProjectScannerPluginTest {
 
         // Mock project
         MavenProject project = mock(MavenProject.class);
-        doReturn(new File("/project")).when(project)
+        doReturn(projectDirectory).when(project)
             .getBasedir();
         File pomXml = new File("pom.xml");
         when(project.getFile()).thenReturn(pomXml);
@@ -161,10 +161,9 @@ class MavenProjectScannerPluginTest {
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
         List<ArtifactDescriptor> createsArtifacts = new LinkedList<>();
         when(projectDescriptor.getCreatesArtifacts()).thenReturn(createsArtifacts);
-        String projectDir = new File("/project").getAbsolutePath()
-            .replace('\\', '/');
+        String relativeProjectDirectory = "/";
         doReturn(projectDescriptor).when(fileResolver)
-            .match(projectDir, MavenProjectDirectoryDescriptor.class, scannerContext);
+            .match(relativeProjectDirectory, MavenProjectDirectoryDescriptor.class, scannerContext);
 
         Scanner scanner = mock(Scanner.class);
         doReturn(scanConfiguration).when(scanner)
@@ -174,7 +173,7 @@ class MavenProjectScannerPluginTest {
         MavenPomXmlDescriptor pomXmlDescriptor = mock(MavenPomXmlDescriptor.class);
         when(scanner.scan(pomXml, null, MavenScope.PROJECT)).thenReturn(pomXmlDescriptor);
 
-        // Effective effective model
+        // Effective model
         MavenPomDescriptor modelDescriptor = mock(MavenPomDescriptor.class);
         doReturn(modelDescriptor).when(store)
             .create(MavenPomDescriptor.class);
@@ -258,7 +257,7 @@ class MavenProjectScannerPluginTest {
         verify(scannerContext).pop(ArtifactResolver.class);
 
         verify(scanner, times(2)).scan(any(File.class), eq(null), eq(CLASSPATH));
-        verify(fileResolver).match(projectDir, MavenProjectDirectoryDescriptor.class, scannerContext);
+        verify(fileResolver).match(relativeProjectDirectory, MavenProjectDirectoryDescriptor.class, scannerContext);
         verify(projectDescriptor).setFullQualifiedName("group:artifact:1.0.0");
         verify(projectDescriptor).setName("project");
         verify(projectDescriptor).setGroupId("group");

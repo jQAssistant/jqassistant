@@ -44,6 +44,9 @@ public class FileContainerScannerPluginTest {
     @Mock
     private Cache<String, FileDescriptor> cache;
 
+    @Mock
+    private FileResolver parentFileResolver;
+
     @BeforeEach
     public void stub() {
         when(scanner.getContext()).thenReturn(context);
@@ -56,6 +59,21 @@ public class FileContainerScannerPluginTest {
                 cache)
             .get(anyString(), any(Function.class));
         Deque<FileResolver> fileResolvers = new LinkedList<>();
+
+        doAnswer(invocation -> {
+            ArtifactFileDescriptor containerDescriptor = mock(invocation.<Class<ArtifactFileDescriptor>>getArgument(1));
+            doReturn("/test").when(containerDescriptor)
+                .getPath();
+            doReturn(new ArrayList<>()).when(containerDescriptor)
+                .getProvides();
+            doReturn(new ArrayList<>()).when(containerDescriptor)
+                .getContains();
+            doReturn(new ArrayList<>()).when(containerDescriptor)
+                .getRequires();
+            return containerDescriptor;
+        }).when(parentFileResolver)
+            .match(anyString(), eq(ArtifactFileDescriptor.class), any(ScannerContext.class));
+        fileResolvers.push(parentFileResolver);
 
         doAnswer(invocation -> {
             FileResolver resolver = (FileResolver) invocation.getArguments()[1];
@@ -84,10 +102,11 @@ public class FileContainerScannerPluginTest {
     @Test
     public void provides() throws IOException {
         TestFileContainerScannerPlugin scannerPlugin = new TestFileContainerScannerPlugin();
+
         ArtifactFileDescriptor artifactFileDescriptor = scannerPlugin.scan(List.of("A", "B", "B/C", "non-existing"), "/", DefaultScope.NONE, scanner);
         assertThat(artifactFileDescriptor).isNotNull();
 
-        verify(artifactFileDescriptor).setFileName("/");
+        verify(parentFileResolver).match("/", ArtifactFileDescriptor.class, context);
 
         List<FileDescriptor> provides = artifactFileDescriptor.getProvides();
         assertThat(provides.size()).isEqualTo(3);
@@ -114,7 +133,7 @@ public class FileContainerScannerPluginTest {
         ArtifactFileDescriptor artifactFileDescriptor = scannerPlugin.scan(Arrays.asList("A", "R"), "/", DefaultScope.NONE, scanner);
         assertThat(artifactFileDescriptor).isNotNull();
 
-        verify(artifactFileDescriptor).setFileName("/");
+        verify(parentFileResolver).match("/", ArtifactFileDescriptor.class, context);
 
         List<FileDescriptor> provides = artifactFileDescriptor.getProvides();
         assertThat(provides.size()).isEqualTo(2);
@@ -130,6 +149,11 @@ public class FileContainerScannerPluginTest {
     }
 
     private static class TestFileContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, ArtifactFileDescriptor> {
+
+        @Override
+        public Class<ArtifactFileDescriptor> getDescriptorType() {
+            return ArtifactFileDescriptor.class;
+        }
 
         @Override
         public boolean accepts(Collection<String> item, String path, Scope scope) {

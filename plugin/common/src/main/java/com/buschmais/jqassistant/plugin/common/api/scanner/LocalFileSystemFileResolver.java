@@ -1,11 +1,10 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.LocalDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.LocalFileDescriptor;
 import com.buschmais.xo.api.Query.Result;
 
 /**
@@ -15,32 +14,31 @@ import com.buschmais.xo.api.Query.Result;
 public class LocalFileSystemFileResolver extends AbstractFileResolver {
 
     public LocalFileSystemFileResolver() {
-        super(LocalFileSystemFileResolver.class.getName());
+        super("", LocalFileSystemFileResolver.class.getName());
     }
 
     @Override
-    public <D extends FileDescriptor> D require(String requiredPath, String containedPath, Class<D> type, ScannerContext context) {
-        return resolve(requiredPath, type, context);
+    public <D extends FileDescriptor> D require(String requiredFileName, String containedFileName, Class<D> type, ScannerContext context) {
+        return resolve(requiredFileName, type, false, context);
     }
 
     @Override
-    public <D extends FileDescriptor> D match(String containedPath, Class<D> type, ScannerContext context) {
-        return resolve(containedPath, type, context);
+    public <D extends FileDescriptor> D match(String containedFileName, Class<D> type, ScannerContext context) {
+        return resolve(containedFileName, type, true, context);
     }
 
-    private <D extends FileDescriptor> D resolve(String requiredPath, Class<D> type, ScannerContext context) {
-        D fileDescriptor = getOrCreateAs(requiredPath, type, s -> {
-            Map<String, Object> params = new HashMap<>();
-            params.put("fileName", s);
-            Result<Result.CompositeRowObject> result = context.getStore()
-                .executeQuery("MATCH (file:File:Local) WHERE file.fileName=$fileName RETURN file", params);
-            return result.hasResult() ?
-                result.getSingleResult()
-                    .get("file", FileDescriptor.class) :
-                null;
-        }, context);
+    private <D extends FileDescriptor> D resolve(String requiredFileName, Class<D> type, boolean isMatch, ScannerContext context) {
+        D fileDescriptor = getOrCreateAs(requiredFileName, type, fileName -> {
+            try (Result<Result.CompositeRowObject> result = context.getStore()
+                .executeQuery("MATCH (file:File:Local) WHERE file.fileName=$fileName RETURN file", Map.of("fileName", fileName))) {
+                return result.hasResult() ?
+                    result.getSingleResult()
+                        .get("file", FileDescriptor.class) :
+                    null;
+            }
+        }, isMatch, context);
         return context.getStore()
-            .addDescriptorType(fileDescriptor, LocalDescriptor.class)
+            .addDescriptorType(fileDescriptor, LocalFileDescriptor.class)
             .as(type);
     }
 

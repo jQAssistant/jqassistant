@@ -37,7 +37,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
             artifact = store.create(JavaArtifactFileDescriptor.class, artifactId);
             artifact.setFullQualifiedName(artifactId);
         }
-        return JavaArtifactFileDescriptor.class.cast(artifact);
+        return (JavaArtifactFileDescriptor) artifact;
     }
 
     /**
@@ -159,7 +159,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
         artifact.setFullQualifiedName(artifactId);
         context.push(JavaArtifactFileDescriptor.class, artifact);
-        ContainerFileResolver containerFileResolver = new ContainerFileResolver(scanner.getContext(), artifact);
+        ContainerFileResolver containerFileResolver = new ContainerFileResolver("", scanner.getContext(), artifact);
         context.push(FileResolver.class, containerFileResolver);
 
         List<? extends FileDescriptor> descriptors = execute(artifact, operation, scanner);

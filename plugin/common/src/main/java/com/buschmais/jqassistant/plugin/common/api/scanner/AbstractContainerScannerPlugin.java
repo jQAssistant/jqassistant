@@ -32,28 +32,25 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
     @Override
-    public final D scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
+    public final D scan(I container, String relativeContainerPath, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        D containerDescriptor = getContainerDescriptor(container, context);
-        String containerPath = getContainerPath(container, path, scanner.getContext());
-        if (containerDescriptor.getFileName() == null) {
-            // Plugins may re-use existing descriptor, don't overwrite their fileName
-            containerDescriptor.setFileName(containerPath);
-        }
+        FileResolver parentFileResolver = context.peek(FileResolver.class);
+        D containerDescriptor = parentFileResolver.match(relativeContainerPath, getDescriptorType(), context);
+        String containerPath = containerDescriptor.getPath();
         LOGGER.info("Entering {}", containerPath);
-        ContainerFileResolver fileResolver = new ContainerFileResolver(scanner.getContext(), containerDescriptor);
+        ContainerFileResolver fileResolver = new ContainerFileResolver(containerPath, context, containerDescriptor);
         context.push(FileResolver.class, fileResolver);
         enterContainer(container, containerDescriptor, scanner.getContext());
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             Iterable<? extends E> entries = getEntries(container);
             for (E entry : entries) {
-                String relativePath = getRelativePath(container, entry);
+                String relativeEntryPath = getRelativePath(container, entry);
                 try (Resource resource = getEntry(container, entry)) {
-                    LOGGER.debug("Scanning {}", relativePath);
-                    FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
+                    LOGGER.debug("Scanning {}", relativeEntryPath);
+                    FileDescriptor descriptor = scanner.scan(resource, relativeEntryPath, scope);
                     if (descriptor != null) {
-                        fileResolver.put(relativePath, descriptor);
+                        fileResolver.put(relativeEntryPath, descriptor);
                     }
                 }
             }
@@ -74,7 +71,11 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
      * @param scannerContext
      *     The scanner context.
      * @return The artifact descriptor.
+     *
+     * @deprecated This method is no longer invoked.
      */
+    @Deprecated
+    @ToBeRemovedInVersion(major = 3, minor = 0)
     protected abstract D getContainerDescriptor(I container, ScannerContext scannerContext);
 
     /**
@@ -104,21 +105,6 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
     @Deprecated
     protected String getContainerPath(I container, String path) {
         return path;
-    };
-
-    /**
-     * Return the normalized path to the container.
-     *
-     * @param container
-     *     The container.
-     * @param path
-     *     The provided path.
-     * @param context
-     *     The {@link ScannerContext}
-     * @return The normalized path.
-     */
-    protected String getContainerPath(I container, String path, ScannerContext context) {
-        return getContainerPath(container, path);
     }
 
     /**

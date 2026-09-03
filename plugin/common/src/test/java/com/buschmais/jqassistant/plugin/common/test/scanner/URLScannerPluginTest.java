@@ -1,55 +1,87 @@
 package com.buschmais.jqassistant.plugin.common.test.scanner;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.URLFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.URLScannerPlugin;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.params.provider.Arguments.of;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 class URLScannerPluginTest {
 
-    private URLScannerPlugin plugin = new URLScannerPlugin();
+    private final URLScannerPlugin plugin = new URLScannerPlugin();
 
     @Mock
     private Scanner scanner;
+
+    @Mock
+    private ScannerContext context;
+
+    @Mock
+    private Store store;
 
     @BeforeAll
     static void registerURLHandler() {
         URL.setURLStreamHandlerFactory(new TestURLStreamHandlerFactory());
     }
 
-    @Test
-    void urls() throws IOException {
-        scan("test:/path", "test:/path");
-        scan("test://myhost", "test://myhost");
-        scan("test://myhost:8080", "test://myhost:8080");
-        scan("test://myhost:8080/path", "test://myhost:8080/path");
-        scan("test://myhost:8080/path?value1=test1&value2=test2", "test://myhost:8080/path?value1=test1&value2=test2");
-        scan("test://myhost:8080/path?value1=test1&value2=test2#anchor", "test://myhost:8080/path?value1=test1&value2=test2#anchor");
+    @BeforeEach
+    void setUp() {
+        doReturn(context).when(scanner)
+            .getContext();
+        doReturn(store).when(context)
+            .getStore();
+        doAnswer(i -> mock(i.getArgument(1, Class.class))).when(store)
+            .addDescriptorType(any(), any());
+    }
+
+    @ParameterizedTest
+    @MethodSource("urlArguments")
+    void urls(String url, String expectedFileName) throws IOException {
+        scan(new URL(url), expectedFileName);
+    }
+
+    static Stream<Arguments> urlArguments() {
+        return Stream.of( //
+            of("test:/path", "/path"), //
+            of("test://myhost", ""), //
+            of("test://myhost:8080/path", "/path"), //
+            of("test://myhost:8080/path?value1=test1&value2=test2", "/path?value1=test1&value2=test2"));
     }
 
     @Test
     void authentication() throws IOException {
-        try (FileResource fileResource = scan("test://user:secret@myhost:8080/path?value1=test1&value2=test2#anchor",
-            "test://myhost:8080/path?value1=test1&value2=test2#anchor")) {
+        try (FileResource fileResource = scan(new URL("test://user:secret@myhost:8080/path?value1=test1&value2=test2"), "/path?value1=test1&value2=test2")) {
             String content = IOUtils.toString(fileResource.createStream(), StandardCharsets.UTF_8);
             assertThat(content).startsWith("Basic ");
         }
@@ -57,19 +89,20 @@ class URLScannerPluginTest {
 
     @Test
     void getFileFromResource() throws IOException {
-        String testResource = URLScannerPluginTest.class.getResource("/test-resource.txt")
-            .toString();
-        try (FileResource fileResource = scan(testResource, testResource)) {
+        URL testResource = URLScannerPluginTest.class.getResource("/test-resource.txt");
+        try (FileResource fileResource = scan(testResource, testResource.getFile())) {
             File file = fileResource.getFile();
             assertThat(file.getPath()).endsWith("/test-resource.txt");
         }
     }
 
-    private FileResource scan(String path, String expectedPath) throws IOException {
-        URL url = new URL(path);
-        plugin.scan(url, path, DefaultScope.NONE, scanner);
+    private FileResource scan(URL url, String expectedFileName) throws IOException {
+        FileDescriptor fileDescriptor = plugin.scan(url, url.toString(), DefaultScope.NONE, scanner);
+
+        assertThat(fileDescriptor).isNotNull()
+            .isInstanceOf(URLFileDescriptor.class);
         ArgumentCaptor<FileResource> resource = ArgumentCaptor.forClass(FileResource.class);
-        verify(scanner).scan(resource.capture(), Mockito.eq(expectedPath), Mockito.eq(DefaultScope.NONE));
+        verify(scanner).scan(resource.capture(), eq(expectedFileName), eq(DefaultScope.NONE));
         return resource.getValue();
     }
 

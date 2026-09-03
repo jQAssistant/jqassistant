@@ -37,15 +37,15 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
         String normalizedPath = PathNormalizer.normalize(file, scanner.getContext());
         LOGGER.debug("Scanning '{}'.", normalizedPath);
-        try (FileResource fileResource = new RealFileResource(file);) {
+        try (FileResource fileResource = new LocalFileResource(file)) {
             return scanner.scan(fileResource, normalizedPath, scope);
         }
     }
 
-    private static class RealFileResource implements FileResource {
+    public static class LocalFileResource implements FileResource {
         private final File file;
 
-        public RealFileResource(File file) {
+        public LocalFileResource(File file) {
             this.file = file;
         }
 

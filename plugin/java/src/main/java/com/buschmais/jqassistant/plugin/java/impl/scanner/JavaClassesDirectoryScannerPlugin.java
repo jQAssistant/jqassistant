@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
 import java.io.File;
-import java.util.Arrays;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -15,8 +14,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 /**
  * A scanner plugin for directories containing java classes.
  */
-public class JavaClassesDirectoryScannerPlugin
-        extends AbstractDirectoryScannerPlugin<JavaArtifactFileDescriptor> {
+public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<JavaArtifactFileDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {
@@ -34,16 +32,12 @@ public class JavaClassesDirectoryScannerPlugin
     }
 
     @Override
-    protected JavaArtifactFileDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
+    protected JavaArtifactFileDescriptor getContainerDescriptor(File artifactFile, ScannerContext scannerContext) {
         JavaArtifactFileDescriptor javaArtifactDescriptor = scannerContext.peekOrDefault(JavaArtifactFileDescriptor.class, null);
         Store store = scannerContext.getStore();
-        if (javaArtifactDescriptor == null) {
-            return store.create(JavaArtifactFileDescriptor.class);
+        if (javaArtifactDescriptor != null) {
+            return javaArtifactDescriptor;
         }
-        if (JavaArtifactFileDescriptor.class.isAssignableFrom(javaArtifactDescriptor.getClass())) {
-            return JavaArtifactFileDescriptor.class.cast(javaArtifactDescriptor);
-        }
-        throw new IllegalStateException("Expected an instance of " + JavaArtifactFileDescriptor.class.getName() + " but got "
-                + Arrays.asList(javaArtifactDescriptor.getClass().getInterfaces()));
+        return store.create(JavaArtifactFileDescriptor.class);
     }
 }

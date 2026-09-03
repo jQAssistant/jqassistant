@@ -26,15 +26,15 @@ public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResourc
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return filePatternMatcher.accepts(path);
+    public boolean accepts(FileResource item, String relativePath, Scope scope) throws IOException {
+        return filePatternMatcher.accepts(relativePath);
     }
 
     @Override
-    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileResource item, String relativePath, Scope scope, Scanner scanner) throws IOException {
         return scanner.getContext()
             .peek(FileResolver.class)
-            .match(path, FileDescriptor.class, scanner.getContext());
+            .match(relativePath, FileDescriptor.class, scanner.getContext());
     }
 
 }

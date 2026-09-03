@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class MavenRepositoryArtifactResolver implements ArtifactResolver {
 
@@ -21,56 +21,56 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
      * Constructor.
      *
      * @param repositoryRoot
-     *            The root directory of the local repository.
+     *     The root directory of the local repository.
      * @param fileResolver
-     *            The {@link FileResolver} to be used for looking up files in the
-     *            local repository.
+     *     The {@link FileResolver} to be used for looking up files in the
+     *     local repository.
      */
     public MavenRepositoryArtifactResolver(File repositoryRoot, FileResolver fileResolver) {
-        this.repositoryRoot = repositoryRoot.getAbsolutePath().replace('\\', '/');
+        this.repositoryRoot = repositoryRoot.getAbsolutePath()
+            .replace('\\', '/');
         this.fileResolver = fileResolver;
     }
 
     @Override
     public MavenArtifactDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
         String fqn = MavenArtifactHelper.getId(coordinates);
-        return scannerContext.getStore().<String, MavenArtifactDescriptor> getCache(CACHE_KEY).get(fqn, key -> {
-            String fileName = getFileName(coordinates);
-            MavenArtifactFileDescriptor mavenArtifactDescriptor = fileResolver.require(fileName, MavenArtifactFileDescriptor.class, scannerContext);
-            MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, coordinates);
-            return mavenArtifactDescriptor;
-        });
+        return scannerContext.getStore()
+            .<String, MavenArtifactDescriptor>getCache(CACHE_KEY)
+            .get(fqn, key -> {
+                String fileName = getRequiredPath(coordinates);
+                MavenArtifactFileDescriptor mavenArtifactDescriptor = fileResolver.require(fileName, MavenArtifactFileDescriptor.class, scannerContext);
+                MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, coordinates);
+                return mavenArtifactDescriptor;
+            });
     }
 
-    private String getFileName(Coordinates coordinates) {
+    private String getRequiredPath(Coordinates coordinates) {
         String group = coordinates.getGroup();
         String name = coordinates.getName();
         String version = coordinates.getVersion();
         String classifier = coordinates.getClassifier();
         String type = coordinates.getType();
-        StringBuilder fileName = new StringBuilder(repositoryRoot);
-        if (StringUtils.isNotEmpty(group)) {
-            fileName.append('/');
-            fileName.append(group.replace('.', '/'));
+        StringBuilder requiredPath = new StringBuilder(repositoryRoot);
+        requiredPath.append(group.replace('.', '/'));
+        requiredPath.append('/');
+        requiredPath.append(name);
+        if (isNotEmpty(version)) {
+            requiredPath.append('/');
+            requiredPath.append(version);
         }
-        fileName.append('/');
-        fileName.append(name);
-        if (StringUtils.isNotEmpty(version)) {
-            fileName.append('/');
-            fileName.append(version);
+        requiredPath.append('/');
+        requiredPath.append(name);
+        if (isNotEmpty(version)) {
+            requiredPath.append('-');
+            requiredPath.append(version);
         }
-        fileName.append('/');
-        fileName.append(name);
-        if (StringUtils.isNotEmpty(version)) {
-            fileName.append('-');
-            fileName.append(version);
+        if (isNotEmpty(classifier)) {
+            requiredPath.append('-');
+            requiredPath.append(classifier);
         }
-        if (StringUtils.isNotEmpty(classifier)) {
-            fileName.append('-');
-            fileName.append(classifier);
-        }
-        fileName.append('.');
-        fileName.append(type);
-        return fileName.toString();
+        requiredPath.append('.');
+        requiredPath.append(type);
+        return requiredPath.toString();
     }
 }
