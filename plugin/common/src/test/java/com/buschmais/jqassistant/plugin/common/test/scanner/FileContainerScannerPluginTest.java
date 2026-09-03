@@ -175,11 +175,6 @@ public class FileContainerScannerPluginTest {
         }
 
         @Override
-        protected String getContainerPath(Collection<String> container, String path, ScannerContext context) {
-            return path;
-        }
-
-        @Override
         protected String getRelativePath(Collection<String> container, String entry) {
             return "/" + entry;
         }
