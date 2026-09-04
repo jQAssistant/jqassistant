@@ -32,11 +32,11 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
     @Override
-    public final D scan(I container, String relativeContainerPath, Scope scope, Scanner scanner) throws IOException {
+    public final D scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         FileResolver parentFileResolver = context.peek(FileResolver.class);
-        D containerDescriptor = parentFileResolver.match(relativeContainerPath, getDescriptorType(), context);
-        String containerPath = containerDescriptor.getPath();
+        String containerPath = getContainerPath(container, path, context);
+        D containerDescriptor = parentFileResolver.match(containerPath, getDescriptorType(), context);
         LOGGER.info("Entering {}", containerPath);
         ContainerFileResolver fileResolver = new ContainerFileResolver(containerPath, context, containerDescriptor);
         context.push(FileResolver.class, fileResolver);
@@ -71,12 +71,13 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
      * @param scannerContext
      *     The scanner context.
      * @return The artifact descriptor.
-     *
      * @deprecated This method is no longer invoked.
      */
     @Deprecated
     @ToBeRemovedInVersion(major = 3, minor = 0)
-    protected abstract D getContainerDescriptor(I container, ScannerContext scannerContext);
+    protected final D getContainerDescriptor(I container, ScannerContext scannerContext) {
+        throw new UnsupportedOperationException("This method must no longer be called.");
+    }
 
     /**
      * Return an iterable which delivers the entries of the container.
@@ -91,6 +92,21 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
      *     If the entries cannot be determined.
      */
     protected abstract Iterable<? extends E> getEntries(I container) throws IOException;
+
+    /**
+     * Return the normalized path to the container.
+     *
+     * @param container
+     *     The container.
+     * @param path
+     *     The provided path.
+     * @param context
+     *     The {@link ScannerContext}
+     * @return The normalized path.
+     */
+    protected String getContainerPath(I container, String path, ScannerContext context) {
+        return path;
+    }
 
     /**
      * Return the normalized path to the container.

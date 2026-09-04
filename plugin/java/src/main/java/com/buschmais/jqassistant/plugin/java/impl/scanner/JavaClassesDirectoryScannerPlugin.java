@@ -4,7 +4,6 @@ import java.io.File;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
@@ -31,13 +30,4 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
         context.pop(TypeResolver.class);
     }
 
-    @Override
-    protected JavaArtifactFileDescriptor getContainerDescriptor(File artifactFile, ScannerContext scannerContext) {
-        JavaArtifactFileDescriptor javaArtifactDescriptor = scannerContext.peekOrDefault(JavaArtifactFileDescriptor.class, null);
-        Store store = scannerContext.getStore();
-        if (javaArtifactDescriptor != null) {
-            return javaArtifactDescriptor;
-        }
-        return store.create(JavaArtifactFileDescriptor.class);
-    }
 }

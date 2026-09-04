@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.URLFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.URLDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.URLScannerPlugin;
 
@@ -50,6 +50,9 @@ class URLScannerPluginTest {
     @Mock
     private Store store;
 
+    @Mock
+    private FileDescriptor fileDescriptor;
+
     @BeforeAll
     static void registerURLHandler() {
         URL.setURLStreamHandlerFactory(new TestURLStreamHandlerFactory());
@@ -61,8 +64,10 @@ class URLScannerPluginTest {
             .getContext();
         doReturn(store).when(context)
             .getStore();
-        doAnswer(i -> mock(i.getArgument(1, Class.class))).when(store)
-            .addDescriptorType(any(), any());
+        doReturn(fileDescriptor).when(scanner)
+            .scan(any(), any(), any());
+        doAnswer(i -> mock(FileDescriptor.class, withSettings().extraInterfaces(URLDescriptor.class))).when(store)
+            .addDescriptorType(eq(fileDescriptor), eq(URLDescriptor.class));
     }
 
     @ParameterizedTest
@@ -97,12 +102,13 @@ class URLScannerPluginTest {
     }
 
     private FileResource scan(URL url, String expectedFileName) throws IOException {
-        FileDescriptor fileDescriptor = plugin.scan(url, url.toString(), DefaultScope.NONE, scanner);
+        FileDescriptor urlFileDescriptor = plugin.scan(url, url.toString(), DefaultScope.NONE, scanner);
 
-        assertThat(fileDescriptor).isNotNull()
-            .isInstanceOf(URLFileDescriptor.class);
+        assertThat(urlFileDescriptor).isNotNull()
+            .isInstanceOf(URLDescriptor.class);
         ArgumentCaptor<FileResource> resource = ArgumentCaptor.forClass(FileResource.class);
         verify(scanner).scan(resource.capture(), eq(expectedFileName), eq(DefaultScope.NONE));
+        verify(store).addDescriptorType(fileDescriptor, URLDescriptor.class);
         return resource.getValue();
     }
 

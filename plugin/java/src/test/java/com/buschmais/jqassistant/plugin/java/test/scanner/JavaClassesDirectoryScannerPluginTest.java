@@ -51,13 +51,13 @@ class JavaClassesDirectoryScannerPluginTest {
         directory.mkdir();
         doReturn(context).when(scanner)
             .getContext();
+        doReturn(projectDirectory).when(context)
+            .getProjectDirectory();
         doReturn(store).when(context)
             .getStore();
 
         doAnswer(invocation -> {
             JavaArtifactFileDescriptor containerDescriptor = mock(invocation.<Class<JavaArtifactFileDescriptor>>getArgument(1));
-            doReturn("/test").when(containerDescriptor)
-                .getPath();
             doReturn(new ArrayList<>()).when(containerDescriptor)
                 .getProvides();
             doReturn(new ArrayList<>()).when(containerDescriptor)
@@ -89,9 +89,9 @@ class JavaClassesDirectoryScannerPluginTest {
      */
     @Test
     void matchArtifact() throws IOException {
-        JavaArtifactFileDescriptor descriptor = plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
+        JavaArtifactFileDescriptor descriptor = plugin.scan(directory, null, JavaScope.CLASSPATH, scanner);
 
         assertThat(descriptor).isNotNull();
-        verify(parentFileResolver).match("/", JavaArtifactFileDescriptor.class, context);
+        verify(parentFileResolver).match("/directory", JavaArtifactFileDescriptor.class, context);
     }
 }

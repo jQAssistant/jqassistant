@@ -16,12 +16,6 @@ public class DirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<Direc
     }
 
     @Override
-    protected DirectoryDescriptor getContainerDescriptor(File container, ScannerContext scannerContext) {
-        return scannerContext.getStore()
-            .create(DirectoryDescriptor.class);
-    }
-
-    @Override
     protected void enterContainer(File directory, DirectoryDescriptor directoryDescriptor, ScannerContext scannerContext) {
     }
 

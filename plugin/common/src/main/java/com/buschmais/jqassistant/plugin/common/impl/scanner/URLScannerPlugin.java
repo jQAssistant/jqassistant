@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.URLFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.URLDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
@@ -66,8 +66,8 @@ public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
             scannerContext.push(FileResolver.class, fileResolver);
             try {
                 FileDescriptor fileDescriptor = scanner.scan(fileResource, url.getFile(), scope);
-                return scannerContext.getStore()
-                    .addDescriptorType(fileDescriptor, URLFileDescriptor.class);
+                return (FileDescriptor) scannerContext.getStore()
+                    .addDescriptorType(fileDescriptor, URLDescriptor.class);
             } finally {
                 scannerContext.pop(FileResolver.class);
             }

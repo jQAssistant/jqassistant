@@ -34,11 +34,6 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    protected ZipArchiveDescriptor getContainerDescriptor(ZipFileResource zipFile, ScannerContext scannerContext) {
-        return scannerContext.peek(ZipArchiveDescriptor.class);
-    }
-
-    @Override
     protected Iterable<? extends ZipArchiveEntry> getEntries(ZipFileResource container) {
         final Enumeration<? extends ZipArchiveEntry> entries = container.getZipFile()
             .getEntriesInPhysicalOrder();

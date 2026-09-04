@@ -38,39 +38,40 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
         return scannerContext.getStore()
             .<String, MavenArtifactDescriptor>getCache(CACHE_KEY)
             .get(fqn, key -> {
-                String fileName = getRequiredPath(coordinates);
+                String fileName = getFileName(coordinates);
                 MavenArtifactFileDescriptor mavenArtifactDescriptor = fileResolver.require(fileName, MavenArtifactFileDescriptor.class, scannerContext);
                 MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, coordinates);
                 return mavenArtifactDescriptor;
             });
     }
 
-    private String getRequiredPath(Coordinates coordinates) {
+    private String getFileName(Coordinates coordinates) {
         String group = coordinates.getGroup();
         String name = coordinates.getName();
         String version = coordinates.getVersion();
         String classifier = coordinates.getClassifier();
         String type = coordinates.getType();
-        StringBuilder requiredPath = new StringBuilder(repositoryRoot);
-        requiredPath.append(group.replace('.', '/'));
-        requiredPath.append('/');
-        requiredPath.append(name);
+        StringBuilder fileName = new StringBuilder(repositoryRoot);
+        fileName.append('/');
+        fileName.append(group.replace('.', '/'));
+        fileName.append('/');
+        fileName.append(name);
         if (isNotEmpty(version)) {
-            requiredPath.append('/');
-            requiredPath.append(version);
+            fileName.append('/');
+            fileName.append(version);
         }
-        requiredPath.append('/');
-        requiredPath.append(name);
+        fileName.append('/');
+        fileName.append(name);
         if (isNotEmpty(version)) {
-            requiredPath.append('-');
-            requiredPath.append(version);
+            fileName.append('-');
+            fileName.append(version);
         }
         if (isNotEmpty(classifier)) {
-            requiredPath.append('-');
-            requiredPath.append(classifier);
+            fileName.append('-');
+            fileName.append(classifier);
         }
-        requiredPath.append('.');
-        requiredPath.append(type);
-        return requiredPath.toString();
+        fileName.append('.');
+        fileName.append(type);
+        return fileName.toString();
     }
 }

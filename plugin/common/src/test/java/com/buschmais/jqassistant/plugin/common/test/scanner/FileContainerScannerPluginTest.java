@@ -61,16 +61,14 @@ public class FileContainerScannerPluginTest {
         Deque<FileResolver> fileResolvers = new LinkedList<>();
 
         doAnswer(invocation -> {
-            ArtifactFileDescriptor containerDescriptor = mock(invocation.<Class<ArtifactFileDescriptor>>getArgument(1));
-            doReturn("/test").when(containerDescriptor)
-                .getPath();
-            doReturn(new ArrayList<>()).when(containerDescriptor)
+            ArtifactFileDescriptor artifactFileDescriptor = mock(invocation.<Class<ArtifactFileDescriptor>>getArgument(1));
+            doReturn(new ArrayList<>()).when(artifactFileDescriptor)
                 .getProvides();
-            doReturn(new ArrayList<>()).when(containerDescriptor)
+            doReturn(new ArrayList<>()).when(artifactFileDescriptor)
                 .getContains();
-            doReturn(new ArrayList<>()).when(containerDescriptor)
+            doReturn(new ArrayList<>()).when(artifactFileDescriptor)
                 .getRequires();
-            return containerDescriptor;
+            return artifactFileDescriptor;
         }).when(parentFileResolver)
             .match(anyString(), eq(ArtifactFileDescriptor.class), any(ScannerContext.class));
         fileResolvers.push(parentFileResolver);
@@ -161,15 +159,6 @@ public class FileContainerScannerPluginTest {
         }
 
         @Override
-        protected ArtifactFileDescriptor getContainerDescriptor(Collection<String> container, ScannerContext scannerContext) {
-            ArtifactFileDescriptor artifactFileDescriptor = mock(ArtifactFileDescriptor.class);
-            when(artifactFileDescriptor.getProvides()).thenReturn(new ArrayList<>());
-            when(artifactFileDescriptor.getContains()).thenReturn(new ArrayList<>());
-            when(artifactFileDescriptor.getRequires()).thenReturn(new ArrayList<>());
-            return artifactFileDescriptor;
-        }
-
-        @Override
         protected Iterable<? extends String> getEntries(Collection<String> container) {
             return container;
         }
@@ -181,12 +170,10 @@ public class FileContainerScannerPluginTest {
 
         @Override
         protected void enterContainer(Collection<String> container, ArtifactFileDescriptor artifactFileDescriptor, ScannerContext scannerContext) {
-
         }
 
         @Override
         protected void leaveContainer(Collection<String> container, ArtifactFileDescriptor artifactFileDescriptor, ScannerContext scannerContext) {
-
         }
 
         @Override
