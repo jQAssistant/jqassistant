@@ -26,7 +26,7 @@ class DefaultUriScannerPluginIT extends AbstractPluginIT {
         URI uri = resource.toURI();
         Descriptor descriptor = getScanner().scan(uri, uri.toString(), DefaultScope.NONE);
         assertThat(descriptor).isInstanceOf(FileDescriptor.class);
-        assertThat(((FileDescriptor) descriptor).getFileName()).isEqualTo(uri.toString());
+        assertThat(((FileDescriptor) descriptor).getFileName()).isEqualTo(resource.getFile());
         store.commitTransaction();
     }
 

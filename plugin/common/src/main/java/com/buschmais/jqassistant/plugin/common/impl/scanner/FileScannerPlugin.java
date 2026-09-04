@@ -7,9 +7,10 @@ import java.io.InputStream;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.common.api.scanner.LocalFileSystemFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 import org.slf4j.Logger;
@@ -23,23 +24,28 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerPlugin.class);
 
     @Override
+    protected void configure() {
+        getScannerContext().push(FileResolver.class, new LocalFileSystemFileResolver());
+    }
+
+    @Override
     public boolean accepts(File item, String path, Scope scope) throws IOException {
         return !item.isDirectory();
     }
 
     @Override
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
-        String normalizedPath = FileNameNormalizer.normalize(path);
+        String normalizedPath = PathNormalizer.normalize(file, scanner.getContext());
         LOGGER.debug("Scanning '{}'.", normalizedPath);
-        try (FileResource fileResource = new RealFileResource(file);) {
+        try (FileResource fileResource = new LocalFileResource(file)) {
             return scanner.scan(fileResource, normalizedPath, scope);
         }
     }
 
-    private static class RealFileResource implements FileResource {
+    public static class LocalFileResource implements FileResource {
         private final File file;
 
-        public RealFileResource(File file) {
+        public LocalFileResource(File file) {
             this.file = file;
         }
 
@@ -56,7 +62,6 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
         @Override
         public void close() {
         }
-
 
         @Override
         public String toString() {

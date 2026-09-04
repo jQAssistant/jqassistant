@@ -2,13 +2,13 @@ package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.URIDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
@@ -80,13 +80,12 @@ public abstract class AbstractUriScannerPlugin<R> extends AbstractScannerPlugin<
      * @return An {@link Optional} representing the URI resource to be scanned.
      */
     protected final Optional<R> resolve(URI uri, Supplier<R> resourceSupplier, ScannerContext context) {
-        Query.Result<Query.Result.CompositeRowObject> result = context.getStore()
-            .executeQuery("MATCH (uri:URI{uri:$uri}) RETURN uri", MapBuilder.<String, Object>builder()
-                .entry("uri", uri.toString())
-                .build());
-        if (result.hasResult()) {
-            log.debug("URI '{}' has already been scanned, skipping.", uri);
-            return empty();
+        try (Query.Result<Query.Result.CompositeRowObject> result = context.getStore()
+            .executeQuery("MATCH (uri:URI{uri:$uri}) RETURN uri", Map.of("uri", uri.toString()))) {
+            if (result.hasResult()) {
+                log.debug("URI '{}' has already been scanned, skipping.", uri);
+                return empty();
+            }
         }
         return ofNullable(resourceSupplier.get());
     }

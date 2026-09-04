@@ -17,10 +17,10 @@ public class DirectoryResourceScannerPlugin extends AbstractScannerPlugin<Direct
     }
 
     @Override
-    public DirectoryDescriptor scan(DirectoryResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public DirectoryDescriptor scan(DirectoryResource item, String relativePath, Scope scope, Scanner scanner) throws IOException {
         return scanner.getContext()
             .peek(FileResolver.class)
-            .match(path, DirectoryDescriptor.class, scanner.getContext());
+            .match(relativePath, DirectoryDescriptor.class, scanner.getContext());
     }
 
 }

@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
@@ -30,8 +29,8 @@ public class ContainerFileResolver extends AbstractFileResolver {
 
     private final Map<String, FileDescriptor> providedFiles;
 
-    public ContainerFileResolver(ScannerContext scannerContext, DirectoryDescriptor directoryDescriptor) {
-        super(CACHE_KEY + "/" + directoryDescriptor.getId());
+    public ContainerFileResolver(String path, ScannerContext scannerContext, DirectoryDescriptor directoryDescriptor) {
+        super(path, CACHE_KEY + "/" + directoryDescriptor.getId());
         this.directoryDescriptor = directoryDescriptor;
         this.scannerContext = scannerContext;
         if (directoryDescriptor instanceof ArtifactFileDescriptor) {
@@ -45,23 +44,24 @@ public class ContainerFileResolver extends AbstractFileResolver {
     }
 
     @Override
-    public <D extends FileDescriptor> D require(String requiredPath, String containedPath, Class<D> type, ScannerContext context) {
-        final FileDescriptor fileDescriptor = providedFiles.get(containedPath);
+    public <D extends FileDescriptor> D require(String requiredFileName, String containedFileName, Class<D> type, ScannerContext context) {
+        final FileDescriptor fileDescriptor = providedFiles.get(containedFileName);
         D result;
         if (fileDescriptor != null) {
-            result = getOrCreateAs(containedPath, type, path -> fileDescriptor, context);
-            providedFiles.put(containedPath, result);
+            result = getOrCreateAs(containedFileName, type, fileName -> fileDescriptor, false, context);
+            // type may have changed due to added labels
+            providedFiles.put(containedFileName, result);
         } else {
-            result = getOrCreateAs(containedPath, type, path -> requiredFiles.get(containedPath), context);
-            requiredFiles.put(containedPath, result);
+            result = getOrCreateAs(containedFileName, type, path -> requiredFiles.get(containedFileName), false, context);
+            requiredFiles.put(containedFileName, result);
         }
         return result;
     }
 
     @Override
-    public <D extends FileDescriptor> D match(String containedPath, Class<D> type, ScannerContext context) {
-        FileDescriptor fileDescriptor = requiredFiles.remove(containedPath);
-        return getOrCreateAs(containedPath, type, path -> fileDescriptor, context);
+    public <D extends FileDescriptor> D match(String containedFileName, Class<D> type, ScannerContext context) {
+        FileDescriptor fileDescriptor = requiredFiles.remove(containedFileName);
+        return getOrCreateAs(containedFileName, type, fileName -> fileDescriptor, true, context);
     }
 
     /**
@@ -115,13 +115,8 @@ public class ContainerFileResolver extends AbstractFileResolver {
      */
     private Map<String, FileDescriptor> getCache(Iterable<FileDescriptor> fileDescriptors) {
         Map<String, FileDescriptor> cache = new TreeMap<>();
-        for (Descriptor descriptor : fileDescriptors) {
-            if (descriptor instanceof FileDescriptor) {
-                FileDescriptor fileDescriptor = (FileDescriptor) descriptor;
-                cache.put(fileDescriptor.getFileName(), fileDescriptor);
-            } else {
-                LOGGER.warn("{} is not a file descriptor, container={}", descriptor, directoryDescriptor);
-            }
+        for (FileDescriptor fileDescriptor : fileDescriptors) {
+            cache.put(fileDescriptor.getFileName(), fileDescriptor);
         }
         return cache;
     }

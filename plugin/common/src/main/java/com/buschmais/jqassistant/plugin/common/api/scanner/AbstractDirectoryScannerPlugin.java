@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.BufferedFileResource;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.PathNormalizer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +46,11 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     @Override
     public boolean accepts(File item, String path, Scope scope) throws IOException {
         return item.isDirectory() && getRequiredScope().equals(scope);
+    }
+
+    @Override
+    protected String getContainerPath(File container, String path, ScannerContext context) {
+        return PathNormalizer.normalize(container, context);
     }
 
     @Override
@@ -84,13 +90,8 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     protected abstract Scope getRequiredScope();
 
     @Override
-    protected String getContainerPath(File container, String path) {
-        return FileNameNormalizer.normalize(path);
-    }
-
-    @Override
-    protected String getRelativePath(File container, File entry) {
-        return getDirectoryPath(container, entry);
+    protected String getRelativePath(File directory, File entry) {
+        return getDirectoryPath(directory, entry);
     }
 
     @Override

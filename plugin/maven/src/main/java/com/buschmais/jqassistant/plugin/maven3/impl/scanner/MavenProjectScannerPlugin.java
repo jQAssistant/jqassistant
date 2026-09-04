@@ -21,6 +21,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.PathNormalizer;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
@@ -42,7 +43,6 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.buschmais.jqassistant.core.shared.io.FileNameNormalizer.normalize;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
 import static org.eclipse.aether.util.graph.transformer.ConflictResolver.CONFIG_PROP_VERBOSE;
@@ -163,10 +163,10 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         // add test reports
         String surefireReports = project.getBuild()
             .getDirectory() + "/surefire-reports";
-        scanFile(new File(surefireReports), surefireReports, TESTREPORTS, scanner);
+        scanFile(new File(surefireReports), TESTREPORTS, scanner);
         String failsafeReports = project.getBuild()
             .getDirectory() + "/failsafe-reports";
-        scanFile(new File(failsafeReports), failsafeReports, TESTREPORTS, scanner);
+        scanFile(new File(failsafeReports), TESTREPORTS, scanner);
     }
 
     private void scanIncludes(MavenProject project, Scanner scanner, MavenProjectDirectoryDescriptor projectDescriptor) {
@@ -185,7 +185,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
                 // files
                 scanInclude(include.files(), (fileName, s) -> scanFile(basedir.toPath()
                     .resolve(fileName)
-                    .toFile(), fileName, s, scanner), scanIncludeConsumer, scanner);
+                    .toFile(), s, scanner), scanIncludeConsumer, scanner);
                 // urls
                 scanInclude(include.urls(), (url, s) -> {
                     try {
@@ -253,7 +253,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             File basedir = project.getBasedir();
             if (basedir != null) {
                 projectDescriptor = scannerContext.peek(FileResolver.class)
-                    .match(normalize(basedir.getAbsoluteFile()), MavenProjectDirectoryDescriptor.class, scannerContext);
+                    .match(PathNormalizer.normalize(basedir, scannerContext), MavenProjectDirectoryDescriptor.class, scannerContext);
 
             } else {
                 projectDescriptor = store.create(expectedType);
@@ -329,7 +329,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      */
     private void addModel(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner) {
         File pomXmlFile = project.getFile();
-        FileDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        FileDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, null, MavenScope.PROJECT);
         projectDescriptor.setModel(mavenPomXmlDescriptor);
         // Effective model
         MavenPomDescriptor mavenPomDescriptor = scanner.getContext()
@@ -337,7 +337,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             .create(MavenPomDescriptor.class);
         scanner.getContext()
             .push(MavenPomDescriptor.class, mavenPomDescriptor);
-        scanner.scan(project.getModel(), pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        scanner.scan(project.getModel(), null, MavenScope.PROJECT);
         scanner.getContext()
             .pop(MavenPomDescriptor.class);
         MavenPomDescriptor effectiveModelDescriptor = scanner.getContext()
@@ -401,7 +401,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     private void scanClassesDirectory(MavenArtifactDescriptor artifactDescriptor, final String directoryName, Scanner scanner) {
         File directory = new File(directoryName);
         if (directory.exists()) {
-            scanArtifact(artifactDescriptor, directory, directoryName, scanner);
+            scanArtifact(artifactDescriptor, directory, scanner);
         }
     }
 
@@ -412,19 +412,17 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      *     The resolved {@link MavenArtifactDescriptor}.
      * @param file
      *     The {@link File}.
-     * @param path
-     *     The path of the file.
      * @param scanner
      *     The {@link Scanner}.
      */
-    private JavaArtifactFileDescriptor scanArtifact(ArtifactDescriptor artifactDescriptor, File file, String path, Scanner scanner) {
+    private JavaArtifactFileDescriptor scanArtifact(ArtifactDescriptor artifactDescriptor, File file, Scanner scanner) {
         JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext()
             .getStore()
             .addDescriptorType(artifactDescriptor, JavaArtifactFileDescriptor.class);
         ScannerContext context = scanner.getContext();
         context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
         try {
-            return scanFile(file, path, CLASSPATH, scanner);
+            return scanFile(file, CLASSPATH, scanner);
         } finally {
             context.pop(JavaArtifactFileDescriptor.class);
         }
@@ -439,16 +437,14 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      *
      * @param file
      *     The file.
-     * @param path
-     *     The path.
      * @param scope
      *     The scope.
      * @param scanner
      *     The scanner.
      */
-    private <F extends FileDescriptor> F scanFile(File file, String path, Scope scope, Scanner scanner) {
+    private <F extends FileDescriptor> F scanFile(File file, Scope scope, Scanner scanner) {
         if (file.exists()) {
-            return scanner.scan(file, path, scope);
+            return scanner.scan(file, null, scope);
         } else {
             LOGGER.debug("{} does not exist, skipping.", file.getAbsolutePath());
         }

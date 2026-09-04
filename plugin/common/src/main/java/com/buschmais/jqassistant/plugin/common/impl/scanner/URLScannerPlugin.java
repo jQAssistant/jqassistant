@@ -6,16 +6,22 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.URLDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.xo.api.Query;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,18 +61,24 @@ public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
                 return uriPath != null ? uriPath : uri.getSchemeSpecificPart();
             }
         })) {
-            return scanner.scan(fileResource, getPath(url), scope);
+            URLFileResolver fileResolver = new URLFileResolver(getPath(url));
+            ScannerContext scannerContext = scanner.getContext();
+            scannerContext.push(FileResolver.class, fileResolver);
+            try {
+                FileDescriptor fileDescriptor = scanner.scan(fileResource, url.getFile(), scope);
+                return (FileDescriptor) scannerContext.getStore()
+                    .addDescriptorType(fileDescriptor, URLDescriptor.class);
+            } finally {
+                scannerContext.pop(FileResolver.class);
+            }
         }
     }
 
-    private String getPath(URL item) {
+    private String getPath(URL url) {
         // Rebuild the path without the username:password
-        String protocol = item.getProtocol();
-        String host = item.getHost();
-        int port = item.getPort();
-        String path = item.getPath();
-        String query = item.getQuery();
-        String ref = item.getRef();
+        String protocol = url.getProtocol();
+        String host = url.getHost();
+        int port = url.getPort();
         StringBuilder result = new StringBuilder();
         result.append(protocol)
             .append(":");
@@ -78,17 +90,36 @@ public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
             result.append(":")
                 .append(port);
         }
-        if (path != null) {
-            result.append(path);
-        }
-        if (query != null) {
-            result.append("?")
-                .append(query);
-        }
-        if (ref != null) {
-            result.append("#")
-                .append(ref);
-        }
         return result.toString();
+    }
+
+    private static class URLFileResolver extends AbstractFileResolver {
+
+        public URLFileResolver(String path) {
+            super(path, URLFileResolver.class.getName());
+        }
+
+        @Override
+        public <D extends FileDescriptor> D require(String requiredFileName, String containedFileName, Class<D> type, ScannerContext context) {
+            return resolve(requiredFileName, type, false, context);
+        }
+
+        @Override
+        public <D extends FileDescriptor> D match(String containedFileName, Class<D> type, ScannerContext context) {
+            return resolve(containedFileName, type, true, context);
+        }
+
+        private <D extends FileDescriptor> D resolve(String requiredFileName, Class<D> type, boolean isMatch, ScannerContext context) {
+            D fileDescriptor = getOrCreateAs(requiredFileName, type, fileName -> {
+                try (Query.Result<Query.Result.CompositeRowObject> result = context.getStore()
+                    .executeQuery("MATCH (file:File:URL) WHERE file.path=$url RETURN file", Map.of("url", getPath() + fileName))) {
+                    return result.hasResult() ?
+                        result.getSingleResult()
+                            .get("file", FileDescriptor.class) :
+                        null;
+                }
+            }, isMatch, context);
+            return fileDescriptor.as(type);
+        }
     }
 }

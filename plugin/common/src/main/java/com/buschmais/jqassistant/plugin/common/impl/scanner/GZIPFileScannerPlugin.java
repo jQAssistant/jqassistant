@@ -19,12 +19,12 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  * Scanner plugin for GZipped file resources.
  */
 @Requires(FileDescriptor.class)
-public class GZIPFileScannerPlugin
-        extends AbstractScannerPlugin<FileResource, GZipFileDescriptor> {
+public class GZIPFileScannerPlugin extends AbstractScannerPlugin<FileResource, GZipFileDescriptor> {
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return path.toLowerCase().endsWith(".gz");
+        return path.toLowerCase()
+            .endsWith(".gz");
     }
 
     @Override
@@ -33,7 +33,8 @@ public class GZIPFileScannerPlugin
         Store store = context.getStore();
         final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         GZipFileDescriptor gZipFileDescriptor = store.addDescriptorType(fileDescriptor, GZipFileDescriptor.class);
-        String uncompressedPath = path.substring(0, path.toLowerCase().indexOf(".gz"));
+        String uncompressedPath = path.substring(path.lastIndexOf('/'), path.toLowerCase()
+            .indexOf(".gz"));
         try (FileResource fileResource = new BufferedFileResource(new AbstractVirtualFileResource() {
             @Override
             public InputStream createStream() throws IOException {
@@ -46,7 +47,8 @@ public class GZIPFileScannerPlugin
             }
         })) {
             FileDescriptor entryDescriptor = scanner.scan(fileResource, uncompressedPath, scope);
-            gZipFileDescriptor.getContains().add(entryDescriptor);
+            gZipFileDescriptor.getContains()
+                .add(entryDescriptor);
         }
         return gZipFileDescriptor;
     }

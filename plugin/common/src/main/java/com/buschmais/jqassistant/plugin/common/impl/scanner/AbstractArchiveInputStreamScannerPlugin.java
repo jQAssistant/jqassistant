@@ -21,14 +21,14 @@ import org.slf4j.LoggerFactory;
  * Abstract base class for archive scanners based on commons compress.
  *
  * @param <S>
- *            The ArchiveInputStream type.
+ *     The ArchiveInputStream type.
  * @param <E>
- *            The ArchiveEntry type.
+ *     The ArchiveEntry type.
  * @param <D>
- *            The ArchiveDescriptor type.
+ *     The ArchiveDescriptor type.
  */
 public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveInputStream, E extends ArchiveEntry, D extends ArchiveDescriptor>
-        extends AbstractContainerScannerPlugin<S, E, D> {
+    extends AbstractContainerScannerPlugin<S, E, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArchiveInputStreamScannerPlugin.class);
 
@@ -40,46 +40,36 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
     }
 
     @Override
-    protected Iterable<? extends E> getEntries(final S container) throws IOException {
-        return new Iterable<E>() {
+    protected Iterable<? extends E> getEntries(final S container) {
+        return (Iterable<E>) () -> new Iterator<>() {
+
+            private E entry = null;
+
             @Override
-            public Iterator<E> iterator() {
-                return new Iterator<E>() {
-
-                    private E entry = null;
-
-                    @Override
-                    public boolean hasNext() {
-                        if (entry == null) {
-                            try {
-                                entry = getNextEntry(container);
-                            } catch (IOException e) {
-                                LOGGER.warn("Cannot get next entry from archive.", e);
-                            }
-                            return entry != null;
-                        }
-                        return true;
+            public boolean hasNext() {
+                if (entry == null) {
+                    try {
+                        entry = getNextEntry(container);
+                    } catch (IOException e) {
+                        LOGGER.warn("Cannot get next entry from archive.", e);
                     }
+                    return entry != null;
+                }
+                return true;
+            }
 
-                    @Override
-                    public E next() {
-                        E next = entry;
-                        entry = null;
-                        return next;
-                    }
+            @Override
+            public E next() {
+                E next = entry;
+                entry = null;
+                return next;
+            }
 
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                };
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
             }
         };
-    }
-
-    @Override
-    protected String getContainerPath(S container, String path) {
-        return path;
     }
 
     @Override
@@ -94,17 +84,18 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
     }
 
     @Override
-    protected void enterContainer(S container, D containerDescriptor, ScannerContext scannerContext) throws IOException {
+    protected void enterContainer(S container, D containerDescriptor, ScannerContext scannerContext) {
     }
 
     @Override
-    protected void leaveContainer(S container, D containerDescriptor, ScannerContext scannerContext) throws IOException {
+    protected void leaveContainer(S container, D containerDescriptor, ScannerContext scannerContext) {
     }
 
     @Override
     protected Resource getEntry(final S container, final E entry) {
         if (entry.isDirectory()) {
-            return new AbstractDirectoryResource(container.toString()) {};
+            return new AbstractDirectoryResource(container.toString()) {
+            };
         } else {
             return new AbstractVirtualFileResource() {
                 @Override

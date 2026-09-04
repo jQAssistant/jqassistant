@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * Defines the context for the scanning process.
- *
+ * <p>
  * Values of a specific type may be pushed/popped to provide information for
  * plugins.
  */
@@ -33,11 +33,11 @@ public interface ScannerContext {
      * Push a value to the context.
      *
      * @param key
-     *            The type of the value.
+     *     The type of the value.
      * @param value
-     *            The value.
+     *     The value.
      * @param <T>
-     *            The type of the value.
+     *     The type of the value.
      */
     <T> void push(Class<T> key, T value);
 
@@ -45,12 +45,12 @@ public interface ScannerContext {
      * Peek for a value in the context.
      *
      * @param key
-     *            The type of the value.
+     *     The type of the value.
      * @param <T>
-     *            The type of the value.
+     *     The type of the value.
      * @return The value.
      * @throws IllegalStateException
-     *             If the context does not provide a value for the given key.
+     *     If the context does not provide a value for the given key.
      */
     <T> T peek(Class<T> key);
 
@@ -59,11 +59,11 @@ public interface ScannerContext {
      * provided default value.
      *
      * @param key
-     *            The type of the value.
+     *     The type of the value.
      * @param defaultValue
-     *            The default value to return.
+     *     The default value to return.
      * @param <T>
-     *            The type of the value.
+     *     The type of the value.
      * @return The value.
      */
     <T> T peekOrDefault(Class<T> key, T defaultValue);
@@ -72,9 +72,9 @@ public interface ScannerContext {
      * Pop a value from the context.
      *
      * @param key
-     *            The type of the value.
+     *     The type of the value.
      * @param <T>
-     *            The type of the value.
+     *     The type of the value.
      * @return The value.
      */
     <T> T pop(Class<T> key);
@@ -84,9 +84,9 @@ public interface ScannerContext {
      * the pipeline.
      *
      * @param descriptor
-     *            The descriptor.
+     *     The descriptor.
      * @param <D>
-     *            The descriptor type.
+     *     The descriptor type.
      */
     <D extends Descriptor> void setCurrentDescriptor(D descriptor);
 
@@ -95,14 +95,19 @@ public interface ScannerContext {
      * in the pipeline.
      *
      * @param <D>
-     *            The descriptor type.
+     *     The descriptor type.
      */
     <D extends Descriptor> D getCurrentDescriptor();
 
     /**
-    * Return the directory for storing data using a given relative
+     * Return the directory for storing data using a given relative
      */
     File getDataDirectory(String path);
+
+    /**
+     * Return the project directory.
+     */
+    File getProjectDirectory();
 
     /**
      * Return the current working directory.

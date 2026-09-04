@@ -6,84 +6,70 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
+import lombok.RequiredArgsConstructor;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 /**
  * Abstract base class for {@link FileResolver}s.
  * <p>
  * Provides utility functionality.
  */
+@RequiredArgsConstructor
 public abstract class AbstractFileResolver implements FileResolver {
+
+    private final String path;
 
     private final String cacheKey;
 
-    /**
-     * Constructor.
-     *
-     * @param cacheKey
-     *            The cache key to use for the store.
-     */
-    protected AbstractFileResolver(String cacheKey) {
-        this.cacheKey = cacheKey;
+    @Override
+    public String getPath() {
+        return path;
     }
 
     @Override
-    public <D extends FileDescriptor> D require(String requiredPath, Class<D> type, ScannerContext context) {
-        return require(requiredPath, requiredPath, type, context);
-    }
-
-    /**
-     * Takes an optional descriptor and transforms it to file descriptor.
-     *
-     * @param descriptor
-     *            The descriptor, if <code>null</code> a new descriptor is created.
-     * @param type
-     *            The required type.
-     * @param path
-     *            The path (to set as file name).
-     * @param context
-     *            The scanner context.
-     * @param <D>
-     *            The required type.
-     * @return The file descriptor.
-     * @deprecated migrate to
-     *             {@link #getOrCreateAs(String, Class, Function, ScannerContext)}.
-     */
-    @Deprecated
-    protected <D extends FileDescriptor> D toFileDescriptor(Descriptor descriptor, Class<D> type, String path, ScannerContext context) {
-        if (descriptor == null) {
-            D result = context.getStore().create(type);
-            result.setFileName(path);
-            return result;
-        }
-        return migrateOrCast(descriptor, type, context);
+    public <D extends FileDescriptor> D require(String requiredFileName, Class<D> type, ScannerContext context) {
+        return require(requiredFileName, requiredFileName, type, context);
     }
 
     /**
      * Get an existing {@link FileDescriptor} or create a new one. If an existing
      * {@link FileDescriptor} exists it will be migrated on demand.
      *
-     * @param path
-     *            The path.
-     * @param type
-     *            The requested type.
+     * @param fileName
+     *     The required file name.
+     * @param fileDescriptorType
+     *     The requested {@link FileDescriptor} type.
      * @param resolveExisting
-     *            A {@link Function} to resolve an existing {@link FileDescriptor}.
+     *     A {@link Function} to resolve an existing {@link FileDescriptor}.
+     * @param isMatch
+     *     if <code>true</code> set the path attribute to indicate an existing file (it has been matched by a scanner/resolver)
      * @param context
-     *            The {@link ScannerContext}.
+     *     The {@link ScannerContext}.
      * @param <D>
-     *            The requested type.
+     *     The requested type.
      * @return The {@link FileDescriptor}.
      */
-    protected <D extends FileDescriptor> D getOrCreateAs(String path, Class<D> type, Function<String, FileDescriptor> resolveExisting, ScannerContext context) {
-        FileDescriptor descriptor = context.getStore().<String, FileDescriptor> getCache(cacheKey).get(path, p -> {
-            FileDescriptor fileDescriptor = resolveExisting.apply(p);
-            if (fileDescriptor != null) {
+    protected <D extends FileDescriptor> D getOrCreateAs(String fileName, Class<D> fileDescriptorType, Function<String, FileDescriptor> resolveExisting,
+        boolean isMatch, ScannerContext context) {
+        FileDescriptor descriptor = context.getStore()
+            .<String, FileDescriptor>getCache(cacheKey)
+            .get(fileName, f -> {
+                FileDescriptor fileDescriptor = resolveExisting.apply(f);
+                if (fileDescriptor != null) {
+                    return fileDescriptor;
+                }
+                fileDescriptor = context.getStore()
+                    .create(fileDescriptorType);
+                // TODO fileName currently starts with a leading "/", to be changed in 3.x
+                fileDescriptor.setFileName(fileName);
                 return fileDescriptor;
-            }
-            fileDescriptor = context.getStore().create(type);
-            fileDescriptor.setFileName(path);
-            return fileDescriptor;
-        });
-        return migrateOrCast(descriptor, type, context);
+            });
+        if (isMatch) {
+            String relativePath = fileName.substring(1);
+            descriptor.setPath(isNotEmpty(path) ? path + "/" + relativePath : relativePath);
+        }
+        return migrateOrCast(descriptor, fileDescriptorType, context);
     }
 
     /**
@@ -91,17 +77,20 @@ public abstract class AbstractFileResolver implements FileResolver {
      * migrating or just casting it.
      *
      * @param descriptor
-     *            The {@link FileDescriptor}.
+     *     The {@link FileDescriptor}.
      * @param type
-     *            The requested type.
+     *     The requested type.
      * @param context
-     *            The {@link ScannerContext}.
+     *     The {@link ScannerContext}.
      * @param <D>
-     *            The requested type.
+     *     The requested type.
      * @return The {@link FileDescriptor} that implements the requested type.
      */
     private <D extends FileDescriptor> D migrateOrCast(Descriptor descriptor, Class<D> type, ScannerContext context) {
-        return type.isAssignableFrom(descriptor.getClass()) ? type.cast(descriptor) : context.getStore().addDescriptorType(descriptor, type);
+        return type.isAssignableFrom(descriptor.getClass()) ?
+            type.cast(descriptor) :
+            context.getStore()
+                .addDescriptorType(descriptor, type);
     }
 
 }

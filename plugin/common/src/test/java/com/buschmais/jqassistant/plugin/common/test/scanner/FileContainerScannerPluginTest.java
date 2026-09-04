@@ -44,6 +44,9 @@ public class FileContainerScannerPluginTest {
     @Mock
     private Cache<String, FileDescriptor> cache;
 
+    @Mock
+    private FileResolver parentFileResolver;
+
     @BeforeEach
     public void stub() {
         when(scanner.getContext()).thenReturn(context);
@@ -56,6 +59,19 @@ public class FileContainerScannerPluginTest {
                 cache)
             .get(anyString(), any(Function.class));
         Deque<FileResolver> fileResolvers = new LinkedList<>();
+
+        doAnswer(invocation -> {
+            ArtifactFileDescriptor artifactFileDescriptor = mock(invocation.<Class<ArtifactFileDescriptor>>getArgument(1));
+            doReturn(new ArrayList<>()).when(artifactFileDescriptor)
+                .getProvides();
+            doReturn(new ArrayList<>()).when(artifactFileDescriptor)
+                .getContains();
+            doReturn(new ArrayList<>()).when(artifactFileDescriptor)
+                .getRequires();
+            return artifactFileDescriptor;
+        }).when(parentFileResolver)
+            .match(anyString(), eq(ArtifactFileDescriptor.class), any(ScannerContext.class));
+        fileResolvers.push(parentFileResolver);
 
         doAnswer(invocation -> {
             FileResolver resolver = (FileResolver) invocation.getArguments()[1];
@@ -84,10 +100,11 @@ public class FileContainerScannerPluginTest {
     @Test
     public void provides() throws IOException {
         TestFileContainerScannerPlugin scannerPlugin = new TestFileContainerScannerPlugin();
+
         ArtifactFileDescriptor artifactFileDescriptor = scannerPlugin.scan(List.of("A", "B", "B/C", "non-existing"), "/", DefaultScope.NONE, scanner);
         assertThat(artifactFileDescriptor).isNotNull();
 
-        verify(artifactFileDescriptor).setFileName("/");
+        verify(parentFileResolver).match("/", ArtifactFileDescriptor.class, context);
 
         List<FileDescriptor> provides = artifactFileDescriptor.getProvides();
         assertThat(provides.size()).isEqualTo(3);
@@ -114,7 +131,7 @@ public class FileContainerScannerPluginTest {
         ArtifactFileDescriptor artifactFileDescriptor = scannerPlugin.scan(Arrays.asList("A", "R"), "/", DefaultScope.NONE, scanner);
         assertThat(artifactFileDescriptor).isNotNull();
 
-        verify(artifactFileDescriptor).setFileName("/");
+        verify(parentFileResolver).match("/", ArtifactFileDescriptor.class, context);
 
         List<FileDescriptor> provides = artifactFileDescriptor.getProvides();
         assertThat(provides.size()).isEqualTo(2);
@@ -132,27 +149,18 @@ public class FileContainerScannerPluginTest {
     private static class TestFileContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, ArtifactFileDescriptor> {
 
         @Override
+        public Class<ArtifactFileDescriptor> getDescriptorType() {
+            return ArtifactFileDescriptor.class;
+        }
+
+        @Override
         public boolean accepts(Collection<String> item, String path, Scope scope) {
             return true;
         }
 
         @Override
-        protected ArtifactFileDescriptor getContainerDescriptor(Collection<String> container, ScannerContext scannerContext) {
-            ArtifactFileDescriptor artifactFileDescriptor = mock(ArtifactFileDescriptor.class);
-            when(artifactFileDescriptor.getProvides()).thenReturn(new ArrayList<>());
-            when(artifactFileDescriptor.getContains()).thenReturn(new ArrayList<>());
-            when(artifactFileDescriptor.getRequires()).thenReturn(new ArrayList<>());
-            return artifactFileDescriptor;
-        }
-
-        @Override
         protected Iterable<? extends String> getEntries(Collection<String> container) {
             return container;
-        }
-
-        @Override
-        protected String getContainerPath(Collection<String> container, String path) {
-            return path;
         }
 
         @Override
@@ -162,12 +170,10 @@ public class FileContainerScannerPluginTest {
 
         @Override
         protected void enterContainer(Collection<String> container, ArtifactFileDescriptor artifactFileDescriptor, ScannerContext scannerContext) {
-
         }
 
         @Override
         protected void leaveContainer(Collection<String> container, ArtifactFileDescriptor artifactFileDescriptor, ScannerContext scannerContext) {
-
         }
 
         @Override

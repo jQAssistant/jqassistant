@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.common.api.scanner.LocalFileSystemFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
@@ -20,7 +19,6 @@ public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResourc
 
     @Override
     protected void configure() {
-        getScannerContext().push(FileResolver.class, new LocalFileSystemFileResolver());
         filePatternMatcher = FilePatternMatcher.builder()
             .include(getStringProperty(PROPERTY_INCLUDE, null))
             .exclude(getStringProperty(PROPERTY_EXCLUDE, null))
@@ -28,15 +26,15 @@ public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResourc
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return filePatternMatcher.accepts(path);
+    public boolean accepts(FileResource item, String relativePath, Scope scope) throws IOException {
+        return filePatternMatcher.accepts(relativePath);
     }
 
     @Override
-    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileResource item, String relativePath, Scope scope, Scanner scanner) throws IOException {
         return scanner.getContext()
             .peek(FileResolver.class)
-            .match(path, FileDescriptor.class, scanner.getContext());
+            .match(relativePath, FileDescriptor.class, scanner.getContext());
     }
 
 }
