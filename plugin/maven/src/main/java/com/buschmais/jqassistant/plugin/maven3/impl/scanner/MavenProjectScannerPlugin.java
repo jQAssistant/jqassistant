@@ -110,7 +110,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             .getBasedir();
 
         FileResolver fileResolver = context.peek(FileResolver.class);
-        MavenRepositoryArtifactResolver artifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory, fileResolver);
+        MavenRepositoryArtifactResolver artifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory, fileResolver, context);
         context.push(ArtifactResolver.class, artifactResolver);
         try {
             MavenProjectDirectoryDescriptor projectDescriptor = scanClasses(project, scanner, mavenSession);

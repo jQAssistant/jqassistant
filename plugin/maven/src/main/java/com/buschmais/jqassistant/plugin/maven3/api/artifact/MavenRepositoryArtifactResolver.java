@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.PathNormalizer;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor;
 
@@ -26,9 +27,8 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
      *     The {@link FileResolver} to be used for looking up files in the
      *     local repository.
      */
-    public MavenRepositoryArtifactResolver(File repositoryRoot, FileResolver fileResolver) {
-        this.repositoryRoot = repositoryRoot.getAbsolutePath()
-            .replace('\\', '/');
+    public MavenRepositoryArtifactResolver(File repositoryRoot, FileResolver fileResolver, ScannerContext context) {
+        this.repositoryRoot = PathNormalizer.normalize(repositoryRoot, context);
         this.fileResolver = fileResolver;
     }
 
@@ -53,19 +53,15 @@ public class MavenRepositoryArtifactResolver implements ArtifactResolver {
         String type = coordinates.getType();
         StringBuilder fileName = new StringBuilder(repositoryRoot);
         fileName.append('/');
-        fileName.append(group.replace('.', '/'));
+        fileName.append(isNotEmpty(group) ? group.replace('.', '/') : "$");
         fileName.append('/');
         fileName.append(name);
-        if (isNotEmpty(version)) {
-            fileName.append('/');
-            fileName.append(version);
-        }
+        fileName.append('/');
+        fileName.append(isNotEmpty(version) ? version : "$");
         fileName.append('/');
         fileName.append(name);
-        if (isNotEmpty(version)) {
-            fileName.append('-');
-            fileName.append(version);
-        }
+        fileName.append("-")
+            .append(isNotEmpty(version) ? version : "$");
         if (isNotEmpty(classifier)) {
             fileName.append('-');
             fileName.append(classifier);
