@@ -92,8 +92,7 @@ public @interface Java {
                 return new SourceProvider<>() {
                     @Override
                     public String getName(ReadsDescriptor descriptor) {
-                        return descriptor.getMethod()
-                            .getSignature();
+                        return getSignatureWithLineNumber(descriptor.getMethod(), descriptor);
                     }
 
                     @Override
@@ -110,8 +109,7 @@ public @interface Java {
                 return new SourceProvider<>() {
                     @Override
                     public String getName(WritesDescriptor descriptor) {
-                        return descriptor.getMethod()
-                            .getSignature();
+                        return getSignatureWithLineNumber(descriptor.getMethod(), descriptor);
                     }
 
                     @Override
@@ -141,8 +139,7 @@ public @interface Java {
                 return new SourceProvider<>() {
                     @Override
                     public String getName(InvokesDescriptor descriptor) {
-                        return descriptor.getInvokingMethod()
-                            .getSignature();
+                        return getSignatureWithLineNumber(descriptor.getInvokingMethod(), descriptor);
                     }
 
                     @Override
@@ -229,6 +226,10 @@ public @interface Java {
                     ofNullable(descriptor.getLastLineNumber()));
             }
 
+        }
+
+        private static String getSignatureWithLineNumber(MethodDescriptor methodDescriptor, LineNumberDescriptor lineNumberDescriptor) {
+            return methodDescriptor.getSignature() + ":" + lineNumberDescriptor.getLineNumber();
         }
     }
 }

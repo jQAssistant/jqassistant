@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
-import java.util.List;
+import java.net.URL;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepositoryException;
@@ -16,7 +17,7 @@ public abstract class AbstractPluginRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginRepository.class);
 
-    protected final List<JqassistantPlugin> plugins;
+    protected final Map<URL, JqassistantPlugin> plugins;
 
     /*
      * The class loader to use for loading classes and resources.

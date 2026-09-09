@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
-import static com.buschmais.jqassistant.core.report.api.model.Result.Status.WARNING;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.FileUtils.readFileToString;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +42,7 @@ class JSONReportPluginIT extends AbstractPluginIT {
     @Test
     void emptyResult() throws RuleException {
         Result<Concept> result = applyConcept("json-it:EmptyResult");
-        assertThat(result.getStatus()).isEqualTo(WARNING);
+        assertThat(result.getStatus()).isEqualTo(SUCCESS);
         assertThat(result.getRows()).isEmpty();
         assertThat(new File(JSON_REPORT_DIRECTORY, "json-it_EmptyResult.json")).doesNotExist();
     }

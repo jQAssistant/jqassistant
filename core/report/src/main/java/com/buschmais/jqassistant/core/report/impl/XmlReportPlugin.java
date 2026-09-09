@@ -42,14 +42,16 @@ public class XmlReportPlugin implements ReportPlugin {
     // Properties
     public static final String PROPERTY_XML_REPORT_FILE = "xml.report.file";
 
-    public static final String PROPERTY_XML_REPORT_INCLUDE_HIDDEN_ROWS = "xml.report.include-hidden-rows";
-
     public static final String PROPERTY_XML_REPORT_TRANSFORM_TO_HTML = "xml.report.transform-to-html";
+
+    public static final String PROPERTY_XML_REPORT_HTML_FILE = "xml.report.html-file";
+
+    public static final String PROPERTY_XML_REPORT_INCLUDE_HIDDEN_ROWS = "xml.report.include-hidden-rows";
 
     // Default values
     public static final String DEFAULT_XML_REPORT_FILE = "jqassistant-report.xml";
 
-    public static final String REPORT_FILE_HTML = "jqassistant-report.html";
+    public static final String DEFAULT_XML_REPORT_HTML_FILE = "jqassistant-report.html";
 
     public static final String NAMESPACE_URL = "http://schema.jqassistant.org/report/v2.10";
 
@@ -62,6 +64,8 @@ public class XmlReportPlugin implements ReportPlugin {
     private ReportContext reportContext;
 
     private File xmlReportFile;
+
+    private File htmlReportFile;
 
     private boolean transformToHTML;
 
@@ -92,6 +96,9 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlReportFileProperty != null ? new File(xmlReportFileProperty) : new File(reportContext.getOutputDirectory(), DEFAULT_XML_REPORT_FILE);
         Object transformToHTMLProperty = properties.get(PROPERTY_XML_REPORT_TRANSFORM_TO_HTML);
         this.transformToHTML = transformToHTMLProperty == null || Boolean.parseBoolean(transformToHTMLProperty.toString());
+        String htmlReportFileProperty = (String) properties.get(PROPERTY_XML_REPORT_HTML_FILE);
+        this.htmlReportFile =
+            htmlReportFileProperty != null ? new File(htmlReportFileProperty) : new File(xmlReportFile.getParentFile(), DEFAULT_XML_REPORT_HTML_FILE);
         Object includeHiddenRows = properties.get(PROPERTY_XML_REPORT_INCLUDE_HIDDEN_ROWS);
         this.includeHiddenRows = includeHiddenRows == null || Boolean.parseBoolean((includeHiddenRows).toString());
     }
@@ -99,8 +106,9 @@ public class XmlReportPlugin implements ReportPlugin {
     @Override
     public void begin() throws ReportException {
         xml(() -> {
-            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(xmlReportFile), UTF_8);
-            XMLStreamWriter streamWriter = xmlOutputFactory.createXMLStreamWriter(writer);
+            xmlReportFile.getParentFile()
+                .mkdirs();
+            XMLStreamWriter streamWriter = xmlOutputFactory.createXMLStreamWriter(new BufferedWriter(new FileWriter(xmlReportFile)));
             xmlStreamWriter = new IndentingXMLStreamWriter(streamWriter);
             xmlStreamWriter.writeStartDocument(UTF_8.name(), "1.0");
             xmlStreamWriter.setDefaultNamespace(NAMESPACE_URL);
@@ -144,21 +152,20 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private void transformToHTML() throws ReportException {
-        File file = new File(xmlReportFile.getParentFile(), REPORT_FILE_HTML);
-        FileWriter writer;
-        try {
-            writer = new FileWriter(file);
+        htmlReportFile.getParentFile()
+            .mkdirs();
+        try (Writer writer = new BufferedWriter(new FileWriter(htmlReportFile))) {
+            log.info("Writing HTML report to '{}'.", htmlReportFile.getAbsolutePath());
+            javax.xml.transform.Result htmlTarget = new StreamResult(writer);
+            Source xmlSource = new StreamSource(xmlReportFile);
+            ReportTransformer transformer = new HtmlReportTransformer();
+            try {
+                transformer.toStandalone(xmlSource, htmlTarget);
+            } catch (ReportTransformerException e) {
+                throw new ReportException("Cannot transform report.", e);
+            }
         } catch (IOException e) {
-            throw new ReportException("Cannot create HTML report file.", e);
-        }
-        log.info("Writing HTML report to '{}'.", file.getAbsolutePath());
-        javax.xml.transform.Result htmlTarget = new StreamResult(writer);
-        Source xmlSource = new StreamSource(xmlReportFile);
-        ReportTransformer transformer = new HtmlReportTransformer();
-        try {
-            transformer.toStandalone(xmlSource, htmlTarget);
-        } catch (ReportTransformerException e) {
-            throw new ReportException("Cannot transform report.", e);
+            throw new ReportException("Cannot write HTML report file '" + htmlReportFile.getAbsolutePath() + "'.", e);
         }
     }
 
@@ -257,6 +264,7 @@ public class XmlReportPlugin implements ReportPlugin {
         xmlStreamWriter.writeStartElement("verificationResult");
         writeElementWithCharacters("success", Boolean.toString(verificationResult.isSuccess()));
         writeElementWithCharacters("rowCount", Integer.toString(verificationResult.getRowCount()));
+        writeElementWithCharacters("hiddenRowCount", Integer.toString(verificationResult.getHiddenRowCount()));
         xmlStreamWriter.writeEndElement(); // verificationResult
     }
 
@@ -282,13 +290,14 @@ public class XmlReportPlugin implements ReportPlugin {
                 if (!row.isHidden() || this.includeHiddenRows) {
                     xmlStreamWriter.writeStartElement("row");
                     xmlStreamWriter.writeAttribute("key", row.getKey());
-                    writeHidden(row);
                     for (Map.Entry<String, Column<?>> rowEntry : row.getColumns()
                         .entrySet()) {
                         String columnName = rowEntry.getKey();
                         Column<?> column = rowEntry.getValue();
                         writeColumn(columnName, column);
                     }
+                    writeStatus(row.getStatus()); // status
+                    writeHidden(row);
                     xmlStreamWriter.writeEndElement();
                 }
             }
@@ -335,8 +344,12 @@ public class XmlReportPlugin implements ReportPlugin {
      *     If a problem occurs.
      */
     private void writeStatus(Result.Status status) throws XMLStreamException {
-        writeElementWithCharacters("status", status.name()
+        xmlStreamWriter.writeStartElement("status");
+        xmlStreamWriter.writeAttribute("level", status.getLevel()
+            .toString());
+        xmlStreamWriter.writeCharacters(status.name()
             .toLowerCase());
+        xmlStreamWriter.writeEndElement();
     }
 
     /**
@@ -375,7 +388,7 @@ public class XmlReportPlugin implements ReportPlugin {
         xmlStreamWriter.writeEndElement(); // column
     }
 
-    private <P extends SourceLocation> void writeSourceLocation(SourceLocation<? extends SourceLocation<?>> sourceLocation) throws XMLStreamException {
+    private void writeSourceLocation(SourceLocation<? extends SourceLocation<?>> sourceLocation) throws XMLStreamException {
         xmlStreamWriter.writeAttribute("fileName", sourceLocation.getFileName());
         if (sourceLocation instanceof FileLocation) {
             FileLocation fileLocation = (FileLocation) sourceLocation;
@@ -499,38 +512,40 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private void writeHidden(Row row) throws XMLStreamException {
-        Optional<Hidden> hidden = row.getHidden();
-        if (hidden != null && hidden.isPresent()) {
+        Optional<Hidden> optionalHidden = row.getHidden();
+        if (optionalHidden != null && optionalHidden.isPresent()) {
+            Hidden hidden = optionalHidden.get();
             xmlStreamWriter.writeStartElement("hidden");
-            Optional<Hidden.Suppression> suppression = hidden.get()
-                .getSuppression();
-            if (suppression.isPresent()) {
-                xmlStreamWriter.writeStartElement("suppression");
-                if (StringUtils.isNotEmpty(suppression.get()
-                    .getSuppressReason())) {
-                    xmlStreamWriter.writeStartElement("reason");
-                    xmlStreamWriter.writeCharacters(suppression.get()
-                        .getSuppressReason());
-                    xmlStreamWriter.writeEndElement();
-                }
-                if (suppression.get()
-                    .getSuppressUntil() != null && StringUtils.isNotEmpty(suppression.get()
-                    .getSuppressUntil()
-                    .toString())) {
-                    xmlStreamWriter.writeStartElement("until");
-                    xmlStreamWriter.writeCharacters(suppression.get()
-                        .getSuppressUntil()
-                        .format(DateTimeFormatter.ISO_LOCAL_DATE));
-                    xmlStreamWriter.writeEndElement();
-                }
-                xmlStreamWriter.writeEndElement(); //suppression
-            }
-            if (hidden.get()
-                .getBaseline()
-                .isPresent()) {
-                xmlStreamWriter.writeEmptyElement("baseline");
-            }
+            writeBaseline(hidden);
+            writeSuppressions(hidden);
             xmlStreamWriter.writeEndElement(); //hidden
+        }
+    }
+
+    private void writeSuppressions(Hidden hidden) throws XMLStreamException {
+        List<Hidden.Suppression> suppressions = hidden.getSuppressions();
+        for (Hidden.Suppression suppression : suppressions) {
+            xmlStreamWriter.writeStartElement("suppression");
+            if (StringUtils.isNotEmpty(suppression.getReason())) {
+                xmlStreamWriter.writeStartElement("reason");
+                xmlStreamWriter.writeCharacters(suppression.getReason());
+                xmlStreamWriter.writeEndElement();
+            }
+            if (suppression.getUntil() != null && StringUtils.isNotEmpty(suppression.getUntil()
+                .toString())) {
+                xmlStreamWriter.writeStartElement("until");
+                xmlStreamWriter.writeCharacters(suppression.getUntil()
+                    .format(DateTimeFormatter.ISO_LOCAL_DATE));
+                xmlStreamWriter.writeEndElement();
+            }
+            xmlStreamWriter.writeEndElement(); //suppression
+        }
+    }
+
+    private void writeBaseline(Hidden hidden) throws XMLStreamException {
+        if (hidden.getBaseline()
+            .isPresent()) {
+            xmlStreamWriter.writeEmptyElement("baseline");
         }
     }
 

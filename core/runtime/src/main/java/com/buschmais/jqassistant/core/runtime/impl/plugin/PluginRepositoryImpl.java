@@ -89,6 +89,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     @Override
     public List<PluginInfo> getPluginInfos() {
         return pluginConfigurationReader.getPlugins()
+            .values()
             .stream()
             .map(plugin -> PluginInfoImpl.builder()
                 .id(plugin.getId())

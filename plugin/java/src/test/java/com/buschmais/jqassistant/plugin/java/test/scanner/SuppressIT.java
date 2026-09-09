@@ -1,13 +1,15 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
+import com.buschmais.jqassistant.core.report.api.model.SuppressionDescriptor;
 import com.buschmais.jqassistant.core.rule.api.model.Concept;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
+import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaSuppressDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.suppress.DeprecatedSuppress;
@@ -17,10 +19,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
-import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 class SuppressIT extends AbstractJavaPluginIT {
 
@@ -28,22 +28,28 @@ class SuppressIT extends AbstractJavaPluginIT {
     @ValueSource(classes = { Suppress.class, DeprecatedSuppress.class })
     void suppressAnnotationWithUntilAndReasonAttributes(Class<?> classToScan) {
         scanClasses(classToScan);
-        List<Map<String, Object>> rows = query("MATCH (type:Java:jQASuppress) return type").getRows();
+        List<NamedDescriptor> rows = query("MATCH (element:Java:jQASuppress) RETURN element").getColumn("element");
         assertThat(rows.size()).isEqualTo(3);
         store.beginTransaction();
-        assertThat(((JavaSuppressDescriptor) rows.get(0)
-            .get("type")).getSuppressReason()).isEqualTo("For testing this annotation");
-        assertThat(((JavaSuppressDescriptor) rows.get(0)
-            .get("type")).getSuppressUntil()).isNull();
-        assertThat(((JavaSuppressDescriptor) rows.get(1)
-            .get("type")).getSuppressReason()).isNull();
-        assertThat(((JavaSuppressDescriptor) rows.get(1)
-            .get("type")).getSuppressUntil()).isNull();
-        assertThat(((JavaSuppressDescriptor) rows.get(2)
-            .get("type")).getSuppressReason()).isEqualTo("Reason for suppression");
-        assertThat(((JavaSuppressDescriptor) rows.get(2)
-            .get("type")).getSuppressUntil()).isEqualTo("2075-08-13");
+        verifySuppressions(rows, classToScan.getSimpleName(), 1, "For testing this annotation", null);
+        verifySuppressions(rows, "value", 1, null, null);
+        verifySuppressions(rows, "doSomething", 3, "Reason for suppression", LocalDate.parse("2075-08-13"));
         store.commitTransaction();
+    }
+
+    private static void verifySuppressions(List<NamedDescriptor> namedDescriptors, String elementName, int expectedSuppressions, String expectedReason,
+        LocalDate expectedUntil) {
+        JavaSuppressDescriptor element = (JavaSuppressDescriptor) namedDescriptors.stream()
+            .filter(namedDescriptor -> namedDescriptor.getName()
+                .equals(elementName))
+            .findAny()
+            .orElseThrow();
+        List<SuppressionDescriptor> suppressions = element.getSuppressions();
+        assertThat(suppressions.size()).isEqualTo(expectedSuppressions);
+        for (SuppressionDescriptor suppression : suppressions) {
+            assertThat(suppression.getReason()).isEqualTo(expectedReason);
+            assertThat(suppression.getUntil()).isEqualTo(expectedUntil);
+        }
     }
 
     @ParameterizedTest
@@ -91,17 +97,21 @@ class SuppressIT extends AbstractJavaPluginIT {
     private void verifySuppress(Class<?> classToScan, String constraintId, String conceptId, String column) throws RuleException {
         scanClasses(classToScan);
         assertThat(validateConstraint(constraintId).getStatus()).isEqualTo(SUCCESS);
-        Result<Concept> supressedItems = applyConcept(conceptId);
-        assertThat(supressedItems.getStatus()).isEqualTo(SUCCESS);
+        Result<Concept> suppressedItems = applyConcept(conceptId);
+        assertThat(suppressedItems.getStatus()).isEqualTo(SUCCESS);
         store.beginTransaction();
-        assertThat(supressedItems.getRows()
+        assertThat(suppressedItems.getRows()
             .size()).isEqualTo(1);
-        Row row = supressedItems.getRows()
+        Row row = suppressedItems.getRows()
             .get(0);
         JavaSuppressDescriptor suppressDescriptor = (JavaSuppressDescriptor) row.getColumns()
             .get(column)
             .getValue();
-        assertThat(asList(suppressDescriptor.getSuppressIds()), hasItem(constraintId));
+        List<String> constraintIds = suppressDescriptor.getSuppressions()
+            .stream()
+            .map(SuppressionDescriptor::getRuleId)
+            .collect(toList());
+        assertThat(constraintIds).contains(constraintId);
         store.commitTransaction();
     }
 }

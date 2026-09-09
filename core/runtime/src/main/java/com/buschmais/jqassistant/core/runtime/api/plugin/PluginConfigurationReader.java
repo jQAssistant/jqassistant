@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.runtime.api.plugin;
 
-import java.util.List;
+import java.net.URL;
+import java.util.Map;
 
 import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
 
@@ -21,10 +22,10 @@ public interface PluginConfigurationReader {
     ClassLoader getClassLoader();
 
     /**
-     * Return the list of detected plugins.
+     * Return the {@link Map} of detected plugins, each one identified by a base {@link URL}.
      *
      * @return The plugins.
      */
-    List<JqassistantPlugin> getPlugins();
+    Map<URL, JqassistantPlugin> getPlugins();
 
 }

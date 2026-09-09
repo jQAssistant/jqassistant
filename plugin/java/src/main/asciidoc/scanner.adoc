@@ -706,6 +706,8 @@ public class ClassViolatingMyConstraint {
 }
 ----
 
+TIP: The `jQASuppress` annotation is repeatable.
+
 === @TechnicalDebt
 
 The annotation `com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt` can be used to document technical debt on the level of Java types and/or their members.
@@ -734,3 +736,4 @@ public class ClassWithTechnicalDebt {
 }
 ----
 
+TIP: The `TechnicalDebt` annotation is repeatable.

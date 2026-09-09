@@ -6,7 +6,7 @@ import java.util.Set;
 
 import lombok.*;
 
-import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.INFO;
 
 /**
  * Defines a concept which can be applied.
@@ -16,7 +16,7 @@ import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
 @Getter
 public class Concept extends AbstractExecutableRule {
 
-    public static final Severity DEFAULT_SEVERITY = MINOR;
+    public static final Severity DEFAULT_SEVERITY = INFO;
 
     /**
      * Determines the activation policy of providing concepts

@@ -7,10 +7,9 @@ import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.Rule;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import lombok.ToString;
+import lombok.*;
+
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * The result of an executed {@link Rule}.
@@ -27,11 +26,16 @@ public class Result<T extends ExecutableRule> {
     /**
      * The defined status for the result of a rule.
      */
+    // TODO Consider moving this to a separate class as this enum is also used to report the status of a row.
+    @Getter
+    @RequiredArgsConstructor(access = PRIVATE)
     public enum Status {
-        SUCCESS,
-        FAILURE,
-        WARNING,
-        SKIPPED
+        FAILURE(0),
+        WARNING(1),
+        SUCCESS(2),
+        SKIPPED(3);
+
+        private final Integer level;
     }
 
     /**

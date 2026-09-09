@@ -1,6 +1,11 @@
 package com.buschmais.jqassistant.core.runtime.impl.plugin;
 
-import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.spi.AnalyzerPluginRepository;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
@@ -90,7 +95,7 @@ class PluginRepositoryImplTest {
     }
 
     @Test
-    void allPluginsKnownToThePluginReaderFormThePluginOverview() {
+    void allPluginsKnownToThePluginReaderFormThePluginOverview() throws MalformedURLException {
         PluginConfigurationReader pluginConfigurationReader = Mockito.mock(PluginConfigurationReader.class);
 
         JqassistantPlugin pluginA = Mockito.mock(JqassistantPlugin.class);
@@ -112,7 +117,8 @@ class PluginRepositoryImplTest {
         doReturn("C").when(pluginC)
             .getName();
 
-        doReturn(Arrays.asList(pluginA, pluginB, pluginC)).when(pluginConfigurationReader)
+        doReturn(Map.of(new URL("file://1/META-INF/jqassistant-plugin.xml"), pluginA, new URL("file://2/META-INF/jqassistant-plugin.xml"), pluginB,
+            new URL("file://3/META-INF/jqassistant-plugin.xml"), pluginC)).when(pluginConfigurationReader)
             .getPlugins();
         doReturn(PluginRepositoryImplTest.class.getClassLoader()).when(pluginConfigurationReader)
             .getClassLoader();

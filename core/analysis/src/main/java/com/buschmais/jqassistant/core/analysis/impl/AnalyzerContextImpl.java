@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.baseline.BaselineManager;
@@ -72,51 +71,67 @@ class AnalyzerContextImpl implements AnalyzerContext {
     }
 
     @Override
-    public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn) {
+    public VerificationResult verifyRow(ExecutableRule<?> executableRule, List<String> columnNames, Map<String, Column<?>> columns) throws RuleException {
+        Verification verification = getVerification(executableRule);
+        VerificationStrategy verificationStrategy = getVerificationStrategy(verification);
+        return verificationStrategy.verifyColumns(executableRule, verification, columnNames, columns);
+    }
+
+    @Override
+    public Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn, Result.Status status) {
         if (rule.getReport() != null) {
-            Hidden hidden = Hidden.builder()
-                .build();
+            Hidden.HiddenBuilder hiddenBuilder = Hidden.builder();
             String rowKey = ReportHelper.getRowKey(rule, columns);
             if (baselineManager.isExisting(rule, rowKey, columns)) {
-                hidden.setBaseline(Optional.of(Hidden.Baseline.builder()
+                hiddenBuilder.baseline(Optional.of(Hidden.Baseline.builder()
                     .build()));
             }
-            for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
-                String columnName = entry.getKey();
-                Column<?> column = entry.getValue();
-                Object columnValue = column.getValue();
-                if (columnValue != null && Suppress.class.isAssignableFrom(columnValue.getClass())) {
-                    Suppress suppress = (Suppress) columnValue;
-                    String suppressColumn = suppress.getSuppressColumn();
-                    if ((suppressColumn != null && suppressColumn.equals(columnName)) || (primaryColumn.isPresent() && primaryColumn.get()
-                        .equals(columnName))) {
-                        String[] suppressIds = suppress.getSuppressIds();
-                        if (validateSuppressUntilDate(suppress.getSuppressUntil())) {
-                            for (String suppressId : suppressIds) {
-                                if (rule.getId()
-                                    .equals(suppressId)) {
-                                    Hidden.Suppression suppression = Hidden.Suppression.builder()
-                                        .build();
-                                    if (StringUtils.isNotEmpty(suppress.getSuppressReason())) {
-                                        suppression.setSuppressReason(suppress.getSuppressReason());
-                                    }
-                                    if (suppress.getSuppressUntil() != null) {
-                                        suppression.setSuppressUntil(suppress.getSuppressUntil());
-                                    }
-                                    hidden.setSuppression(Optional.of(suppression));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (hidden.getSuppression()
-                .isPresent() || hidden.getBaseline()
+            evaluateSuppressions(rule, columns, primaryColumn, hiddenBuilder);
+            Hidden hidden = hiddenBuilder.build();
+            if (!hidden.getSuppressions()
+                .isEmpty() || hidden.getBaseline()
                 .isPresent()) {
-                return ReportHelper.toRow(rule, columns, Optional.of(hidden));
+                return ReportHelper.toRow(rule, columns, status, Optional.of(hidden));
             }
         }
-        return ReportHelper.toRow(rule, columns, empty());
+        return ReportHelper.toRow(rule, columns, status, empty());
+    }
+
+    private void evaluateSuppressions(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn,
+        Hidden.HiddenBuilder hiddenBuilder) {
+        for (Map.Entry<String, Column<?>> entry : columns.entrySet()) {
+            String columnName = entry.getKey();
+            Column<?> column = entry.getValue();
+            Object columnValue = column.getValue();
+            if (columnValue != null && SuppressDescriptor.class.isAssignableFrom(columnValue.getClass())) {
+                SuppressDescriptor suppressDescriptor = (SuppressDescriptor) columnValue;
+                for (SuppressionDescriptor suppressionDescriptor : suppressDescriptor.getSuppressions()) {
+                    evaluateSuppression(rule, columnName, primaryColumn, suppressionDescriptor, hiddenBuilder);
+                }
+            }
+        }
+    }
+
+    private void evaluateSuppression(ExecutableRule<?> rule, String columnName, Optional<String> primaryColumn, SuppressionDescriptor suppressionDescriptor,
+        Hidden.HiddenBuilder hiddenBuilder) {
+        String suppressRuleId = suppressionDescriptor.getRuleId();
+        String suppressColumn = suppressionDescriptor.getColumn();
+        String suppressReason = suppressionDescriptor.getReason();
+        LocalDate suppressUntil = suppressionDescriptor.getUntil();
+        if (suppressRuleId.equals(rule.getId())  //
+            && ((suppressColumn != null && suppressColumn.equals(columnName)) || (primaryColumn.isPresent() //
+            && primaryColumn.get()
+            .equals(columnName))) //
+            && validateSuppressUntilDate(suppressUntil)) {
+            Hidden.Suppression.SuppressionBuilder suppressionBuilder = Hidden.Suppression.builder();
+            if (StringUtils.isNotEmpty(suppressReason)) {
+                suppressionBuilder.reason(suppressReason);
+            }
+            if (suppressUntil != null) {
+                suppressionBuilder.until(suppressUntil);
+            }
+            hiddenBuilder.suppression(suppressionBuilder.build());
+        }
     }
 
     public boolean validateSuppressUntilDate(LocalDate until) {
@@ -130,20 +145,26 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     @Override
     public <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException {
-        Verification verification = executable.getVerification();
-        if (verification == null) {
-            log.debug("Using default verification for '{}'.", executable);
-            verification = DEFAULT_VERIFICATION;
-        }
+        VerificationStrategy strategy = getVerificationStrategy(getVerification(executable));
+        return strategy.verifyRows(executable, getVerification(executable), columnNames, rows);
+    }
+
+    private VerificationStrategy getVerificationStrategy(Verification verification) throws RuleException {
         VerificationStrategy strategy = verificationStrategies.get(verification.getClass());
         if (strategy == null) {
             throw new RuleException("Result verification not supported: " + verification.getClass()
                 .getName());
         }
-        List<Row> filteredRows = rows.stream()
-            .filter(row -> !row.isHidden())
-            .collect(Collectors.toList());
-        return strategy.verify(executable, verification, columnNames, filteredRows);
+        return strategy;
+    }
+
+    private static <T extends ExecutableRule<?>> Verification getVerification(T executable) {
+        Verification verification = executable.getVerification();
+        if (verification == null) {
+            log.debug("Using default verification for '{}'.", executable);
+            verification = DEFAULT_VERIFICATION;
+        }
+        return verification;
     }
 
     @Override

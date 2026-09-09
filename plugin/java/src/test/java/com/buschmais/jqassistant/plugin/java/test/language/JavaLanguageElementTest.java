@@ -59,7 +59,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         doReturn(42).when(descriptor)
             .getLineNumber();
 
-        verify(descriptor, ReadField, "void doSomething()", "/com/buschmais/Test.java", of(42), of(42));
+        verify(descriptor, ReadField, "void doSomething():42", "/com/buschmais/Test.java", of(42), of(42));
     }
 
     @Test
@@ -75,7 +75,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         doReturn(42).when(descriptor)
             .getLineNumber();
 
-        verify(descriptor, WriteField, "void doSomething()", "/com/buschmais/Test.java", of(42), of(42));
+        verify(descriptor, WriteField, "void doSomething():42", "/com/buschmais/Test.java", of(42), of(42));
     }
 
     @Test
@@ -90,7 +90,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
             .getSignature();
         when(descriptor.getLineNumber()).thenReturn(42);
 
-        verify(descriptor, MethodInvocation, "void doSomething()", "/com/buschmais/Test.java", of(42), of(42));
+        verify(descriptor, MethodInvocation, "void doSomething():42", "/com/buschmais/Test.java", of(42), of(42));
     }
 
     @Test

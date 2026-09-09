@@ -11,8 +11,10 @@ import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.rule.api.model.Severity;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Optional.empty;
 
 /**
@@ -45,6 +47,8 @@ public interface AnalyzerContext {
      */
     <T> Column<?> toColumn(T value);
 
+    VerificationResult verifyRow(ExecutableRule<?> executableRule, List<String> columnNames, Map<String, Column<?>> columns) throws RuleException;
+
     /**
      * Create a result {@link Row} from a map of columns.
      * Checks for suppression and sets the according values.
@@ -56,8 +60,9 @@ public interface AnalyzerContext {
      * @return The {@link Row}
      */
     @Deprecated
+    @ToBeRemovedInVersion(major = 3, minor = 0)
     default Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns) {
-        return toRow(rule, columns, empty());
+        return toRow(rule, columns, empty(), SUCCESS);
     }
 
     /**
@@ -72,7 +77,7 @@ public interface AnalyzerContext {
      *     The name of the primary column
      * @return The {@link Row}
      */
-    Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn);
+    Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<String> primaryColumn, Result.Status status);
 
     /**
      * Verifies the rows returned by a cypher query for an executable.
@@ -90,6 +95,7 @@ public interface AnalyzerContext {
      *     If no valid verification strategy can be found.
      */
     <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException;
+
 
     /**
      * Get the status of an executed rule.
@@ -112,4 +118,5 @@ public interface AnalyzerContext {
      * @return The optional primary columns name.
      */
     Optional<String> getPrimaryColumn(ExecutableRule<?> rule, List<String> columnNames);
+
 }

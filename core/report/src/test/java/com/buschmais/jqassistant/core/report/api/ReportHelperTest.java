@@ -172,18 +172,21 @@ class ReportHelperTest {
         Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, SUCCESS, INFO, singletonList(Row.builder()
             .key("1")
             .columns(infoRow)
+            .status(SUCCESS)
             .build()));
         Map<String, Column<?>> minorRow = new HashMap<>();
         minorRow.put("MinorElement", toColumn("MinorValue"));
         Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, WARNING, MINOR, singletonList(Row.builder()
             .key("2")
             .columns(minorRow)
+            .status(FAILURE)
             .build()));
         Map<String, Column<?>> majorRow = new HashMap<>();
         majorRow.put("MajorElement", toColumn("MajorValue"));
         Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, FAILURE, MAJOR, singletonList(Row.builder()
             .key("3")
             .columns(majorRow)
+            .status(FAILURE)
             .build()));
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:infoConstraint", infoConstraintResult);
@@ -215,10 +218,12 @@ class ReportHelperTest {
         Row visibleRow = Row.builder()
             .key("1")
             .columns(Map.of("C", toColumn("Visible")))
+            .status(FAILURE)
             .build();
         Row hiddenRow = Row.builder()
             .key("2")
             .columns(Map.of("C", toColumn("Hidden")))
+            .status(FAILURE)
             .hidden(empty())
             .build();
         Result<Constraint> result = mockResult("test:Constraint", Constraint.class, FAILURE, MAJOR, List.of(visibleRow, hiddenRow));
@@ -246,18 +251,21 @@ class ReportHelperTest {
         Result<Constraint> infoConstraintResult = mockResult("test:infoConstraint", Constraint.class, SUCCESS, INFO, MINOR, singletonList(Row.builder()
             .key("1")
             .columns(infoRow)
+            .status(SUCCESS)
             .build()));
         Map<String, Column<?>> minorRow = new HashMap<>();
         minorRow.put("MinorElement", toColumn("MinorValue"));
         Result<Constraint> minorConstraintResult = mockResult("test:minorConstraint", Constraint.class, WARNING, MINOR, MAJOR, singletonList(Row.builder()
             .key("2")
             .columns(minorRow)
+            .status(WARNING)
             .build()));
         Map<String, Column<?>> majorRow = new HashMap<>();
         majorRow.put("MajorElement", toColumn("MajorValue"));
         Result<Constraint> majorConstraintResult = mockResult("test:majorConstraint", Constraint.class, FAILURE, MAJOR, CRITICAL, singletonList(Row.builder()
             .key("3")
             .columns(majorRow)
+            .status(FAILURE)
             .build()));
         Map<String, Result<Constraint>> constraintResults = new HashMap<>();
         constraintResults.put("test:infoConstraint", infoConstraintResult);

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jqassistant-baseline xmlns="http://schema.jqassistant.org/baseline/v2.4">
+    <constraint id="java:TechnicalDebt">
+        <row key="6208402a71f65f5775d52de33d2484269644d31d14a1911156e5126a3211dbb3">
+            <column name="Description">technicalDebt:Field with debts</column>
+            <column name="Issue">859</column>
+            <column name="Member">debtField</column>
+            <column name="Priority">0</column>
+            <column name="Type">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</column>
+        </row>
+        <row key="63c437e80c27b62c16073dfd2e8101c5916ff7b5fb9f51e6d81359f7affff3e5">
+            <column name="Description">technicalDebt:Class with defaults</column>
+            <column name="Issue"></column>
+            <column name="Member"></column>
+            <column name="Priority">1</column>
+            <column name="Type">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</column>
+        </row>
+        <row key="851dce24f9f189ee4bb707430073b6fcf7a378979b0d43633348ca6474beb9c1">
+            <column name="Description">technicalDebt:Method with debts</column>
+            <column name="Issue">3</column>
+            <column name="Member">doSomething</column>
+            <column name="Priority">2</column>
+            <column name="Type">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</column>
+        </row>
+        <row key="ec903743db1098548f70e4110d5b3b3c831d5ae3354b8af84a0bfe05e3a20223">
+            <column name="Description">technicalDebt:Class with debts</column>
+            <column name="Issue">284</column>
+            <column name="Member"></column>
+            <column name="Priority">1</column>
+            <column name="Type">com.buschmais.jqassistant.plugin.java.test.set.scanner.technicaldebt.TechnicalDebtExample</column>
+        </row>
+    </constraint>
+</jqassistant-baseline>

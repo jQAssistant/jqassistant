@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.core.rule.api.model.Verification;
 
 public abstract class AbstractMinMaxVerificationStrategy<T extends Verification> implements VerificationStrategy<T> {
 
-    protected final <E extends ExecutableRule> VerificationResult getStatus(E executable, int value, Integer min, Integer max) {
+    protected final <E extends ExecutableRule> VerificationResult getStatus(E executable, int value, int hiddenValue, Integer min, Integer max) {
         if (min == null && max == null) {
             if (executable instanceof Concept) {
                 min = 1;
@@ -21,6 +21,7 @@ public abstract class AbstractMinMaxVerificationStrategy<T extends Verification>
         return VerificationResult.builder()
             .success(successful)
             .rowCount(value)
+            .hiddenRowCount(hiddenValue)
             .build();
     }
 }
