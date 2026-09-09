@@ -43,7 +43,7 @@ class JSONFileScannerPluginScansAllInvalidJSONFilesOfTestSuiteIT extends Abstrac
         assertThat(file).describedAs("Scanner must be able to return a descriptor.")
             .isNotNull();
         assertThat(file.getFileName()).isNotNull();
-        assertThat(file.getFileName()).endsWith(PathNormalizer.normalize(pathToJSONFile, scanner.getContext()));
+        assertThat(file.getFileName()).endsWith(PathNormalizer.normalizeFileName(pathToJSONFile, scanner.getContext()));
         assertThat(file.isValid()).isFalse();
     }
 }

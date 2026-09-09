@@ -154,8 +154,13 @@ public class FileContainerScannerPluginTest {
         }
 
         @Override
-        public boolean accepts(Collection<String> item, String path, Scope scope) {
+        public boolean accepts(Collection<String> item, String location, Scope scope) {
             return true;
+        }
+
+        @Override
+        protected String getContainerPath(Collection<String> container, String location, ScannerContext context) {
+            return "";
         }
 
         @Override
@@ -165,7 +170,7 @@ public class FileContainerScannerPluginTest {
 
         @Override
         protected String getRelativePath(Collection<String> container, String entry) {
-            return "/" + entry;
+            return entry;
         }
 
         @Override

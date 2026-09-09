@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.FileScannerPlugin.LocalFileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalFileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;

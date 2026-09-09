@@ -42,20 +42,20 @@ public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor> 
     }
 
     @Override
-    public  D scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public  D scan(FileResource item, String location, Scope scope, Scanner scanner) throws IOException {
         FileDescriptor fileDescriptor = scanner.getContext().getCurrentDescriptor();
         Class<D> descriptorType = getDescriptorType();
         D xmlFileDescriptor = scanner.getContext().getStore().addDescriptorType(fileDescriptor, descriptorType);
         scanner.getContext().push(XmlDocumentDescriptor.class, xmlFileDescriptor);
         try (InputStream stream = item.createStream()) {
-            scanner.scan(new StreamSource(stream), path, scope);
+            scanner.scan(new StreamSource(stream), location, scope);
         } finally {
             scanner.getContext().pop(XmlDocumentDescriptor.class);
         }
         if (!xmlFileDescriptor.isXmlWellFormed()) {
-            LOGGER.warn("XML content is not well-formed for item '{}', skipping.", path);
+            LOGGER.warn("XML content is not well-formed for item '{}', skipping.", location);
         } else {
-            return scan(item, xmlFileDescriptor, path, scope, scanner);
+            return scan(item, xmlFileDescriptor, location, scope, scanner);
         }
         return xmlFileDescriptor;
     }

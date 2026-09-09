@@ -43,7 +43,7 @@ class JSONFileScannerPluginScansAllValidJSONFilesOfTestSuiteIT extends AbstractP
         assertThat(file).describedAs("Scanner must be able to scan the resource and to return a descriptor.")
                         .isNotNull();
         assertThat(file.getFileName()).isNotNull();
-        assertThat(file.getFileName()).isEqualTo(PathNormalizer.normalize(pathToJSONFile, scanner.getContext()));
+        assertThat(file.getFileName()).isEqualTo(PathNormalizer.normalizeFileName(pathToJSONFile, scanner.getContext()));
         assertThat(file.isValid()).isTrue();
     }
 }

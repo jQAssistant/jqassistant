@@ -40,7 +40,7 @@ public abstract class NestedTestItemScannerPlugin implements ScannerPlugin<TestI
     }
 
     @Override
-    public NestedTestItemDescriptor scan(TestItem item, String path, Scope scope, Scanner scanner) {
+    public NestedTestItemDescriptor scan(TestItem item, String location, Scope scope, Scanner scanner) {
         assertThat((DependentTestItemDescriptor) scanner.getContext()
             .getCurrentDescriptor()).isInstanceOf(DependentTestItemDescriptor.class);
         return mock(NestedTestItemDescriptor.class);

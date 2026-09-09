@@ -20,16 +20,16 @@ import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSP
 public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<DirectoryResource, PackageDescriptor> {
 
     @Override
-    public boolean accepts(DirectoryResource item, String path, Scope scope) throws IOException {
-        return (CLASSPATH.equals(scope) && path != null && !path.startsWith("/META-INF"));
+    public boolean accepts(DirectoryResource item, String location, Scope scope) throws IOException {
+        return (CLASSPATH.equals(scope) && location != null && !location.startsWith("/META-INF"));
     }
 
     @Override
-    public PackageDescriptor scan(DirectoryResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public PackageDescriptor scan(DirectoryResource item, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         DirectoryDescriptor directoryDescriptor = context.getCurrentDescriptor();
         PackageDescriptor descriptor = context.getStore().addDescriptorType(directoryDescriptor, PackageDescriptor.class);
-        String packageName = path.substring(1).replaceAll("/", ".");
+        String packageName = location.substring(1).replaceAll("/", ".");
         String name;
         int separatorIndex = packageName.lastIndexOf('.');
         if (separatorIndex != -1) {

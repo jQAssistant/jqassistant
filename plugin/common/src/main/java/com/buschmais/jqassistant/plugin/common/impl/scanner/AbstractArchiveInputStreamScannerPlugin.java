@@ -35,7 +35,7 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
     protected abstract E getNextEntry(S container) throws IOException;
 
     @Override
-    public boolean accepts(S item, String path, Scope scope) throws IOException {
+    public boolean accepts(S item, String location, Scope scope) throws IOException {
         return true;
     }
 
@@ -77,9 +77,9 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
         String name = entry.getName();
         if (entry.isDirectory()) {
             // strip trailing slash from directory entries
-            return "/" + name.substring(0, name.length() - 1);
+            return name.substring(0, name.length() - 1);
         } else {
-            return "/" + name;
+            return name;
         }
     }
 

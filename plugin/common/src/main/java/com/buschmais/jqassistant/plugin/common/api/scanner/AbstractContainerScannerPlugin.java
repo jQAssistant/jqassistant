@@ -32,11 +32,11 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
     @Override
-    public final D scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
+    public final D scan(I container, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         FileResolver parentFileResolver = context.peek(FileResolver.class);
-        String containerPath = getContainerPath(container, path, context);
-        D containerDescriptor = parentFileResolver.match(containerPath, getDescriptorType(), context);
+        String containerPath = getContainerPath(container, location, context);
+        D containerDescriptor = parentFileResolver.match("/" + containerPath, getDescriptorType(), context);
         LOGGER.info("Entering {}", containerPath);
         ContainerFileResolver fileResolver = new ContainerFileResolver(containerPath, context, containerDescriptor);
         context.push(FileResolver.class, fileResolver);
@@ -48,7 +48,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
                 String relativeEntryPath = getRelativePath(container, entry);
                 try (Resource resource = getEntry(container, entry)) {
                     LOGGER.debug("Scanning {}", relativeEntryPath);
-                    FileDescriptor descriptor = scanner.scan(resource, relativeEntryPath, scope);
+                    FileDescriptor descriptor = scanner.scan(resource, "/" + relativeEntryPath, scope);
                     if (descriptor != null) {
                         fileResolver.put(relativeEntryPath, descriptor);
                     }
@@ -94,18 +94,19 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
     protected abstract Iterable<? extends E> getEntries(I container) throws IOException;
 
     /**
-     * Return the normalized path to the container.
+     * Return the normalized relative location to the container.
      *
      * @param container
      *     The container.
-     * @param path
-     *     The provided path.
+     * @param location
+     *     The provided location.
      * @param context
      *     The {@link ScannerContext}
-     * @return The normalized path.
+     * @return The normalized location.
      */
-    protected String getContainerPath(I container, String path, ScannerContext context) {
-        return path;
+    protected String getContainerPath(I container, String location, ScannerContext context) {
+        // default implemenation: derive container path from the location which is a file name and comes with a leading "/"
+        return location.substring(1);
     }
 
     /**

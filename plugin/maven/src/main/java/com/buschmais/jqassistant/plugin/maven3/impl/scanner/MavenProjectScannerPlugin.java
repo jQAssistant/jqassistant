@@ -95,12 +95,12 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     }
 
     @Override
-    public boolean accepts(MavenProject item, String path, Scope scope) {
+    public boolean accepts(MavenProject item, String location, Scope scope) {
         return true;
     }
 
     @Override
-    public MavenProjectDirectoryDescriptor scan(MavenProject project, String projectPath, Scope scope, Scanner scanner) {
+    public MavenProjectDirectoryDescriptor scan(MavenProject project, String location, Scope scope, Scanner scanner) {
         ScannerContext context = scanner.getContext();
         MavenSession mavenSession = context.peek(MavenSession.class);
 
@@ -229,7 +229,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      */
     private <T extends MavenArtifactFileDescriptor> T getMavenArtifactDescriptor(String directory, Coordinates coordinates, Class<T> type,
         ScannerContext context) {
-        String path = PathNormalizer.normalize(new File(directory), context);
+        String path = PathNormalizer.normalizeFileName(new File(directory), context);
         T artifactFileDescriptor = context.peek(FileResolver.class)
             .require(path, type, context);
         MavenArtifactHelper.setCoordinates(artifactFileDescriptor, coordinates);
@@ -254,7 +254,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             File basedir = project.getBasedir();
             if (basedir != null) {
                 projectDescriptor = scannerContext.peek(FileResolver.class)
-                    .match(PathNormalizer.normalize(basedir, scannerContext), MavenProjectDirectoryDescriptor.class, scannerContext);
+                    .match(PathNormalizer.normalizeFileName(basedir, scannerContext), MavenProjectDirectoryDescriptor.class, scannerContext);
 
             } else {
                 projectDescriptor = store.create(expectedType);

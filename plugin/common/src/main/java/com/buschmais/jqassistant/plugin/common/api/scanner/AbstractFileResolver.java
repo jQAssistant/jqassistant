@@ -61,13 +61,17 @@ public abstract class AbstractFileResolver implements FileResolver {
                 }
                 fileDescriptor = context.getStore()
                     .create(fileDescriptorType);
-                // TODO fileName currently starts with a leading "/", to be changed in 3.x
                 fileDescriptor.setFileName(fileName);
                 return fileDescriptor;
             });
         if (isMatch) {
-            String relativePath = fileName.substring(1);
-            descriptor.setPath(isNotEmpty(path) ? path + "/" + relativePath : relativePath);
+            if (isNotEmpty(path)) {
+                descriptor.setPath(path + fileName);
+            } else {
+                // if no parent path is present then use the given file name but strip the leading slash
+                // TODO matching/requiring files should be based on relative paths, current file name based matching is kept in 2.x for compatibility reasons
+                descriptor.setPath(fileName.startsWith("/") ? fileName.substring(1) : fileName);
+            }
         }
         return migrateOrCast(descriptor, fileDescriptorType, context);
     }

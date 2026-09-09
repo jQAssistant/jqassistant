@@ -39,11 +39,11 @@ public abstract class AbstractUriScannerPlugin<R> extends AbstractScannerPlugin<
     }
 
     @Override
-    public final URIDescriptor scan(URI uri, String path, Scope scope, Scanner scanner) throws IOException {
+    public final URIDescriptor scan(URI uri, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         return getResource(uri, context).map(resource -> {
                 log.debug("Resolved URI '{}' to resource '{}'.", uri, resource);
-                Descriptor descriptor = scanner.scan(resource, path, scope);
+                Descriptor descriptor = scanner.scan(resource, location, scope);
                 if (descriptor != null) {
                     URIDescriptor uriDescriptor = context.getStore()
                         .addDescriptorType(descriptor, URIDescriptor.class);

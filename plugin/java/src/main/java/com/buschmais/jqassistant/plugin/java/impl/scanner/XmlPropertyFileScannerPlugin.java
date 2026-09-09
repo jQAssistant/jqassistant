@@ -30,13 +30,13 @@ public class XmlPropertyFileScannerPlugin extends AbstractScannerPlugin<FileReso
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlPropertyFileScannerPlugin.class);
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return path.toLowerCase()
-            .endsWith(".xml") && XMLFileFilter.rootElementMatches(item, path, "properties");
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        return location.toLowerCase()
+            .endsWith(".xml") && XMLFileFilter.rootElementMatches(item, location, "properties");
     }
 
     @Override
-    public PropertyFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public PropertyFileDescriptor scan(FileResource item, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
@@ -46,7 +46,7 @@ public class XmlPropertyFileScannerPlugin extends AbstractScannerPlugin<FileReso
         try (InputStream stream = item.createStream()) {
             properties.loadFromXML(stream);
         } catch (IllegalArgumentException e) {
-            LOGGER.warn("Cannot load properties from '{}': {}", path, e.getMessage());
+            LOGGER.warn("Cannot load properties from '{}': {}", location, e.getMessage());
         }
 
         for (String name : properties.stringPropertyNames()) {

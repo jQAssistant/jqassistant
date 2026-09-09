@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.ContainerFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.FileScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalFileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -110,7 +110,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
             List<FileDescriptor> result = new ArrayList<>();
             for (String resource : resources) {
                 File file = new File(directory, resource);
-                FileDescriptor fileDescriptor = scanner.scan(new FileScannerPlugin.LocalFileResource(file), resource, scope);
+                FileDescriptor fileDescriptor = scanner.scan(new LocalFileResource(file), resource, scope);
                 result.add(fileDescriptor);
             }
             return result;

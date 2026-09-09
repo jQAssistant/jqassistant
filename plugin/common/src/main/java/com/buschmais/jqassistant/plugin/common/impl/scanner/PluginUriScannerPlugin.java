@@ -25,7 +25,7 @@ public class PluginUriScannerPlugin extends AbstractUriScannerPlugin<URL> {
     }
 
     @Override
-    public boolean accepts(URI uri, String path, Scope scope) throws IOException {
+    public boolean accepts(URI uri, String location, Scope scope) throws IOException {
         return JQASSISTANT_PLUGIN.equalsIgnoreCase(uri.getScheme());
     }
 

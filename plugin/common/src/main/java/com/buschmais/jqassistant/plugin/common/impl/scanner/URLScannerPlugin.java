@@ -31,12 +31,12 @@ import org.apache.commons.lang3.StringUtils;
 public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor> {
 
     @Override
-    public boolean accepts(URL item, String path, Scope scope) throws IOException {
+    public boolean accepts(URL item, String location, Scope scope) throws IOException {
         return scope.equals(DefaultScope.NONE);
     }
 
     @Override
-    public FileDescriptor scan(final URL url, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(final URL url, String location, Scope scope, Scanner scanner) throws IOException {
         try (FileResource fileResource = new BufferedFileResource(new AbstractVirtualFileResource() {
             @Override
             public InputStream createStream() throws IOException {
@@ -53,9 +53,9 @@ public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
             protected String getRelativePath() throws IOException {
                 URI uri;
                 try {
-                    uri = new URI(path);
+                    uri = new URI(location);
                 } catch (URISyntaxException e) {
-                    throw new IOException("Cannot create URI from " + path, e);
+                    throw new IOException("Cannot create URI from " + location, e);
                 }
                 String uriPath = uri.getPath();
                 return uriPath != null ? uriPath : uri.getSchemeSpecificPart();

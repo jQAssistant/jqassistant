@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.api.model;
 
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.api.annotation.Abstract;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 
@@ -8,7 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  */
 @Abstract
 @Label("Path")
-public interface PathDescriptor {
+public interface PathDescriptor extends Descriptor {
 
     /**
      * Return the path relative to the project root.

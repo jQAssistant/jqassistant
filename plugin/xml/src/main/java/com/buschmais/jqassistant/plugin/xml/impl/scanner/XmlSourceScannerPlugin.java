@@ -44,12 +44,12 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
     }
 
     @Override
-    public boolean accepts(Source item, String path, Scope scope) throws IOException {
+    public boolean accepts(Source item, String location, Scope scope) throws IOException {
         return true;
     }
 
     @Override
-    public XmlDocumentDescriptor scan(Source item, String path, Scope scope, Scanner scanner) throws IOException {
+    public XmlDocumentDescriptor scan(Source item, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
         XmlElementDescriptor parentElement = null;
@@ -88,7 +88,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
             }
             documentDescriptor.setXmlWellFormed(true);
         } catch (XMLStreamException e) {
-            LOGGER.warn("Cannot parse document '" + path + "': " + e.getMessage());
+            LOGGER.warn("Cannot parse document '" + location + "': " + e.getMessage());
             if (documentDescriptor != null) {
                 documentDescriptor.setXmlWellFormed(false);
             }

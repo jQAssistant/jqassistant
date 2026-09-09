@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * Defines the interface for a scanner plugin.
- * 
+ *
  * @param <I>
  *            The item type accepted by the plugin.
  */
@@ -18,15 +18,15 @@ public interface ScannerPlugin<I, D extends Descriptor> extends ContextualConfig
     /**
      * Defines the annotation for specifying a dependency to another plugin to
      * provide an instance of the given descriptor value.
-     * 
+     *
      * [source,java]
      * ----
      * @Requires(XmlDescriptor.class)
      * public class MyPlugin implements ScannerPlugin&lt;FileResource, MyDescriptor&gt; {
-     * 
+     *
      * @Requires(XmlDescriptor.class)
      * public class MyPlugin implements ScannerPlugin&lt;FileResource, MyDescriptor&gt; {
-     * 
+     *
      *     }
      * }
      * ----
@@ -56,7 +56,7 @@ public interface ScannerPlugin<I, D extends Descriptor> extends ContextualConfig
 
     /**
      * Return the item type accepted by the plugin.
-     * 
+     *
      * @return The item type.
      */
     Class<? extends I> getType();
@@ -70,26 +70,26 @@ public interface ScannerPlugin<I, D extends Descriptor> extends ContextualConfig
 
     /**
      * Determine if the item is accepted by the plugin.
-     * 
+     *
      * @param item
      *            The item.
-     * @param path
-     *            The path where the item is located.
+     * @param location
+     *            The String representation of the location of the item.
      * @param scope
      *            The scope.
      * @return `true` if the plugin accepts the item.
      * @throws IOException
      *             If a problem occurs.
      */
-    boolean accepts(I item, String path, Scope scope) throws IOException;
+    boolean accepts(I item, String location, Scope scope) throws IOException;
 
     /**
      * Scan the item.
-     * 
+     *
      * @param item
      *            The item.
-     * @param path
-     *            The path where the item is located.
+     * @param location
+     *            The String representation of the location of the item.
      * @param scope
      *            The scope.
      * @param scanner
@@ -99,7 +99,7 @@ public interface ScannerPlugin<I, D extends Descriptor> extends ContextualConfig
      * @throws IOException
      *             If a problem occurs.
      */
-    D scan(I item, String path, Scope scope, Scanner scanner) throws IOException;
+    D scan(I item, String location, Scope scope, Scanner scanner) throws IOException;
 
     /**
      * Returns a unique name for the plugin required to identifiy the plugin by its

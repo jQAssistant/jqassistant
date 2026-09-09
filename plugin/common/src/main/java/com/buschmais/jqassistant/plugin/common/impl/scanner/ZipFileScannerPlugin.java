@@ -9,10 +9,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.ZipFileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.*;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
@@ -29,7 +26,7 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    public boolean accepts(ZipFileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(ZipFileResource item, String location, Scope scope) throws IOException {
         return true;
     }
 
@@ -45,9 +42,9 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
         String name = entry.getName();
         if (entry.isDirectory()) {
             // strip trailing slash from directory entries
-            return "/" + name.substring(0, name.length() - 1);
+            return name.substring(0, name.length() - 1);
         } else {
-            return "/" + name;
+            return name;
         }
     }
 

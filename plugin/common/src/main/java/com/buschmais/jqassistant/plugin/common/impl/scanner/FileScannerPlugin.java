@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -12,6 +10,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScann
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.LocalFileSystemFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalFileResource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,43 +28,16 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
     }
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
-        return !item.isDirectory();
+    public boolean accepts(File file, String location, Scope scope) throws IOException {
+        return !file.isDirectory();
     }
 
     @Override
-    public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
-        String normalizedPath = PathNormalizer.normalize(file, scanner.getContext());
-        LOGGER.debug("Scanning '{}'.", normalizedPath);
+    public FileDescriptor scan(final File file, String location, Scope scope, Scanner scanner) throws IOException {
+        String fileName = PathNormalizer.normalizeFileName(file, scanner.getContext());
+        LOGGER.debug("Scanning '{}'.", fileName);
         try (FileResource fileResource = new LocalFileResource(file)) {
-            return scanner.scan(fileResource, normalizedPath, scope);
-        }
-    }
-
-    public static class LocalFileResource implements FileResource {
-        private final File file;
-
-        public LocalFileResource(File file) {
-            this.file = file;
-        }
-
-        @Override
-        public InputStream createStream() throws IOException {
-            return new FileInputStream(file);
-        }
-
-        @Override
-        public File getFile() {
-            return file;
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public String toString() {
-            return file.toString();
+            return scanner.scan(fileResource, fileName, scope);
         }
     }
 }

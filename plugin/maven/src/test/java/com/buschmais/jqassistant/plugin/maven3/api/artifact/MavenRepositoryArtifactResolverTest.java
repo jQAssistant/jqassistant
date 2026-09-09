@@ -8,11 +8,13 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor;
+import com.buschmais.xo.api.Query;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Builder;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -43,6 +45,12 @@ class MavenRepositoryArtifactResolverTest {
     @Mock
     private Store store;
 
+    @Mock
+    private Query.Result<Query.Result.CompositeRowObject> result;
+
+    @Mock
+    private Query.Result.CompositeRowObject compositeRowObject;
+
     @Captor
     private ArgumentCaptor<String> requiredFileCaptor;
 
@@ -57,14 +65,19 @@ class MavenRepositoryArtifactResolverTest {
         doReturn(Caffeine.newBuilder()
             .build()).when(store)
             .getCache(anyString());
-        doReturn(mock(MavenArtifactFileDescriptor.class)).when(fileResolver)
-            .require(anyString(), eq(MavenArtifactFileDescriptor.class), eq(context));
+        doReturn(result).when(store)
+            .executeQuery(anyString(), anyMap());
         artifactResolver = new MavenRepositoryArtifactResolver(REPOSITORY_ROOT, fileResolver, context);
     }
 
     @ParameterizedTest
     @MethodSource("coordinates")
-    void resolve(Coordinates coordinates, String expectedFileName) {
+    void resolveToRepositoryFile(Coordinates coordinates, String expectedFileName) {
+        doReturn(false).when(result)
+            .hasResult();
+        doReturn(mock(MavenArtifactFileDescriptor.class)).when(fileResolver)
+            .require(anyString(), eq(MavenArtifactFileDescriptor.class), eq(context));
+
         MavenArtifactDescriptor artifactDescriptor = artifactResolver.resolve(coordinates, context);
 
         assertThat(artifactDescriptor).isNotNull();
@@ -77,6 +90,27 @@ class MavenRepositoryArtifactResolverTest {
 
         verify(fileResolver).require(requiredFileCaptor.capture(), eq(MavenArtifactFileDescriptor.class), eq(context));
         assertThat(requiredFileCaptor.getValue()).isEqualTo("/../.m2" + expectedFileName);
+    }
+
+    @Test
+    void resolveExistingArtifact() {
+        Coordinates coordinates = TestCoordinates.builder()
+            .group("com.acme")
+            .name("parent")
+            .type("jar")
+            .version("1.0.0")
+            .build();
+        doReturn(true).when(result)
+            .hasResult();
+        doReturn(compositeRowObject).when(result)
+            .getSingleResult();
+        MavenArtifactFileDescriptor existingMavenArtifactFileDescriptor = mock(MavenArtifactFileDescriptor.class);
+        doReturn(existingMavenArtifactFileDescriptor).when(compositeRowObject)
+            .get(anyString(), eq(MavenArtifactFileDescriptor.class));
+
+        MavenArtifactDescriptor artifactDescriptor = artifactResolver.resolve(coordinates, context);
+
+        assertThat(artifactDescriptor).isEqualTo(existingMavenArtifactFileDescriptor);
     }
 
     private static Stream<Arguments> coordinates() {

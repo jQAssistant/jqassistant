@@ -22,18 +22,18 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 public class GZIPFileScannerPlugin extends AbstractScannerPlugin<FileResource, GZipFileDescriptor> {
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return path.toLowerCase()
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        return location.toLowerCase()
             .endsWith(".gz");
     }
 
     @Override
-    public GZipFileDescriptor scan(final FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public GZipFileDescriptor scan(final FileResource item, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
         final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         GZipFileDescriptor gZipFileDescriptor = store.addDescriptorType(fileDescriptor, GZipFileDescriptor.class);
-        String uncompressedPath = path.substring(path.lastIndexOf('/'), path.toLowerCase()
+        String uncompressedPath = location.substring(location.lastIndexOf('/'), location.toLowerCase()
             .indexOf(".gz"));
         try (FileResource fileResource = new BufferedFileResource(new AbstractVirtualFileResource() {
             @Override

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.LocalDescriptor;
 import com.buschmais.xo.api.Query.Result;
 
 /**
@@ -37,9 +36,7 @@ public class LocalFileSystemFileResolver extends AbstractFileResolver {
                     null;
             }
         }, isMatch, context);
-        return context.getStore()
-            .addDescriptorType(fileDescriptor, LocalDescriptor.class)
-            .as(type);
+        return fileDescriptor;
     }
 
 }

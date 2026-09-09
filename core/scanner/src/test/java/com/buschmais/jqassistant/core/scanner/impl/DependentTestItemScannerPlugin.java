@@ -37,7 +37,7 @@ public abstract class DependentTestItemScannerPlugin implements ScannerPlugin<Te
     }
 
     @Override
-    public DependentTestItemDescriptor scan(TestItem item, String path, Scope scope, Scanner scanner) {
+    public DependentTestItemDescriptor scan(TestItem item, String location, Scope scope, Scanner scanner) {
         assertThat((TestItemDescriptor) scanner.getContext()
             .getCurrentDescriptor()).isInstanceOf(TestItemDescriptor.class);
         return mock(DependentTestItemDescriptor.class);

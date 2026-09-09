@@ -19,12 +19,12 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 public class TarFileScannerPlugin extends AbstractScannerPlugin<FileResource, TarArchiveDescriptor> {
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return path.toLowerCase().endsWith(".tar");
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        return location.toLowerCase().endsWith(".tar");
     }
 
     @Override
-    public TarArchiveDescriptor scan(final FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        return scanner.scan(new TarArchiveInputStream(item.createStream()), path, scope);
+    public TarArchiveDescriptor scan(final FileResource item, String location, Scope scope, Scanner scanner) throws IOException {
+        return scanner.scan(new TarArchiveInputStream(item.createStream()), location, scope);
     }
 }

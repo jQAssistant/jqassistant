@@ -9,15 +9,10 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A file resolver strategy for file containers.
  */
 public class ContainerFileResolver extends AbstractFileResolver {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContainerFileResolver.class);
 
     private static final String CACHE_KEY = ContainerFileResolver.class.getName();
 
@@ -48,8 +43,8 @@ public class ContainerFileResolver extends AbstractFileResolver {
         final FileDescriptor fileDescriptor = providedFiles.get(containedFileName);
         D result;
         if (fileDescriptor != null) {
-            result = getOrCreateAs(containedFileName, type, fileName -> fileDescriptor, false, context);
-            // type may have changed due to added labels
+            // required type may have changed, add labels and update map of provided files
+            result = context.getStore().addDescriptorType(fileDescriptor, type);
             providedFiles.put(containedFileName, result);
         } else {
             result = getOrCreateAs(containedFileName, type, path -> requiredFiles.get(containedFileName), false, context);
