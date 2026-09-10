@@ -4,8 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.ServiceLoader;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalFileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -69,12 +68,8 @@ class ServiceLoaderIT extends AbstractJavaPluginIT {
         final String path = "META-INF/services/test.properties";
         store.beginTransaction();
         JavaArtifactFileDescriptor artifactDescriptor = getArtifactDescriptor("a1");
-        execute(artifactDescriptor, new ScanClassPathOperation() {
-            @Override
-            public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                return singletonList(scanner.scan(propsFile, path, JavaScope.CLASSPATH));
-            }
-        }, getScanner());
+        execute(artifactDescriptor,
+            (artifact, scanner) -> singletonList(scanner.scan(new LocalFileResource(propsFile), path, JavaScope.CLASSPATH)), getScanner());
         List<ServiceLoaderDescriptor> s = query("MATCH (s:ServiceLoader:Properties:File) RETURN s").getColumn("s");
         assertThat(s.size()).isEqualTo(1);
         ServiceLoaderDescriptor serviceLoaderDescriptor = s.get(0);

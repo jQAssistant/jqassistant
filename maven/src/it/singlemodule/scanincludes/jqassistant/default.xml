@@ -10,7 +10,9 @@
             match
               (:Maven:Project)-[:CONTAINS]->(config:File)-[:CONTAINS]->(f:File:Properties)
             where
-              config.fileName ends with "/config"
+              config.path = "config"
+              and config.fileName = "/config"
+              and f.path = "config/test.properties"
               and f.fileName = "/test.properties"
             return
               f
@@ -23,7 +25,8 @@
             match
               (:Maven:Project)-[:CONTAINS]->(f:File:Properties)
             where
-              f.fileName = "file:config/test.properties"
+              f.path = "file:config/test.properties"
+              and f.fileName = "config/test.properties"
             return
               f
         ]]></cypher>

@@ -146,6 +146,11 @@ If multiple, partially overlapping configurations are provided then the followin
 
 === Options
 
+[[cli:projectDirectory]]
+* --projectDirectory <directory>
+** the project directory to use, defines default locations of jqassistant directory
+** default: current working directory
+
 [[cli:configurationLocations]]
 * --configurationLocations <files> <directories>
 ** the list of configuration locations, e.g. YAML files and directories

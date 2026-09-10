@@ -5,8 +5,8 @@ import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
 import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.PathNormalizer;
 import com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor;
 
 import org.junit.jupiter.api.AfterEach;
@@ -38,12 +38,12 @@ class JSONFileScannerPluginScansAllValidJSONFilesOfTestSuiteIT extends AbstractP
     @ParameterizedTest
     void scannerScansAValidFileOfTheTestSuite(File pathToJSONFile) {
         Scanner scanner = getScanner();
-        JSONFileDescriptor file = scanner.scan(pathToJSONFile, pathToJSONFile.getAbsolutePath(), null);
+        JSONFileDescriptor file = scanner.scan(pathToJSONFile, null, null);
 
         assertThat(file).describedAs("Scanner must be able to scan the resource and to return a descriptor.")
                         .isNotNull();
         assertThat(file.getFileName()).isNotNull();
-        assertThat(file.getFileName()).endsWith(FileNameNormalizer.normalize(pathToJSONFile));
+        assertThat(file.getFileName()).isEqualTo(PathNormalizer.normalizeFileName(pathToJSONFile, scanner.getContext()));
         assertThat(file.isValid()).isTrue();
     }
 }

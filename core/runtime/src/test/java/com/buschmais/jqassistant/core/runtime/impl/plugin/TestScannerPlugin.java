@@ -34,12 +34,12 @@ public class TestScannerPlugin implements ScannerPlugin<File, Descriptor> {
     }
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
+    public boolean accepts(File item, String location, Scope scope) {
         return false;
     }
 
     @Override
-    public Descriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
+    public Descriptor scan(File item, String location, Scope scope, Scanner scanner) throws IOException {
         return null;
     }
 

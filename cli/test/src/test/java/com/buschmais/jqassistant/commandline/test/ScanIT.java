@@ -3,10 +3,12 @@ package com.buschmais.jqassistant.commandline.test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
@@ -28,20 +30,40 @@ class ScanIT extends AbstractCLIIT {
             .getFile();
         String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + directory };
         assertThat(execute(args).getExitCode()).isZero();
-        withStore(store -> verifyTypesScanned(store, ScanIT.class));
+        withStore(store -> {
+            Map<String, Object> params = new HashMap<>();
+            params.put("type", ScanIT.class.getName());
+            String query = "match (t:Type:Class) where t.fqn=$type return count(t) as count";
+            Long count = executeQuery(store, query, params, "count", Long.class);
+            assertThat(count).describedAs("Expecting a result for %s", ScanIT.class)
+                .isEqualTo(1);
+        });
     }
 
     @DistributionTest
-    void files() {
+    void filesWithDefaultProjectDirectory() {
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", directory.getFile() };
         assertThat(execute(args).getExitCode()).isZero();
 
         withStore(store -> {
-            Map<String, Object> params = new HashMap<>();
-            params.put("fileName", "/META-INF");
-            String query = "match (f:File:Directory) where f.fileName=$fileName return count(f) as count";
-            Long count = executeQuery(store, query, params, "count", Long.class);
+            String query = "match (f:File:Directory) where f.fileName=$fileName and f.path=$path return count(f) as count";
+            Long count = executeQuery(store, query, Map.of("fileName", "/META-INF", "path", "../test-classes/META-INF"), "count", Long.class);
+            assertThat(count).isEqualTo(1L);
+        });
+    }
+
+    @DistributionTest
+    void filesWithCustomProjectDirectory() {
+        String directory = ScanIT.class.getResource("/")
+            .getFile();
+        File projectDirectory = new File(getWorkingDirectory(), "project");
+        String[] args = new String[] { "--projectDirectory", projectDirectory.getAbsolutePath(), "scan", "-f", new File(directory).getAbsolutePath() };
+        assertThat(execute(args).getExitCode()).isZero();
+
+        withStore(new File(projectDirectory, Task.DEFAULT_STORE_DIRECTORY), store -> {
+            String query = "match (f:File:Directory) where f.fileName=$fileName and f.path=$path return count(f) as count";
+            Long count = executeQuery(store, query, Map.of("fileName", "/META-INF", "path", "../../test-classes/META-INF"), "count", Long.class);
             assertThat(count).isEqualTo(1L);
         });
     }
@@ -75,7 +97,7 @@ class ScanIT extends AbstractCLIIT {
 
     @DistributionTest
     void reset() {
-        URL file = getResource(AnalyzeIT.class);
+        URL file = getResource(ScanIT.class);
         String[] args = new String[] { "scan", "-f", file.getFile(), "-D", "jqassistant.scan.reset=true" };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode()).isZero();
@@ -120,29 +142,13 @@ class ScanIT extends AbstractCLIIT {
 
     private <T> T executeQuery(Store store, String query, Map<String, Object> params, String resultColumn, Class<T> resultType) {
         store.beginTransaction();
-        Result<CompositeRowObject> result = store.executeQuery(query, params);
-        assertThat(result.hasResult()).isTrue();
-        T value = result.getSingleResult()
-            .get(resultColumn, resultType);
-        store.commitTransaction();
-        return value;
-    }
-
-    /**
-     * Determine if a specific type is in the database.
-     *
-     * @param store
-     *     The store
-     * @param type
-     *     The type
-     * @return <code>true</code> if the type is represented in the database.
-     */
-    private boolean isTypeScanned(Store store, Class<?> type) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("type", type.getName());
-        String query = "match (t:Type:Class) where t.fqn=$type return count(t) as count";
-        Long count = executeQuery(store, query, params, "count", Long.class);
-        return count == 1;
+        try (Result<CompositeRowObject> result = store.executeQuery(query, params)) {
+            assertThat(result.hasResult()).isTrue();
+            return result.getSingleResult()
+                .get(resultColumn, resultType);
+        } finally {
+            store.commitTransaction();
+        }
     }
 
     /**
@@ -155,42 +161,18 @@ class ScanIT extends AbstractCLIIT {
      * @return <code>true</code> if the file is represented in the database.
      */
     private boolean isFileScanned(Store store, File file) {
+        Path relativePath = getWorkingDirectory().toPath()
+            .toAbsolutePath()
+            .normalize()
+            .relativize(file.toPath()
+                .toAbsolutePath()
+                .normalize());
         Map<String, Object> params = new HashMap<>();
-        params.put("name", file.getAbsolutePath()
+        params.put("name", "/" + relativePath.toString()
             .replace("\\", "/"));
         String query = "match (t:File) where t.fileName=$name return count(t) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
         return count == 1;
-    }
-
-    /**
-     * Verifies if a database is created not containing the the given files.
-     *
-     * @param store
-     *     The {@link Store}.
-     * @param files
-     *     The types.
-     */
-    private void verifyFilesNotScanned(Store store, File... files) {
-        for (File file : files) {
-            assertThat(isFileScanned(store, file)).describedAs("Expecting no result for %s", file)
-                .isFalse();
-        }
-    }
-
-    /**
-     * Verifies if a database is created containing the the given types.
-     *
-     * @param store
-     *     The {@link Store}.
-     * @param types
-     *     The types.
-     */
-    private void verifyTypesScanned(Store store, Class<?>... types) {
-        for (Class<?> type : types) {
-            assertThat(isTypeScanned(store, type)).describedAs("Expecting a result for %s", type.getName())
-                .isTrue();
-        }
     }
 
     /**

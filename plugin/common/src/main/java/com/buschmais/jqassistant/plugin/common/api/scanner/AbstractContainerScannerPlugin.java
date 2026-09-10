@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
@@ -31,28 +32,25 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
     @Override
-    public final D scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
+    public final D scan(I container, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        D containerDescriptor = getContainerDescriptor(container, context);
-        String containerPath = getContainerPath(container, path);
-        if (containerDescriptor.getFileName() == null) {
-            // Plugins may re-use existing descriptor, don't overwrite their fileName
-            containerDescriptor.setFileName(containerPath);
-        }
+        FileResolver parentFileResolver = context.peek(FileResolver.class);
+        String containerPath = getContainerPath(container, location, context);
+        D containerDescriptor = parentFileResolver.match("/" + containerPath, getDescriptorType(), context);
         LOGGER.info("Entering {}", containerPath);
-        ContainerFileResolver fileResolver = new ContainerFileResolver(scanner.getContext(), containerDescriptor);
+        ContainerFileResolver fileResolver = new ContainerFileResolver(containerPath, context, containerDescriptor);
         context.push(FileResolver.class, fileResolver);
         enterContainer(container, containerDescriptor, scanner.getContext());
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             Iterable<? extends E> entries = getEntries(container);
             for (E entry : entries) {
-                String relativePath = getRelativePath(container, entry);
+                String relativeEntryPath = getRelativePath(container, entry);
                 try (Resource resource = getEntry(container, entry)) {
-                    LOGGER.debug("Scanning {}", relativePath);
-                    FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
+                    LOGGER.debug("Scanning {}", relativeEntryPath);
+                    FileDescriptor descriptor = scanner.scan(resource, "/" + relativeEntryPath, scope);
                     if (descriptor != null) {
-                        fileResolver.put(relativePath, descriptor);
+                        fileResolver.put(relativeEntryPath, descriptor);
                     }
                 }
             }
@@ -73,8 +71,13 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
      * @param scannerContext
      *     The scanner context.
      * @return The artifact descriptor.
+     * @deprecated This method is no longer invoked.
      */
-    protected abstract D getContainerDescriptor(I container, ScannerContext scannerContext);
+    @Deprecated
+    @ToBeRemovedInVersion(major = 3, minor = 0)
+    protected final D getContainerDescriptor(I container, ScannerContext scannerContext) {
+        throw new UnsupportedOperationException("This method must no longer be called.");
+    }
 
     /**
      * Return an iterable which delivers the entries of the container.
@@ -91,13 +94,35 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends DirectoryDe
     protected abstract Iterable<? extends E> getEntries(I container) throws IOException;
 
     /**
+     * Return the normalized relative location to the container.
+     *
+     * @param container
+     *     The container.
+     * @param location
+     *     The provided location.
+     * @param context
+     *     The {@link ScannerContext}
+     * @return The normalized location.
+     */
+    protected String getContainerPath(I container, String location, ScannerContext context) {
+        // default implemenation: derive container path from the location which is a file name and comes with a leading "/"
+        return location.substring(1);
+    }
+
+    /**
      * Return the normalized path to the container.
      *
      * @param container
      *     The container.
+     * @param path
+     *     The provided path.
      * @return The normalized path.
      */
-    protected abstract String getContainerPath(I container, String path);
+    @ToBeRemovedInVersion(major = 3, minor = 0)
+    @Deprecated
+    protected String getContainerPath(I container, String path) {
+        return path;
+    }
 
     /**
      * Return the relative path of an element within the container.

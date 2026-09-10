@@ -33,7 +33,7 @@ public abstract class TestItemScannerPlugin implements ScannerPlugin<TestItem, T
     }
 
     @Override
-    public TestItemDescriptor scan(TestItem item, String path, Scope scope, Scanner scanner) {
+    public TestItemDescriptor scan(TestItem item, String location, Scope scope, Scanner scanner) {
         return mock(TestItemDescriptor.class);
     }
 

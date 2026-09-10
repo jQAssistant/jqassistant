@@ -2,16 +2,18 @@ package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileNameDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.buschmais.jqassistant.core.scanner.api.DefaultScope.NONE;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
@@ -24,15 +26,15 @@ class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
     }
 
     @BeforeEach
-    void scanDirectoryWithTestData() throws Exception {
+    void scanDirectoryWithTestData() {
         File rootDir = getClassesDirectory(ComplexTestsForMavenSupportIT.class);
         File scanRoot = new File(rootDir, "project-with-idea-config");
 
-        scanClassPathDirectory(scanRoot);
+        getScanner().scan(scanRoot, null, NONE);
     }
 
     @Test
-    void shouldFind7Files() throws Exception {
+    void shouldFind7Files() {
         store.beginTransaction();
 
         List<FileDescriptor> files = query("MATCH (f:Xml:File) RETURN f").getColumn("f");
@@ -41,7 +43,7 @@ class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void shouldFind2Directories() throws Exception {
+    void shouldFind2Directories() {
         store.beginTransaction();
 
         List<DirectoryDescriptor> directories = query("MATCH (d:Directory) RETURN d").getColumn("d");
@@ -50,12 +52,14 @@ class ComplexTestsForMavenSupportIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    void shouldFindOneMavenPOM() throws Exception {
+    void shouldFindOneMavenPOM() {
         store.beginTransaction();
 
         List<FileDescriptor> directories = query("MATCH (x:Maven:Pom:Xml) RETURN x").getColumn("x");
 
-        assertThat(directories.stream().map(d -> d.getFileName()).collect(Collectors.toList())).containsExactly("/pom.xml");
+        assertThat(directories.stream()
+            .map(FileNameDescriptor::getFileName)
+            .collect(toList())).containsExactly("/pom.xml");
         assertThat(directories).hasSize(1);
     }
 }
