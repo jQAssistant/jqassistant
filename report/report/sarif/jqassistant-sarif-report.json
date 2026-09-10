@@ -162,11 +162,121 @@
         "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
       }
     }, {
+      "ruleId" : "fc6308e975f936fc7abd2cf4d0bab3c51248376452e353509dcfe20fae4d9931",
+      "level" : "warning",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" will be removed in the given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.core.shared.io.ClasspathResource\n|Member: \n|MajorVersion: 3\n|MinorVersion: 0\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
+      }
+    }, {
+      "ruleId" : "6152603574b21498e0568bcc9d2419d3af67fa901e5f3dafb97e9d8125fdff3f",
+      "level" : "warning",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" will be removed in the given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.core.shared.io.FileNameNormalizer\n|Member: \n|MajorVersion: 3\n|MinorVersion: 0\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
+      }
+    }, {
+      "ruleId" : "aa51edcdd8ae1c37296a7b7acf81d47d12a3b44f12f3d6bd14c6944b69a5b317",
+      "level" : "warning",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" will be removed in the given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.core.shared.io.FilePattern\n|Member: \n|MajorVersion: 3\n|MinorVersion: 0\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
+      }
+    }, {
       "ruleId" : "99736b70389ca94ed974f30f8e0168e98888e5123936a5d48ee97d17262a68c7",
       "level" : "warning",
       "message" : {
         "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" will be removed in the given version.",
         "markdown" : "|Type: com.buschmais.jqassistant.core.shared.map.MapBuilder\n|Member: \n|MajorVersion: 3\n|MinorVersion: 0\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
+      }
+    }, {
+      "ruleId" : "768f8a13c138cf027877d6d9de483071dc58b8ecd87102155cc76243f1c177aa",
+      "level" : "warning",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" will be removed in the given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin\n|Member: com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor getContainerDescriptor(java.lang.Object,com.buschmais.jqassistant.core.scanner.api.ScannerContext)\n|MajorVersion: 3\n|MinorVersion: 0\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
+      }
+    }, {
+      "ruleId" : "6758ab4d450abc7641d63e4bb2d57e76f85ac8c95fc9496b5e5f99346cc583ad",
+      "level" : "warning",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" will be removed in the given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin\n|Member: java.lang.String getContainerPath(java.lang.Object,java.lang.String)\n|MajorVersion: 3\n|MinorVersion: 0\n"
       },
       "locations" : [ {
         "physicalLocation" : {
