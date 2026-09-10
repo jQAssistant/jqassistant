@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.commandline.configuration;
 
 import java.io.File;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import static com.buschmais.jqassistant.core.runtime.api.configuration.JsonSchemaGenerator.*;
 import static org.assertj.core.api.Assertions.assertThat;

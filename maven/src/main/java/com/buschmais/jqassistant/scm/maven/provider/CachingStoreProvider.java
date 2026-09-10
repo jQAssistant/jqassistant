@@ -7,6 +7,8 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import javax.inject.Singleton;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.jqassistant.scm.maven.MavenTaskContext;
@@ -15,7 +17,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Manages the life cycle of {@link Store} instance.
  */
-@Component(role = CachingStoreProvider.class, instantiationStrategy = "singleton")
+@Singleton
 public class CachingStoreProvider implements Disposable {
 
     @Getter

@@ -38,17 +38,16 @@ public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
             .property(GraphDatabaseSettings.log_queries, GraphDatabaseSettings.LogQueryLevel.OFF)
             .property(GraphDatabaseInternalSettings.dump_diagnostics, false)
             // don't wait on server shutdown
-            .property(GraphDatabaseInternalSettings.netty_server_shutdown_quiet_period, 0);
+            .property(GraphDatabaseInternalSettings.netty_server_shutdown_quiet_period, 0)
+            // deactivate internal debug logs
+            .property(GraphDatabaseSettings.debug_log_enabled, false)
+            // deactivate user data collector
+            .property(GraphDatabaseSettings.index_background_sampling_enabled, false);
+        neo4jProperties.forEach(propertiesBuilder::property);
         if (connectorEnabled) {
             propertiesBuilder.property(BoltConnector.enabled, true);
             propertiesBuilder.property(BoltConnector.listen_address, new SocketAddress(listenAddress, boltPort));
         }
-        neo4jProperties.forEach(propertiesBuilder::property);
-        // set string properties which are not available for Neo4j v4
-        // deactivate internal debug logs
-        propertiesBuilder.property("server.logs.debug.enabled", FALSE.toString());
-        // deactivate user data collector
-        propertiesBuilder.property("dbms.usage_report.enabled", FALSE.toString());
         Properties properties = propertiesBuilder.build();
         if (!plugins.isEmpty()) {
             properties.setProperty(EmbeddedNeo4jXOProvider.PROPERTY_XO_NEO4J_EMBEDDED_PLUGINS, plugins.stream()

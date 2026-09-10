@@ -1,0 +1,38 @@
+package com.buschmais.jqassistant.plugin.maven.api.artifact;
+
+import org.apache.maven.model.Model;
+
+public final class ModelCoordinates implements Coordinates {
+
+    private final Model model;
+
+    public ModelCoordinates(Model model) {
+        this.model = model;
+    }
+
+    @Override
+    public String getGroup() {
+        return model.getGroupId();
+    }
+
+    @Override
+    public String getName() {
+        return model.getArtifactId();
+    }
+
+    @Override
+    public String getClassifier() {
+        return null;
+    }
+
+    @Override
+    public String getType() {
+        return model.getPackaging();
+    }
+
+    @Override
+    public String getVersion() {
+        return model.getVersion();
+    }
+
+}
