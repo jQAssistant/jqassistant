@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.commandline.Task;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
@@ -40,16 +41,29 @@ class ScanIT extends AbstractCLIIT {
     }
 
     @DistributionTest
-    void files() {
+    void filesWithDefaultProjectDirectory() {
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", directory.getFile() };
         assertThat(execute(args).getExitCode()).isZero();
 
         withStore(store -> {
-            Map<String, Object> params = new HashMap<>();
-            params.put("fileName", "/META-INF");
-            String query = "match (f:File:Directory) where f.fileName=$fileName return count(f) as count";
-            Long count = executeQuery(store, query, params, "count", Long.class);
+            String query = "match (f:File:Directory) where f.fileName=$fileName and f.path=$path return count(f) as count";
+            Long count = executeQuery(store, query, Map.of("fileName", "/META-INF", "path", "../test-classes/META-INF"), "count", Long.class);
+            assertThat(count).isEqualTo(1L);
+        });
+    }
+
+    @DistributionTest
+    void filesWithCustomProjectDirectory() {
+        String directory = ScanIT.class.getResource("/")
+            .getFile();
+        File projectDirectory = new File(getWorkingDirectory(), "project");
+        String[] args = new String[] { "--projectDirectory", projectDirectory.getAbsolutePath(), "scan", "-f", new File(directory).getAbsolutePath() };
+        assertThat(execute(args).getExitCode()).isZero();
+
+        withStore(new File(projectDirectory, Task.DEFAULT_STORE_DIRECTORY), store -> {
+            String query = "match (f:File:Directory) where f.fileName=$fileName and f.path=$path return count(f) as count";
+            Long count = executeQuery(store, query, Map.of("fileName", "/META-INF", "path", "../../test-classes/META-INF"), "count", Long.class);
             assertThat(count).isEqualTo(1L);
         });
     }

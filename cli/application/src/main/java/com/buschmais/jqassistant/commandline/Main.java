@@ -34,7 +34,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * The main class, i.e. the entry point for the CLI.
@@ -44,6 +45,8 @@ import static java.util.stream.Collectors.*;
  */
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+    private static final String CMDLINE_OPTION_PROJECT_DIRECTORY = "--projectDirectory";
 
     private static final String CMDLINE_OPTION_CONFIG_LOCATIONS = "--configurationLocations";
 
@@ -138,6 +141,11 @@ public class Main {
      *     The standard options.
      */
     private void gatherStandardOptions(final Options options) {
+        options.addOption(Option.builder("D")
+            .longOpt("projectDirectory")
+            .desc("The project directory.")
+            .hasArg()
+            .build());
         options.addOption(Option.builder("C")
             .longOpt("configurationLocations")
             .desc("The list of configuration locations, i.e. YAML files and directories")
@@ -189,9 +197,10 @@ public class Main {
      */
     private void interpretCommandLine(CommandLine commandLine, Options options) throws CliExecutionException {
         File workingDirectory = new File(".");
+        File projectDirectory = getProjectDirectory(commandLine, workingDirectory);
         File userHome = new File(System.getProperty("user.home"));
         List<Task> tasks = getTasks(commandLine);
-        CliConfiguration configuration = getCliConfiguration(commandLine, workingDirectory, userHome, tasks);
+        CliConfiguration configuration = getCliConfiguration(commandLine, projectDirectory, workingDirectory, userHome, tasks);
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
         } else {
@@ -201,7 +210,7 @@ public class Main {
             ClassLoader contextClassLoader = currentThread().getContextClassLoader();
             currentThread().setContextClassLoader(pluginRepository.getClassLoader());
             try {
-                executeTasks(tasks, configuration, options, pluginRepository, storeFactory);
+                executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory);
             } finally {
                 currentThread().setContextClassLoader(contextClassLoader);
             }
@@ -220,7 +229,7 @@ public class Main {
         return tasks;
     }
 
-    private CliConfiguration getCliConfiguration(CommandLine commandLine, File workingDirectory, File userHome, List<Task> tasks)
+    private CliConfiguration getCliConfiguration(CommandLine commandLine, File projectDirectory, File workingDirectory, File userHome, List<Task> tasks)
         throws CliConfigurationException {
         List<String> configLocations = getConfigLocations(commandLine);
         List<String> profiles = getUserProfiles(commandLine);
@@ -244,14 +253,24 @@ public class Main {
             task.configure(commandLine, taskConfigurationBuilder);
         }
         ConfigSource taskConfigSource = taskConfigurationBuilder.build();
-        return ConfigurationMappingLoader.builder(CliConfiguration.class, configLocations)
+        ConfigurationMappingLoader.Builder<CliConfiguration> configurationBuilder = ConfigurationMappingLoader.builder(CliConfiguration.class, configLocations)
             .withUserHome(userHome)
-            .withWorkingDirectory(workingDirectory)
+            .withProjectDirectory(projectDirectory)
             .withClasspath()
             .withEnvVariables()
             .withProfiles(profiles)
-            .withIgnoreProperties(IGNORE_PROPERTIES)
-            .load(buildConfigSource, taskConfigSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
+            .withIgnoreProperties(IGNORE_PROPERTIES);
+        if (!projectDirectory.equals(workingDirectory)) {
+            configurationBuilder.withWorkingDirectory(workingDirectory);
+        }
+        return configurationBuilder.load(buildConfigSource, taskConfigSource, new SysPropConfigSource(), commandLineProperties, mavenSettingsConfigSource);
+    }
+
+    private File getProjectDirectory(CommandLine commandLine, File workingDirectory) {
+        if (commandLine.hasOption(CMDLINE_OPTION_PROJECT_DIRECTORY)) {
+            return new File(commandLine.getOptionValue(CMDLINE_OPTION_PROJECT_DIRECTORY));
+        }
+        return workingDirectory;
     }
 
     private List<String> getConfigLocations(CommandLine commandLine) {
@@ -277,11 +296,11 @@ public class Main {
         return emptyList();
     }
 
-    protected void executeTasks(List<Task> tasks, CliConfiguration configuration, Options options, PluginRepository pluginRepository, StoreFactory storeFactory)
-        throws CliExecutionException {
+    protected void executeTasks(List<Task> tasks, CliConfiguration configuration, Options options, File projectDirectory, File workingDirectory,
+        PluginRepository pluginRepository, StoreFactory storeFactory) throws CliExecutionException {
         try {
             for (Task task : tasks) {
-                executeTask(task, configuration, options, pluginRepository, storeFactory);
+                executeTask(task, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory);
             }
         } finally {
             pluginRepository.destroy();
@@ -320,9 +339,9 @@ public class Main {
      * @throws CliExecutionException
      *     If the execution fails.
      */
-    private void executeTask(Task task, CliConfiguration configuration, Options options, PluginRepository pluginRepository, StoreFactory storeFactory)
-        throws CliExecutionException {
-        task.initialize(pluginRepository, storeFactory);
+    private void executeTask(Task task, CliConfiguration configuration, Options options, File projectDirectory, File workingDirectory,
+        PluginRepository pluginRepository, StoreFactory storeFactory) throws CliExecutionException {
+        task.initialize(projectDirectory, workingDirectory, pluginRepository, storeFactory);
         task.run(configuration, options);
     }
 }
