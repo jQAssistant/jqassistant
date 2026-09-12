@@ -278,7 +278,7 @@ public abstract class AbstractGraphStore implements Store {
             "CALL { " +  //
             "  WITH n " + //
             "  DETACH DELETE n " + //
-            "} IN TRANSACTIONS " + //
+            "} IN 1 CONCURRENT TRANSACTIONS " + //
             "RETURN count(n) as nodes").getSingleResult();
         long totalNodes = result.get("nodes", Long.class);
         Instant end = Instant.now();

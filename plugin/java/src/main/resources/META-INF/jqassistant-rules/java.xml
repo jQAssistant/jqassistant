@@ -12,7 +12,7 @@
                 innerType
               SET
                 innerType:Inner
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(innerType) AS InnerTypes
         ]]></cypher>
@@ -34,7 +34,7 @@
                 anonymousInnerTypes
               SET
                 anonymousInnerTypes:Anonymous
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(anonymousInnerTypes) AS AnonymousInnerTypes
         ]]></cypher>
@@ -52,7 +52,7 @@
                   type, superType
                 MERGE
                   (superType)-[:ASSIGNABLE_FROM]->(type)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) AS AssignableTypes
         ]]></cypher>
@@ -88,7 +88,7 @@
                 member, inheritedMember
               MERGE
                 (member)-[:INHERITED_FROM]->(inheritedMember)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as InheritedMembers
         ]]></cypher>
@@ -141,7 +141,7 @@
                 method, overriddenMethod
               MERGE
                 (method)-[:OVERRIDES]->(overriddenMethod)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as OverriddenMethods
         ]]></cypher>
@@ -202,7 +202,7 @@
                 method, virtualInvokedMethod, lineNumber
               MERGE
                 (method)-[virtualInvokes:VIRTUAL_INVOKES{lineNumber:lineNumber}]->(virtualInvokedMethod)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as VirtualInvokes
         ]]></cypher>
@@ -232,7 +232,7 @@
                 dependent, type
               MERGE
                 (dependent)-[virtualDependsOn:VIRTUAL_DEPENDS_ON]->(type)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) AS VirtualDependsOn
         ]]></cypher>
@@ -258,7 +258,7 @@
               WITH method, otherMethod
               MERGE
                 (method)-[:OVERLOADS]->(otherMethod)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(method) AS OverloadedMethods
         ]]></cypher>
@@ -400,7 +400,7 @@
                 i
               SET
                 i:FunctionalInterface
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(i) AS FunctionInterfaces
         ]]></cypher>
@@ -508,7 +508,7 @@
                 requiredTypeParameter, declaredTypeParameter
               MERGE
                 (requiredTypeParameter)-[:DECLARED_BY]->(declaredTypeParameter)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as OuterTypeDeclarations
         ]]></cypher>
@@ -532,7 +532,7 @@
                 typeArgument, typeParameter
               MERGE
                 (typeArgument)-[:DECLARED_BY]->(typeParameter)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as TypeParameterDeclarations
         ]]></cypher>
@@ -559,7 +559,7 @@
                 (p1)-[d:DEPENDS_ON]->(p2)
               SET
                 d.weight = weight
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               p1 AS package, COUNT(p2) AS PackageDependencies
         ]]></cypher>
@@ -587,7 +587,7 @@
                 (a1)-[d:DEPENDS_ON]->(a2)
               SET
                 d.weight = weight
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               a1 AS Artifact, COLLECT(DISTINCT a2.fqn) AS Dependencies
         ]]></cypher>
