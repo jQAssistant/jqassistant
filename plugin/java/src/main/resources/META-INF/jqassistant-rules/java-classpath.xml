@@ -20,7 +20,7 @@
                 t1, t2
               MERGE
                 (t1)-[:RESOLVES_TO]->(t2)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) AS ResolvedTypes
             ]]></cypher>
@@ -47,7 +47,7 @@
                 m1, m2
               MERGE
               (m1)-[:RESOLVES_TO]->(m2)
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedMembers
         ]]></cypher>
@@ -72,7 +72,7 @@
               SET
                 dependsOn1 = properties(dependsOn),
                 dependsOn1.resolved = true
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedDependencies
         ]]></cypher>
@@ -97,7 +97,7 @@
               SET
                 extends1 = properties(extends),
                 extends1.resolved = true
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedSuperClass
         ]]></cypher>
@@ -122,7 +122,7 @@
               SET
                 implements1 = properties(implements),
                 implements1.resolved = true
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedInterfaces
         ]]></cypher>
@@ -147,7 +147,7 @@
               SET
                 ofType1 = properties(ofType),
                 ofType1.resolved = true
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedFieldTypes
         ]]></cypher>
@@ -222,7 +222,7 @@
               SET
                 returns1 = properties(returns),
                 returns1.resolved = true
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedReturnTypes
         ]]></cypher>
@@ -247,7 +247,7 @@
               SET
                 ofType1 = properties(ofType),
                 ofType1.resolved = true
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedParameterTypes
         ]]></cypher>
@@ -272,7 +272,7 @@
               SET
                 ofType1 = properties(ofType),
                 ofType1.resolved = true
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedAnnotationTypes
         ]]></cypher>
@@ -297,7 +297,7 @@
               SET
                 ofRawType1 = properties(ofRawType),
                 ofRawType1.resolved = true
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedRawTypes
         ]]></cypher>
@@ -323,7 +323,7 @@
               SET
                 is1= properties(is),
                 is1.resolved = true
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedValueTypes
         ]]></cypher>
@@ -350,7 +350,7 @@
                 reads1.resolved = true
               REMOVE
                 reads1.relationId
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedReads
         ]]></cypher>
@@ -377,7 +377,7 @@
                 writes1.resolved = true
               REMOVE
                 writes1.relationId
-            } IN TRANSACTIONS
+            } IN 1 CONCURRENT TRANSACTIONS
             RETURN
               count(*) as ResolvedWrites
         ]]></cypher>
