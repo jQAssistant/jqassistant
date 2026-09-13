@@ -19,9 +19,9 @@ import org.takes.http.Front;
 import org.takes.http.FtBasic;
 
 @Slf4j
-class Neo4jCommunityNeoServer implements EmbeddedNeo4jServer {
+class CommunityEmbeddedNeo4jServer implements EmbeddedNeo4jServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jCommunityNeoServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommunityEmbeddedNeo4jServer.class);
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
