@@ -112,7 +112,7 @@
         <!-- Maven plugin versions -->
         <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
         <doxia-markdown.version>2.1.0</doxia-markdown.version>
-        <maven.buildhelper.version>3.6.1</maven.buildhelper.version>
+        <maven.buildhelper.version>3.6.2</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven.jaxb2-plugin.version>0.15.3</maven.jaxb2-plugin.version>
         <maven.xml.version>1.2.1</maven.xml.version>
