@@ -7349,6 +7349,13 @@ WHERE                                                  // exclude...
   and not (virtualInvokedMethod)-[:INHERITED_FROM]-&gt;() // ...inherited methods
 WITH
   method, virtualInvokedMethod, coalesce(invokes.lineNumber, -1) as lineNumber
+// collect all methods to avoid concurrent modifications
+WITH
+  collect({method: method, virtualInvokedMethod: virtualInvokedMethod, lineNumber: lineNumber}) AS rows
+UNWIND
+  rows as row
+WITH
+  row.method AS method, row.virtualInvokedMethod AS virtualInvokedMethod, row.lineNumber AS lineNumber
 CALL {
   WITH
     method, virtualInvokedMethod, lineNumber
@@ -12920,7 +12927,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-09-15 08:56:47 UTC
+Last updated 2026-09-16 16:00:47 UTC
 </div>
 </div>
 </body>
