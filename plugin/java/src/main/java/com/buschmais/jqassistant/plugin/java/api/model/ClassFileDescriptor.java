@@ -48,4 +48,19 @@ public interface ClassFileDescriptor extends JavaByteCodeDescriptor, FileDescrip
     @Relation.Incoming
     List<ClassFileDependsOnDescriptor> getDependents();
 
+    /**
+     * Return the {@link FileDescriptor} representing the source file.
+     *
+     * @return The {@link FileDescriptor} representing the source file.
+     */
+    @Relation
+    FileDescriptor getHasSourceFile();
+
+    /**
+     * Set the {@link FileDescriptor} representing the source file.
+     *
+     * @param sourceFileDescriptor
+     *     The {@link FileDescriptor} representing the source file..
+     */
+    void setHasSourceFile(FileDescriptor sourceFileDescriptor);
 }

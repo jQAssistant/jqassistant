@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -12,6 +13,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaSourceFileResolver;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassFileVisitorContext;
 
@@ -20,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the {@link AbstractScannerPlugin} for Java classes.
@@ -31,6 +35,8 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
     public static final String PROPERTY_INCLUDE_LOCAL_VARIABLES = "java.include.local-variables";
 
+    public static final String PROPERTY_SOURCE_PATHS = "java.source.paths";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileScannerPlugin.class);
 
     private ClassFileScannerConfiguration configuration;
@@ -40,6 +46,14 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
         configuration = ClassFileScannerConfiguration.builder()
             .includeLocalVariables(getBooleanProperty(PROPERTY_INCLUDE_LOCAL_VARIABLES, false))
             .build();
+        String sourcePathsProperty = getStringProperty(PROPERTY_SOURCE_PATHS, null);
+        List<String> sourcePaths = sourcePathsProperty != null ?
+            stream(sourcePathsProperty.split(",")).map(String::trim)
+                .filter(sourcePath -> !sourcePath.isEmpty())
+                .collect(toList()) :
+            null;
+        // push DefaultJavaSourceFileResolver to ScannerContext, may be overridden by specific resolvers
+        getScannerContext().push(JavaSourceFileResolver.class, new DefaultJavaSourceFileResolver(sourcePaths));
     }
 
     @Override
@@ -66,7 +80,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
             new ClassReader(inputStream).accept(visitor, 0);
             classFileDescriptor.setValid(true);
         } catch (RuntimeException e) {
-            LOGGER.warn("Cannot scan class '" + location + "'.", e);
+            LOGGER.warn("Cannot scan class file '{}'.", location, e);
             classFileDescriptor.setValid(false);
         }
         return classFileDescriptor;

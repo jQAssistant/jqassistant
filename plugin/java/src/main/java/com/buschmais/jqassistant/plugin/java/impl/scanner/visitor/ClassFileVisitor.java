@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.model.generics.BoundDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaSourceFileResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.delegate.DelegatingMethodVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.generics.AbstractBoundVisitor;
@@ -215,6 +216,14 @@ public class ClassFileVisitor extends ClassVisitor {
     @Override
     public void visitSource(final String source, final String debug) {
         this.classFileDescriptor.setSourceFileName(source);
+        JavaSourceFileResolver javaSourceFileResolver = classFileVisitorContext.getScannerContext()
+            .peekOrDefault(JavaSourceFileResolver.class, null);
+        if (javaSourceFileResolver != null) {
+            int packagePathIndex = this.typeName.lastIndexOf('/');
+            String sourceFileName = packagePathIndex != -1 ? this.typeName.substring(0, packagePathIndex) + "/" + source : source;
+            javaSourceFileResolver.resolveSourceFile(sourceFileName, classFileVisitorContext.getScannerContext())
+                .ifPresent(this.classFileDescriptor::setHasSourceFile);
+        }
     }
 
     @Override

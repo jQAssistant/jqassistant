@@ -12,8 +12,10 @@ import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaSourceFileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactFilter;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryArtifactResolver;
@@ -43,6 +45,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.scanner.api.DefaultScope.NONE;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -57,6 +60,8 @@ class MavenProjectScannerPluginTest {
     private final LocalRepository localRepo = new LocalRepository("target/test/.m2");
 
     private final File projectDirectory = new File("target/test/project");
+    private final File mainSourceDirectory = new File("target/test/project/src/main/java");
+    private final File testSourceDirectory = new File("target/test/project/src/test/java");
     private final File mainClassesDirectory = new File("target/test/project/target/classes");
     private final File testClassesDirectory = new File("target/test/project/target/test-classes");
 
@@ -96,7 +101,9 @@ class MavenProjectScannerPluginTest {
     @BeforeEach
     void setUp() {
         projectDirectory.mkdirs();
+        mainSourceDirectory.mkdirs();
         mainClassesDirectory.mkdirs();
+        testSourceDirectory.mkdirs();
         testClassesDirectory.mkdirs();
         doReturn(projectDirectory).when(scannerContext)
             .getProjectDirectory();
@@ -153,6 +160,10 @@ class MavenProjectScannerPluginTest {
         when(project.getArtifact()).thenReturn(artifact);
         when(project.getPackaging()).thenReturn("jar");
         when(project.getParent()).thenReturn(parentProject);
+        doReturn(List.of(mainSourceDirectory.getAbsolutePath())).when(project)
+            .getCompileSourceRoots();
+        doReturn(List.of(testSourceDirectory.getAbsolutePath())).when(project)
+            .getTestCompileSourceRoots();
         properties.put(MavenProject.class.getName(), project);
 
         Build build = new Build();
@@ -189,7 +200,10 @@ class MavenProjectScannerPluginTest {
         when(scannerContext.getStore()).thenReturn(store);
         when(scanner.getContext()).thenReturn(scannerContext);
 
-        // classes directory
+        // main sources and classes
+        DirectoryDescriptor mainSourceDirectoryDescriptor = mock(DirectoryDescriptor.class);
+        doReturn(mainSourceDirectoryDescriptor).when(scanner)
+            .scan(eq(mainSourceDirectory.getAbsoluteFile()), eq(null), eq(NONE));
         MavenMainArtifactDescriptor mainArtifactDescriptor = mock(MavenMainArtifactDescriptor.class);
         JavaArtifactFileDescriptor mainClassesDirectoryDescriptor = mock(JavaArtifactFileDescriptor.class);
         MavenTestArtifactDescriptor testArtifactDescriptor = mock(MavenTestArtifactDescriptor.class);
@@ -199,7 +213,10 @@ class MavenProjectScannerPluginTest {
         doReturn(mainClassesDirectoryDescriptor).when(scanner)
             .scan(eq(mainClassesDirectory.getAbsoluteFile()), eq(null), eq(CLASSPATH));
 
-        // test classes directory
+        // test source and classes
+        DirectoryDescriptor testSourceDirectoryDescriptor = mock(DirectoryDescriptor.class);
+        doReturn(testSourceDirectoryDescriptor).when(scanner)
+            .scan(eq(testSourceDirectory.getAbsoluteFile()), eq(null), eq(NONE));
         doReturn(testClassesDirectoryDescriptor).when(scanner)
             .scan(eq(testClassesDirectory.getAbsoluteFile()), eq(null), eq(CLASSPATH));
         doReturn(testArtifactDescriptor).when(fileResolver)
@@ -283,8 +300,16 @@ class MavenProjectScannerPluginTest {
 
         verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
 
+        verify(scannerContext, times(2)).push(eq(JavaSourceFileResolver.class), any(MavenJavaSourceFileResolver.class));
+        verify(scannerContext, times(2)).pop(JavaSourceFileResolver.class);
+
+        verify(scanner).scan(mainSourceDirectory.getAbsoluteFile(), null, NONE);
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, mainClassesDirectoryDescriptor);
+        verify(scanner).scan(mainClassesDirectory.getAbsoluteFile(), null, CLASSPATH);
+
+        verify(scanner).scan(testSourceDirectory.getAbsoluteFile(), null, NONE);
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, testClassesDirectoryDescriptor);
+        verify(scanner).scan(testClassesDirectory.getAbsoluteFile(), null, CLASSPATH);
         verify(scannerContext, times(2)).pop(JavaArtifactFileDescriptor.class);
         assertThat(createsArtifacts.size(), equalTo(2));
         assertThat(createsArtifacts, hasItem(mainArtifactDescriptor));

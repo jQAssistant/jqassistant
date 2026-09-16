@@ -154,7 +154,20 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      *     The operation.
      */
     protected List<? extends FileDescriptor> execute(String artifactId, ScanClassPathOperation operation) {
-        Scanner scanner = getScanner();
+        return execute(artifactId, operation, getScanner());
+    }
+
+    /**
+     * Executes the given scan operation.
+     *
+     * @param artifactId
+     *     The artifact id of the artifact to push on the context.
+     * @param operation
+     *     The operation.
+     * @param scanner
+     *     The scanner.
+     */
+    protected List<? extends FileDescriptor> execute(String artifactId, ScanClassPathOperation operation, Scanner scanner) {
         ScannerContext context = scanner.getContext();
         store.beginTransaction();
         JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
