@@ -20,11 +20,11 @@ import static java.lang.Boolean.FALSE;
 import static java.util.stream.Collectors.joining;
 
 @Slf4j
-public class Neo4jCommunityServerFactory implements EmbeddedNeo4jServerFactory {
+public class CommunityEmbeddedNeo4jServerFactory implements EmbeddedNeo4jServerFactory {
 
     @Override
     public EmbeddedNeo4jServer getServer() {
-        return new Neo4jCommunityNeoServer();
+        return new CommunityEmbeddedNeo4jServer();
     }
 
     @Override
