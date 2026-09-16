@@ -14,8 +14,8 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPl
 public class XsdFileScannerPlugin extends AbstractXmlFileScannerPlugin<XmlFileDescriptor> {
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return path.toLowerCase().endsWith(".xsd");
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        return location.toLowerCase().endsWith(".xsd");
     }
 
     @Override

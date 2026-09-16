@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import java.io.File;
 import java.util.List;
 
 import com.buschmais.jqassistant.commandline.CliExecutionException;
@@ -30,7 +31,8 @@ class MainTest {
     void setUp() {
         this.main = new com.buschmais.jqassistant.commandline.Main() {
             @Override
-            protected void executeTasks(List<Task> tasks, CliConfiguration configuration, Options options, PluginRepository pluginRepository, StoreFactory storeFactory) {
+            protected void executeTasks(List<Task> tasks, CliConfiguration configuration, Options options, File projectDirectory, File workingDirectory,
+                PluginRepository pluginRepository, StoreFactory storeFactory) {
                 fail("(No task must be executed");
             }
         };

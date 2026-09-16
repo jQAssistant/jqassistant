@@ -23,7 +23,7 @@ public class DefaultUriScannerPlugin extends AbstractUriScannerPlugin<URL> {
         .collect(toSet());
 
     @Override
-    public boolean accepts(URI uri, String path, Scope scope) throws IOException {
+    public boolean accepts(URI uri, String location, Scope scope) throws IOException {
         String scheme = uri.getScheme()
             .toLowerCase();
         return SCHEMES.contains(scheme);

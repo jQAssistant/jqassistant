@@ -26,7 +26,7 @@ class GZipFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstr
      * Scan a GZipped zip file.
      *
      * @throws java.io.IOException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     void gzippedTextFile() throws IOException {
@@ -38,14 +38,24 @@ class GZipFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstr
         gzipOutputStream.write("Hello World".getBytes());
         gzipOutputStream.close();
 
-        FileDescriptor descriptor = getScanner().scan(gzFile, gzFile.getAbsolutePath(), DefaultScope.NONE);
-        assertThat(descriptor).as("Expecting a GZIP descriptor.").isInstanceOf(GZipFileDescriptor.class);
-        String expectedGZFileName = gzFile.getAbsolutePath().replace('\\', '/');
-        assertThat(descriptor.getFileName()).as("Expecting an valid valid file name.").isEqualTo(expectedGZFileName);
+        FileDescriptor descriptor = getScanner().scan(gzFile, null, DefaultScope.NONE);
+
+        assertThat(descriptor).as("Expecting a GZIP descriptor.")
+            .isInstanceOf(GZipFileDescriptor.class);
+        String expectedGZFileName = gzFile.getAbsolutePath()
+            .replace('\\', '/');
+        assertThat(descriptor.getFileName()).as("Expecting an valid valid file name.")
+            .endsWith(expectedGZFileName);
         GZipFileDescriptor gZipFileDescriptor = (GZipFileDescriptor) descriptor;
-        assertThat(gZipFileDescriptor.getContains().size()).as("Expecting one entry.").isEqualTo(1);
-        FileDescriptor fileDescriptor = gZipFileDescriptor.getContains().get(0);
-        assertThat(fileDescriptor.getFileName()).as("Expecting a valid entry file name, e.g. without .gz").isEqualTo(expectedGZFileName.substring(0, expectedGZFileName.length() - 3));
+        assertThat(gZipFileDescriptor.getContains()
+            .size()).as("Expecting one entry.")
+            .isEqualTo(1);
+        FileDescriptor fileDescriptor = gZipFileDescriptor.getContains()
+            .get(0);
+        assertThat(fileDescriptor.getFileName()).as("Expecting a valid entry file name, e.g. without .gz")
+            .isEqualTo("/" + gzFile.getName()
+                .substring(0, gzFile.getName()
+                    .lastIndexOf(".gz")));
         store.commitTransaction();
     }
 
@@ -53,7 +63,7 @@ class GZipFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstr
      * Scan a GZipped zip file.
      *
      * @throws java.io.IOException
-     *             If the test fails.
+     *     If the test fails.
      */
     @Test
     void gzippedZipFile() throws IOException {
@@ -73,10 +83,13 @@ class GZipFileScannerIT extends com.buschmais.jqassistant.core.test.plugin.Abstr
 
         FileDescriptor descriptor = getScanner().scan(gzFile, gzFile.getAbsolutePath(), DefaultScope.NONE);
         assertThat(descriptor).isInstanceOf(GZipFileDescriptor.class);
-        assertThat(descriptor.getFileName()).isEqualTo(gzFile.getAbsolutePath().replace('\\', '/'));
+        assertThat(descriptor.getFileName()).endsWith(gzFile.getAbsolutePath()
+            .replace('\\', '/'));
         GZipFileDescriptor gZipFileDescriptor = (GZipFileDescriptor) descriptor;
-        assertThat(gZipFileDescriptor.getContains().size()).isEqualTo(1);
-        FileDescriptor fileDescriptor = gZipFileDescriptor.getContains().get(0);
+        assertThat(gZipFileDescriptor.getContains()
+            .size()).isEqualTo(1);
+        FileDescriptor fileDescriptor = gZipFileDescriptor.getContains()
+            .get(0);
         assertThat(fileDescriptor).isInstanceOf(ArchiveDescriptor.class);
         store.commitTransaction();
     }

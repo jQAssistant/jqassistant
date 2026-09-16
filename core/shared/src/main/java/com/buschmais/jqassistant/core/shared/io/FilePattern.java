@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.core.shared.io;
 import java.io.File;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,6 +14,8 @@ import lombok.ToString;
  * <p>
  * A matcher evaluates all include patterns before applying the exclude patterns.
  */
+@Deprecated
+@ToBeRemovedInVersion(major = 3, minor = 0)
 @Getter
 @Builder
 @ToString

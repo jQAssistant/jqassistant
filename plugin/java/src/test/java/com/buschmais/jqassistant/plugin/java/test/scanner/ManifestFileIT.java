@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor;
@@ -20,11 +19,9 @@ class ManifestFileIT extends AbstractJavaPluginIT {
     /**
      * Verifies that manifest files are scanned.
      *
-     * @throws java.io.IOException
-     *             If the test fails.
      */
     @Test
-    void manifestFile() throws IOException {
+    void manifestFile() {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         store.beginTransaction();
         List<ManifestFileDescriptor> manifestFileDescriptors = query("MATCH (mf:Manifest:File) RETURN mf").getColumn("mf");

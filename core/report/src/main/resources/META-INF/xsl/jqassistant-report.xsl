@@ -5,6 +5,8 @@
     <xsl:output method="html" version="1.0" encoding="UTF-8"
                 indent="yes"/>
     <xsl:template name="content">
+    <xsl:variable name="constraints" select="//tns:constraint"/>
+    <xsl:variable name="concepts" select="//tns:concept"/>
         <script type="text/javascript" xmlns:tns="http://schema.jqassistant.org/report/v2.10">
             function getResultElement(id) {
                 return document.getElementById('resultOf' + id);
@@ -234,7 +236,7 @@
                     <div>Count</div>
                     <div>Constraint</div>
                 </div>
-                <xsl:apply-templates select="//tns:constraint">
+                <xsl:apply-templates select="$constraints">
                     <xsl:sort select="tns:status/@level"/>
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="tns:verificationResult/tns:success"/>
@@ -261,7 +263,7 @@
                     <div>Count</div>
                     <div>Concept</div>
                 </div>
-                <xsl:apply-templates select="//tns:concept">
+                <xsl:apply-templates select="$concepts">
                     <xsl:sort select="tns:status/@level"/>
                     <xsl:sort select="tns:severity/@level"/>
                     <xsl:sort select="tns:verificationResult/tns:success"/>
@@ -467,11 +469,12 @@
 
     <!-- RESULT PART -->
     <xsl:template match="tns:result">
+        <xsl:variable name="columns" select="tns:columns/tns:column"/>
         <div class="result">
 
             <table>
                 <tr>
-                    <xsl:for-each select="tns:columns/tns:column">
+                    <xsl:for-each select="$columns">
                         <th>
                             <xsl:value-of select="text()"/>
                         </th>
@@ -480,12 +483,12 @@
 
                 <xsl:for-each select="tns:rows/tns:row">
                     <xsl:if test="not(tns:hidden != '')">
-                        <xsl:variable name="row" select="position()"/>
+                        <xsl:variable name="currentRow" select="."/>
                         <tr>
-                            <xsl:for-each select="../../tns:columns/tns:column">
-                                <xsl:variable name="col" select="text()"/>
+                            <xsl:for-each select="$columns">
+                                <xsl:variable name="columnName" select="text()"/>
                                 <td style="background-color:#f0ecdf;">
-                                    <xsl:value-of select="../../tns:rows/tns:row[$row]/tns:column[@name=$col]/tns:value"/>
+                                    <xsl:value-of select="$currentRow/tns:column[@name=$columnName]/tns:value"/>
                                 </td>
                             </xsl:for-each>
                         </tr>

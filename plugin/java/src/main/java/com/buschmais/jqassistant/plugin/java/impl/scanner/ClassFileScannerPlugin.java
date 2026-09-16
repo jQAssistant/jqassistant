@@ -43,8 +43,8 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     }
 
     @Override
-    public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
-        if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
+    public boolean accepts(FileResource file, String location, Scope scope) throws IOException {
+        if (CLASSPATH.equals(scope) && location.endsWith(".class")) {
             try (InputStream stream = file.createStream()) {
                 byte[] header = new byte[CAFEBABE.length];
                 int read = stream.read(header);
@@ -55,7 +55,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     }
 
     @Override
-    public ClassFileDescriptor scan(FileResource file, String path, Scope scope, final Scanner scanner) throws IOException {
+    public ClassFileDescriptor scan(FileResource file, String location, Scope scope, final Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         final FileDescriptor fileDescriptor = context.getCurrentDescriptor();
         ClassFileDescriptor classFileDescriptor = context.getStore()
@@ -66,7 +66,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
             new ClassReader(inputStream).accept(visitor, 0);
             classFileDescriptor.setValid(true);
         } catch (RuntimeException e) {
-            LOGGER.warn("Cannot scan class '" + path + "'.", e);
+            LOGGER.warn("Cannot scan class '" + location + "'.", e);
             classFileDescriptor.setValid(false);
         }
         return classFileDescriptor;

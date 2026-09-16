@@ -25,12 +25,12 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
     private final RawModelBuilder rawModelBuilder = new RawModelBuilder();
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        boolean hasXMLExtension = path.toLowerCase()
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        boolean hasXMLExtension = location.toLowerCase()
             .endsWith(".xml");
-        boolean isPomXML = path.toLowerCase()
+        boolean isPomXML = location.toLowerCase()
             .endsWith("pom.xml");
-        boolean hasPomExtension = path.toLowerCase()
+        boolean hasPomExtension = location.toLowerCase()
             .endsWith(".pom");
         boolean identifiedByExtension = isPomXML || hasPomExtension;
 

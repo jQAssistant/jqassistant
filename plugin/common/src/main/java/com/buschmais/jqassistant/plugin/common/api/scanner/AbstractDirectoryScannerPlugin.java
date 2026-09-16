@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
@@ -12,12 +10,13 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.shared.io.FileNameNormalizer;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalDirectoryResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.BufferedFileResource;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.PathNormalizer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,8 +42,13 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     }
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
+    public boolean accepts(File item, String location, Scope scope) throws IOException {
         return item.isDirectory() && getRequiredScope().equals(scope);
+    }
+
+    @Override
+    protected String getContainerPath(File container, String location, ScannerContext context) {
+        return PathNormalizer.normalizePath(container, context);
     }
 
     @Override
@@ -84,55 +88,20 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     protected abstract Scope getRequiredScope();
 
     @Override
-    protected String getContainerPath(File container, String path) {
-        return FileNameNormalizer.normalize(path);
-    }
-
-    @Override
-    protected String getRelativePath(File container, File entry) {
-        return getDirectoryPath(container, entry);
+    protected String getRelativePath(File directory, File entry) {
+        if (entry.equals(directory)) {
+            return "";
+        }
+        return PathNormalizer.relativize(directory, entry);
     }
 
     @Override
     protected Resource getEntry(File container, final File entry) {
         if (entry.isDirectory()) {
-            return new DirectoryResource(entry.getPath());
+            return new LocalDirectoryResource();
         } else {
-            return new BufferedFileResource(new FileResource(entry));
+            return new LocalFileResource(entry);
         }
     }
 
-    /**
-     * A directory resource.
-     */
-    private static class DirectoryResource extends AbstractDirectoryResource {
-        public DirectoryResource(String entryPath) {
-            super(entryPath);
-        }
-    }
-
-    /**
-     * A file resource.
-     */
-    private static class FileResource implements com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource {
-        private final File entry;
-
-        public FileResource(File entry) {
-            this.entry = entry;
-        }
-
-        @Override
-        public InputStream createStream() throws IOException {
-            return new FileInputStream(entry);
-        }
-
-        @Override
-        public File getFile() {
-            return entry;
-        }
-
-        @Override
-        public void close() {
-        }
-    }
 }

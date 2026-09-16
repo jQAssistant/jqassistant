@@ -56,9 +56,10 @@ public abstract class AbstractRuleTask extends AbstractStoreTask {
      *     The {@link Rule} configuration.
      * @return The rules directory.
      */
-    protected static File getRulesDirectory(Rule rule) {
-        return new File(rule.directory()
-            .orElse(DEFAULT_RULE_DIRECTORY));
+    protected File getRulesDirectory(Rule rule) {
+        return rule.directory()
+            .map(File::new)
+            .orElse(new File(projectDirectory, DEFAULT_RULE_DIRECTORY));
     }
 
     /**

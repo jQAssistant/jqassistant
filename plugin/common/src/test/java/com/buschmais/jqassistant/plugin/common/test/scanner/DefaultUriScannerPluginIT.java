@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.URIDescriptor;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,13 +21,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DefaultUriScannerPluginIT extends AbstractPluginIT {
 
     @Test
-    void fileUri() throws URISyntaxException {
+    void absoluteFileUri() throws URISyntaxException {
         store.beginTransaction();
         URL resource = DefaultUriScannerPluginIT.class.getResource("/");
         URI uri = resource.toURI();
         Descriptor descriptor = getScanner().scan(uri, uri.toString(), DefaultScope.NONE);
         assertThat(descriptor).isInstanceOf(FileDescriptor.class);
-        assertThat(((FileDescriptor) descriptor).getFileName()).isEqualTo(uri.toString());
+        FileDescriptor fileDescriptor = (FileDescriptor) descriptor;
+        assertThat(fileDescriptor.getPath()).isEqualTo(uri.toString());
+        assertThat(fileDescriptor.getFileName()).isEqualTo(resource.getFile());
+        store.commitTransaction();
+    }
+
+    @Test
+    void relativeFileUri() throws URISyntaxException {
+        store.beginTransaction();
+        URI uri = new URI("file:target/test-classes");
+        URIDescriptor descriptor = getScanner().scan(uri, uri.toString(), DefaultScope.NONE);
+        assertThat(descriptor).isInstanceOf(FileDescriptor.class);
+        FileDescriptor fileDescriptor = (FileDescriptor) descriptor;
+        assertThat(fileDescriptor.getPath()).isEqualTo(uri.toString());
+        assertThat(fileDescriptor.getFileName()).isEqualTo("target/test-classes");
         store.commitTransaction();
     }
 

@@ -195,17 +195,17 @@ class ScannerImplTest {
         ScannerContext scannerContext = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
         doReturn(Set.<ScannerPlugin<?, ?>>of(new TestItemScannerPlugin() {
             @Override
-            public boolean accepts(TestItem item, String path, Scope scope) {
+            public boolean accepts(TestItem item, String location, Scope scope) {
                 return true;
             }
         }, new DependentTestItemScannerPlugin() {
             @Override
-            public boolean accepts(TestItem item, String path, Scope scope) {
+            public boolean accepts(TestItem item, String location, Scope scope) {
                 return true;
             }
         }, new NestedTestItemScannerPlugin() {
             @Override
-            public boolean accepts(TestItem item, String path, Scope scope) {
+            public boolean accepts(TestItem item, String location, Scope scope) {
                 return true;
             }
         })).when(scannerPluginRepository)
@@ -225,17 +225,17 @@ class ScannerImplTest {
         ScannerContext scannerContext = new ScannerContextImpl(ScannerImplTest.class.getClassLoader(), store, WORKING_DIRECTORY, OUTPUT_DIRECTORY);
         doReturn(Set.<ScannerPlugin<?, ?>>of(new TestItemScannerPlugin() {
             @Override
-            public boolean accepts(TestItem item, String path, Scope scope) {
+            public boolean accepts(TestItem item, String location, Scope scope) {
                 return true;
             }
         }, new DependentTestItemScannerPlugin() {
             @Override
-            public boolean accepts(TestItem item, String path, Scope scope) {
+            public boolean accepts(TestItem item, String location, Scope scope) {
                 return false;
             }
         }, new NestedTestItemScannerPlugin() {
             @Override
-            public boolean accepts(TestItem item, String path, Scope scope) {
+            public boolean accepts(TestItem item, String location, Scope scope) {
                 return true;
             }
         })).when(scannerPluginRepository)

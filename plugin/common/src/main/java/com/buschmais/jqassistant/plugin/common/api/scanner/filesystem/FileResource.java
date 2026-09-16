@@ -6,7 +6,7 @@ import java.io.InputStream;
 /**
  * Represents a file resource.
  */
-public interface FileResource extends Resource {
+public interface FileResource extends Resource, AutoCloseable {
 
     InputStream createStream() throws IOException;
 
