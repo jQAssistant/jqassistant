@@ -37,7 +37,7 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
         boolean isMavenPOM;
         if (!identifiedByExtension && hasXMLExtension) {
             // Maven 4.1.0 uses namespace http://maven.apache.org/POM/4.1.0 (root element remains "project")
-            isMavenPOM = XMLFileFilter.rootElementMatches(item, path,
+            isMavenPOM = XMLFileFilter.rootElementMatches(item, location,
                 rootElement -> "project".equals(rootElement.getLocalPart()) && rootElement.getNamespaceURI()
                     .startsWith("http://maven.apache.org/POM/"));
         } else {
