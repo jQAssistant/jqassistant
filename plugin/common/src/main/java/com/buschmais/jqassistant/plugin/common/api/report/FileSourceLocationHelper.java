@@ -17,13 +17,19 @@ import static lombok.AccessLevel.PRIVATE;
  * {@link FileDescriptor}s.
  */
 @NoArgsConstructor(access = PRIVATE)
-public class FileSourceHelper {
+public class FileSourceLocationHelper {
 
     public static Optional<FileLocation> getSourceLocation(FileDescriptor descriptor, Optional<Integer> startLine, Optional<Integer> endLine) {
-        String fileName = descriptor.getFileName();
-        if (fileName != null) {
+        return getSourceLocation(descriptor, descriptor, startLine, endLine);
+    }
+
+    public static Optional<FileLocation> getSourceLocation(FileDescriptor descriptor, FileDescriptor sourceFileDescriptor, Optional<Integer> startLine,
+        Optional<Integer> endLine) {
+        String path = sourceFileDescriptor.getPath();
+        if (path != null) {
             FileLocation.FileLocationBuilder<?, ?> fileLocationBuilder = FileLocation.builder()
-                .fileName(fileName);
+                .path(path)
+                .fileName(sourceFileDescriptor.getFileName());
             fileLocationBuilder.startLine(startLine);
             fileLocationBuilder.endLine(endLine);
             fileLocationBuilder.parent(getParentLocation(descriptor));
@@ -38,6 +44,7 @@ public class FileSourceHelper {
                 ArtifactFileDescriptor parentArtifactFileDescriptor = (ArtifactFileDescriptor) parentDescriptor;
                 // fileName
                 ArtifactLocation.ArtifactLocationBuilder<?, ?> artifactLocationBuilder = ArtifactLocation.builder()
+                    .path(parentArtifactFileDescriptor.getPath())
                     .fileName(parentArtifactFileDescriptor.getFileName());
                 // optional Maven coordinates
                 artifactLocationBuilder.group(ofNullable(parentArtifactFileDescriptor.getGroup()))

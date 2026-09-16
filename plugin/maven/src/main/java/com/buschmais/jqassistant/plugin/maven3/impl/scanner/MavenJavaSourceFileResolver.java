@@ -33,7 +33,9 @@ public class MavenJavaSourceFileResolver implements JavaSourceFileResolver {
                 + "WHERE" //
                 + "  id(sourceDirectory) in $sourceDirectories " //
                 + "RETURN" //
-                + "  sourceFile", Map.of("sourceDirectories", sourceDirectoryDescriptors, "fileName", "/" + relativeSourcePath))) {
+                + "  sourceFile " //
+                + "LIMIT " //
+                + "  1", Map.of("sourceDirectories", sourceDirectoryDescriptors, "fileName", "/" + relativeSourcePath))) {
             return result.hasResult() ?
                 of(result.getSingleResult()
                     .get("sourceFile", FileDescriptor.class)) :

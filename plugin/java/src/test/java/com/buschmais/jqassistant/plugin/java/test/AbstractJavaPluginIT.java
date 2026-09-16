@@ -34,11 +34,15 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      */
     protected JavaArtifactFileDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
-        if (artifact == null) {
-            artifact = store.create(JavaArtifactFileDescriptor.class, artifactId);
-            artifact.setFullQualifiedName(artifactId);
+        if (artifact != null) {
+            return (JavaArtifactFileDescriptor) artifact;
         }
-        return (JavaArtifactFileDescriptor) artifact;
+        JavaArtifactFileDescriptor artifactFileDescriptor = store.create(JavaArtifactFileDescriptor.class, artifactId);
+        String path = getClassesDirectory(this.getClass()).getPath();
+        artifactFileDescriptor.setPath(path);
+        artifactFileDescriptor.setFileName("/" + path);
+        artifactFileDescriptor.setFullQualifiedName(artifactId);
+        return artifactFileDescriptor;
     }
 
     /**
