@@ -31,7 +31,8 @@ public class MavenJavaSourceFileResolver implements JavaSourceFileResolver {
             .executeQuery("MATCH" //
                 + "  shortestPath((sourceDirectory:File:Directory)-[:CONTAINS*]->(sourceFile:File{fileName:$fileName})) " //
                 + "WHERE" //
-                + "  id(sourceDirectory) in $sourceDirectories " //
+                + "  sourceDirectory <> sourceFile " //
+                + "  and id(sourceDirectory) in $sourceDirectories " //
                 + "RETURN" //
                 + "  sourceFile " //
                 + "LIMIT " //

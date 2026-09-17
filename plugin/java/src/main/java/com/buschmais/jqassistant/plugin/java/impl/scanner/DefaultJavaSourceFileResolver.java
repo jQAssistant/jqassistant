@@ -32,10 +32,10 @@ public class DefaultJavaSourceFileResolver implements JavaSourceFileResolver {
         params.put("sourceFileName", "/" + relativeSourcePath);
         try (Query.Result<Query.Result.CompositeRowObject> result = context.getStore()
             .executeQuery("MATCH" //
-                + "  shortestPath((directory:Directory)-[:CONTAINS*]->(sourceFile:File{fileName:$sourceFileName})) " //
+                + "  shortestPath((sourceDirectory:Directory)-[:CONTAINS*]->(sourceFile:File{fileName:$sourceFileName})) " //
                 + "WHERE" //
-                + "  $sourceDirectoryPaths is null" //
-                + "  or any(sourceDirectory in $sourceDirectoryPaths WHERE directory.path ends with sourceDirectory) " //
+                + "  sourceDirectory <> sourceFile" //
+                + "  and ($sourceDirectoryPaths is null or any(sourceDirectoryPath in $sourceDirectoryPaths WHERE sourceDirectory.path ends with sourceDirectoryPath)) " //
                 + "RETURN"  //
                 + "  sourceFile " //
                 + "ORDER BY "  //
