@@ -36,11 +36,11 @@ class JavaSourceFileIT extends AbstractJavaPluginIT {
         }, scanner);
 
         store.beginTransaction();
-        TestResult testResult = query("MATCH (t:Java:ByteCode:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t as types");
+        TestResult testResult = query("MATCH (t:Java:ByteCode:Type:Class{fqn:$fqn}) RETURN t", Map.of("fqn", Pojo.class.getName()));
         assertThat(testResult.getRows()).hasSize(1);
         TypeClassFileDescriptor typeDescriptor = (TypeClassFileDescriptor) testResult.getRows()
             .get(0)
-            .get("types");
+            .get("t");
         FileDescriptor sourceFileDescriptor = typeDescriptor.getHasSourceFile();
         assertThat(sourceFileDescriptor).isNotNull();
         assertThat(sourceFileDescriptor.getPath()).endsWith(Pojo.class.getSimpleName() + ".java");
