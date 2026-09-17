@@ -10,7 +10,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /**
  * Defines the combination of labels "Java" and "ByteCode".
  */
-public interface ClassFileDescriptor extends JavaByteCodeDescriptor, FileDescriptor, FullQualifiedNameDescriptor, AnnotatedDescriptor, ValidDescriptor {
+public interface ClassFileDescriptor
+    extends JavaByteCodeDescriptor, FileDescriptor, FullQualifiedNameDescriptor, AnnotatedDescriptor, ValidDescriptor, SourceFileTemplate {
 
     /**
      * Return the name of the source file.
@@ -47,5 +48,4 @@ public interface ClassFileDescriptor extends JavaByteCodeDescriptor, FileDescrip
 
     @Relation.Incoming
     List<ClassFileDependsOnDescriptor> getDependents();
-
 }

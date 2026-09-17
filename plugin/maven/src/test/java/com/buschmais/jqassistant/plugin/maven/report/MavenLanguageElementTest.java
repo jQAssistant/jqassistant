@@ -39,6 +39,8 @@ public class MavenLanguageElementTest {
 
         assertThat(Pom.getLanguage()).isEqualTo("Maven");
 
+        doReturn("projects/my-project/pom.xml").when(pomXmlFileDescriptor)
+            .getPath();
         doReturn("/projects/my-project/pom.xml").when(pomXmlFileDescriptor)
                 .getFileName();
         SourceProvider<CompositeObject> sourceProvider = Pom.getSourceProvider();

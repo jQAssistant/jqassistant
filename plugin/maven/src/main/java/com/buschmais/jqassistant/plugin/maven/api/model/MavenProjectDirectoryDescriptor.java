@@ -57,4 +57,20 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
     MavenPomDescriptor getEffectiveModel();
 
     void setEffectiveModel(MavenPomDescriptor effectiveModel);
+
+    /**
+     * Return the source directories.
+     *
+     * @return The source directories.
+     */
+    @Relation("HAS_SOURCE_DIRECTORY")
+    List<DirectoryDescriptor> getSourceDirectories();
+
+    /**
+     * Return the test source directories.
+     *
+     * @return The test source directories.
+     */
+    @Relation("HAS_TEST_SOURCE_DIRECTORY")
+    List<DirectoryDescriptor> getTestSourceDirectories();
 }
