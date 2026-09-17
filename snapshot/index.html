@@ -5124,9 +5124,14 @@ These reports can be evaluated by other tools, e.g. <a href="https://jenkins-ci.
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.source.paths</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Comma separated list of scanned directory paths containing Java source files, e.g. "src,src-test,src-gen" (if used by CLI)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.include.local-variables</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">If <code>true</code> then local variables (declared by methods) will be scanned: <code>(:Method)-[:DECLARES]&#8594;(:Variable)</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 </tr>
 </tbody>
 </table>
@@ -5221,6 +5226,12 @@ property <code>fqn</code> and <code>DECLARES</code> relations to their members. 
 </tr>
 </thead>
 <tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HAS_SOURCE_FILE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#:File">:File</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the Java source file</p></td>
+</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DECLARES_TYPE_PARAMETER</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#:Java:Bound:TypeVariable">Nodes labeled with <code>:Java:Bound:TypeVariable</code></a></p></td>
@@ -11307,6 +11318,18 @@ They follow the Maven syntax, i.e. <code>[groupId]:[artifactId]:[type]:[version]
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HAS_SOURCE_DIRECTORY</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#:File:Directory">:File:Directory</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the source directories of the project</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HAS_TEST_ SOURCE_DIRECTORY</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#:File:Directory">:File:Directory</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References the test source directories of the project</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">CREATES</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#:Maven:Artifact">Nodes labeled with <code>:Maven:Artifact</code></a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0..n</p></td>
@@ -12927,7 +12950,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-09-17 10:02:00 UTC
+Last updated 2026-09-17 11:37:19 UTC
 </div>
 </div>
 </body>
