@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
+package com.buschmais.jqassistant.plugin.maven.impl.scanner;
 
 import java.util.List;
 import java.util.Map;
