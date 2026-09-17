@@ -49,8 +49,16 @@
     <concept id="it:TypeHasSourceFile" severity="blocker">
         <description>Verifies that each Java type references a source file.</description>
         <cypher><![CDATA[
+            WITH [
+              "module1/src/main/java/com/buschmais/jqassistant/maven/module1/A.java",
+              "module1/src/test/java/com/buschmais/jqassistant/maven/module1/ATest.java",
+              "module2/src/main/java/com/buschmais/jqassistant/maven/module2/B.java",
+              "module2/src/test/java/com/buschmais/jqassistant/maven/module2/BTest.java"
+            ] as expectedPaths
+            UNWIND
+              expectedPaths as expectedPath
             MATCH
-              (:Type)-[:HAS_SOURCE_FILE]->(:File)
+              (:Type)-[:HAS_SOURCE_FILE]->(:File{path:expectedPath})
             RETURN
               count(*) as count
         ]]></cypher>
