@@ -389,6 +389,7 @@ public class XmlReportPlugin implements ReportPlugin {
     }
 
     private void writeSourceLocation(SourceLocation<? extends SourceLocation<?>> sourceLocation) throws XMLStreamException {
+        xmlStreamWriter.writeAttribute("path", sourceLocation.getPath());
         xmlStreamWriter.writeAttribute("fileName", sourceLocation.getFileName());
         if (sourceLocation instanceof FileLocation) {
             FileLocation fileLocation = (FileLocation) sourceLocation;

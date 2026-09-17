@@ -1,25 +1,33 @@
 package com.buschmais.jqassistant.plugin.java.test.language;
 
+import java.util.Set;
+
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.plugin.common.api.model.AbstractLanguageElementTest;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.*;
-import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class JavaLanguageElementTest extends AbstractLanguageElementTest {
 
+    public static final String JAVA_SOURCE_FILENAME = "/com/buschmais/Test.java";
+    public static final String JAVA_SOURCE_PATH = SOURCE_PATH_PREFIX + JAVA_SOURCE_FILENAME;
+    public static final String JAVA_TYPE = "com.buschmais.Type";
+
     @Test
     public void packageElement() {
         PackageDescriptor descriptor = mock(PackageDescriptor.class);
+        when(descriptor.getPath()).thenReturn("src/com/buschmais");
         when(descriptor.getFileName()).thenReturn("/com/buschmais");
         when(descriptor.getFullQualifiedName()).thenReturn("com.buschmais");
-        doReturn(newHashSet(getArtifactFileDescriptor())).when(descriptor)
+        doReturn(Set.of(getArtifactFileDescriptor())).when(descriptor)
             .getParents();
 
         SourceProvider<PackageDescriptor> sourceProvider = Package.getSourceProvider();
@@ -32,7 +40,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
     void typeElement() {
         TypeDescriptor descriptor = getTypeDescriptor();
 
-        verify(descriptor, Type, "com.buschmais.Type", "/com/buschmais/Test.java");
+        verify(descriptor, Type, JAVA_TYPE, JAVA_SOURCE_FILENAME);
     }
 
     @Test
@@ -43,7 +51,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         doReturn(getTypeDescriptor()).when(descriptor)
             .getDeclaringType();
 
-        verify(descriptor, Field, "int value", "/com/buschmais/Test.java");
+        verify(descriptor, Field, "int value", JAVA_SOURCE_FILENAME);
     }
 
     @Test
@@ -59,7 +67,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         doReturn(42).when(descriptor)
             .getLineNumber();
 
-        verify(descriptor, ReadField, "void doSomething():42", "/com/buschmais/Test.java", of(42), of(42));
+        verify(descriptor, ReadField, "void doSomething():42", JAVA_SOURCE_FILENAME, of(42), of(42));
     }
 
     @Test
@@ -75,7 +83,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         doReturn(42).when(descriptor)
             .getLineNumber();
 
-        verify(descriptor, WriteField, "void doSomething():42", "/com/buschmais/Test.java", of(42), of(42));
+        verify(descriptor, WriteField, "void doSomething():42", JAVA_SOURCE_FILENAME, of(42), of(42));
     }
 
     @Test
@@ -90,7 +98,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
             .getSignature();
         when(descriptor.getLineNumber()).thenReturn(42);
 
-        verify(descriptor, MethodInvocation, "void doSomething():42", "/com/buschmais/Test.java", of(42), of(42));
+        verify(descriptor, MethodInvocation, "void doSomething():42", JAVA_SOURCE_FILENAME, of(42), of(42));
     }
 
     @Test
@@ -105,7 +113,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         doReturn(42).when(descriptor)
             .getLastLineNumber();
 
-        verify(descriptor, Method, "int getValue()", "/com/buschmais/Test.java", of(24), of(42));
+        verify(descriptor, Method, "int getValue()", JAVA_SOURCE_FILENAME, of(24), of(42));
     }
 
     @Test
@@ -123,7 +131,7 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         doReturn("int i").when(variable)
             .getSignature();
 
-        verify(variable, Variable, "void doSomething()#int i", "/com/buschmais/Test.java");
+        verify(variable, Variable, "void doSomething()#int i", JAVA_SOURCE_FILENAME);
     }
 
     @Test
@@ -136,21 +144,28 @@ class JavaLanguageElementTest extends AbstractLanguageElementTest {
         when(dependsOnDescriptor.getDependent()).thenReturn(dependent);
         when(dependsOnDescriptor.getDependency()).thenReturn(dependency);
 
-        verify(dependsOnDescriptor, ClassFileDepdendency, "A->B", "/com/buschmais/Test.java");
+        verify(dependsOnDescriptor, ClassFileDepdendency, "A->B", JAVA_SOURCE_FILENAME);
     }
 
     private TypeClassFileDescriptor getTypeDescriptor() {
+        FileDescriptor packageSourceDirectoryDescriptor = mock(DirectoryDescriptor.class);
+        doReturn("src/com/buschmais").when(packageSourceDirectoryDescriptor)
+            .getPath();
         PackageDescriptor packageDescriptor = mock(PackageDescriptor.class);
-        doReturn("/com/buschmais").when(packageDescriptor)
+        doReturn(packageSourceDirectoryDescriptor).when(packageDescriptor)
+            .getHasSourceFile();
+
+        FileDescriptor typeSourceFileDescriptor = mock(FileDescriptor.class);
+        doReturn(JAVA_SOURCE_PATH).when(typeSourceFileDescriptor)
+            .getPath();
+        doReturn(JAVA_SOURCE_FILENAME).when(typeSourceFileDescriptor)
             .getFileName();
         TypeClassFileDescriptor descriptor = mock(TypeClassFileDescriptor.class);
-        doReturn("/com/buschmais/Test.class").when(descriptor)
-            .getFileName();
-        doReturn("Test.java").when(descriptor)
-            .getSourceFileName();
-        doReturn("com.buschmais.Type").when(descriptor)
+        doReturn(JAVA_TYPE).when(descriptor)
             .getFullQualifiedName();
-        doReturn(newHashSet(packageDescriptor, getArtifactFileDescriptor())).when(descriptor)
+        doReturn(typeSourceFileDescriptor).when(descriptor)
+            .getHasSourceFile();
+        doReturn(Set.of(packageDescriptor, getArtifactFileDescriptor())).when(descriptor)
             .getParents();
         return descriptor;
     }

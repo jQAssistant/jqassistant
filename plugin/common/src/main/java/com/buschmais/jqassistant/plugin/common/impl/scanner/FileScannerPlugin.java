@@ -29,7 +29,7 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
 
     @Override
     public boolean accepts(File file, String location, Scope scope) throws IOException {
-        return !file.isDirectory();
+        return file.exists() & !file.isDirectory();
     }
 
     @Override

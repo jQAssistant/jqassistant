@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 /**
  * A scanner plugin for directories containing java classes.
  */
-public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<JavaArtifactFileDescriptor> {
+public class JavaClasspathDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<JavaArtifactFileDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {
@@ -21,8 +21,8 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
     }
 
     @Override
-    protected void enterContainer(File directory, JavaArtifactFileDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
-        context.push(TypeResolver.class, new ArtifactScopedTypeResolver(javaClassesDirectoryDescriptor));
+    protected void enterContainer(File directory, JavaArtifactFileDescriptor javaArtifactFileDescriptor, ScannerContext context) {
+        context.push(TypeResolver.class, new ArtifactScopedTypeResolver(javaArtifactFileDescriptor));
     }
 
     @Override

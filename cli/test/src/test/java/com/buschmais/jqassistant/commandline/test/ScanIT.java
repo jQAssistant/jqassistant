@@ -22,18 +22,36 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ScanIT extends AbstractCLIIT {
 
-    private static final String CLASSPATH_SCOPE_SUFFIX = "java:classpath::";
+    private static final String CLASSPATH_SCOPE_PREFIX = "java:classpath::";
 
     @DistributionTest
     void classFromDirectory() {
         String directory = ScanIT.class.getResource("/")
             .getFile();
-        String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_SUFFIX + directory };
+        String[] args = new String[] { "scan", "-f", CLASSPATH_SCOPE_PREFIX + directory };
         assertThat(execute(args).getExitCode()).isZero();
         withStore(store -> {
             Map<String, Object> params = new HashMap<>();
             params.put("type", ScanIT.class.getName());
             String query = "match (t:Type:Class) where t.fqn=$type return count(t) as count";
+            Long count = executeQuery(store, query, params, "count", Long.class);
+            assertThat(count).describedAs("Expecting a result for %s", ScanIT.class)
+                .isEqualTo(1);
+        });
+    }
+
+    @DistributionTest
+    void classFromDirectoryWithSourceFile() {
+        String directory = ScanIT.class.getResource("/")
+            .getFile();
+        String sourceDirectory = new File(directory, "../../src/test/java").getPath();
+        assertThat(execute("scan", "-f", sourceDirectory).getExitCode()).isZero();
+        assertThat(execute("scan", "-f", CLASSPATH_SCOPE_PREFIX + directory, "-D",
+            "jqassistant.scan.properties.java.source.paths=src/main/java,src/test/java").getExitCode()).isZero();
+        withStore(store -> {
+            Map<String, Object> params = new HashMap<>();
+            params.put("type", ScanIT.class.getName());
+            String query = "match (t:Type:Class)-[:HAS_SOURCE_FILE]->(source:File) where t.fqn=$type return count(t) as count";
             Long count = executeQuery(store, query, params, "count", Long.class);
             assertThat(count).describedAs("Expecting a result for %s", ScanIT.class)
                 .isEqualTo(1);

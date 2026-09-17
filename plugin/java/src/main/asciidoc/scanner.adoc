@@ -78,8 +78,13 @@ Imports Java classes, i.e. all scanned files having a `.class` suffix.
 |====
 | Property     | Description																 | Default
 
+| java.source.paths
+| Comma separated list of scanned directory paths containing Java source files, e.g. "src,src-test,src-gen" (if used by CLI)
+|
+
 | java.include.local-variables
-| If `true` then local variables (declared by methods) will be scanned: `(:Method)-[:DECLARES]->(:Variable)` |
+| If `true` then local variables (declared by methods) will be scanned: `(:Method)-[:DECLARES]->(:Variable)`
+| false
 
 |====
 
@@ -117,6 +122,7 @@ A Java type. Can be qualified by either `:Class`, `:Interface`, `:Enum`, `:Recor
 [options="header"]
 |====
 | Name                    | Target label(s)              | Cardinality | Description
+| HAS_SOURCE_FILE         | <<:File>>                    | 0..1        | References the Java source file
 | DECLARES_TYPE_PARAMETER | <<:Java:Bound:TypeVariable>> | 0..n        | Declares a type variable
 | REQUIRES_TYPE_PARAMETER | <<:Java:Bound:TypeVariable>> | 0..n        | References a required type variable (in case of an inner class referencin a type parameter declared by an outer class)
 | DECLARES                | <<:Java:Type>>               | 0..n        | Declares an inner type of the type

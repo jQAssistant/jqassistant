@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -18,11 +19,13 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.PathNormalizer;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaSourceFileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
@@ -43,6 +46,7 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.buschmais.jqassistant.core.scanner.api.DefaultScope.NONE;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
 import static org.eclipse.aether.util.graph.transformer.ConflictResolver.CONFIG_PROP_VERBOSE;
@@ -128,8 +132,27 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         }
     }
 
-    private MavenProjectDirectoryDescriptor scanArtifacts(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner,
-        MavenSession mavenSession) {
+    private List<DirectoryDescriptor> scanSourceRoot(Scanner scanner, List<String> sourceRoots) {
+        return sourceRoots.stream()
+            .map(File::new)
+            .filter(sourceRoot -> sourceRoot.exists() && sourceRoot.isDirectory())
+            .map(sourceRoot -> (DirectoryDescriptor) scanner.scan(sourceRoot, null, NONE))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Scans the artifacts created by the {@link MavenProject}.
+     *
+     * @param project
+     *     The {@link MavenProject}.
+     * @param projectDescriptor
+     *     The {@link MavenProjectDirectoryDescriptor} representing the {@link MavenProject}.
+     * @param scanner
+     *     The {@link Scanner}.
+     * @param mavenSession
+     *     The {@link MavenSession}.
+     */
+    private void scanArtifacts(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner, MavenSession mavenSession) {
         ScannerContext context = scanner.getContext();
         // main artifact
         Artifact artifact = project.getArtifact();
@@ -164,10 +187,10 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         if (!project.getPackaging()
             .equals(PACKAGING_POM)) {
             // Scan classes
-            scanClassesDirectory(mainArtifactDescriptor, outputDirectory, scanner);
-            scanClassesDirectory(testArtifactDescriptor, testOutputDirectory, scanner);
+            scanClasses(outputDirectory, mainArtifactDescriptor, project.getCompileSourceRoots(), projectDescriptor.getSourceDirectories(), scanner);
+            scanClasses(testOutputDirectory, testArtifactDescriptor, project.getTestCompileSourceRoots(), projectDescriptor.getTestSourceDirectories(),
+                scanner);
         }
-        return projectDescriptor;
     }
 
     private void scanTestReports(MavenProject project, Scanner scanner) {
@@ -402,16 +425,28 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     /**
      * Scan the given directory for classes and add them to an artifact.
      *
-     * @param artifactDescriptor
-     *     The artifact.
      * @param directory
      *     The directory.
+     * @param artifactDescriptor
+     *     The artifact.
+     * @param sourceRoots
+     *     The list of source roots for adding the scanned source root directories.
      * @param scanner
      *     The scanner.
      */
-    private void scanClassesDirectory(MavenArtifactDescriptor artifactDescriptor, final File directory, Scanner scanner) {
+    private void scanClasses(final File directory, MavenArtifactDescriptor artifactDescriptor, List<String> sourceRoots,
+        List<DirectoryDescriptor> sourceRootDescriptors, Scanner scanner) {
         if (directory.exists()) {
-            scanArtifact(artifactDescriptor, directory, scanner);
+            List<DirectoryDescriptor> directoryDescriptors = scanSourceRoot(scanner, sourceRoots);
+            sourceRootDescriptors.addAll(directoryDescriptors);
+            scanner.getContext()
+                .push(JavaSourceFileResolver.class, new MavenJavaSourceFileResolver(directoryDescriptors));
+            try {
+                scanArtifact(artifactDescriptor, directory, scanner);
+            } finally {
+                scanner.getContext()
+                    .pop(JavaSourceFileResolver.class);
+            }
         }
     }
 

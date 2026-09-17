@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.JavaClassesDirectoryScannerPlugin;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.JavaClasspathDirectoryScannerPlugin;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class JavaClassesDirectoryScannerPluginTest {
+class JavaClasspathDirectoryScannerPluginTest {
 
     @Mock
     private Scanner scanner;
@@ -41,7 +41,7 @@ class JavaClassesDirectoryScannerPluginTest {
 
     private File directory;
 
-    private JavaClassesDirectoryScannerPlugin plugin;
+    private JavaClasspathDirectoryScannerPlugin plugin;
 
     @BeforeEach
     void before() throws IOException {
@@ -70,7 +70,7 @@ class JavaClassesDirectoryScannerPluginTest {
         doReturn(parentFileResolver).when(context)
             .peek(FileResolver.class);
 
-        this.plugin = new JavaClassesDirectoryScannerPlugin();
+        this.plugin = new JavaClasspathDirectoryScannerPlugin();
         this.plugin.configure(context, emptyMap());
     }
 
