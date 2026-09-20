@@ -8,6 +8,72 @@
       }
     },
     "results" : [ {
+      "ruleId" : "82e75d22d9c77f1aa8aea08a125547eb04ca688ff560ce66a37c030e542e5589",
+      "level" : "error",
+      "message" : {
+        "text" : "The license definition seems to be wrong. Please ensure\nto declare the license in this project as follows:\n\n    <licenses>\n        <license>\n            <name>GNU General Public License, v3</name>\n            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>\n        </license>\n    </licenses>",
+        "markdown" : "|Project: jQAssistant Parent\n|groupId: com.buschmais.jqassistant\n|artifactId: parent\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-legal:license:is-correctly-defined"
+      }
+    }, {
+      "ruleId" : "82e75d22d9c77f1aa8aea08a125547eb04ca688ff560ce66a37c030e542e5589",
+      "level" : "error",
+      "message" : {
+        "text" : "The license definition seems to be wrong. Please ensure\nto declare the license in this project as follows:\n\n    <licenses>\n        <license>\n            <name>GNU General Public License, v3</name>\n            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>\n        </license>\n    </licenses>",
+        "markdown" : "|Project: jQAssistant Parent\n|groupId: com.buschmais.jqassistant\n|artifactId: parent\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-legal:license:is-correctly-defined"
+      }
+    }, {
+      "ruleId" : "a40b0d353f451838dfaf70ac973a51259c06a137b4f1174d03180835349f4df6",
+      "level" : "warning",
+      "message" : {
+        "text" : "A jQAssistant project must have exactly one license specified in\nits Maven POM. This project has one or more then one license\nspecified.",
+        "markdown" : "|Project: jQAssistant Parent\n|groupId: com.buschmais.jqassistant\n|artifactId: parent\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-legal:license:only-one-in-pom"
+      }
+    }, {
       "ruleId" : "a40b0d353f451838dfaf70ac973a51259c06a137b4f1174d03180835349f4df6",
       "level" : "warning",
       "message" : {
