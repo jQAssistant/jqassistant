@@ -985,6 +985,19 @@ building block instances depicted in this diagram.&gt;</em></p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="red">FAILURE</span></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#jqassistant_jqa-legal:license:is-correctly-defined">jqa-legal:license:is-correctly-defined</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The license definition seems to be wrong. Please ensure
+to declare the license in this project as follows:</p>
+<p class="tableblock">    &lt;licenses&gt;
+        &lt;license&gt;
+            &lt;name&gt;GNU General Public License, v3&lt;/name&gt;
+            &lt;url&gt;<a href="https://www.gnu.org/licenses/gpl-3.0.html&lt;/url&gt" class="bare">https://www.gnu.org/licenses/gpl-3.0.html&lt;/url&gt</a>;
+        &lt;/license&gt;
+    &lt;/licenses&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MAJOR</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="red">FAILURE</span></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#jqassistant_jqa-technical-debt:CodeElementToBeRemoved">jqa-technical-debt:CodeElementToBeRemoved</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in given version.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MAJOR</p></td>
@@ -1018,19 +1031,6 @@ readme file called 'LICENSE'.</p>
 and should help users to identify the type of license
 the project uses.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MINOR</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="green">SUCCESS</span></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#jqassistant_jqa-legal:license:is-correctly-defined">jqa-legal:license:is-correctly-defined</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The license definition seems to be wrong. Please ensure
-to declare the license in this project as follows:</p>
-<p class="tableblock">    &lt;licenses&gt;
-        &lt;license&gt;
-            &lt;name&gt;GNU General Public License, v3&lt;/name&gt;
-            &lt;url&gt;<a href="https://www.gnu.org/licenses/gpl-3.0.html&lt;/url&gt" class="bare">https://www.gnu.org/licenses/gpl-3.0.html&lt;/url&gt</a>;
-        &lt;/license&gt;
-    &lt;/licenses&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MAJOR</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="green">SUCCESS</span></p></td>
 </tr>
 <tr>
@@ -1244,6 +1244,63 @@ Status: <span class="red">FAILURE</span>, Severity: MAJOR
 </div>
 </div>
 <div class="sect3">
+<h4 id="jqassistant_jqa-legal:license:is-correctly-defined">jqa-legal:license:is-correctly-defined</h4>
+<div class="sidebarblock">
+<div class="content">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">🔥 ERROR</div>
+</td>
+<td class="content">
+The license definition seems to be wrong. Please ensure
+to declare the license in this project as follows:
+</td>
+</tr>
+</table>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>    &lt;licenses&gt;
+        &lt;license&gt;
+            &lt;name&gt;GNU General Public License, v3&lt;/name&gt;
+            &lt;url&gt;https://www.gnu.org/licenses/gpl-3.0.html&lt;/url&gt;
+        &lt;/license&gt;
+    &lt;/licenses&gt; +
+Status: [red]#FAILURE#, Severity: MAJOR</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Project</th>
+<th class="tableblock halign-left valign-top">groupId</th>
+<th class="tableblock halign-left valign-top">artifactId</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jQAssistant Parent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parent</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jQAssistant Parent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parent</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
 <h4 id="jqassistant_jqa-technical-debt:CodeElementToBeRemoved">jqa-technical-debt:CodeElementToBeRemoved</h4>
 <div class="sidebarblock">
 <div class="content">
@@ -1326,6 +1383,11 @@ Status: <span class="yellow">WARNING</span>, Severity: MINOR
 </tr>
 </thead>
 <tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jQAssistant Parent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parent</p></td>
+</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jQAssistant Parent</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant</p></td>
@@ -1496,59 +1558,7 @@ Status: <span class="green">SUCCESS</span>, Severity: MINOR</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/home/runner/work/jqassistant/jqassistant/LICENSE</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="jqassistant_jqa-legal:license:is-correctly-defined">jqa-legal:license:is-correctly-defined</h4>
-<div class="sidebarblock">
-<div class="content">
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<div class="title">✅ SUCCESS</div>
-</td>
-<td class="content">
-The license definition seems to be wrong. Please ensure
-to declare the license in this project as follows:
-</td>
-</tr>
-</table>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>    &lt;licenses&gt;
-        &lt;license&gt;
-            &lt;name&gt;GNU General Public License, v3&lt;/name&gt;
-            &lt;url&gt;https://www.gnu.org/licenses/gpl-3.0.html&lt;/url&gt;
-        &lt;/license&gt;
-    &lt;/licenses&gt; +
-Status: [green]#SUCCESS#, Severity: MAJOR</pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Project</th>
-<th class="tableblock halign-left valign-top">groupId</th>
-<th class="tableblock halign-left valign-top">artifactId</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">jQAssistant Parent</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">parent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LICENSE</p></td>
 </tr>
 </tbody>
 </table>
@@ -1754,7 +1764,7 @@ Status: <span class="green">SUCCESS</span>, Severity: MINOR</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jQAssistant Parent</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/home/runner/work/jqassistant/jqassistant/pom.xml</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/pom.xml</p></td>
 </tr>
 </tbody>
 </table>
@@ -1869,7 +1879,7 @@ Status: <span class="green">SUCCESS</span>, Severity: MINOR</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/home/runner/work/jqassistant/jqassistant/pom.xml</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/pom.xml</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2.10.0-SNAPSHOT</p></td>
 </tr>
 </tbody>
@@ -1911,27 +1921,11 @@ Status: <span class="green">SUCCESS</span>, Severity: INFO</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor, com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor, com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor, com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactFileDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.TestDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor, com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor, com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor, com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor, com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor, com.buschmais.jqassistant.plugin.java.api.model.XmlPropertyFileDescriptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor, com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</p></td>
@@ -1939,7 +1933,7 @@ Status: <span class="green">SUCCESS</span>, Severity: INFO</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.json.api.model.JSONDescriptor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">com.buschmais.jqassistant.plugin.json.api.model.JSONValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONScalarValueDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONArrayDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONObjectDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONFileDescriptor, com.buschmais.jqassistant.plugin.json.api.model.JSONKeyDescriptor</p></td>
 </tr>
 </tbody>
 </table>
@@ -2030,7 +2024,7 @@ Status: <span class="green">SUCCESS</span>, Severity: MINOR
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/home/runner/work/jqassistant/jqassistant/.editorconfig</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">.editorconfig</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jQAssistant Parent</p></td>
 </tr>
 </tbody>
@@ -2074,7 +2068,7 @@ Status: <span class="green">SUCCESS</span>, Severity: MINOR</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jQAssistant Parent</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/home/runner/work/jqassistant/jqassistant/readme.adoc</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">readme.adoc</p></td>
 </tr>
 </tbody>
 </table>
@@ -2116,7 +2110,7 @@ Status: <span class="green">SUCCESS</span>, Severity: MINOR</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.0 EN<br>
-Last updated 2026-09-17 11:37:19 UTC
+Last updated 2026-09-20 10:00:46 UTC
 </div>
 </div>
 </body>
