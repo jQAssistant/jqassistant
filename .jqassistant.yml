@@ -5,7 +5,7 @@ jqassistant:
       version: ${jqassistant.build.version}
     - group-id: org.jqassistant.plugin
       artifact-id: jqassistant-sarif-report-plugin
-      version: 1.0.0-M1
+      version: 1.0.0-M2
   scan:
     include:
       files:
