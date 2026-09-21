@@ -16,6 +16,8 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleSelection;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import io.micrometer.core.instrument.MeterRegistry;
+
 /**
  * Implementation of the {@link Analyzer}.
  */
@@ -26,6 +28,8 @@ public class AnalyzerImpl implements Analyzer {
     private final ClassLoader classLoader;
 
     private final Store store;
+
+    private final MeterRegistry meterRegistry;
 
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins;
 
@@ -48,20 +52,23 @@ public class AnalyzerImpl implements Analyzer {
      *     The {@link BaselineManager}.
      * @param reportPlugin
      *     The report writer.
+     * @param meterRegistry
+     *     The {@link MeterRegistry}.
      */
     public AnalyzerImpl(Analyze configuration, ClassLoader classLoader, Store store, Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins,
-        BaselineManager baselineManager, ReportPlugin reportPlugin) {
+        BaselineManager baselineManager, ReportPlugin reportPlugin, MeterRegistry meterRegistry) {
         this.configuration = configuration;
         this.classLoader = classLoader;
         this.store = store;
         this.ruleInterpreterPlugins = ruleInterpreterPlugins;
         this.baselineManager = baselineManager;
         this.reportPlugin = reportPlugin;
+        this.meterRegistry = meterRegistry;
     }
 
     @Override
     public void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws RuleException {
-        AnalyzerContext analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store, baselineManager);
+        AnalyzerContext analyzerContext = new AnalyzerContextImpl(configuration, classLoader, store, baselineManager, meterRegistry);
         baselineManager.start();
         AnalyzerRuleVisitor visitor = new AnalyzerRuleVisitor(configuration, analyzerContext, ruleInterpreterPlugins, reportPlugin);
         AnalyzerRuleVisitorAuditDecorator visitorDelegate = new AnalyzerRuleVisitorAuditDecorator(visitor, store);

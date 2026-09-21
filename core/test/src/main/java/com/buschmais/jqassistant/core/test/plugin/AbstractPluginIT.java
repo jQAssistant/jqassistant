@@ -33,8 +33,10 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
+import com.buschmais.jqassistant.core.runtime.api.metrics.MeterRegistryFactory;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.runtime.impl.metrics.MeterRegistryFactoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -100,6 +102,8 @@ public abstract class AbstractPluginIT {
 
     protected Store store;
 
+    protected MeterRegistryFactory meterRegistryFactory;
+
     protected InMemoryReportPlugin reportPlugin;
 
     protected RuleSet ruleSet;
@@ -125,10 +129,11 @@ public abstract class AbstractPluginIT {
     }
 
     @BeforeEach
-    public void beforeEach() throws IOException, RuleException {
+    public final void beforeEach() throws IOException, RuleException {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder();
         configure(configurationBuilder);
         ITConfiguration configuration = createConfiguration(configurationBuilder);
+        initializeMeterRegistry(configuration);
         startStore(configuration);
         initializeRuleSet(configuration);
         initializeReportPlugin(configuration);
@@ -153,10 +158,11 @@ public abstract class AbstractPluginIT {
      * Stops the store.
      */
     @AfterEach
-    public void stopStore() {
+    public final void afterEach() throws IOException {
         if (store != null) {
             store.stop();
         }
+        meterRegistryFactory.destroy();
     }
 
     /**
@@ -170,6 +176,11 @@ public abstract class AbstractPluginIT {
             .withProfiles(getConfigurationProfiles())
             .load(configurationBuilder.build(), new EnvConfigSource() {
             }, new SysPropConfigSource(), mavenSettingsConfigSource);
+    }
+
+    private void initializeMeterRegistry(Configuration configuration) {
+        meterRegistryFactory = new MeterRegistryFactoryImpl(configuration.metrics());
+        meterRegistryFactory.initialize();
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {
@@ -278,7 +289,8 @@ public abstract class AbstractPluginIT {
             .baseline();
         BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRuleDirectory());
         BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
-        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin);
+        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin,
+            meterRegistryFactory.getMeterRegistry());
     }
 
     /**

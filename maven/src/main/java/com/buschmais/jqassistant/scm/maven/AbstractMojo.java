@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.shared.aether.AetherArtifactProvider;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 import com.buschmais.jqassistant.scm.maven.provider.CachingStoreProvider;
 import com.buschmais.jqassistant.scm.maven.provider.ConfigurationFileLoaderProvider;
+import com.buschmais.jqassistant.scm.maven.provider.MeterRegistryProvider;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 
 import org.apache.maven.execution.MavenSession;
@@ -70,6 +71,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Component
     protected CachingStoreProvider cachingStoreProvider;
+
+    /**
+     * The store repository.
+     */
+    @Component
+    protected MeterRegistryProvider meterRegistryProvider;
 
     /**
      * The Maven runtime information.

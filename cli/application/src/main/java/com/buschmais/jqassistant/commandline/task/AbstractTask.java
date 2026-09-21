@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.rule.api.RuleHelper;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
@@ -18,17 +19,19 @@ public abstract class AbstractTask implements Task {
     protected File workingDirectory;
     protected File outputDirectory;
     protected StoreFactory storeFactory;
+    protected MeterRegistry meterRegistry;
 
     protected PluginRepository pluginRepository;
     protected RuleHelper ruleHelper;
 
     @Override
-    public final void initialize(File projectDirectory, File workingDirectory, PluginRepository pluginRepository, StoreFactory storeFactory) {
+    public final void initialize(File projectDirectory, File workingDirectory, PluginRepository pluginRepository, StoreFactory storeFactory, MeterRegistry meterRegistry) {
         this.workingDirectory = workingDirectory;
         this.projectDirectory = projectDirectory;
         this.outputDirectory = new File(projectDirectory, DEFAULT_OUTPUT_DIRECTORY);
         this.pluginRepository = pluginRepository;
         this.storeFactory = storeFactory;
+        this.meterRegistry = meterRegistry;
         this.ruleHelper = new RuleHelper();
     }
 

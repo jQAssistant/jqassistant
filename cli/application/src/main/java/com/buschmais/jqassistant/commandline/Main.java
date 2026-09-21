@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.commandline;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -8,10 +9,12 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.task.RegisteredTask;
 import com.buschmais.jqassistant.core.report.api.BuildConfigBuilder;
 import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
+import com.buschmais.jqassistant.core.runtime.api.metrics.MeterRegistryFactory;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
+import com.buschmais.jqassistant.core.runtime.impl.metrics.MeterRegistryFactoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
@@ -20,10 +23,12 @@ import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
 import org.apache.commons.cli.*;
 import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,17 +209,31 @@ public class Main {
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
         } else {
+            MeterRegistryFactory meterRegistryFactory = createMeterRegistryProvider(configuration);
             ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
             PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider);
             StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
             ClassLoader contextClassLoader = currentThread().getContextClassLoader();
             currentThread().setContextClassLoader(pluginRepository.getClassLoader());
             try {
-                executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory);
+                executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory,
+                    meterRegistryFactory.getMeterRegistry());
             } finally {
                 currentThread().setContextClassLoader(contextClassLoader);
             }
+            try {
+                meterRegistryFactory.destroy();
+            } catch (IOException e) {
+                throw new CliExecutionException("Could not destroy Meter Registry", e);
+            }
+
         }
+    }
+
+    private static @NonNull MeterRegistryFactory createMeterRegistryProvider(CliConfiguration configuration) {
+        MeterRegistryFactory meterRegistryFactory = new MeterRegistryFactoryImpl(configuration.metrics());
+        meterRegistryFactory.initialize();
+        return meterRegistryFactory;
     }
 
     private List<Task> getTasks(CommandLine commandLine) throws CliExecutionException {
@@ -297,10 +316,10 @@ public class Main {
     }
 
     protected void executeTasks(List<Task> tasks, CliConfiguration configuration, Options options, File projectDirectory, File workingDirectory,
-        PluginRepository pluginRepository, StoreFactory storeFactory) throws CliExecutionException {
+        PluginRepository pluginRepository, StoreFactory storeFactory, MeterRegistry meterRegistry) throws CliExecutionException {
         try {
             for (Task task : tasks) {
-                executeTask(task, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory);
+                executeTask(task, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
             }
         } finally {
             pluginRepository.destroy();
@@ -340,8 +359,8 @@ public class Main {
      *     If the execution fails.
      */
     private void executeTask(Task task, CliConfiguration configuration, Options options, File projectDirectory, File workingDirectory,
-        PluginRepository pluginRepository, StoreFactory storeFactory) throws CliExecutionException {
-        task.initialize(projectDirectory, workingDirectory, pluginRepository, storeFactory);
+        PluginRepository pluginRepository, StoreFactory storeFactory, MeterRegistry meterRegistry) throws CliExecutionException {
+        task.initialize(projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
         task.run(configuration, options);
     }
 }
