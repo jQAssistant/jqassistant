@@ -149,7 +149,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "core/rule/src/main/java/com/buschmais/jqassistant/core/rule/api/source/RuleSource.java"
           },
           "region" : {
             "startLine" : 1,
@@ -171,7 +171,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "core/store/src/main/java/com/buschmais/jqassistant/core/store/api/Store.java"
           },
           "region" : {
             "startLine" : 1,
@@ -193,7 +193,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "core/analysis/src/main/java/com/buschmais/jqassistant/core/analysis/api/AnalyzerContext.java"
           },
           "region" : {
             "startLine" : 1,
@@ -215,7 +215,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "core/report/src/main/java/com/buschmais/jqassistant/core/report/api/model/source/AbstractLocation.java"
           },
           "region" : {
             "startLine" : 1,
@@ -237,7 +237,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "core/shared/src/main/java/com/buschmais/jqassistant/core/shared/io/ClasspathResource.java"
           },
           "region" : {
             "startLine" : 1,
@@ -259,7 +259,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "core/shared/src/main/java/com/buschmais/jqassistant/core/shared/io/FileNameNormalizer.java"
           },
           "region" : {
             "startLine" : 1,
@@ -281,7 +281,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "core/shared/src/main/java/com/buschmais/jqassistant/core/shared/io/FilePattern.java"
           },
           "region" : {
             "startLine" : 1,
@@ -303,7 +303,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "core/shared/src/main/java/com/buschmais/jqassistant/core/shared/map/MapBuilder.java"
           },
           "region" : {
             "startLine" : 1,
@@ -325,7 +325,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "plugin/common/src/main/java/com/buschmais/jqassistant/plugin/common/api/scanner/AbstractContainerScannerPlugin.java"
           },
           "region" : {
             "startLine" : 1,
@@ -347,7 +347,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+            "uri" : "plugin/common/src/main/java/com/buschmais/jqassistant/plugin/common/api/scanner/AbstractContainerScannerPlugin.java"
           },
           "region" : {
             "startLine" : 1,
