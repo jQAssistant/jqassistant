@@ -73,7 +73,7 @@ class JavaTestIT extends AbstractJavaPluginIT {
         assertThat(result.getRows().get(0).getColumns().get("DeclaringType").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor("Assertions"));
         assertThat(result.getRows().get(0).getColumns().get("AssertMethods").getValue()).isEqualTo(1L);
         assertThat(result.getRows().get(1).getColumns().get("DeclaringType").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
-        assertThat(result.getRows().get(1).getColumns().get("AssertMethods").getValue()).isEqualTo(2L);
+        assertThat(result.getRows().get(1).getColumns().get("AssertMethods").getValue()).isEqualTo(4L);
         store.commitTransaction();
     }
 
@@ -82,23 +82,69 @@ class JavaTestIT extends AbstractJavaPluginIT {
         scanClasses(CustomAssert.class);
         final Result<Concept> result = applyConcept("java:CustomAssertMethod");
         assertThat(result.getStatus()).isEqualTo(SUCCESS);
-        assertThat(result.getRows()).hasSize(2);
         store.beginTransaction();
 
+        assertThat(result.getRows()).hasSize(4);
         assertThat(result.getRows().get(0).getColumns().get("type").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
-        assertThat(result.getRows().get(0).getColumns().get("assertMethod").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodCallingJunitAssertion"));
+        assertThat(result.getRows().get(0).getColumns().get("assertMethod").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodCallingAnotherCustomAssertMethod"));
         assertThat(result.getRows().get(1).getColumns().get("type").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
-        assertThat(result.getRows().get(1).getColumns().get("assertMethod").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodNotCallingAssertion"));
+        assertThat(result.getRows().get(1).getColumns().get("assertMethod").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodDirectlyCallingJunitAssertion"));
+        assertThat(result.getRows().get(2).getColumns().get("type").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
+        assertThat(result.getRows().get(2).getColumns().get("assertMethod").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodIndirectlyCallingJunitAssertMethod"));
+        assertThat(result.getRows().get(3).getColumns().get("type").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
+        assertThat(result.getRows().get(3).getColumns().get("assertMethod").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodNotCallingAssertion"));
 
         final TestResult queryResult = query(
             "MATCH (method:Java:Method:Custom:Assert) RETURN method");
-        assertThat(queryResult.getRows()).hasSize(2);
+        assertThat(queryResult.getRows()).hasSize(4);
         final List<MethodDescriptor> methods = queryResult.getRows().stream()
                 .map(row -> row.get("method"))
                 .map(MethodDescriptor.class::cast)
                 .collect(Collectors.toList());
-        assertThat(methods).haveExactly(1, methodDescriptor(CustomAssert.class, "customAssertMethodCallingJunitAssertion"));
+        assertThat(methods).haveExactly(1, methodDescriptor(CustomAssert.class, "customAssertMethodCallingAnotherCustomAssertMethod"));
+        assertThat(methods).haveExactly(1, methodDescriptor(CustomAssert.class, "customAssertMethodDirectlyCallingJunitAssertion"));
+        assertThat(methods).haveExactly(1, methodDescriptor(CustomAssert.class, "customAssertMethodIndirectlyCallingJunitAssertMethod"));
         assertThat(methods).haveExactly(1, methodDescriptor(CustomAssert.class, "customAssertMethodNotCallingAssertion"));
+        store.commitTransaction();
+    }
+
+    @Test
+    void javaCustomAssertMethodWithoutAssertion() throws RuleException, NoSuchMethodException {
+        labelJunitAssertTrue();
+        scanClasses(CustomAssert.class);
+        final Result<Constraint> result = validateConstraint("java:CustomAssertMethodWithoutAssertion");
+        assertThat(result.getStatus()).isEqualTo(FAILURE);
+        store.beginTransaction();
+
+        assertThat(result.getRows()).hasSize(2);
+
+        assertThat(result.getRows().get(0).getColumns().get("Type").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
+        assertThat(result.getRows().get(0).getColumns().get("Method").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodCallingAnotherCustomAssertMethod"));
+
+        assertThat(result.getRows().get(1).getColumns().get("Type").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
+        assertThat(result.getRows().get(1).getColumns().get("Method").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodNotCallingAssertion"));
+
+        store.commitTransaction();
+    }
+
+    @Test
+    void javaCustomAssertMethodWithoutAssertionStrictParam() throws RuleException, NoSuchMethodException {
+        labelJunitAssertTrue();
+        scanClasses(CustomAssert.class);
+        final Result<Constraint> result = validateConstraint("java:CustomAssertMethodWithoutAssertion", Map.of("javaCustomAssertMaxCallDepth", "1"));
+        assertThat(result.getStatus()).isEqualTo(FAILURE);
+        store.beginTransaction();
+
+        assertThat(result.getRows()).hasSize(3);
+
+        assertThat(result.getRows().get(0).getColumns().get("Type").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
+        assertThat(result.getRows().get(0).getColumns().get("Method").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodCallingAnotherCustomAssertMethod"));
+
+        assertThat(result.getRows().get(1).getColumns().get("Type").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
+        assertThat(result.getRows().get(1).getColumns().get("Method").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodIndirectlyCallingJunitAssertMethod"));
+
+        assertThat(result.getRows().get(2).getColumns().get("Type").getValue()).asInstanceOf(type(TypeDescriptor.class)).is(typeDescriptor(CustomAssert.class));
+        assertThat(result.getRows().get(2).getColumns().get("Method").getValue()).asInstanceOf(type(MethodDescriptor.class)).is(methodDescriptor(CustomAssert.class, "customAssertMethodNotCallingAssertion"));
 
         store.commitTransaction();
     }
@@ -155,6 +201,14 @@ class JavaTestIT extends AbstractJavaPluginIT {
     @Test
     void javaTestMethodAssertionViaAnnotation() throws RuleException {
         assertThat(validateConstraint("java:TestMethodWithoutAssertion").getStatus()).isEqualTo(SUCCESS);
+    }
+
+    /**
+     * Labels org.junit.jupiter.api.Assertions#assertTrue with :Junit5:Assert.
+     */
+    private void labelJunitAssertTrue() {
+        scanClasses(org.junit.jupiter.api.Assertions.class);
+        query("MATCH (assertType:Java:Type {fqn: 'org.junit.jupiter.api.Assertions'})-[:DECLARES]->(assertMethod:Java:Method {name: 'assertTrue'}) SET assertMethod:Junit5:Assert");
     }
 
 }

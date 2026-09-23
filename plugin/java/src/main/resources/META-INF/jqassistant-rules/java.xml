@@ -794,6 +794,30 @@
         <report primaryColumn="TestMethod"/>
     </constraint>
 
+    <constraint id="java:CustomAssertMethodWithoutAssertion">
+        <requiresConcept refId="java:AssertMethod"/> <!-- Includes custom assert methods -->
+        <requiresParameter name="javaCustomAssertMaxCallDepth" type="int" defaultValue="5" />
+        <description>Custom assert methods must call a non-custom assert method. The default maximum call depth is 5.</description>
+        <cypher><![CDATA[
+            MATCH
+                (type:Java:Type)-[:DECLARES]->(customAssertMethod:Java:Method:Custom:Assert)
+            OPTIONAL MATCH
+                path=shortestPath((customAssertMethod)-[:INVOKES|VIRTUAL_INVOKES*]->(assertMethod:Java:Method:Assert))
+            WHERE NOT
+                assertMethod:Custom
+            WITH
+                type, customAssertMethod, length(path) as callDepth
+            WHERE
+                callDepth IS NULL
+                OR callDepth > $javaCustomAssertMaxCallDepth
+            RETURN
+                distinct type AS Type, customAssertMethod AS Method
+            ORDER BY
+                type.fqn, customAssertMethod.name
+            ]]></cypher>
+        <report primaryColumn="Method"/>
+    </constraint>
+
     <constraint id="java:TechnicalDebt">
         <description>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".</description>
         <cypher><![CDATA[
