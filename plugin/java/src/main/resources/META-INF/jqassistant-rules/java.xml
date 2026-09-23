@@ -675,6 +675,21 @@
         ]]></cypher>
     </concept>
 
+    <concept id="java:CustomAssertMethod">
+        <providesConcept refId="java:AssertMethod"/>
+        <description>Labels methods annotated with com.buschmais.jqassistant.plugin.java.annotation.CustomAssertMethod with :Custom:Assert i.e. as assert methods.</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Java:Type)-[:DECLARES]->(assertMethod:Java:Method)-[:ANNOTATED_BY]->(:Annotation)-[:OF_TYPE]->(:Java:Type {fqn: "com.buschmais.jqassistant.plugin.java.annotation.CustomAssertMethod"})
+            SET
+              assertMethod:Custom:Assert
+            RETURN
+              type, assertMethod
+            ORDER BY
+              type.fqn, assertMethod.name
+        ]]></cypher>
+    </concept>
+
     <concept id="java:AssertAnnotation">
         <description>
             An assert annotation is used to define an expected testing result (e.g. @Test(expected = RuntimeException.class)
