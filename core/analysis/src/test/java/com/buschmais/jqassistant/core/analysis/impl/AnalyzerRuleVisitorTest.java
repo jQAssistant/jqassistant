@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
 import com.buschmais.jqassistant.core.analysis.api.RuleInterpreterPlugin;
@@ -24,6 +25,9 @@ import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
 import com.buschmais.xo.api.XOManager;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Timer;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +48,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -82,6 +87,12 @@ class AnalyzerRuleVisitorTest {
     @Mock
     private AnalyzerContext analyzerContext;
 
+    @Mock
+    private MeterRegistry meterRegistry;
+
+    @Mock
+    private Timer timer;
+
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
 
     private AnalyzerRuleVisitor analyzerRuleVisitor;
@@ -114,6 +125,15 @@ class AnalyzerRuleVisitorTest {
 
         doReturn(store).when(analyzerContext)
             .getStore();
+        doReturn(meterRegistry).when(analyzerContext)
+            .getMeterRegistry();
+        doAnswer(i -> {
+            doAnswer(ti -> ti.getArgument(0, Callable.class)
+                .call()).when(timer)
+                .recordCallable(any(Callable.class));
+            return timer;
+        }).when(meterRegistry)
+            .timer(anyString(), anyList());
         doAnswer(invocation -> {
             ((Transactional.TransactionalAction<?>) invocation.getArgument(0)).execute();
             return null;
@@ -185,7 +205,7 @@ class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    void executeConcept() throws RuleException {
+    void executeConcept() throws Exception {
         VerificationResult verificationResult = VerificationResult.builder()
             .success(true)
             .build();
@@ -209,6 +229,7 @@ class AnalyzerRuleVisitorTest {
         verify(analyzerContext, times(2)).getStatus(verificationResult, MAJOR);
         verify(reportWriter).beginConcept(eq(concept), anyMap(), anyMap());
         verifyConceptResult(SUCCESS, MAJOR);
+        verifyMetrics(concept);
     }
 
     @Test
@@ -261,7 +282,7 @@ class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    void executeConstraint() throws RuleException {
+    void executeConstraint() throws Exception {
         VerificationResult verificationResult = VerificationResult.builder()
             .success(false)
             .build();
@@ -283,6 +304,7 @@ class AnalyzerRuleVisitorTest {
         verify(analyzerContext, times(2)).getStatus(verificationResult, BLOCKER);
         verify(reportWriter).beginConstraint(constraint, emptyMap());
         verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
+        verifyMetrics(constraint);
     }
 
     @Test
@@ -423,6 +445,30 @@ class AnalyzerRuleVisitorTest {
         }
     }
 
+    private void verifyMetrics(Rule rule) throws Exception {
+        ArgumentCaptor<List<Tag>> resultRowsTagCaptor = ArgumentCaptor.forClass(List.class);
+        verify(meterRegistry).gauge(eq(AnalyzerRuleVisitor.METER_ANALYZE_RULE_RESULT_ROW_COUNT), resultRowsTagCaptor.capture(), anyInt());
+        verifyTags(rule, resultRowsTagCaptor);
+
+        ArgumentCaptor<List<Tag>> resultHiddenRowsTagCaptor = ArgumentCaptor.forClass(List.class);
+        verify(meterRegistry).gauge(eq(AnalyzerRuleVisitor.METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT), resultHiddenRowsTagCaptor.capture(), anyInt());
+        verifyTags(rule, resultHiddenRowsTagCaptor);
+
+        ArgumentCaptor<List<Tag>> resultExecutionTimeTagCaptor = ArgumentCaptor.forClass(List.class);
+        verify(meterRegistry).timer(eq(AnalyzerRuleVisitor.METER_ANALYZE_RULE_EXECUTION_TIME), resultExecutionTimeTagCaptor.capture());
+        verifyTags(rule, resultExecutionTimeTagCaptor);
+        verify(timer).recordCallable(any(Callable.class));
+    }
+
+    private static void verifyTags(Rule rule, ArgumentCaptor<List<Tag>> tagCaptor) {
+        Map<String, String> tags = tagCaptor.getValue()
+            .stream()
+            .collect(toMap(Tag::getKey, Tag::getValue));
+        assertThat(tags).containsEntry(AnalyzerRuleVisitor.TAG_RULE_TYPE, rule.getClass()
+            .getSimpleName());
+        assertThat(tags).containsEntry(AnalyzerRuleVisitor.TAG_RULE_ID, rule.getId());
+    }
+
     private Concept createConcept(String id) {
         return createConcept(id, STATEMENT);
     }
@@ -491,4 +537,5 @@ class AnalyzerRuleVisitorTest {
         when(result.iterator()).thenReturn(iterator);
         return result;
     }
+
 }

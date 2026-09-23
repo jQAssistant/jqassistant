@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -19,6 +20,9 @@ import com.buschmais.jqassistant.core.rule.api.executor.AbstractRuleVisitor;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Timer;
 import io.smallrye.config.ConfigMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
@@ -33,6 +37,12 @@ import static java.util.Collections.*;
  */
 @Slf4j
 public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
+
+    public static final String METER_ANALYZE_RULE_EXECUTION_TIME = "analyze-rule-execution-time";
+    public static final String METER_ANALYZE_RULE_RESULT_ROW_COUNT = "analyze-rule-result-row-count";
+    public static final String METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT = "analyze-rule-result-hidden-row-count";
+    public static final String TAG_RULE_TYPE = "type";
+    public static final String TAG_RULE_ID = "rule-id";
 
     private final Analyze configuration;
     private final AnalyzerContext analyzerContext;
@@ -190,34 +200,71 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     private <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Severity severity) throws RuleException {
-        Executable<?> executable = executableRule.getExecutable();
-        if (executable == null) {
-            return Result.<T>builder()
-                .rule(executableRule)
-                .verificationResult(VerificationResult.builder()
-                    .success(true)
-                    .rowCount(0)
-                    .build())
-                .status(SUCCESS)
-                .severity(severity)
-                .columnNames(emptyList())
-                .rows(emptyList())
-                .build();
-        } else {
-            Map<String, Object> ruleParameters = getRuleParameters(executableRule);
-            Collection<RuleInterpreterPlugin> languagePlugins = ruleInterpreterPlugins.get(executable.getLanguage());
-            if (languagePlugins == null) {
-                throw new RuleException("Could not determine plugin to execute " + executableRule);
-            }
-            for (RuleInterpreterPlugin languagePlugin : languagePlugins) {
-                if (languagePlugin.accepts(executableRule)) {
-                    Result<T> result = execute(executableRule, severity, ruleParameters, languagePlugin);
-                    if (result != null) {
-                        return result;
+        return executeWithMetrics(executableRule, () -> {
+            Executable<?> executable = executableRule.getExecutable();
+            if (executable == null) {
+                return Result.<T>builder()
+                    .rule(executableRule)
+                    .verificationResult(VerificationResult.builder()
+                        .success(true)
+                        .rowCount(0)
+                        .build())
+                    .status(SUCCESS)
+                    .severity(severity)
+                    .columnNames(emptyList())
+                    .rows(emptyList())
+                    .build();
+            } else {
+                Map<String, Object> ruleParameters = getRuleParameters(executableRule);
+                Collection<RuleInterpreterPlugin> languagePlugins = ruleInterpreterPlugins.get(executable.getLanguage());
+                if (languagePlugins == null) {
+                    throw new RuleException("Could not determine plugin to execute " + executableRule);
+                }
+                for (RuleInterpreterPlugin languagePlugin : languagePlugins) {
+                    if (languagePlugin.accepts(executableRule)) {
+                        Result<T> result = execute(executableRule, severity, ruleParameters, languagePlugin);
+                        if (result != null) {
+                            return result;
+                        }
                     }
                 }
+                throw new RuleException("No plugin for language '" + executable.getLanguage() + "' returned a result for " + executableRule);
             }
-            throw new RuleException("No plugin for language '" + executable.getLanguage() + "' returned a result for " + executableRule);
+        });
+    }
+
+    /**
+     * Execute a {@link Callable} for an {@link ExecutableRule} with {@link Timer} metrics.
+     *
+     * @param executableRule
+     *     The {@link Rule}.
+     * @param callable
+     *     The {@link Callable}.
+     * @param <T>
+     *     The {@link ExecutableRule} type.
+     * @return The result of the {@link Callable}
+     * @throws RuleException
+     *     If the {@link Callable} throws an {@link Exception}.
+     */
+    private <T extends ExecutableRule<?>> Result<T> executeWithMetrics(T executableRule, Callable<Result<T>> callable) throws RuleException {
+        MeterRegistry meterRegistry = analyzerContext.getMeterRegistry();
+        List<Tag> tags = List.of(Tag.of(TAG_RULE_TYPE, executableRule.getClass()
+            .getSimpleName()), Tag.of(TAG_RULE_ID, executableRule.getId()));
+        Timer timer = meterRegistry.timer(METER_ANALYZE_RULE_EXECUTION_TIME, tags);
+        try {
+            Result<T> result = timer.recordCallable(callable::call);
+            meterRegistry.gauge(METER_ANALYZE_RULE_RESULT_ROW_COUNT, tags, result.getVerificationResult()
+                .getRowCount());
+            meterRegistry.gauge(METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT, tags, result.getVerificationResult()
+                .getHiddenRowCount());
+            return result;
+        } catch (Exception e) {
+            if (e instanceof RuleException) {
+                throw (RuleException) e;
+            } else if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new RuntimeException(e);
         }
     }
 
@@ -270,7 +317,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     private static <E extends ExecutableRule<?>> Result<E> skipExecutableRule(E executableRule, Severity effectiveSeverity) {
-        Result<E> result = Result.<E>builder()
+        return Result.<E>builder()
             .rule(executableRule)
             .status(Result.Status.SKIPPED)
             .verificationResult(VerificationResult.builder()
@@ -278,6 +325,5 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
                 .build())
             .severity(effectiveSeverity)
             .build();
-        return result;
     }
 }

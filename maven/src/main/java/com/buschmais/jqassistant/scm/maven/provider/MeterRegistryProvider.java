@@ -21,6 +21,7 @@ public class MeterRegistryProvider implements Disposable {
     public MeterRegistry getMeterRegistry(Configuration configuration) {
         if (meterRegistryFactory == null) {
             this.meterRegistryFactory = new MeterRegistryFactoryImpl(configuration.metrics());
+            this.meterRegistryFactory.initialize();
         }
         return this.meterRegistryFactory.getMeterRegistry();
     }
