@@ -162,7 +162,9 @@ public abstract class AbstractPluginIT {
         if (store != null) {
             store.stop();
         }
-        meterRegistryFactory.destroy();
+        if (meterRegistryFactory != null) {
+            meterRegistryFactory.destroy();
+        }
     }
 
     /**
