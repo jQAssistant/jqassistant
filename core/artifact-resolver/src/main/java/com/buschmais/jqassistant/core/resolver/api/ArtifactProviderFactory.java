@@ -7,25 +7,21 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.buschmais.jqassistant.core.resolver.configuration.*;
-import com.buschmais.jqassistant.core.resolver.configuration.Proxy;
 import com.buschmais.jqassistant.core.shared.aether.AetherArtifactProvider;
 import com.buschmais.jqassistant.core.shared.aether.configuration.Plugin;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
-import org.eclipse.aether.impl.DefaultServiceLocator;
-import org.eclipse.aether.repository.*;
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.transport.TransporterFactory;
+import org.eclipse.aether.repository.MirrorSelector;
+import org.eclipse.aether.repository.ProxySelector;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.aether.supplier.RepositorySystemSupplier;
+import org.eclipse.aether.supplier.SessionBuilderSupplier;
 import org.eclipse.aether.transfer.AbstractTransferListener;
 import org.eclipse.aether.transfer.TransferEvent;
-import org.eclipse.aether.transport.file.FileTransporterFactory;
-import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 import org.eclipse.aether.util.repository.DefaultProxySelector;
@@ -113,7 +109,6 @@ public class ArtifactProviderFactory {
         ProxySelector proxySelector = getProxySelector(configuration, proxy);
         Optional<MirrorSelector> mirrorSelector = getMirrorSelector(repositories);
         List<RemoteRepository> remoteRepositories = getRemoteRepositories(repositories, proxySelector, mirrorSelector);
-        RepositorySystem repositorySystem = newRepositorySystem();
         log.info("Local repository: {}", localRepository);
         log.info("Remote repositories: {}", remoteRepositories.stream()
             .map(repository -> {
@@ -126,6 +121,7 @@ public class ArtifactProviderFactory {
                     "", repositoryProxy != null ? String.format(" via proxy %s:%d", repositoryProxy.getHost(), repositoryProxy.getPort()) : "");
             })
             .collect(joining(", ")));
+        RepositorySystem repositorySystem = newRepositorySystem();
         RepositorySystemSession session = newRepositorySystemSession(repositories, repositorySystem, localRepository, mirrorSelector, proxySelector);
 
         return new AetherArtifactProvider(repositorySystem, session, remoteRepositories);
@@ -241,11 +237,8 @@ public class ArtifactProviderFactory {
      * @return The {@link RepositorySystem}.
      */
     private static RepositorySystem newRepositorySystem() {
-        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
-        locator.addService(TransporterFactory.class, FileTransporterFactory.class);
-        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-        return locator.getService(RepositorySystem.class);
+        RepositorySystemSupplier repositorySystemSupplier = new RepositorySystemSupplier();
+        return repositorySystemSupplier.get();
     }
 
     /**
@@ -263,15 +256,15 @@ public class ArtifactProviderFactory {
      */
     private static RepositorySystemSession newRepositorySystemSession(Repositories repositories, RepositorySystem system, File localDirectory,
         Optional<MirrorSelector> mirrorSelector, ProxySelector proxySelector) {
-        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        session.setTransferListener(new TransferListener());
-        LocalRepository localRepo = new LocalRepository(localDirectory);
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-        session.setProxySelector(proxySelector);
-        mirrorSelector.ifPresent(session::setMirrorSelector);
-        session.setIgnoreArtifactDescriptorRepositories(repositories.ignoreTransitiveRepositories()
-            .orElse(true));
-        return session;
+        RepositorySystemSession.SessionBuilder sessionBuilder = new SessionBuilderSupplier(system).get()
+            .withLocalRepositoryBaseDirectories(localDirectory.getAbsoluteFile()
+                .toPath())
+            .withTransferListener(new TransferListener())
+            .setProxySelector(proxySelector)
+            .setIgnoreArtifactDescriptorRepositories(repositories.ignoreTransitiveRepositories()
+                .orElse(true));
+        mirrorSelector.ifPresent(sessionBuilder::setMirrorSelector);
+        return sessionBuilder.build();
     }
 
     private static Optional<MirrorSelector> getMirrorSelector(Repositories repositories) {

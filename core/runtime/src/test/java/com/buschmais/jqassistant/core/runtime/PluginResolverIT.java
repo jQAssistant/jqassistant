@@ -29,23 +29,22 @@ class PluginResolverIT {
     }
 
     @Test
-    void resolve() {
+    void resolve() throws ClassNotFoundException {
         ConfigSource buildConfigSource = BuildConfigBuilder.getConfigSource("PluginIT", ZonedDateTime.now());
         Map<String, String> configurationProperties = new HashMap<>();
-        configurationProperties.put("jqassistant.plugins[0].group-id", "org.jqassistant.plugin");
-        configurationProperties.put("jqassistant.plugins[0].artifact-id", "jqassistant-docker-plugin");
-        configurationProperties.put("jqassistant.plugins[0].version", "2.1.0");
+        configurationProperties.put("jqassistant.plugins[0].group-id", "com.buschmais.jqassistant.plugin");
+        configurationProperties.put("jqassistant.plugins[0].artifact-id", "java");
+        configurationProperties.put("jqassistant.plugins[0].version", "2.9.1");
         PropertiesConfigSource testConfigSource = new PropertiesConfigSource(configurationProperties, "TestConfigSource", 110);
-
         TestConfiguration configuration = ConfigurationMappingLoader.builder(TestConfiguration.class)
             .load(buildConfigSource, testConfigSource);
 
         ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, new File("target/it/userhome"));
         PluginResolver pluginResolver = new PluginResolverImpl(artifactProvider);
-
         PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(ArtifactProviderFactory.class.getClassLoader(), configuration);
-
         assertThat(pluginClassLoader).isNotNull();
+        Class<?> classVisitor = pluginClassLoader.loadClass("com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassVisitor");
+        assertThat(classVisitor).isNotNull();
     }
 
 }

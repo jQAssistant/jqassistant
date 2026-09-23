@@ -1,0 +1,6 @@
+jqassistant:
+  analyze:
+    groups:
+      - it
+    report:
+      fail-on-severity: MINOR
