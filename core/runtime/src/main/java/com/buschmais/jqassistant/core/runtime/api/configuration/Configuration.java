@@ -40,6 +40,13 @@ public interface Configuration {
     List<Plugin> plugins();
 
     /**
+     * The {@link Metrics} configuration.
+     *
+     * @return The {@link Metrics} configuration.
+     */
+    Metrics metrics();
+
+    /**
      * The {@link Store} configuration.
      *
      * @return The {@link Store} configuration.

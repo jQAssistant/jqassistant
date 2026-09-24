@@ -14,6 +14,8 @@ import com.buschmais.jqassistant.core.rule.api.model.Severity;
 import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import io.micrometer.core.instrument.MeterRegistry;
+
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
 import static java.util.Optional.empty;
 
@@ -35,6 +37,13 @@ public interface AnalyzerContext {
      * @return The {@link Store}.
      */
     Store getStore();
+
+    /**
+     * Return the {@link MeterRegistry}.
+     *
+     * @return The {@link MeterRegistry}.
+     */
+    MeterRegistry getMeterRegistry();
 
     /**
      * Create a result {@link Column} from a value.
@@ -95,7 +104,6 @@ public interface AnalyzerContext {
      *     If no valid verification strategy can be found.
      */
     <T extends ExecutableRule<?>> VerificationResult verify(T executable, List<String> columnNames, List<Row> rows) throws RuleException;
-
 
     /**
      * Get the status of an executed rule.

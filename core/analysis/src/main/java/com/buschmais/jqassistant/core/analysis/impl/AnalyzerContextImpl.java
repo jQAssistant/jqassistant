@@ -14,6 +14,7 @@ import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.reader.RowCountVerification;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,16 +38,19 @@ class AnalyzerContextImpl implements AnalyzerContext {
 
     private final BaselineManager baselineManager;
 
+    private final MeterRegistry meterRegistry;
+
     private final Map<Class<? extends Verification>, VerificationStrategy<?>> verificationStrategies;
 
     private final Severity.Threshold warnOnSeverity;
 
     private final Severity.Threshold failOnSeverity;
 
-    AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store, BaselineManager baselineManager) throws RuleException {
+    AnalyzerContextImpl(Analyze configuration, ClassLoader classLoader, Store store, BaselineManager baselineManager, MeterRegistry meterRegistry) throws RuleException {
         this.classLoader = classLoader;
         this.store = store;
         this.baselineManager = baselineManager;
+        this.meterRegistry = meterRegistry;
         this.warnOnSeverity = Severity.Threshold.from(configuration.report()
             .warnOnSeverity());
         this.failOnSeverity = Severity.Threshold.from(configuration.report()
@@ -63,6 +67,11 @@ class AnalyzerContextImpl implements AnalyzerContext {
     @Override
     public Store getStore() {
         return store;
+    }
+
+    @Override
+    public MeterRegistry getMeterRegistry() {
+        return meterRegistry;
     }
 
     @Override

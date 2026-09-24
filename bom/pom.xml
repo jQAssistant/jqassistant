@@ -319,6 +319,23 @@
             </dependency>
             <!-- End of Slf4j dependencies -->
 
+            <!-- Micrometer and Prometheus -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>prometheus-metrics-exporter-pushgateway</artifactId>
+                <version>1.7.0</version>
+            </dependency>
+
             <!-- Start misc dependencies -->
             <dependency>
                 <groupId>commons-beanutils</groupId>

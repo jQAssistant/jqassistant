@@ -6,6 +6,7 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.mockito.Mock;
 
 /**
@@ -24,4 +25,6 @@ abstract class AbstractTaskTest {
     @Mock
     protected StoreFactory storeFactory;
 
+    @Mock
+    protected MeterRegistry meterRegistry;
 }
