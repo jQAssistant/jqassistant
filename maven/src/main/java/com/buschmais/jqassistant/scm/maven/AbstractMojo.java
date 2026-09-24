@@ -112,8 +112,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         // Synchronize on this class as multiple instances of the plugin may exist in parallel builds
         synchronized (AbstractMojo.class) {
             AetherArtifactProvider artifactProvider = new AetherArtifactProvider(repositorySystem, repositorySystemSession, repositories);
-            PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(mavenConfiguration, artifactProvider);
-            MavenTaskContext mavenTaskContext = new MavenTaskContext(session, currentProject, execution, mavenConfiguration, pluginRepository, artifactProvider);
+            PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(mavenConfiguration, artifactProvider,
+                meterRegistryProvider.getMeterRegistry(mavenConfiguration));
+            MavenTaskContext mavenTaskContext = new MavenTaskContext(session, currentProject, execution, mavenConfiguration, pluginRepository,
+                artifactProvider);
             if (skip) {
                 // This is a shortcut to avoid loading the configuration if skip is given as part of the POM or system property.
                 getLog().info("Skipping execution (required by plugin configuration");

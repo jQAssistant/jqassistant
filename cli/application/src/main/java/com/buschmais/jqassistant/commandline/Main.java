@@ -116,13 +116,15 @@ public class Main {
      *     The {@link CliConfiguration}
      * @param artifactProvider
      *     The {@link ArtifactProvider}
+     * @param meterRegistry
+     *     The meterRegistry.
      * @return The repository.
      */
-    private PluginRepository getPluginRepository(CliConfiguration configuration, ArtifactProvider artifactProvider) {
+    private PluginRepository getPluginRepository(CliConfiguration configuration, ArtifactProvider artifactProvider, MeterRegistry meterRegistry) {
         PluginResolver pluginResolver = new PluginResolverImpl(artifactProvider);
         PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(Task.class.getClassLoader(), configuration);
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
-        PluginRepositoryImpl pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        PluginRepositoryImpl pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistry);
         pluginRepository.initialize();
         return pluginRepository;
     }
@@ -210,14 +212,14 @@ public class Main {
             LOGGER.info("Skipping execution.");
         } else {
             MeterRegistryFactory meterRegistryFactory = createMeterRegistryProvider(configuration);
+            MeterRegistry meterRegistry = meterRegistryFactory.getMeterRegistry();
             ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
-            PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider);
+            PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider, meterRegistry);
             StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
             ClassLoader contextClassLoader = currentThread().getContextClassLoader();
             currentThread().setContextClassLoader(pluginRepository.getClassLoader());
             try {
-                executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory,
-                    meterRegistryFactory.getMeterRegistry());
+                executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
             } finally {
                 currentThread().setContextClassLoader(contextClassLoader);
             }

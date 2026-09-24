@@ -10,7 +10,11 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -18,11 +22,18 @@ import static java.util.stream.Collectors.toList;
 /**
  * The plugin repository.
  */
+@RequiredArgsConstructor
 @Slf4j
 public class PluginRepositoryImpl implements PluginRepository {
 
-    private final PluginConfigurationReader pluginConfigurationReader;
+    public static final String METER_JQASSISTANT_PLUGIN = "jqassistant_plugin";
+    public static final String TAG_ID = "id";
+    public static final String TAG_VERSION = "version";
 
+    private final PluginConfigurationReader pluginConfigurationReader;
+    private final MeterRegistry meterRegistry;
+
+    private List<PluginInfo> pluginInfos;
     private StorePluginRepository storePluginRepository;
     private ScannerPluginRepository scannerPluginRepository;
     private RulePluginRepository rulePluginRepository;
@@ -30,19 +41,9 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     private ClassLoader classLoader;
 
-    /**
-     * Constructor.
-     *
-     * @param pluginConfigurationReader
-     *     The plugin configuration reader.
-     */
-    public PluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
-        this.pluginConfigurationReader = pluginConfigurationReader;
-        this.printPluginInfos();
-    }
-
     @Override
     public void initialize() {
+        this.pluginInfos = createPluginInfos();
         this.storePluginRepository = new StorePluginRepositoryImpl(pluginConfigurationReader);
         this.scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         this.scannerPluginRepository.initialize();
@@ -51,6 +52,20 @@ public class PluginRepositoryImpl implements PluginRepository {
         this.analyzerPluginRepository = new AnalyzerPluginRepositoryImpl(pluginConfigurationReader);
         this.analyzerPluginRepository.initialize();
         this.classLoader = pluginConfigurationReader.getClassLoader();
+        printPluginInfos();
+        publishPluginMetrics();
+    }
+
+    private void publishPluginMetrics() {
+        for (PluginInfo pluginInfo : getPluginInfos()) {
+            Gauge.builder(METER_JQASSISTANT_PLUGIN, () -> 1)
+                .tag(TAG_ID, pluginInfo.getId())
+                .tag(TAG_VERSION, pluginInfo.getVersion()
+                    .orElse("unknown"))
+                .description("The active jQAssistant plugins.")
+                .strongReference(true)
+                .register(meterRegistry);
+        }
     }
 
     @Override
@@ -88,6 +103,18 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     @Override
     public List<PluginInfo> getPluginInfos() {
+        return pluginInfos;
+    }
+
+    @Override
+    public void printPluginInfos() {
+        for (PluginInfo pluginInfo : pluginInfos) {
+            log.info("{} {} [{}]", pluginInfo.getName(), pluginInfo.getVersion()
+                .orElse("<unknown version>"), pluginInfo.getId());
+        }
+    }
+
+    private @NonNull List<PluginInfo> createPluginInfos() {
         return pluginConfigurationReader.getPlugins()
             .values()
             .stream()
@@ -100,11 +127,4 @@ public class PluginRepositoryImpl implements PluginRepository {
             .collect(toList());
     }
 
-    @Override
-    public void printPluginInfos() {
-        for (PluginInfo pluginInfo : getPluginInfos()) {
-            log.info("{} {} [{}]", pluginInfo.getName(), pluginInfo.getVersion()
-                .orElse("<unknown version>"), pluginInfo.getId());
-        }
-    }
 }

@@ -7,21 +7,29 @@ import com.buschmais.jqassistant.core.runtime.api.configuration.Metrics;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Prometheus;
 import com.buschmais.jqassistant.core.runtime.api.metrics.MeterRegistryFactory;
 
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.prometheusmetrics.PrometheusConfig;
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 import io.prometheus.metrics.exporter.pushgateway.PushGateway;
+import io.prometheus.metrics.exporter.pushgateway.Scheme;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 
+import static com.buschmais.jqassistant.core.runtime.api.bootstrap.VersionProvider.getVersionProvider;
+import static io.micrometer.core.instrument.Metrics.addRegistry;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
 public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
+
+    public static final String METER_JQASSISTANT_DISTRIBUTION = "jqassistant-distribution";
+
+    public static final String TAG_JQASSISTANT_VERSION = "version";
 
     private final Metrics metrics;
 
@@ -37,7 +45,12 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
             .map(this::createPrometheusMeterRegistry)
             .orElse(new SimpleMeterRegistry());
         registerCommonTags(meterRegistry);
-        io.micrometer.core.instrument.Metrics.addRegistry(meterRegistry);
+        Gauge.builder(METER_JQASSISTANT_DISTRIBUTION, () -> 1)
+            .tag(TAG_JQASSISTANT_VERSION, getVersionProvider().getVersion())
+            .description("The jQAssistant distribution.")
+            .strongReference(true)
+            .register(meterRegistry);
+        addRegistry(meterRegistry);
     }
 
     @Override
@@ -51,9 +64,7 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
             metrics.prometheus()
                 .pushgateway()
                 .address()
-                .ifPresent(address -> {
-                    log.info("Pushing collected metrics to Prometheus Pushgateway '{}'.", address);
-                });
+                .ifPresent(address -> log.info("Pushing collected metrics to Prometheus Pushgateway '{}'.", address));
             pushGateway.push();
         }
         meterRegistry.close();
@@ -62,11 +73,12 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
     private @NonNull MeterRegistry createPrometheusMeterRegistry(String address) {
         Prometheus.Pushgateway pushgateway = metrics.prometheus()
             .pushgateway();
-        log.info("Initializing Prometheus metrics provider using address: {} (scheme={}).", address, pushgateway.scheme());
+        log.info("Initializing Prometheus metrics provider using address '{}' (scheme={}).", address, pushgateway.scheme());
         PrometheusMeterRegistry meterRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
         PushGateway.Builder builder = PushGateway.builder()
             .address(address)
-            .job(metrics.jobName())
+            .scheme(Scheme.fromString(pushgateway.scheme()))
+            .job(pushgateway.jobName())
             .registry(meterRegistry.getPrometheusRegistry());
         pushgateway.bearerToken()
             .ifPresent(builder::bearerToken);

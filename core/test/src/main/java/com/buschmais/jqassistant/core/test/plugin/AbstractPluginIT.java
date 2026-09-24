@@ -98,11 +98,11 @@ public abstract class AbstractPluginIT {
 
     private static ConfigSource mavenSettingsConfigSource;
 
-    private static PluginRepositoryImpl pluginRepository;
+    private MeterRegistryFactory meterRegistryFactory;
+
+    private PluginRepositoryImpl pluginRepository;
 
     protected Store store;
-
-    protected MeterRegistryFactory meterRegistryFactory;
 
     protected InMemoryReportPlugin reportPlugin;
 
@@ -114,18 +114,11 @@ public abstract class AbstractPluginIT {
         List<String> profiles = ofNullable(System.getProperty(PROPERTY_PROFILES)).map(p -> List.of(p.split(",")))
             .orElse(emptyList());
         mavenSettingsConfigSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(USER_HOME, mavenSettingsFile, profiles);
-        PluginClassLoader pluginClassLoader = new PluginClassLoader(AbstractPluginIT.class.getClassLoader());
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
-        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
-        pluginRepository.initialize();
         OUTPUT_DIRECTORY.mkdirs();
     }
 
     @AfterAll
     public static void destroyPluginRepository() {
-        if (pluginRepository != null) {
-            pluginRepository.destroy();
-        }
     }
 
     @BeforeEach
@@ -133,10 +126,31 @@ public abstract class AbstractPluginIT {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder();
         configure(configurationBuilder);
         ITConfiguration configuration = createConfiguration(configurationBuilder);
-        initializeMeterRegistry(configuration);
+        meterRegistryFactory = new MeterRegistryFactoryImpl(configuration.metrics());
+        meterRegistryFactory.initialize();
+        PluginClassLoader pluginClassLoader = new PluginClassLoader(AbstractPluginIT.class.getClassLoader());
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
+        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistryFactory.getMeterRegistry());
+        pluginRepository.initialize();
         startStore(configuration);
         initializeRuleSet(configuration);
         initializeReportPlugin(configuration);
+    }
+
+    /**
+     * Stops the store.
+     */
+    @AfterEach
+    public final void afterEach() throws IOException {
+        if (store != null) {
+            store.stop();
+        }
+        if (pluginRepository != null) {
+            pluginRepository.destroy();
+        }
+        if (meterRegistryFactory != null) {
+            meterRegistryFactory.destroy();
+        }
     }
 
     protected void configure(ConfigurationBuilder configurationBuilder) {
@@ -155,19 +169,6 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Stops the store.
-     */
-    @AfterEach
-    public final void afterEach() throws IOException {
-        if (store != null) {
-            store.stop();
-        }
-        if (meterRegistryFactory != null) {
-            meterRegistryFactory.destroy();
-        }
-    }
-
-    /**
      * Load configuration for ITs.
      *
      * @return The  configuration.
@@ -178,11 +179,6 @@ public abstract class AbstractPluginIT {
             .withProfiles(getConfigurationProfiles())
             .load(configurationBuilder.build(), new EnvConfigSource() {
             }, new SysPropConfigSource(), mavenSettingsConfigSource);
-    }
-
-    private void initializeMeterRegistry(Configuration configuration) {
-        meterRegistryFactory = new MeterRegistryFactoryImpl(configuration.metrics());
-        meterRegistryFactory.initialize();
     }
 
     private void initializeRuleSet(Configuration configuration) throws RuleException, IOException {

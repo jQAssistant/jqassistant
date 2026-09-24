@@ -251,7 +251,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         List<Tag> tags = List.of(Tag.of(TAG_RULE_TYPE, executableRule.getClass()
             .getSimpleName()), Tag.of(TAG_RULE_ID, executableRule.getId()));
         Timer timer = Timer.builder(METER_ANALYZE_RULE_EXECUTION_TIME)
-            .description("The execution time of the executed rule.")
+            .description("The execution times of executed rules.")
             .tags(tags)
             .register(meterRegistry);
         try {
@@ -260,20 +260,20 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
                     .getLevel())
                 .tags(tags)
                 .strongReference(true)
-                .description("The status of the executed rule: " + Arrays.stream(Result.Status.values())
+                .description("The status of executed rules: " + Arrays.stream(Result.Status.values())
                     .map(status -> status.getLevel() + "=" + status.name())
                     .collect(joining(", ")))
                 .register(meterRegistry);
             Gauge.builder(METER_ANALYZE_RULE_RESULT_ROW_COUNT, () -> result.getVerificationResult()
                     .getRowCount())
                 .tags(tags)
-                .description("The count of rows returned by the executed rule.")
+                .description("The count of rows returned by executed rules.")
                 .strongReference(true)
                 .register(meterRegistry);
             Gauge.builder(METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT, () -> result.getVerificationResult()
                     .getHiddenRowCount())
                 .tags(tags)
-                .description("The count of hidden rows returned by the executed rule.")
+                .description("The count of hidden rows returned by executed rules.")
                 .strongReference(true)
                 .register(meterRegistry);
             return result;
