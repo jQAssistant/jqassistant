@@ -257,7 +257,9 @@ public class Junit5IT extends AbstractJunitIT {
 
     @Test
     public void constraintTestClassFindsAllClassesWithTests() throws Exception {
-        scanClasses(DisabledTestClass.class, ParameterizedTestClass.class, TestTemplateClass.class, RepeatedTestClass.class, TagTestClass.A.class);
+        scanClasses(DisabledTestClass.class, ParameterizedTestClass.class, TestTemplateClass.class, RepeatedTestClass.class,
+            TagTestClass.A.class, ParentTestClassWithoutOwnTestMethod.class, ParentTestClassWithoutOwnTestMethod.ChildTestClass.class,
+            ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class);
 
         assertThat(applyConcept("junit5:TestClass").getStatus(), equalTo(SUCCESS));
 
@@ -269,7 +271,23 @@ public class Junit5IT extends AbstractJunitIT {
             .isNotEmpty();
         assertThat(classes,
             containsInAnyOrder(typeDescriptor(DisabledTestClass.class), typeDescriptor(RepeatedTestClass.class), typeDescriptor(TestTemplateClass.class),
-                typeDescriptor(TagTestClass.A.class), typeDescriptor(ParameterizedTestClass.class)));
+                typeDescriptor(TagTestClass.A.class), typeDescriptor(ParameterizedTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.class),
+                typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class)));
+        store.commitTransaction();
+
+        // verify provision to abstract concept java:TestClass
+        Result<Concept> result = applyConcept("java:TestClass");
+
+        store.beginTransaction();
+
+        assertThat(result.getStatus(), is(SUCCESS));
+        List<TypeDescriptor> typeDescriptors = result.getRows().stream().map(r -> (TypeDescriptor) r.getColumns().get("TestClass").getValue()).collect(Collectors.toList());
+        assertThat(typeDescriptors,
+            hasItems(typeDescriptor(DisabledTestClass.class), typeDescriptor(RepeatedTestClass.class), typeDescriptor(TestTemplateClass.class),
+                typeDescriptor(TagTestClass.A.class), typeDescriptor(ParameterizedTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.class),
+                typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class)));
+
+        store.commitTransaction();
     }
 
     @Test

@@ -387,15 +387,20 @@
     </concept>
 
     <concept id="junit5:TestClass">
+        <providesConcept refId="java:TestClass"/>
         <requiresConcept refId="junit5:TestMethod"/>
         <requiresConcept refId="junit5:RepeatedTestMethod"/>
         <requiresConcept refId="junit5:TestTemplateMethod"/>
         <requiresConcept refId="junit5:ParameterizedTestMethod"/>
+        <requiresConcept refId="junit5:NestedTestClass"/>
 
         <description>Labels all classes containing test methods with "Test" and "Junit5".</description>
         <cypher><![CDATA[
             MATCH
-              (c:Type:Class)-[:DECLARES]->(m:Method:Junit5:Test)
+              p = (c:Type:Class)-[:DECLARES*]->(m:Method:Junit5:Test)
+            WHERE
+              (c)-[:DECLARES]->(m) OR
+              all(n IN nodes(p)[1..-1] WHERE n:Nested)
             SET
               c:Test:Junit5
             RETURN
