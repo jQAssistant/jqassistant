@@ -26,15 +26,33 @@
     </concept>
 
     <concept id="junit4:TestClass">
+        <providesConcept refId="java:TestClass"/>
         <requiresConcept refId="junit4:TestMethod"/>
+        <requiresConcept refId="junit4:EnclosedClass"/>
         <description>Labels all classes containing test methods with "Test" and "Junit4".</description>
         <cypher><![CDATA[
             MATCH
-              (c:Type:Class)-[:DECLARES]->(m:Method:Junit4:Test)
+              p = (c:Type:Class)-[:DECLARES*]->(m:Method:Junit4:Test)
+            WHERE
+              (c)-[:DECLARES]->(m)
+              OR all(n IN nodes(p)[..-2] WHERE n:Enclosed)
             SET
               c:Test:Junit4
             RETURN
               c AS TestClass, COLLECT(m) AS TestMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:EnclosedClass">
+        <description>Labels all classes annotated by "@RunWith(Enclosed.class)" with "Junit4" and "Enclosed"</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:ANNOTATED_BY]->(annotation:Annotation)-[:OF_TYPE]->(:Type {fqn: 'org.junit.runner.RunWith'}),
+              (annotation)-[:HAS]->(:Value)-[:IS]->(:Type {fqn: 'org.junit.experimental.runners.Enclosed'})
+            SET
+              c:Junit4:Enclosed
+            RETURN
+              c AS EnclosedClass
         ]]></cypher>
     </concept>
 
