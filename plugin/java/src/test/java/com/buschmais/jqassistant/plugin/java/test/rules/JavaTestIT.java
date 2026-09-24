@@ -24,9 +24,9 @@ class JavaTestIT extends AbstractJavaPluginIT {
     @BeforeEach
     void setUp() {
         query(
-            "MERGE (:Artifact)-[:PROVIDES]->(:Java:ByteCode:Type:Class{fqn:'Test'})-[:DECLARES]->(:Java:ByteCode:Member:Method:Test{signature:'void test()'})-[:INVOKES]->(:Java:ByteCode:Member:Method)-[:INVOKES]->(:Java:ByteCode:Member:Method:Assert)<-[:DECLARES]-(:Java:ByteCode:Type{fqn:'Assertions'})");
+            "MERGE (:Artifact)-[:PROVIDES]->(:Java:ByteCode:Type:Class:Test{fqn:'Test'})-[:DECLARES]->(:Java:ByteCode:Member:Method:Test{signature:'void test()'})-[:INVOKES]->(:Java:ByteCode:Member:Method)-[:INVOKES]->(:Java:ByteCode:Member:Method:Assert)<-[:DECLARES]-(:Java:ByteCode:Type{fqn:'Assertions'})");
         query(
-            "MERGE (testType:Java:ByteCode:Type:Class{fqn:'Test'})-[:DECLARES]->(testMethod:Java:ByteCode:Member:Method:Test{signature:'void annotatedTest()'})-[:ANNOTATED_BY]->(:Java:ByteCode:Annotation:Assert)-[:OF_TYPE]->(:Java:ByteCode:Type {fqn: 'AnnotationType'})"
+            "MERGE (testType:Java:ByteCode:Type:Class:Test{fqn:'Test'})-[:DECLARES]->(testMethod:Java:ByteCode:Member:Method:Test{signature:'void annotatedTest()'})-[:ANNOTATED_BY]->(:Java:ByteCode:Annotation:Assert)-[:OF_TYPE]->(:Java:ByteCode:Type {fqn: 'AnnotationType'})"
         );
     }
 

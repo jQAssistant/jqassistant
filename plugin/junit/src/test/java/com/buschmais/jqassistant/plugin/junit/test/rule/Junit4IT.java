@@ -14,8 +14,10 @@ import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.core.shared.map.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.Assertions4Junit4;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
+import com.buschmais.jqassistant.plugin.junit.test.set.junit4.ParentTestClassWithoutOwnTestMethod;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestClass;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestSuite;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit5.Assertions4Junit5;
@@ -67,10 +69,22 @@ public class Junit4IT extends AbstractJunitIT {
      */
     @Test
     public void testClass() throws Exception {
-        scanClasses(TestClass.class);
+        scanClasses(TestClass.class, ParentTestClassWithoutOwnTestMethod.class, ParentTestClassWithoutOwnTestMethod.ChildTestClass.class,
+            ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class);
         assertThat(applyConcept("junit4:TestClass").getStatus(), equalTo(SUCCESS));
+        List<TypeDescriptor> classes = query("MATCH (c:Type:Class:Junit4:Test) RETURN c").getColumn("c");
         store.beginTransaction();
-        assertThat(query("MATCH (c:Type:Class:Junit4:Test) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
+        assertThat(classes, containsInAnyOrder(typeDescriptor(TestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.class),
+            typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class)));
+        store.commitTransaction();
+
+        // verify provision to abstract concept java:TestClass
+        Result<Concept> result = applyConcept("java:TestClass");
+        store.beginTransaction();
+        assertThat(result.getStatus(), is(SUCCESS));
+        List<TypeDescriptor> typeDescriptors = result.getRows().stream().map(r -> (TypeDescriptor) r.getColumns().get("TestClass").getValue()).collect(Collectors.toList());
+        assertThat(typeDescriptors, hasItems(typeDescriptor(TestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.class),
+            typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class)));
         store.commitTransaction();
     }
 

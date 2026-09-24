@@ -647,15 +647,12 @@
     </concept>
 
     <concept id="java:TestClass">
-        <requiresConcept refId="java:TestMethod"/>
         <description>
-            Classes declaring test methods are labeled with `Test`.
+            Classes declaring test methods directly or transitively represent test classes.
         </description>
         <cypher><![CDATA[
             MATCH
-              (artifact:Artifact)-[:PROVIDES]->(testClass:Java:Type)-[:DECLARES]->(:Java:Method:Test)
-            SET
-              testClass:Test
+              (artifact:Artifact)-[:PROVIDES]->(testClass:Java:Type:Test)-[:DECLARES*]->(:Java:Method:Test)
             RETURN
               artifact as Artifact, testClass as TestClass
             ORDER BY
