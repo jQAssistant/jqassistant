@@ -48,7 +48,12 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
     @Override
     public void destroy() throws IOException {
         if (pushGateway != null) {
-            log.info("Pushing metrics to Prometheus Pushgateway");
+            metrics.prometheus()
+                .pushgateway()
+                .address()
+                .ifPresent(address -> {
+                    log.info("Pushing collected metrics to Prometheus Pushgateway '{}'.", address);
+                });
             pushGateway.push();
         }
         meterRegistry.close();
