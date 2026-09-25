@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <testsuite name="jqassistant.Group_jqa-project-layout" tests="3" failures="0" errors="0" time="0.0">
-    <testcase name="Constraint_jqa-project-layout_editorconfig_exists" time="0.0" classname="jqassistant.Group_jqa-project-layout"/>
-    <testcase name="Constraint_jqa-project-layout_documentation_releasenotes-exists" time="0.0" classname="jqassistant.Group_jqa-project-layout"/>
     <testcase name="Constraint_jqa-project-layout_readme_exists" time="0.0" classname="jqassistant.Group_jqa-project-layout"/>
+    <testcase name="Constraint_jqa-project-layout_documentation_releasenotes-exists" time="0.0" classname="jqassistant.Group_jqa-project-layout"/>
+    <testcase name="Constraint_jqa-project-layout_editorconfig_exists" time="0.0" classname="jqassistant.Group_jqa-project-layout"/>
 </testsuite>
