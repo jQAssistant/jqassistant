@@ -44,12 +44,16 @@ public interface Prometheus {
         @WithDefault("http")
         String scheme();
 
+        String USERNAME = "username";
+
         /**
          * Return the username for basic authentication.
          *
          * @return The username for basic authentication.
          */
         Optional<String> username();
+
+        String PASSWORD = "password";
 
         /**
          * Return the password for basic authentication.
@@ -66,6 +70,8 @@ public interface Prometheus {
          * @return The bearer token for token based authentication.
          */
         Optional<String> bearerToken();
+
+        String JOB_NAME = "job-name";
 
         /**
          * Return the job name to publish.
