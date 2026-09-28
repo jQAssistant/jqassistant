@@ -6,6 +6,9 @@ import com.buschmais.jqassistant.core.shared.lifecycle.LifecycleAware;
 
 import io.micrometer.core.instrument.MeterRegistry;
 
+/**
+ * Defines the factory for the Micrometer {@link MeterRegistry}.
+ */
 public interface MeterRegistryFactory extends LifecycleAware {
 
     @Override

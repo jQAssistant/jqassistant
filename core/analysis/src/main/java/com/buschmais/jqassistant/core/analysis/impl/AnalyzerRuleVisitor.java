@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerContext;
@@ -37,12 +38,12 @@ import static java.util.stream.Collectors.joining;
 @Slf4j
 public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
 
-    public static final String METER_ANALYZE_RULE_EXECUTION_TIME = "analyze-rule-execution-time";
-    public static final String METER_ANALYZE_RULE_RESULT_STATUS = "analyze-rule-result-status";
-    public static final String METER_ANALYZE_RULE_RESULT_ROW_COUNT = "analyze-rule-result-row-count";
-    public static final String METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT = "analyze-rule-result-hidden-row-count";
+    public static final String METER_ANALYZE_RULE_EXECUTION_TIME = "analyze_rule_execution_time";
+    public static final String METER_ANALYZE_RULE_RESULT_STATUS = "analyze_rule_result_status";
+    public static final String METER_ANALYZE_RULE_RESULT_ROW_COUNT = "analyze_rule_result_row_count";
+    public static final String METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT = "analyze_rule_result_hidden_row_count";
     public static final String TAG_RULE_TYPE = "type";
-    public static final String TAG_RULE_ID = "rule-id";
+    public static final String TAG_RULE_ID = "rule_id";
 
     private final Analyze configuration;
     private final AnalyzerContext analyzerContext;
@@ -250,32 +251,17 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         MeterRegistry meterRegistry = analyzerContext.getMeterRegistry();
         List<Tag> tags = List.of(Tag.of(TAG_RULE_TYPE, executableRule.getClass()
             .getSimpleName()), Tag.of(TAG_RULE_ID, executableRule.getId()));
-        Timer timer = Timer.builder(METER_ANALYZE_RULE_EXECUTION_TIME)
-            .description("The execution times of executed rules.")
-            .tags(tags)
-            .register(meterRegistry);
+        Timer timer = getOrCreateTimer(METER_ANALYZE_RULE_EXECUTION_TIME, tags, () -> "The execution times of executed rules.", meterRegistry);
         try {
-            Result<T> result = timer.recordCallable(callable::call);
-            Gauge.builder(METER_ANALYZE_RULE_RESULT_STATUS, () -> result.getStatus()
-                    .getLevel())
-                .tags(tags)
-                .strongReference(true)
-                .description("The status of executed rules: " + Arrays.stream(Result.Status.values())
-                    .map(status -> status.getLevel() + "=" + status.name())
-                    .collect(joining(", ")))
-                .register(meterRegistry);
-            Gauge.builder(METER_ANALYZE_RULE_RESULT_ROW_COUNT, () -> result.getVerificationResult()
-                    .getRowCount())
-                .tags(tags)
-                .description("The count of rows returned by executed rules.")
-                .strongReference(true)
-                .register(meterRegistry);
-            Gauge.builder(METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT, () -> result.getVerificationResult()
-                    .getHiddenRowCount())
-                .tags(tags)
-                .description("The count of hidden rows returned by executed rules.")
-                .strongReference(true)
-                .register(meterRegistry);
+            Result<T> result = timer.recordCallable(callable);
+            getOrCreateGauge(METER_ANALYZE_RULE_RESULT_STATUS, tags, () -> result.getStatus()
+                .getLevel(), () -> "The status of executed rules: " + Arrays.stream(Result.Status.values())
+                .map(status -> status.getLevel() + "=" + status.name())
+                .collect(joining(", ")), meterRegistry);
+            getOrCreateGauge(METER_ANALYZE_RULE_RESULT_ROW_COUNT, tags, () -> result.getVerificationResult()
+                .getRowCount(), () -> "The count of rows returned by executed rules.", meterRegistry);
+            getOrCreateGauge(METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT, tags, () -> result.getVerificationResult()
+                .getHiddenRowCount(), () -> "The count of hidden rows returned by executed rules.", meterRegistry);
             return result;
         } catch (Exception e) {
             if (e instanceof RuleException) {
@@ -284,6 +270,33 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
                 throw (RuntimeException) e;
             }
             throw new RuntimeException(e);
+        }
+    }
+
+    private Timer getOrCreateTimer(String name, List<Tag> tags, Supplier<String> descriptionSupplier, MeterRegistry meterRegistry) {
+        Timer timer = meterRegistry.find(name)
+            .tags(tags)
+            .timer();
+        if (timer == null) {
+            timer = Timer.builder(name)
+                .description(descriptionSupplier.get())
+                .tags(tags)
+                .register(meterRegistry);
+        }
+        return timer;
+    }
+
+    private <T extends Number> void getOrCreateGauge(String name, List<Tag> tags, Supplier<T> supplier, Supplier<String> descriptionSupplier,
+        MeterRegistry meterRegistry) {
+        Gauge gauge = meterRegistry.find(name)
+            .tags(tags)
+            .gauge();
+        if (gauge == null) {
+            Gauge.builder(name, supplier)
+                .tags(tags)
+                .strongReference(true)
+                .description(descriptionSupplier.get())
+                .register(meterRegistry);
         }
     }
 

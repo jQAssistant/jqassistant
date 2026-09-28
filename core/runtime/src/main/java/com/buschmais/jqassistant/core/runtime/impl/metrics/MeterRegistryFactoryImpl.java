@@ -20,14 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 
 import static com.buschmais.jqassistant.core.runtime.api.bootstrap.VersionProvider.getVersionProvider;
-import static io.micrometer.core.instrument.Metrics.addRegistry;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
 public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
 
-    public static final String METER_JQASSISTANT_DISTRIBUTION = "jqassistant-distribution";
+    public static final String METER_JQASSISTANT_DISTRIBUTION = "jqassistant_distribution";
 
     public static final String TAG_JQASSISTANT_VERSION = "version";
 
@@ -50,7 +49,6 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
             .description("The jQAssistant distribution.")
             .strongReference(true)
             .register(meterRegistry);
-        addRegistry(meterRegistry);
     }
 
     @Override
@@ -60,14 +58,17 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
 
     @Override
     public void destroy() throws IOException {
-        if (pushGateway != null) {
-            metrics.prometheus()
-                .pushgateway()
-                .address()
-                .ifPresent(address -> log.info("Pushing collected metrics to Prometheus Pushgateway '{}'.", address));
-            pushGateway.push();
+        try {
+            if (pushGateway != null) {
+                metrics.prometheus()
+                    .pushgateway()
+                    .address()
+                    .ifPresent(address -> log.info("Pushing collected metrics to Prometheus Pushgateway '{}'.", address));
+                pushGateway.push();
+            }
+        } finally {
+            meterRegistry.close();
         }
-        meterRegistry.close();
     }
 
     private @NonNull MeterRegistry createPrometheusMeterRegistry(String address) {

@@ -39,7 +39,7 @@ public interface Prometheus {
         /**
          * Return the scheme to use for connecting to the Pushgateway: "http" or "https".
          *
-         * @return The scheme to use for connectiong to the Pushgateway.
+         * @return The scheme to use for connecting to the Pushgateway.
          */
         @WithDefault("http")
         String scheme();

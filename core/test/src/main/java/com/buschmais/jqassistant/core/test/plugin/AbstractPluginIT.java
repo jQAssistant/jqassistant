@@ -59,7 +59,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import org.eclipse.microprofile.config.spi.ConfigSource;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -115,10 +114,6 @@ public abstract class AbstractPluginIT {
             .orElse(emptyList());
         mavenSettingsConfigSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(USER_HOME, mavenSettingsFile, profiles);
         OUTPUT_DIRECTORY.mkdirs();
-    }
-
-    @AfterAll
-    public static void destroyPluginRepository() {
     }
 
     @BeforeEach

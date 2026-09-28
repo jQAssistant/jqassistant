@@ -26,6 +26,7 @@ import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.jspecify.annotations.NonNull;
@@ -48,6 +49,7 @@ import static java.util.stream.Collectors.toMap;
  * @author jn4, Kontext E GmbH, 23.01.14
  * @author Dirk Mahler
  */
+@Slf4j
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
@@ -211,7 +213,7 @@ public class Main {
         if (configuration.skip()) {
             LOGGER.info("Skipping execution.");
         } else {
-            MeterRegistryFactory meterRegistryFactory = createMeterRegistryProvider(configuration);
+            MeterRegistryFactory meterRegistryFactory = createMeterRegistryFactory(configuration);
             MeterRegistry meterRegistry = meterRegistryFactory.getMeterRegistry();
             ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
             PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider, meterRegistry);
@@ -222,17 +224,16 @@ public class Main {
                 executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
             } finally {
                 currentThread().setContextClassLoader(contextClassLoader);
+                try {
+                    meterRegistryFactory.destroy();
+                } catch (IOException e) {
+                    log.warn("Could not destroy Meter Registry Factory", e);
+                }
             }
-            try {
-                meterRegistryFactory.destroy();
-            } catch (IOException e) {
-                throw new CliExecutionException("Could not destroy Meter Registry", e);
-            }
-
         }
     }
 
-    private static @NonNull MeterRegistryFactory createMeterRegistryProvider(CliConfiguration configuration) {
+    private static @NonNull MeterRegistryFactory createMeterRegistryFactory(CliConfiguration configuration) {
         MeterRegistryFactory meterRegistryFactory = new MeterRegistryFactoryImpl(configuration.metrics());
         meterRegistryFactory.initialize();
         return meterRegistryFactory;

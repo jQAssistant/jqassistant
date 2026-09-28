@@ -73,7 +73,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected CachingStoreProvider cachingStoreProvider;
 
     /**
-     * The store repository.
+     * The {@link MeterRegistryProvider}.
      */
     @Component
     protected MeterRegistryProvider meterRegistryProvider;
