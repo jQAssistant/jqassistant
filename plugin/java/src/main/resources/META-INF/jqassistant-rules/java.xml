@@ -647,8 +647,9 @@
     </concept>
 
     <concept id="java:TestClass">
+        <requiresConcept refId="java:TestMethod"/>
         <description>
-            Classes declaring test methods directly or transitively represent test classes.
+            Abstract concept returning test classes, i. e. that are labeled with ˋTestˋ and that directly or indirectly declare test methods.
         </description>
         <cypher><![CDATA[
             MATCH

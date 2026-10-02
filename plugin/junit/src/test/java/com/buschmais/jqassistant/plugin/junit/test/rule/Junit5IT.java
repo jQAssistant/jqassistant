@@ -283,7 +283,7 @@ public class Junit5IT extends AbstractJunitIT {
         assertThat(result.getStatus(), is(SUCCESS));
         List<TypeDescriptor> typeDescriptors = result.getRows().stream().map(r -> (TypeDescriptor) r.getColumns().get("TestClass").getValue()).collect(Collectors.toList());
         assertThat(typeDescriptors,
-            hasItems(typeDescriptor(DisabledTestClass.class), typeDescriptor(RepeatedTestClass.class), typeDescriptor(TestTemplateClass.class),
+            containsInAnyOrder(typeDescriptor(DisabledTestClass.class), typeDescriptor(RepeatedTestClass.class), typeDescriptor(TestTemplateClass.class),
                 typeDescriptor(TagTestClass.A.class), typeDescriptor(ParameterizedTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.class),
                 typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class)));
 

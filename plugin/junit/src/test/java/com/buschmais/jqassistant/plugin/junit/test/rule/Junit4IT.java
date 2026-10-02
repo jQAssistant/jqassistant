@@ -83,7 +83,7 @@ public class Junit4IT extends AbstractJunitIT {
         store.beginTransaction();
         assertThat(result.getStatus(), is(SUCCESS));
         List<TypeDescriptor> typeDescriptors = result.getRows().stream().map(r -> (TypeDescriptor) r.getColumns().get("TestClass").getValue()).collect(Collectors.toList());
-        assertThat(typeDescriptors, hasItems(typeDescriptor(TestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.class),
+        assertThat(typeDescriptors, containsInAnyOrder(typeDescriptor(TestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.class),
             typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class)));
         store.commitTransaction();
     }
