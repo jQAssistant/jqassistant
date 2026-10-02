@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.junit.test.rule;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -281,11 +282,46 @@ public class Junit5IT extends AbstractJunitIT {
         store.beginTransaction();
 
         assertThat(result.getStatus(), is(SUCCESS));
-        List<TypeDescriptor> typeDescriptors = result.getRows().stream().map(r -> (TypeDescriptor) r.getColumns().get("TestClass").getValue()).collect(Collectors.toList());
-        assertThat(typeDescriptors,
-            containsInAnyOrder(typeDescriptor(DisabledTestClass.class), typeDescriptor(RepeatedTestClass.class), typeDescriptor(TestTemplateClass.class),
-                typeDescriptor(TagTestClass.A.class), typeDescriptor(ParameterizedTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.class),
-                typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class)));
+
+        assertThat(result.getRows().stream().map(r -> r.getColumns().get("Artifact").getLabel()).collect(Collectors.toList()), everyItem(equalTo("artifact")));
+
+        Map<TypeDescriptor, List<MethodDescriptor>> resultMap = result.getRows().stream()
+            .collect(Collectors.toMap(
+                row -> (TypeDescriptor) row.getColumns().get("TestClass").getValue(),
+                row -> (List<MethodDescriptor>) row.getColumns().get("TestMethods").getValue()));
+
+        assertThat(resultMap, aMapWithSize(8));
+
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(DisabledTestClass.class), containsInAnyOrder(methodDescriptor(DisabledTestClass.class, "test")))
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(RepeatedTestClass.class), containsInAnyOrder(methodDescriptor(RepeatedTestClass.class, "repeatedTest")))
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(TestTemplateClass.class), containsInAnyOrder(methodDescriptor(TestTemplateClass.class, "templatedMethod", int.class)))
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(TagTestClass.A.class), containsInAnyOrder(methodDescriptor(TagTestClass.A.class, "activeTest")))
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(ParameterizedTestClass.class), containsInAnyOrder(methodDescriptor(ParameterizedTestClass.class, "parameterizedTest", String.class)))
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(ParentTestClassWithoutOwnTestMethod.class), containsInAnyOrder(
+                methodDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class, "test"),
+                methodDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class, "test"))
+            )
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), containsInAnyOrder(
+                methodDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class, "test"),
+                methodDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class, "test"))
+            )
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class), containsInAnyOrder(methodDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class, "test")))
+        );
 
         store.commitTransaction();
     }

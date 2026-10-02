@@ -82,9 +82,24 @@ public class Junit4IT extends AbstractJunitIT {
         Result<Concept> result = applyConcept("java:TestClass");
         store.beginTransaction();
         assertThat(result.getStatus(), is(SUCCESS));
-        List<TypeDescriptor> typeDescriptors = result.getRows().stream().map(r -> (TypeDescriptor) r.getColumns().get("TestClass").getValue()).collect(Collectors.toList());
-        assertThat(typeDescriptors, containsInAnyOrder(typeDescriptor(TestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.class),
-            typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class)));
+        assertThat(result.getRows().stream().map(r -> r.getColumns().get("Artifact").getLabel()).collect(Collectors.toList()), everyItem(equalTo("artifact")));
+        Map<TypeDescriptor, List<MethodDescriptor>> resultMap = result.getRows().stream()
+            .collect(Collectors.toMap(
+                row -> (TypeDescriptor) row.getColumns().get("TestClass").getValue(),
+                row -> (List<MethodDescriptor>) row.getColumns().get("TestMethods").getValue()));
+        assertThat(resultMap, aMapWithSize(4));
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(TestClass.class), containsInAnyOrder(methodDescriptor(TestClass.class, "activeTestMethod")))
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(ParentTestClassWithoutOwnTestMethod.class), containsInAnyOrder(methodDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class, "test")))
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.class), containsInAnyOrder(methodDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class, "test")))
+        );
+        assertThat(resultMap,
+            hasEntry(typeDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class), containsInAnyOrder(methodDescriptor(ParentTestClassWithoutOwnTestMethod.ChildTestClass.GrandChildTestClass.class, "test")))
+        );
         store.commitTransaction();
     }
 
