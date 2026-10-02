@@ -45,7 +45,7 @@ class ServerTaskTest extends AbstractTaskTest {
                 storeOperation.run(store);
             }
         };
-        serverTask.initialize(pluginRepository, storeFactory);
+        serverTask.initialize(PROJECT_DIRECTORY, PROJECT_DIRECTORY, pluginRepository, storeFactory);
     }
 
     @Test

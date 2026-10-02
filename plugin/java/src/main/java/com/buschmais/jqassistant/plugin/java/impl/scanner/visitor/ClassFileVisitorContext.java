@@ -276,7 +276,10 @@ public class ClassFileVisitorContext {
         if (typeName == null) {
             return null;
         }
-        if (jQASuppress.class.getName()
+        if (jQASuppress.Repeatable.class.getName()
+            .equals(typeName)) {
+            return new RepeatableSuppressAnnotationVisitor(annotatedDescriptor, this);
+        } else if (jQASuppress.class.getName()
             .equals(typeName) || com.buschmais.jqassistant.plugin.java.api.jQASuppress.class.getName()
             .equals(typeName)) {
             return new SuppressAnnotationVisitor(annotatedDescriptor, this);

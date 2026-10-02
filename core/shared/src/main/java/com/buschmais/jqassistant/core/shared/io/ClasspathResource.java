@@ -5,9 +5,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+
 /**
  * Provides functionality to load test resources.
  */
+@Deprecated
+@ToBeRemovedInVersion(major = 3, minor = 0)
 public class ClasspathResource {
 
     public static File getFile(String resource) {

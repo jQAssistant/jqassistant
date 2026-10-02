@@ -12,5 +12,5 @@ import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguage
  */
 @Java(Package)
 @Label(value = "Package", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface PackageDescriptor extends JavaDescriptor, PackageMemberDescriptor, DirectoryDescriptor {
+public interface PackageDescriptor extends JavaDescriptor, PackageMemberDescriptor, DirectoryDescriptor, SourceFileTemplate {
 }

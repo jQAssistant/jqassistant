@@ -42,6 +42,11 @@ public class ConfigurationMappingLoader {
     public static final int ORDINAL_CLASSPATH = 80;
 
     /**
+     * The ordinal for config sources from the project directory.
+     */
+    public static final int ORDINAL_PROJECT_DIRECTORY = 100;
+
+    /**
      * The ordinal for config sources from the working directory.
      */
     public static final int ORDINAL_WORKING_DIRECTORY = 150;
@@ -136,10 +141,21 @@ public class ConfigurationMappingLoader {
         }
 
         /**
-         * Add YAML configs from the working workingDirectory.
+         * Add YAML configs from the project directory.
+         *
+         * @param projectDirectory
+         *     The project directory.
+         * @return The {@link Builder}.
+         */
+        public Builder<C> withProjectDirectory(File projectDirectory) {
+            return withDirectory(projectDirectory, ORDINAL_PROJECT_DIRECTORY);
+        }
+
+        /**
+         * Add YAML configs from the working directory.
          *
          * @param workingDirectory
-         *     The working workingDirectory.
+         *     The working directory.
          * @return The {@link Builder}.
          */
         public Builder<C> withWorkingDirectory(File workingDirectory) {

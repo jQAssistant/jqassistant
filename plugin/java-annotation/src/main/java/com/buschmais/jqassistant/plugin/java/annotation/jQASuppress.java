@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.annotation;
 
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 
 import static java.lang.annotation.RetentionPolicy.CLASS;
@@ -9,6 +10,7 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
  * the annotated element.
  */
 @Retention(CLASS)
+@Repeatable(jQASuppress.Repeatable.class)
 public @interface jQASuppress {
 
     /**
@@ -35,4 +37,11 @@ public @interface jQASuppress {
      */
     String until() default "";
 
+    /**
+     * Define #jQASuppress as a repeatable annotation.
+     */
+    @Retention(CLASS)
+    @interface Repeatable {
+        jQASuppress[] value();
+    }
 }

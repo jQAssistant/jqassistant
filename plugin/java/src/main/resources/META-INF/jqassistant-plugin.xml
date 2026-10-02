@@ -56,7 +56,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope</class>
     </scope>
     <scanner>
-        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.JavaClassesDirectoryScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.java.impl.scanner.JavaClasspathDirectoryScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.JarScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageDirectoryScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin</class>
@@ -72,3 +72,4 @@
         <resource>java-suppress.xml</resource>
     </rules>
 </jqassistant-plugin>
+

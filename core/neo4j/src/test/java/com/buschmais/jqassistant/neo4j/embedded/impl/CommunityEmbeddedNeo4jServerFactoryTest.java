@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Neo4jCommunityServerFactoryTest {
+class CommunityEmbeddedNeo4jServerFactoryTest {
 
-    private final Neo4jCommunityServerFactory serverFactory = new Neo4jCommunityServerFactory();
+    private final CommunityEmbeddedNeo4jServerFactory serverFactory = new CommunityEmbeddedNeo4jServerFactory();
 
     @Test
     void properties() {

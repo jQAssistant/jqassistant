@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.junit.test.scanner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -11,26 +10,22 @@ import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestReportDirectoryScannerIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that test reports files are scanned.
      *
-     * @throws java.io.IOException
-     *             If the test fails.
      */
     @Test
-    public void reportFile() throws IOException {
+    public void reportFile() {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(TestReportDirectoryScannerIT.class);
-        String absolutePath = classesDirectory.getAbsolutePath();
-        TestReportDirectoryDescriptor directory = getScanner().scan(classesDirectory, absolutePath, JunitScope.TESTREPORTS);
-        assertThat(directory.getFileName(), equalTo(absolutePath.replace('\\', '/')));
+        TestReportDirectoryDescriptor directory = getScanner().scan(classesDirectory, null, JunitScope.TESTREPORTS);
+        assertThat(directory.getFileName()).isEqualTo("/target/test-classes");
         List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:File) RETURN suite").getColumn("suite");
-        assertThat(testSuiteDescriptors.size(), equalTo(2));
+        assertThat(testSuiteDescriptors).hasSize(2);
         store.commitTransaction();
     }
 

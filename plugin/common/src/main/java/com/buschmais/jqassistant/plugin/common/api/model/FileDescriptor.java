@@ -10,7 +10,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
  * Represents a file.
  */
 @Label(value = "File", usingIndexedPropertyOf = FileNameDescriptor.class)
-public interface FileDescriptor extends FileNameDescriptor {
+public interface FileDescriptor extends PathDescriptor, FileNameDescriptor {
 
     /**
      * Return the parents (directories, artifacts) containing this

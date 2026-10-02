@@ -214,9 +214,12 @@
     </xs:complexType>
 
     <xs:complexType name="LocationType" abstract="true">
+        <!-- deprecated: the parent element will be removed in version 3.0 -->
         <xs:sequence>
             <xs:element name="parent" type="tns:ArtifactLocationType" minOccurs="0"/>
         </xs:sequence>
+        <xs:attribute name="path" type="xs:string" use="required"/>
+        <!-- deprecated: the fileName attribute will be removed in version 3.0 -->
         <xs:attribute name="fileName" type="xs:string" use="required"/>
     </xs:complexType>
 
@@ -229,6 +232,7 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- deprecated: the artifact location type will be removed in version 3.0 -->
     <xs:complexType name="ArtifactLocationType">
         <xs:complexContent>
             <xs:extension base="tns:LocationType">

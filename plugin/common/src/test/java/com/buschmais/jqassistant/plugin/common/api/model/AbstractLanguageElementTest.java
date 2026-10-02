@@ -16,8 +16,12 @@ import static org.mockito.Mockito.mock;
 
 abstract public class AbstractLanguageElementTest {
 
+    public static final String SOURCE_PATH_PREFIX = "src";
+
     protected ArtifactDescriptor getArtifactFileDescriptor() {
         ArtifactFileDescriptor artifactFileDescriptor = mock(ArtifactFileDescriptor.class);
+        doReturn("test.jar").when(artifactFileDescriptor)
+            .getPath();
         doReturn("test.jar").when(artifactFileDescriptor)
             .getFileName();
         doReturn("groupId").when(artifactFileDescriptor)
@@ -33,23 +37,24 @@ abstract public class AbstractLanguageElementTest {
         return artifactFileDescriptor;
     }
 
-    protected <D extends Descriptor> void verify(D descriptor, LanguageElement languageElement, String expectedName, String expectedSourceFile) {
-        verify(descriptor, languageElement, expectedName, expectedSourceFile, empty(), empty());
+    protected <D extends Descriptor> void verify(D descriptor, LanguageElement languageElement, String expectedName, String expectedFileName) {
+        verify(descriptor, languageElement, expectedName, expectedFileName, empty(), empty());
     }
 
-    protected <D extends Descriptor> void verify(D descriptor, LanguageElement languageElement, String expectedName, String expectedSourceFile,
+    protected <D extends Descriptor> void verify(D descriptor, LanguageElement languageElement, String expectedName, String expectedFileName,
         Optional<Integer> expectedStartLine, Optional<Integer> expectedEndLine) {
         SourceProvider<D> sourceProvider = languageElement.getSourceProvider();
         assertThat(sourceProvider.getName(descriptor)).isEqualTo(expectedName);
-        verifySourceLocation(descriptor, sourceProvider, expectedSourceFile, expectedStartLine, expectedEndLine);
+        verifySourceLocation(descriptor, sourceProvider, expectedFileName, expectedStartLine, expectedEndLine);
     }
 
-    private <D extends Descriptor> void verifySourceLocation(D descriptor, SourceProvider<D> sourceProvider, String expectedSourceFile,
+    private <D extends Descriptor> void verifySourceLocation(D descriptor, SourceProvider<D> sourceProvider, String expectedFileName,
         Optional<Integer> expectedStartLine, Optional<Integer> expectedEndLine) {
         Optional<FileLocation> optionalSourceLocation = sourceProvider.getSourceLocation(descriptor);
         assertThat(optionalSourceLocation.isPresent()).isEqualTo(true);
         FileLocation fileLocation = optionalSourceLocation.get();
-        assertThat(fileLocation.getFileName()).isEqualTo(expectedSourceFile);
+        assertThat(fileLocation.getPath()).isEqualTo(SOURCE_PATH_PREFIX + expectedFileName);
+        assertThat(fileLocation.getFileName()).isEqualTo(expectedFileName);
         assertThat(fileLocation.getStartLine()).isEqualTo(expectedStartLine);
         assertThat(fileLocation.getEndLine()).isEqualTo(expectedEndLine);
         verifyParentArtifact(fileLocation);
@@ -59,6 +64,7 @@ abstract public class AbstractLanguageElementTest {
         Optional<ArtifactLocation> optionalParent = sourceLocation.getParent();
         assertThat(optionalParent.isPresent()).isEqualTo(true);
         ArtifactLocation artifactLocation = optionalParent.get();
+        assertThat(artifactLocation.getPath()).isEqualTo("test.jar");
         assertThat(artifactLocation.getFileName()).isEqualTo("test.jar");
         assertThat(artifactLocation.getGroup()).isEqualTo(of("groupId"));
         assertThat(artifactLocation.getName()).isEqualTo(of("artifactId"));

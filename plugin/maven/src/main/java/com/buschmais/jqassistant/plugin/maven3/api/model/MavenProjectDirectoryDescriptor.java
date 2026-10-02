@@ -14,7 +14,7 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
 
     /**
      * Return the artifacts created by this project.
-     * 
+     *
      * @return The artifacts.
      */
     @Relation("CREATES")
@@ -22,7 +22,7 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
 
     /**
      * Return the parent of this project.
-     * 
+     *
      * @return The parent.
      */
     @Relation("HAS_PARENT")
@@ -32,7 +32,7 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
 
     /**
      * Return the modules of this project.
-     * 
+     *
      * @return The modules.
      */
     @Relation("HAS_MODULE")
@@ -40,7 +40,7 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
 
     /**
      * Return the pom.xml file that defines this project.
-     * 
+     *
      * @return The pom.xml file.
      */
     @Relation("HAS_MODEL")
@@ -57,4 +57,20 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
     MavenPomDescriptor getEffectiveModel();
 
     void setEffectiveModel(MavenPomDescriptor effectiveModel);
+
+    /**
+     * Return the source directories.
+     *
+     * @return The source directories.
+     */
+    @Relation("HAS_SOURCE_DIRECTORY")
+    List<DirectoryDescriptor> getSourceDirectories();
+
+    /**
+     * Return the test source directories.
+     *
+     * @return The test source directories.
+     */
+    @Relation("HAS_TEST_SOURCE_DIRECTORY")
+    List<DirectoryDescriptor> getTestSourceDirectories();
 }

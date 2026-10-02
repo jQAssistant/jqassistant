@@ -19,12 +19,12 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 public class DependentDirectoryScannerPlugin extends AbstractScannerPlugin<File, DependentDirectoryDescriptor> {
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
+    public boolean accepts(File item, String location, Scope scope) throws IOException {
         return DefaultScope.NONE.equals(scope) && item.isDirectory();
     }
 
     @Override
-    public DependentDirectoryDescriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
+    public DependentDirectoryDescriptor scan(File item, String location, Scope scope, Scanner scanner) throws IOException {
         DirectoryDescriptor descriptor = scanner.getContext().getCurrentDescriptor();
         DependentDirectoryDescriptor dependentDirectoryDescriptor = scanner.getContext().getStore()
                 .addDescriptorType(descriptor, DependentDirectoryDescriptor.class);

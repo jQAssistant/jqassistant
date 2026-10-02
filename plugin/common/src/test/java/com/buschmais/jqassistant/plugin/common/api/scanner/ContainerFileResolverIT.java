@@ -15,7 +15,7 @@ public class ContainerFileResolverIT extends AbstractPluginIT {
         store.beginTransaction();
         DirectoryDescriptor directoryDescriptor = store.create(DirectoryDescriptor.class);
         directoryDescriptor.setFileName("/");
-        ContainerFileResolver resolver = new ContainerFileResolver(getScanner().getContext(), directoryDescriptor);
+        ContainerFileResolver resolver = new ContainerFileResolver("", getScanner().getContext(), directoryDescriptor);
 
         FileDescriptor required1 = resolver.require("/file", FileDescriptor.class, getScanner().getContext());
         assertThat(required1.getFileName()).isEqualTo("/file");
@@ -32,7 +32,7 @@ public class ContainerFileResolverIT extends AbstractPluginIT {
         store.beginTransaction();
         DirectoryDescriptor parent = store.create(DirectoryDescriptor.class);
         parent.setFileName("/parentContainer");
-        ContainerFileResolver parentResolver = new ContainerFileResolver(getScanner().getContext(), parent);
+        ContainerFileResolver parentResolver = new ContainerFileResolver("", getScanner().getContext(), parent);
 
         FileDescriptor parentFile = parentResolver.require("/file", FileDescriptor.class, getScanner().getContext());
         assertThat(parentFile.getFileName()).isEqualTo("/file");
@@ -40,7 +40,7 @@ public class ContainerFileResolverIT extends AbstractPluginIT {
         DirectoryDescriptor child = parentResolver.require("/childContainer", DirectoryDescriptor.class, getScanner().getContext());
         assertThat(child.getFileName()).isEqualTo("/childContainer");
 
-        ContainerFileResolver childResolver = new ContainerFileResolver(getScanner().getContext(), child);
+        ContainerFileResolver childResolver = new ContainerFileResolver("", getScanner().getContext(), child);
 
         FileDescriptor childFile = childResolver.require("/file", FileDescriptor.class, getScanner().getContext());
 

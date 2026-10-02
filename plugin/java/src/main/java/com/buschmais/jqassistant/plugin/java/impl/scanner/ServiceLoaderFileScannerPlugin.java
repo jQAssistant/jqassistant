@@ -33,16 +33,16 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileRe
     private static final Pattern PATTERN = Pattern.compile("(.*/)?META-INF/services/(.*)");
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return CLASSPATH.equals(scope) && PATTERN.matcher(path)
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        return CLASSPATH.equals(scope) && PATTERN.matcher(location)
             .matches();
     }
 
     @Override
-    public ServiceLoaderDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        Matcher matcher = PATTERN.matcher(path);
+    public ServiceLoaderDescriptor scan(FileResource item, String location, Scope scope, Scanner scanner) throws IOException {
+        Matcher matcher = PATTERN.matcher(location);
         if (!matcher.matches()) {
-            throw new IOException("Cannot match path name: " + path);
+            throw new IOException("Cannot match path name: " + location);
         }
         String serviceInterface = matcher.group(2);
         ScannerContext context = scanner.getContext();

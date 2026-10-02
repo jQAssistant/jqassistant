@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -26,9 +25,7 @@ public class MavenArtifactResolver implements ArtifactResolver {
     }
 
     private MavenArtifactDescriptor find(String fqn, ScannerContext scannerContext) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("fqn", fqn);
-        Query.Result<CompositeRowObject> result = scannerContext.getStore().executeQuery("MERGE (a:Maven:Artifact{fqn:$fqn}) RETURN a", params);
+        Query.Result<CompositeRowObject> result = scannerContext.getStore().executeQuery("MERGE (a:Maven:Artifact{fqn:$fqn}) RETURN a", Map.of("fqn", fqn));
         return result.hasResult() ? result.getSingleResult().get("a", MavenArtifactDescriptor.class) : null;
     }
 }

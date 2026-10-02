@@ -8,7 +8,7 @@
         <description>The project contains the file "/WEB-INF/web.xml" .</description>
         <cypher>
             MATCH
-              (:Maven:Project)-[:CONTAINS]->(webapp:Directory{fileName:"src/main/webapp"}),
+              (:Maven:Project)-[:CONTAINS]->(webapp:Directory{fileName:"/src/main/webapp"}),
               (webapp)-[:CONTAINS]->(webXml:Xml:File{fileName:"/WEB-INF/web.xml"})
             RETURN
               webXml

@@ -26,7 +26,8 @@ public @interface TestLanguage {
     TestLanguageElement value();
 
     enum TestLanguageElement implements LanguageElement {
-        TestElement, DerivedTestElement;
+        TestElement,
+        DerivedTestElement;
 
         @Override
         public SourceProvider<? extends CompositeObject> getSourceProvider() {
@@ -38,9 +39,22 @@ public @interface TestLanguage {
 
                 @Override
                 public Optional<FileLocation> getSourceLocation(TestDescriptorWithLanguageElement descriptor) {
-                    ArtifactLocation parent = ArtifactLocation.builder().fileName("test.jar").group(of("groupId")).name(of("artifactId")).type(of("jar"))
-                            .classifier(of("jdk8")).version(of("1.0.0")).build();
-                    return of(FileLocation.builder().fileName("Test.java").startLine(of(1)).endLine(of(2)).parent(of(parent)).build());
+                    ArtifactLocation parent = ArtifactLocation.builder()
+                        .path("test.jar")
+                        .fileName("test.jar")
+                        .group(of("groupId"))
+                        .name(of("artifactId"))
+                        .type(of("jar"))
+                        .classifier(of("jdk8"))
+                        .version(of("1.0.0"))
+                        .build();
+                    return of(FileLocation.builder()
+                        .path("src/Test.java")
+                        .fileName("/Test.java")
+                        .startLine(of(1))
+                        .endLine(of(2))
+                        .parent(of(parent))
+                        .build());
                 }
             };
         }

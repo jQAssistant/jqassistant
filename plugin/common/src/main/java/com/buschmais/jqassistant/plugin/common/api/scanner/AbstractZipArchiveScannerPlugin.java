@@ -34,12 +34,12 @@ public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescri
     }
 
     @Override
-    public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
-        return path.toLowerCase().endsWith(getExtension());
+    public boolean accepts(FileResource file, String location, Scope scope) throws IOException {
+        return location.toLowerCase().endsWith(getExtension());
     }
 
     @Override
-    public D scan(FileResource file, String path, Scope currentScope, Scanner scanner) throws IOException {
+    public D scan(FileResource file, String location, Scope currentScope, Scanner scanner) throws IOException {
         ScannerContext scannerContext = scanner.getContext();
         FileDescriptor fileDescriptor = scannerContext.getCurrentDescriptor();
         D archive = scannerContext.getStore().addDescriptorType(fileDescriptor, getDescriptorType());
@@ -47,10 +47,10 @@ public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescri
         Scope archiveScope = createScope(currentScope, archive, scannerContext);
 
         try (ZipFileResource zipFile = new ZipFileResource(file.getFile())) {
-            scanner.scan(zipFile, path, archiveScope);
+            scanner.scan(zipFile, location, archiveScope);
             archive.setValid(true);
         } catch (IOException e) {
-            LOGGER.warn("Cannot read ZIP file '" + path + "'.", e);
+            LOGGER.warn("Cannot read ZIP file '" + location + "'.", e);
             archive.setValid(false);
         }
         finally {

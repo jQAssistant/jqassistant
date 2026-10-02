@@ -243,8 +243,8 @@ class AggregationVerificationStrategyTest {
         }
         return toRow(rule, columns, FAILURE, hidden ?
             Optional.of(Hidden.builder()
-                .suppression(Optional.of(Hidden.Suppression.builder()
-                    .build()))
+                .suppression(Hidden.Suppression.builder()
+                    .build())
                 .build()) :
             empty());
     }

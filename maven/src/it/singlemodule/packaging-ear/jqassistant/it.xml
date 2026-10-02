@@ -8,7 +8,7 @@
         <description>The project contains the file "/META-INF/application.xml" .</description>
         <cypher>
             MATCH
-              (:Maven:Project)-[:CONTAINS]->(application:Directory{fileName:"src/main/application"}),
+              (:Maven:Project)-[:CONTAINS]->(application:Directory{fileName:"/src/main/application"}),
               (application)-[:CONTAINS]->(applicationXml:Xml:File{fileName:"/META-INF/application.xml"})
             RETURN
               applicationXml

@@ -4,6 +4,10 @@ import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 
 import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.TypePath;
+import org.objectweb.asm.TypeReference;
+
+import static org.objectweb.asm.TypeReference.FIELD;
 
 public class FieldVisitor extends org.objectweb.asm.FieldVisitor {
 
@@ -19,5 +23,14 @@ public class FieldVisitor extends org.objectweb.asm.FieldVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
         return classFileVisitorContext.addAnnotation(fieldDescriptor, SignatureHelper.getType(arg0));
+    }
+
+    @Override
+    public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible) {
+        TypeReference typeReference = new TypeReference(typeRef);
+        if (typeReference.getSort() == FIELD && typePath == null) {
+            return classFileVisitorContext.addAnnotation(fieldDescriptor, SignatureHelper.getType(descriptor));
+        }
+        return null;
     }
 }
