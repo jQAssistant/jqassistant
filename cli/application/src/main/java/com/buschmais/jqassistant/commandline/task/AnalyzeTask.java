@@ -57,7 +57,7 @@ public class AnalyzeTask extends AbstractRuleTask {
                 BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRulesDirectory(analyze.rule()));
                 BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
                 Analyzer analyzer = new AnalyzerImpl(analyze, pluginRepository.getClassLoader(), store, pluginRepository.getAnalyzerPluginRepository()
-                    .getRuleInterpreterPlugins(emptyMap()), baselineManager, inMemoryReportPlugin);
+                    .getRuleInterpreterPlugins(emptyMap()), baselineManager, inMemoryReportPlugin, meterRegistry);
                 RuleSet availableRules = getAvailableRules(analyze.rule());
                 analyzer.execute(availableRules, getRuleSelection(availableRules, analyze));
             } catch (RuleException e) {
@@ -80,7 +80,7 @@ public class AnalyzeTask extends AbstractRuleTask {
     }
 
     private void createReportArchive(ReportContext reportContext) throws CliConfigurationException {
-        File reportArchive = null;
+        File reportArchive;
         try {
             reportArchive = reportContext.createReportArchive();
         } catch (ReportException e) {

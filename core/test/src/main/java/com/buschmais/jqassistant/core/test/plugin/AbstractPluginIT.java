@@ -33,8 +33,10 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
+import com.buschmais.jqassistant.core.runtime.api.metrics.MeterRegistryFactory;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.runtime.impl.metrics.MeterRegistryFactoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -57,7 +59,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import org.eclipse.microprofile.config.spi.ConfigSource;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -96,7 +97,9 @@ public abstract class AbstractPluginIT {
 
     private static ConfigSource mavenSettingsConfigSource;
 
-    private static PluginRepositoryImpl pluginRepository;
+    private MeterRegistryFactory meterRegistryFactory;
+
+    private PluginRepositoryImpl pluginRepository;
 
     protected Store store;
 
@@ -110,28 +113,39 @@ public abstract class AbstractPluginIT {
         List<String> profiles = ofNullable(System.getProperty(PROPERTY_PROFILES)).map(p -> List.of(p.split(",")))
             .orElse(emptyList());
         mavenSettingsConfigSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(USER_HOME, mavenSettingsFile, profiles);
-        PluginClassLoader pluginClassLoader = new PluginClassLoader(AbstractPluginIT.class.getClassLoader());
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
-        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
-        pluginRepository.initialize();
         OUTPUT_DIRECTORY.mkdirs();
     }
 
-    @AfterAll
-    public static void destroyPluginRepository() {
-        if (pluginRepository != null) {
-            pluginRepository.destroy();
-        }
-    }
-
     @BeforeEach
-    public void beforeEach() throws IOException, RuleException {
+    public final void beforeEach() throws IOException, RuleException {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder();
         configure(configurationBuilder);
         ITConfiguration configuration = createConfiguration(configurationBuilder);
+        meterRegistryFactory = new MeterRegistryFactoryImpl(configuration.metrics());
+        meterRegistryFactory.initialize();
+        PluginClassLoader pluginClassLoader = new PluginClassLoader(AbstractPluginIT.class.getClassLoader());
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
+        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistryFactory.getMeterRegistry());
+        pluginRepository.initialize();
         startStore(configuration);
         initializeRuleSet(configuration);
         initializeReportPlugin(configuration);
+    }
+
+    /**
+     * Stops the store.
+     */
+    @AfterEach
+    public final void afterEach() throws IOException {
+        if (store != null) {
+            store.stop();
+        }
+        if (pluginRepository != null) {
+            pluginRepository.destroy();
+        }
+        if (meterRegistryFactory != null) {
+            meterRegistryFactory.destroy();
+        }
     }
 
     protected void configure(ConfigurationBuilder configurationBuilder) {
@@ -147,16 +161,6 @@ public abstract class AbstractPluginIT {
             .with(Build.class, Build.TIMESTAMP, ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()));
         configurationBuilder.with(Report.class, Report.PROPERTIES, getReportProperties());
         return configurationBuilder;
-    }
-
-    /**
-     * Stops the store.
-     */
-    @AfterEach
-    public void stopStore() {
-        if (store != null) {
-            store.stop();
-        }
     }
 
     /**
@@ -278,7 +282,8 @@ public abstract class AbstractPluginIT {
             .baseline();
         BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRuleDirectory());
         BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
-        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin);
+        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin,
+            meterRegistryFactory.getMeterRegistry());
     }
 
     /**

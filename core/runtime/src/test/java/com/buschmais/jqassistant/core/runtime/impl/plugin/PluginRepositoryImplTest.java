@@ -20,8 +20,11 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.scanner.spi.ScannerPluginRepository;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.assertj.core.api.Condition;
 import org.jqassistant.schema.plugin.v2.JqassistantPlugin;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -44,6 +47,13 @@ class PluginRepositoryImplTest {
     @Mock
     private Report report;
 
+    private MeterRegistry meterRegistry;
+
+    @BeforeEach
+    void setUp() {
+        meterRegistry = new SimpleMeterRegistry();
+    }
+
     /**
      * Verifies that properties are loaded and passed to plugins.
      */
@@ -57,7 +67,7 @@ class PluginRepositoryImplTest {
             .properties();
         doReturn(properties).when(report)
             .properties();
-        PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistry);
         pluginRepository.initialize();
         // scanner plugins
         verifyProperties(getScannerPluginProperties(pluginRepository));
@@ -70,7 +80,7 @@ class PluginRepositoryImplTest {
     void repositories() {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(
             new PluginClassLoader(PluginRepositoryImplTest.class.getClassLoader()));
-        PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistry);
         pluginRepository.initialize();
         // Scanner plugins
         ScannerContext scannerContext = mock(ScannerContext.class);
@@ -95,7 +105,7 @@ class PluginRepositoryImplTest {
     }
 
     @Test
-    void allPluginsKnownToThePluginReaderFormThePluginOverview() throws MalformedURLException {
+    void pluginInfosAndMetrics() throws MalformedURLException {
         PluginConfigurationReader pluginConfigurationReader = Mockito.mock(PluginConfigurationReader.class);
 
         JqassistantPlugin pluginA = Mockito.mock(JqassistantPlugin.class);
@@ -123,7 +133,7 @@ class PluginRepositoryImplTest {
         doReturn(PluginRepositoryImplTest.class.getClassLoader()).when(pluginConfigurationReader)
             .getClassLoader();
 
-        PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        PluginRepository pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistry);
         pluginRepository.initialize();
 
         Collection<PluginInfo> overview = pluginRepository.getPluginInfos();
@@ -142,6 +152,24 @@ class PluginRepositoryImplTest {
             .equals("C") && info.getId()
             .equals("jqa.c") && info.getVersion()
             .isEmpty());
+
+        assertThat(meterRegistry.get(PluginRepositoryImpl.METER_JQASSISTANT_PLUGIN)
+            .gauges()).hasSize(3);
+        assertThat(meterRegistry.get(PluginRepositoryImpl.METER_JQASSISTANT_PLUGIN)
+            .tag(PluginRepositoryImpl.TAG_ID, "jqa.a")
+            .tag(PluginRepositoryImpl.TAG_VERSION, "1.0.0")
+            .gauge()
+            .value()).isEqualTo(1);
+        assertThat(meterRegistry.get(PluginRepositoryImpl.METER_JQASSISTANT_PLUGIN)
+            .tag(PluginRepositoryImpl.TAG_ID, "jqa.b")
+            .tag(PluginRepositoryImpl.TAG_VERSION, "unknown")
+            .gauge()
+            .value()).isEqualTo(1);
+        assertThat(meterRegistry.get(PluginRepositoryImpl.METER_JQASSISTANT_PLUGIN)
+            .tag(PluginRepositoryImpl.TAG_ID, "jqa.c")
+            .tag(PluginRepositoryImpl.TAG_VERSION, "unknown")
+            .gauge()
+            .value()).isEqualTo(1);
     }
 
     private void verifyProperties(Map<String, Object> pluginProperties) {

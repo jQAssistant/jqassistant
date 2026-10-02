@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.report.api.model.*;
 import com.buschmais.jqassistant.core.rule.api.model.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,6 +54,9 @@ class AnalyzerContextImplTest {
     @Mock
     private BaselineManager baselineManager;
 
+    @Mock
+    private MeterRegistry meterRegistry;
+
     @BeforeEach
     void setUp() throws RuleException {
         doReturn(report).when(configuration)
@@ -62,7 +66,7 @@ class AnalyzerContextImplTest {
         doReturn(Severity.MAJOR.name()).when(report)
             .failOnSeverity();
         analyzerContext = new AnalyzerContextImpl(configuration, this.getClass()
-            .getClassLoader(), store, baselineManager);
+            .getClassLoader(), store, baselineManager, meterRegistry);
     }
 
     @Test
