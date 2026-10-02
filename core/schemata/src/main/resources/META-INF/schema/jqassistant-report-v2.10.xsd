@@ -105,7 +105,7 @@
     <xs:complexType name="StatusType">
         <xs:simpleContent>
             <xs:extension base="tns:StatusEnumType">
-                <xs:attribute name="level" type="xs:integer" use="required"/>
+                <xs:attribute name="level" type="xs:int" use="required"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
