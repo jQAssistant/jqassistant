@@ -653,9 +653,9 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (artifact:Artifact)-[:PROVIDES]->(testClass:Java:Type:Test)-[:DECLARES*]->(:Java:Method:Test)
+              (artifact:Artifact)-[:PROVIDES]->(testClass:Java:Type:Test)-[:DECLARES*]->(m:Java:Method:Test)
             RETURN
-              artifact as Artifact, testClass as TestClass
+              artifact as Artifact, testClass as TestClass, COLLECT(m) AS TestMethods
             ORDER BY
               artifact.fqn, testClass.fqn
         ]]></cypher>
