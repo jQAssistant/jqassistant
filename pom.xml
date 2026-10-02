@@ -93,9 +93,7 @@
         <maven.version>3.6.3</maven.version>
         <micrometer.version>1.17.1</micrometer.version>
         <mockito.version>5.24.0</mockito.version>
-        <system-lambda.version>1.2.1</system-lambda.version>
         <model-assert.version>1.1.0</model-assert.version>
-        <wiremock.version>3.13.2</wiremock.version>
         <neo4j_4x.version>4.4.48</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
         <neo4j_5x.version>5.26.31</neo4j_5x.version>
@@ -108,8 +106,11 @@
         <maven-resolver.version>1.9.27</maven-resolver.version>
         <snakeyaml.version>2.7</snakeyaml.version>
         <snakeyaml-engine.version>3.1.1</snakeyaml-engine.version>
+        <system-lambda.version>1.2.1</system-lambda.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xmlunit-assertj.version>2.14.0</xmlunit-assertj.version>
+        <wiremock.version>3.13.2</wiremock.version>
         <xo.version>2.6.6</xo.version>
         <!-- Maven plugin versions -->
         <exec-maven-plugin.version>3.6.4</exec-maven-plugin.version>

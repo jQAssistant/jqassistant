@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Metrics;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Prometheus;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Prometheus.Pushgateway;
+import com.buschmais.jqassistant.core.runtime.api.metrics.MeterRegistryFactory;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
@@ -86,8 +87,8 @@ class MeterRegistryFactoryImplTest {
         meterRegistryFactory.initialize();
 
         MeterRegistry meterRegistry = meterRegistryFactory.getMeterRegistry();
-        assertThat(meterRegistry.get(MeterRegistryFactoryImpl.METER_JQASSISTANT_DISTRIBUTION)
-            .tag(MeterRegistryFactoryImpl.TAG_JQASSISTANT_VERSION, getVersionProvider().getVersion())
+        assertThat(meterRegistry.get(MeterRegistryFactory.METER_JQASSISTANT_DISTRIBUTION)
+            .tag(MeterRegistryFactory.TAG_JQASSISTANT_VERSION, getVersionProvider().getVersion())
             .tag("build-job", "42")
             .gauge()
             .value()).isEqualTo(1);

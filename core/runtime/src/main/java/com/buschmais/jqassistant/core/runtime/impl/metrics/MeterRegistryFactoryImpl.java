@@ -26,10 +26,6 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
 
-    public static final String METER_JQASSISTANT_DISTRIBUTION = "jqassistant_distribution";
-
-    public static final String TAG_JQASSISTANT_VERSION = "version";
-
     private final Metrics metrics;
 
     private PushGateway pushGateway;
@@ -44,8 +40,8 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
             .map(this::createPrometheusMeterRegistry)
             .orElse(new SimpleMeterRegistry());
         registerCommonTags(meterRegistry);
-        Gauge.builder(METER_JQASSISTANT_DISTRIBUTION, () -> 1)
-            .tag(TAG_JQASSISTANT_VERSION, getVersionProvider().getVersion())
+        Gauge.builder(MeterRegistryFactory.METER_JQASSISTANT_DISTRIBUTION, () -> 1)
+            .tag(MeterRegistryFactory.TAG_JQASSISTANT_VERSION, getVersionProvider().getVersion())
             .description("The jQAssistant distribution.")
             .strongReference(true)
             .register(meterRegistry);

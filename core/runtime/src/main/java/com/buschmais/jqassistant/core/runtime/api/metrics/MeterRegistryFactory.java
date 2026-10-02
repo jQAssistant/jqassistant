@@ -11,6 +11,9 @@ import io.micrometer.core.instrument.MeterRegistry;
  */
 public interface MeterRegistryFactory extends LifecycleAware {
 
+    String METER_JQASSISTANT_DISTRIBUTION = "jqassistant_distribution";
+    String TAG_JQASSISTANT_VERSION = "version";
+
     @Override
     void initialize();
 
