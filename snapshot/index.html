@@ -6943,6 +6943,9 @@ The <code>TechnicalDebt</code> annotation is repeatable.
 <p><a href="#java:TestMethodWithoutAssertion">Constraint <code>java:TestMethodWithoutAssertion</code></a></p>
 </li>
 <li>
+<p><a href="#java:CustomAssertMethodWithoutAssertion">Constraint <code>java:CustomAssertMethodWithoutAssertion</code></a></p>
+</li>
+<li>
 <p><a href="#java:TechnicalDebt">Constraint <code>java:TechnicalDebt</code></a></p>
 </li>
 <li>
@@ -7046,6 +7049,9 @@ The <code>TechnicalDebt</code> annotation is repeatable.
 </li>
 <li>
 <p><a href="#java:AssertMethod">Concept <code>java:AssertMethod</code></a></p>
+</li>
+<li>
+<p><a href="#java:CustomAssertMethod">Concept <code>java:CustomAssertMethod</code></a></p>
 </li>
 <li>
 <p><a href="#java:AssertAnnotation">Concept <code>java:AssertAnnotation</code></a></p>
@@ -7957,6 +7963,34 @@ ORDER BY
 </div>
 </div>
 <div class="sect4">
+<h5 id="java:CustomAssertMethod"><a class="link" href="#java:CustomAssertMethod">Concept <code>java:CustomAssertMethod</code></a></h5>
+<div class="paragraph">
+<p>Labels methods annotated with com.buschmais.jqassistant.plugin.java.annotation.CustomAssertMethod with :Custom:Assert i.e. as assert methods.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (type:Java:Type)-[:DECLARES]-&gt;(assertMethod:Java:Method)-[:ANNOTATED_BY]-&gt;(:Annotation)-[:OF_TYPE]-&gt;(:Java:Type {fqn: &quot;com.buschmais.jqassistant.plugin.java.annotation.CustomAssertMethod&quot;})
+SET
+  assertMethod:Custom:Assert
+RETURN
+  type, assertMethod
+ORDER BY
+  type.fqn, assertMethod.name</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
 <h5 id="java:AssertAnnotation"><a class="link" href="#java:AssertAnnotation">Concept <code>java:AssertAnnotation</code></a></h5>
 <div class="literalblock">
 <div class="content">
@@ -8131,6 +8165,41 @@ ORDER BY
 </li>
 <li>
 <p><a href="#java:InactiveTest">java:InactiveTest</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="java:CustomAssertMethodWithoutAssertion"><a class="link" href="#java:CustomAssertMethodWithoutAssertion">Constraint <code>java:CustomAssertMethodWithoutAssertion</code></a></h5>
+<div class="paragraph">
+<p>Custom assert methods must call a non-custom assert method. The default maximum call depth is 5.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+    (type:Java:Type)-[:DECLARES]-&gt;(customAssertMethod:Java:Method:Custom:Assert)
+OPTIONAL MATCH
+    path=shortestPath((customAssertMethod)-[:INVOKES|VIRTUAL_INVOKES*]-&gt;(assertMethod:Java:Method:Assert))
+WHERE NOT
+    assertMethod:Custom
+WITH
+    type, customAssertMethod, length(path) as callDepth
+WHERE
+    callDepth IS NULL
+    OR callDepth &gt; $javaCustomAssertMaxCallDepth
+RETURN
+    distinct type AS Type, customAssertMethod AS Method
+ORDER BY
+    type.fqn, customAssertMethod.name</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Required concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:AssertMethod">java:AssertMethod</a></p>
 </li>
 </ul>
 </div>
@@ -12950,7 +13019,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-10-06 04:44:58 UTC
+Last updated 2026-10-13 10:38:31 UTC
 </div>
 </div>
 </body>
