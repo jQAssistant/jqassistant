@@ -46,6 +46,7 @@
                                 <include>cli/*/pom.xml</include>
                                 <include>configuration/*/pom.xml</include>
                                 <include>context/*/pom.xml</include>
+                                <include>metrics/pom.xml</include>
                                 <include>multimodule/*/*/pom.xml</include>
                                 <include>neo4j-plugin/pom.xml</include>
                                 <include>plugin/pom.xml</include>
@@ -53,6 +54,14 @@
                                 <include>yaml/*/pom.xml</include>
                             </pomIncludes>
                         </configuration>
+                        <dependencies>
+                            <!-- Add Testcontainers so the Groovy runtime can import GenericContainer -->
+                            <dependency>
+                                <groupId>org.testcontainers</groupId>
+                                <artifactId>testcontainers</artifactId>
+                                <version>${testcontainers.version}</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

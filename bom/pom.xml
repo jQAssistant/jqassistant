@@ -522,9 +522,10 @@
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
-                <artifactId>junit-jupiter</artifactId>
+                <artifactId>testcontainers-bom</artifactId>
+                <type>pom</type>
                 <version>${testcontainers.version}</version>
-                <scope>test</scope>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

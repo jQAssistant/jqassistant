@@ -21,7 +21,7 @@ class MetricsIT extends AbstractCLIIT {
     public static final int PUSHGATEWAY_PORT = 9091;
 
     @Container
-    public static GenericContainer<?> pushgatewayContainer = new GenericContainer<>("prom/pushgateway:v1.9.0").withExposedPorts(PUSHGATEWAY_PORT)
+    public static GenericContainer<?> pushgatewayContainer = new GenericContainer<>("prom/pushgateway:v1").withExposedPorts(PUSHGATEWAY_PORT)
         .waitingFor(Wait.forHttp("/-/ready")
             .forPort(PUSHGATEWAY_PORT));
 

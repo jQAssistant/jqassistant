@@ -107,7 +107,7 @@
         <snakeyaml.version>2.7</snakeyaml.version>
         <snakeyaml-engine.version>3.1.1</snakeyaml-engine.version>
         <system-lambda.version>1.2.1</system-lambda.version>
-        <testcontainers.version>1.21.4</testcontainers.version>
+        <testcontainers.version>2.0.5</testcontainers.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xmlunit-assertj.version>2.14.0</xmlunit-assertj.version>
         <wiremock.version>3.13.2</wiremock.version>
@@ -209,6 +209,7 @@
                         </goals>
                         <updateSnapshots>true</updateSnapshots>
                         <streamLogs>true</streamLogs>
+                        <preBuildHookScript>prepare</preBuildHookScript>
                         <postBuildHookScript>verify</postBuildHookScript>
                         <writeJunitReport>true</writeJunitReport>
                     </configuration>
