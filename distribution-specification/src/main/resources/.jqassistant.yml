@@ -11,7 +11,7 @@ jqassistant:
       artifact-id: json
       version: ${project.version}
     - group-id: com.buschmais.jqassistant.plugin
-      artifact-id: maven3
+      artifact-id: maven
       version: ${project.version}
     - group-id: com.buschmais.jqassistant.plugin
       artifact-id: xml

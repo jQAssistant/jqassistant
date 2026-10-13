@@ -4,7 +4,7 @@ import java.io.File;
 
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import static com.buschmais.jqassistant.core.runtime.api.configuration.JsonSchemaGenerator.*;
 import static org.assertj.core.api.Assertions.assertThat;
