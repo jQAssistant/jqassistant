@@ -10,7 +10,6 @@ import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
 import io.smallrye.config.ConfigMapping;
-import io.smallrye.config.ConfigMappingInterface;
 import io.smallrye.config.ConfigMappings;
 import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.DumperOptions;
@@ -74,22 +73,6 @@ public class ConfigurationSerializer<C> {
     private static Optional<Class<?>> getConfigInterface(Class<?> configType) {
         return stream(configType.getInterfaces()).filter(i -> i.isAnnotationPresent(ConfigMapping.class))
             .findFirst();
-    }
-
-    /**
-     * Determines all implemented interfaces of the given type (including inherited interfaces)
-     *
-     * @param type
-     *     The type.
-     * @return The list of implemented interfaces.
-     */
-    private static List<Class<?>> getImplementedInterfaces(Class<?> type) {
-        List<Class<?>> result = new LinkedList<>();
-        result.add(type);
-        for (Class<?> anInterface : type.getInterfaces()) {
-            result.addAll(getImplementedInterfaces(anInterface));
-        }
-        return result;
     }
 
     private static class ConfigRepresenter extends Representer {
@@ -171,23 +154,13 @@ public class ConfigurationSerializer<C> {
         protected Map<String, Property> getPropertiesMap(Class<?> type, BeanAccess bAccess) {
             Optional<Class<?>> configInterface = getConfigInterface(type);
             return configInterface.map(configurationInterface -> {
+                    ConfigMapping.NamingStrategy namingStrategy = ConfigMappings.ConfigClass.configClass(configurationInterface)
+                        .getHandler()
+                        .getNamingStrategy(configurationInterface);
                     Map<String, Property> properties = new HashMap<>();
-                    Method[] methods = configInterface.getClass()
-                        .getMethods();
-                    for (Class<?> implementedInterface : getImplementedInterfaces(configurationInterface)) {
-                        ConfigMappings.ConfigClass configClass = ConfigMappings.ConfigClass.configClass(implementedInterface);
-                        ConfigMapping.NamingStrategy namingStrategy = configClass.getHandler()
-                            .getNamingStrategy(implementedInterface);
-                        List<Method> methodList = ConfigMappings.getProperties(configClass)
-                            .values()
-                            .stream()
-                            .map(property -> property.getMethod())
-                            .toList();
-                        for (ConfigMappingInterface.Property property : ConfigMappings.getProperties(configClass)
-                            .values()) {
-                            String propertyName = namingStrategy.apply(property.getPropertyName());
-                            properties.put(propertyName, getProperty(propertyName, property.getMethod()));
-                        }
+                    for (Method declaredMethod : configurationInterface.getMethods()) {
+                        String propertyName = namingStrategy.apply(declaredMethod.getName());
+                        properties.put(propertyName, getProperty(propertyName, declaredMethod));
                     }
                     return properties;
                 })
