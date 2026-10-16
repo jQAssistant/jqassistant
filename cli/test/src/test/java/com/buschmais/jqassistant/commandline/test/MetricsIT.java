@@ -30,6 +30,7 @@ class MetricsIT extends AbstractCLIIT {
         String pushgatewayAddress = "localhost:" + pushgatewayContainer.getMappedPort(PUSHGATEWAY_PORT);
         String[] args = new String[] { "analyze", "-D", "jqassistant.analyze.rule.directory=" + RULES_DIRECTORY, "-D",
             "jqassistant.metrics.prometheus.pushgateway.address=" + pushgatewayAddress };
+        // Expecting exit code 2 for a constraint violation
         assertThat(execute(args).getExitCode()).isEqualTo(2);
 
         WebTarget webTarget = ClientBuilder.newClient()

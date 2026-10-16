@@ -39,9 +39,7 @@ public interface AnalyzerContext {
     Store getStore();
 
     /**
-     * Return the {@link MeterRegistry}.
-     *
-     * @return The {@link MeterRegistry}.
+     * @return The {@link MeterRegistry}
      */
     MeterRegistry getMeterRegistry();
 

@@ -251,16 +251,16 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         MeterRegistry meterRegistry = analyzerContext.getMeterRegistry();
         List<Tag> tags = List.of(Tag.of(TAG_RULE_TYPE, executableRule.getClass()
             .getSimpleName()), Tag.of(TAG_RULE_ID, executableRule.getId()));
-        Timer timer = getOrCreateTimer(METER_ANALYZE_RULE_EXECUTION_TIME, tags, () -> "The execution times of executed rules.", meterRegistry);
+        Timer timer = registerTimer(METER_ANALYZE_RULE_EXECUTION_TIME, tags, () -> "The execution times of executed rules.", meterRegistry);
         try {
             Result<T> result = timer.recordCallable(callable);
-            getOrCreateGauge(METER_ANALYZE_RULE_RESULT_STATUS, tags, () -> result.getStatus()
+            registerGauge(METER_ANALYZE_RULE_RESULT_STATUS, tags, () -> result.getStatus()
                 .getLevel(), () -> "The status of executed rules: " + Arrays.stream(Result.Status.values())
                 .map(status -> status.getLevel() + "=" + status.name())
                 .collect(joining(", ")), meterRegistry);
-            getOrCreateGauge(METER_ANALYZE_RULE_RESULT_ROW_COUNT, tags, () -> result.getVerificationResult()
+            registerGauge(METER_ANALYZE_RULE_RESULT_ROW_COUNT, tags, () -> result.getVerificationResult()
                 .getRowCount(), () -> "The count of rows returned by executed rules.", meterRegistry);
-            getOrCreateGauge(METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT, tags, () -> result.getVerificationResult()
+            registerGauge(METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT, tags, () -> result.getVerificationResult()
                 .getHiddenRowCount(), () -> "The count of hidden rows returned by executed rules.", meterRegistry);
             return result;
         } catch (Exception e) {
@@ -273,7 +273,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         }
     }
 
-    private Timer getOrCreateTimer(String name, List<Tag> tags, Supplier<String> descriptionSupplier, MeterRegistry meterRegistry) {
+    private Timer registerTimer(String name, List<Tag> tags, Supplier<String> descriptionSupplier, MeterRegistry meterRegistry) {
         Timer timer = meterRegistry.find(name)
             .tags(tags)
             .timer();
@@ -286,7 +286,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         return timer;
     }
 
-    private <T extends Number> void getOrCreateGauge(String name, List<Tag> tags, Supplier<T> supplier, Supplier<String> descriptionSupplier,
+    private <T extends Number> void registerGauge(String name, List<Tag> tags, Supplier<T> supplier, Supplier<String> descriptionSupplier,
         MeterRegistry meterRegistry) {
         Gauge gauge = meterRegistry.find(name)
             .tags(tags)

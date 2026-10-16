@@ -104,6 +104,7 @@
         <slf4j.version>2.0.20</slf4j.version>
         <smallrye-config.version>3.10.2</smallrye-config.version>
         <maven-resolver.version>1.9.27</maven-resolver.version>
+        <prometheus.pushgateway.version>1.7.0</prometheus.pushgateway.version>
         <snakeyaml.version>2.7</snakeyaml.version>
         <snakeyaml-engine.version>3.2</snakeyaml-engine.version>
         <system-lambda.version>1.2.1</system-lambda.version>

@@ -119,7 +119,7 @@ public class Main {
      * @param artifactProvider
      *     The {@link ArtifactProvider}
      * @param meterRegistry
-     *     The meterRegistry.
+     *     The {@link MeterRegistry}.
      * @return The repository.
      */
     private PluginRepository getPluginRepository(CliConfiguration configuration, ArtifactProvider artifactProvider, MeterRegistry meterRegistry) {
