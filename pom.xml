@@ -91,8 +91,8 @@
         <lombok.version>1.18.48</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <maven.version>3.6.3</maven.version>
+        <micrometer.version>1.17.1</micrometer.version>
         <mockito.version>5.24.0</mockito.version>
-        <system-lambda.version>1.2.1</system-lambda.version>
         <model-assert.version>1.1.0</model-assert.version>
         <neo4j_4x.version>4.4.48</neo4j_4x.version>
         <neo4j_4x_apoc.version>4.4.0.29</neo4j_4x_apoc.version>
@@ -104,10 +104,14 @@
         <slf4j.version>2.0.20</slf4j.version>
         <smallrye-config.version>3.10.2</smallrye-config.version>
         <maven-resolver.version>1.9.27</maven-resolver.version>
+        <prometheus.pushgateway.version>1.7.0</prometheus.pushgateway.version>
         <snakeyaml.version>2.7</snakeyaml.version>
         <snakeyaml-engine.version>3.2</snakeyaml-engine.version>
+        <system-lambda.version>1.2.1</system-lambda.version>
+        <testcontainers.version>2.0.5</testcontainers.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xmlunit-assertj.version>2.14.0</xmlunit-assertj.version>
+        <wiremock.version>3.13.2</wiremock.version>
         <xo.version>2.6.6</xo.version>
         <!-- Maven plugin versions -->
         <exec-maven-plugin.version>3.6.4</exec-maven-plugin.version>
@@ -206,6 +210,7 @@
                         </goals>
                         <updateSnapshots>true</updateSnapshots>
                         <streamLogs>true</streamLogs>
+                        <preBuildHookScript>prepare</preBuildHookScript>
                         <postBuildHookScript>verify</postBuildHookScript>
                         <writeJunitReport>true</writeJunitReport>
                     </configuration>

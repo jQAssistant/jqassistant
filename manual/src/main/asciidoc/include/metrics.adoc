@@ -1,0 +1,73 @@
+== Metrics
+
+jQAssistant supports the collection of metrics which can be pushed to a https://github.com/prometheus/pushgateway[Prometheus Pushgateway].
+
+=== Activation
+
+This is activated by specifying the address of a Pushgateway, including optional credentials (username/password or bearer token):
+
+[source,yaml]
+----
+jqassistant:
+  metrics:
+    common-tags:
+      repository: "my-repository"
+    prometheus:
+      pushgateway:
+        address: "localhost:9091"
+        scheme: http
+
+#       username:
+#       password:
+#       bearer-token:
+
+        job-name: jQAssistant
+----
+
+* `common-tags` allows to specify tags that shall be used by all published metrics.
+* `job-name` is a required tag and used to separate different job executions. It is recommended to use the identifier of the current CI job and defaults to `jQAssistant` if not specified.
+
+NOTE: The values can be provided as environment variables (e.g. `JQASSISTANT_METRICS_PROMETHEUS_PUSHGATEWAY_JOB_NAME`) or system properties (`-Djqassistant.metrics.prometheus.pushgateway.job-name=...`).
+
+=== Core metrics
+
+The core metrics provide information about the execution of jQAssistant:
+
+jqassistant_distribution::
+  * Represents the used jQAssistant distribution, the value is always `1`
+  * Type: Gauge
+  * Tags:
+  ** `version`: The version of the jQAssistant distribution
+
+
+jqassistant_plugin::
+  * Represents a jQAssistant plugin which has be used during execution
+  * Type: Gauge
+  * Tags:
+  ** `id`: The id of the jQAssistant plugin
+  ** `version`: The version of the jQAssistant plugin
+
+=== Analyze metrics
+
+These analyze metrics provide information about rules executed during analyze:
+
+analyze_rule_execution_time::
+** The execution time per rule
+** Type: Timer
+
+analyze_rule_result_status::
+** The status per rule, i.e. FAILURE (0), WARNING (1), SUCCESS (2) or SKIPPED (3)
+** Type: Gauge
+
+analyze_rule_result_row_count::
+** The count of returned rows per rule
+** Type: Gauge
+
+analyze_rule_result_hidden_row_count::
+** The count of returned hidden rows (baseline or suppressions) per rule
+** Type: Gauge
+
+All analyze metrics use the same set of tags:
+
+* `type`: The rule type, either `concept` of `constraint`
+* `rule_id`: The rule id.

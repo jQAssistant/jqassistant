@@ -24,7 +24,8 @@ class ApocIT {
     @BeforeEach
     void setUp() throws IOException {
         assumeThat(Runtime.version()
-            .feature()).isGreaterThanOrEqualTo(17);
+            .feature()).describedAs("Neo4j 5.x required which is available from Java 17 or later")
+            .isGreaterThanOrEqualTo(17);
         deleteDirectory(new File("target/jqassistant/test-store/plugins"));
     }
 
@@ -51,8 +52,7 @@ class ApocIT {
         @Test
         void apocDisabled() {
             store.beginTransaction();
-            assertThatExceptionOfType(QueryExecutionException.class)
-                .isThrownBy(() -> store.executeQuery("call apoc.help('apoc')"));
+            assertThatExceptionOfType(QueryExecutionException.class).isThrownBy(() -> store.executeQuery("call apoc.help('apoc')"));
             store.rollbackTransaction();
         }
     }
