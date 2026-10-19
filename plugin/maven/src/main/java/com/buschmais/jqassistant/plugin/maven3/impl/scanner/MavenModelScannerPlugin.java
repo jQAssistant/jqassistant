@@ -49,13 +49,13 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     }
 
     @Override
-    public boolean accepts(Model item, String path, Scope scope) {
+    public boolean accepts(Model item, String location, Scope scope) {
         return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public MavenPomDescriptor scan(Model model, String path, Scope scope, Scanner scanner) {
+    public MavenPomDescriptor scan(Model model, String location, Scope scope, Scanner scanner) {
         MavenPomDescriptor pomDescriptor = createMavenPomDescriptor(model, scanner);
         ScannerContext scannerContext = scanner.getContext();
         Store store = scannerContext.getStore();

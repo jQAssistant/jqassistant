@@ -2,10 +2,14 @@ package com.buschmais.jqassistant.core.shared.io;
 
 import java.io.File;
 
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
+
 /**
  * Provides functionality for normalizing file names, e.g. replacing backslashes
  * by dashes (Unix style).
  */
+@Deprecated
+@ToBeRemovedInVersion(major = 3, minor = 0)
 public final class FileNameNormalizer {
 
     private FileNameNormalizer() {

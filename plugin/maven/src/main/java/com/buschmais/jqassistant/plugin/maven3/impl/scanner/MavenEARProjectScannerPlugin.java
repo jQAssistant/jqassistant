@@ -21,12 +21,12 @@ public class MavenEARProjectScannerPlugin extends AbstractScannerPlugin<MavenPro
     public static final String APPLICATION_DIR = "src/main/application";
 
     @Override
-    public boolean accepts(MavenProject item, String path, Scope scope) {
+    public boolean accepts(MavenProject item, String location, Scope scope) {
         return "ear".equalsIgnoreCase(item.getPackaging());
     }
 
     @Override
-    public MavenProjectDirectoryDescriptor scan(MavenProject item, String path, Scope scope, Scanner scanner) throws IOException {
+    public MavenProjectDirectoryDescriptor scan(MavenProject item, String location, Scope scope, Scanner scanner) throws IOException {
         File basedir = item.getBasedir();
         MavenProjectDirectoryDescriptor projectDirectoryDescriptor = scanner.getContext()
             .getCurrentDescriptor();

@@ -1,32 +1,30 @@
 package com.buschmais.jqassistant.core.rule.api.model;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.Singular;
 
 @Builder
-@Setter
 @Getter
 public class Hidden {
 
-    @Builder.Default
-    private Optional<Suppression> suppression = Optional.empty();
+    @Singular
+    private List<Suppression> suppressions;
 
     @Builder.Default
     private Optional<Baseline> baseline = Optional.empty();
 
-    @Setter
     @Getter
     @Builder
     public static class Suppression {
-        private LocalDate suppressUntil;
-        private String suppressReason;
+        private LocalDate until;
+        private String reason;
     }
 
-    @Setter
     @Getter
     @Builder
     public static class Baseline {

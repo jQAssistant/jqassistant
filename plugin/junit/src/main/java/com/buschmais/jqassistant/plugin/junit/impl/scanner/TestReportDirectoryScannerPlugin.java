@@ -16,11 +16,6 @@ public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPl
     }
 
     @Override
-    protected TestReportDirectoryDescriptor getContainerDescriptor(File container, ScannerContext scannerContext) {
-        return scannerContext.getStore().create(TestReportDirectoryDescriptor.class);
-    }
-
-    @Override
     protected void enterContainer(File directory, TestReportDirectoryDescriptor testReportDirectoryDescriptor, ScannerContext scannerContext) {
     }
 

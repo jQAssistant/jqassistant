@@ -22,13 +22,33 @@ public class ScannerContextImpl implements ScannerContext {
 
     private final Store store;
 
+    private final File projectDirectory;
+
     private final File workingDirectory;
 
-    private final File dataDirectory;
+    private final File outputDirectory;
 
     private Descriptor current;
 
     private final Map<Class<?>, Deque<?>> contextValuesPerKey = new HashMap<>();
+
+    /**
+     * Constructor.
+     * <p>
+     * Uses the working directory as project directory.
+     *
+     * @param classLoader
+     *     The {@link ClassLoader}.
+     * @param store
+     *     The store.
+     * @param workingDirectory
+     *     The working directory
+     * @param outputDirectory
+     *     The output directory
+     */
+    public ScannerContextImpl(ClassLoader classLoader, Store store, File workingDirectory, File outputDirectory) {
+        this(classLoader, store, workingDirectory, workingDirectory, outputDirectory);
+    }
 
     /**
      * Constructor.
@@ -42,11 +62,12 @@ public class ScannerContextImpl implements ScannerContext {
      * @param outputDirectory
      *     The output directory
      */
-    public ScannerContextImpl(ClassLoader classLoader, Store store, File workingDirectory, File outputDirectory) {
+    public ScannerContextImpl(ClassLoader classLoader, Store store, File projectDirectory, File workingDirectory, File outputDirectory) {
         this.classLoader = classLoader;
         this.store = store;
+        this.projectDirectory = projectDirectory;
         this.workingDirectory = workingDirectory;
-        this.dataDirectory = new File(outputDirectory, DATA_DIRECTORY);
+        this.outputDirectory = new File(outputDirectory, DATA_DIRECTORY);
     }
 
     @Override
@@ -88,9 +109,9 @@ public class ScannerContextImpl implements ScannerContext {
      * Determine the stack for the given key.
      *
      * @param key
-     *            The key.
+     *     The key.
      * @param <T>
-     *            The key key.
+     *     The key type.
      * @return The stack.
      */
     private <T> Deque<T> getValues(Class<T> key) {
@@ -109,11 +130,16 @@ public class ScannerContextImpl implements ScannerContext {
 
     @Override
     public File getDataDirectory(String path) {
-        File directory = new File(dataDirectory, path);
+        File directory = new File(outputDirectory, path);
         if (directory.mkdirs()) {
             log.debug("Created data directory '{}'.", directory.getAbsolutePath());
         }
         return directory;
+    }
+
+    @Override
+    public File getProjectDirectory() {
+        return projectDirectory;
     }
 
     @Override

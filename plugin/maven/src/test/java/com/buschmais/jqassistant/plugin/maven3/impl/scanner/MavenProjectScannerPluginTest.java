@@ -10,11 +10,12 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.configuration.Scan;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaSourceFileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactFilter;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenRepositoryArtifactResolver;
@@ -22,7 +23,6 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.dependency.DependencyScanner;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -37,6 +37,7 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.LocalRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -44,6 +45,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.scanner.api.DefaultScope.NONE;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -56,6 +58,12 @@ import static org.mockito.Mockito.*;
 class MavenProjectScannerPluginTest {
 
     private final LocalRepository localRepo = new LocalRepository("target/test/.m2");
+
+    private final File projectDirectory = new File("target/test/project");
+    private final File mainSourceDirectory = new File("target/test/project/src/main/java");
+    private final File testSourceDirectory = new File("target/test/project/src/test/java");
+    private final File mainClassesDirectory = new File("target/test/project/target/classes");
+    private final File testClassesDirectory = new File("target/test/project/target/test-classes");
 
     @Mock
     private Store store;
@@ -89,6 +97,17 @@ class MavenProjectScannerPluginTest {
 
     @Captor
     private ArgumentCaptor<ArtifactFilter> artifactFilterCaptor;
+
+    @BeforeEach
+    void setUp() {
+        projectDirectory.mkdirs();
+        mainSourceDirectory.mkdirs();
+        mainClassesDirectory.mkdirs();
+        testSourceDirectory.mkdirs();
+        testClassesDirectory.mkdirs();
+        doReturn(projectDirectory).when(scannerContext)
+            .getProjectDirectory();
+    }
 
     @Test
     void scan() throws DependencyGraphBuilderException {
@@ -124,7 +143,7 @@ class MavenProjectScannerPluginTest {
 
         // Mock project
         MavenProject project = mock(MavenProject.class);
-        doReturn(new File("/project")).when(project)
+        doReturn(projectDirectory).when(project)
             .getBasedir();
         File pomXml = new File("pom.xml");
         when(project.getFile()).thenReturn(pomXml);
@@ -141,19 +160,22 @@ class MavenProjectScannerPluginTest {
         when(project.getArtifact()).thenReturn(artifact);
         when(project.getPackaging()).thenReturn("jar");
         when(project.getParent()).thenReturn(parentProject);
+        doReturn(List.of(mainSourceDirectory.getAbsolutePath())).when(project)
+            .getCompileSourceRoots();
+        doReturn(List.of(testSourceDirectory.getAbsolutePath())).when(project)
+            .getTestCompileSourceRoots();
         properties.put(MavenProject.class.getName(), project);
 
         Build build = new Build();
-        build.setOutputDirectory("target/classes");
-        build.setTestOutputDirectory("target/test-classes");
+        build.setOutputDirectory(mainClassesDirectory.getAbsolutePath());
+        build.setTestOutputDirectory(testClassesDirectory.getAbsolutePath());
         when(project.getBuild()).thenReturn(build);
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
         List<ArtifactDescriptor> createsArtifacts = new LinkedList<>();
         when(projectDescriptor.getCreatesArtifacts()).thenReturn(createsArtifacts);
-        String projectDir = new File("/project").getAbsolutePath()
-            .replace('\\', '/');
+        String relativeProjectDirectory = "/";
         doReturn(projectDescriptor).when(fileResolver)
-            .match(projectDir, MavenProjectDirectoryDescriptor.class, scannerContext);
+            .match(relativeProjectDirectory, MavenProjectDirectoryDescriptor.class, scannerContext);
 
         Scanner scanner = mock(Scanner.class);
         doReturn(scanConfiguration).when(scanner)
@@ -161,48 +183,47 @@ class MavenProjectScannerPluginTest {
 
         // pom.xml
         MavenPomXmlDescriptor pomXmlDescriptor = mock(MavenPomXmlDescriptor.class);
-        when(scanner.scan(pomXml, pomXml.getAbsolutePath(), MavenScope.PROJECT)).thenReturn(pomXmlDescriptor);
+        when(scanner.scan(pomXml, null, MavenScope.PROJECT)).thenReturn(pomXmlDescriptor);
 
-        // Effective effective model
+        // Effective model
         MavenPomDescriptor modelDescriptor = mock(MavenPomDescriptor.class);
         doReturn(modelDescriptor).when(store)
             .create(MavenPomDescriptor.class);
         Model effectiveModel = mock(Model.class);
         when(project.getModel()).thenReturn(effectiveModel);
         doReturn(modelDescriptor).when(scanner)
-            .scan(any(Model.class), eq(pomXml.getAbsolutePath()), eq(MavenScope.PROJECT));
+            .scan(any(Model.class), eq(null), eq(MavenScope.PROJECT));
         doReturn(modelDescriptor).when(store)
             .addDescriptorType(modelDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
 
         // Store and cache
         when(scannerContext.getStore()).thenReturn(store);
-        Cache<String, ? extends Descriptor> artifactCache = mock(Cache.class);
-        doReturn(artifactCache).when(store)
-            .getCache(anyString());
         when(scanner.getContext()).thenReturn(scannerContext);
 
-        // classes directory
+        // main sources and classes
+        DirectoryDescriptor mainSourceDirectoryDescriptor = mock(DirectoryDescriptor.class);
+        doReturn(mainSourceDirectoryDescriptor).when(scanner)
+            .scan(eq(mainSourceDirectory.getAbsoluteFile()), eq(null), eq(NONE));
         MavenMainArtifactDescriptor mainArtifactDescriptor = mock(MavenMainArtifactDescriptor.class);
-        JavaArtifactFileDescriptor mainClassesDirectory = mock(JavaArtifactFileDescriptor.class);
+        JavaArtifactFileDescriptor mainClassesDirectoryDescriptor = mock(JavaArtifactFileDescriptor.class);
         MavenTestArtifactDescriptor testArtifactDescriptor = mock(MavenTestArtifactDescriptor.class);
-        JavaArtifactFileDescriptor testClassesDirectory = mock(JavaArtifactFileDescriptor.class);
-        doReturn(mainArtifactDescriptor).when(artifactCache)
-            .get(argThat(fqn -> fqn.contains(":jar:")), any());
-        doReturn(mainClassesDirectory).when(scanner)
-            .scan(any(File.class), eq("target/classes"), eq(CLASSPATH));
-        doReturn(mainArtifactDescriptor).when(store)
-            .addDescriptorType(mainArtifactDescriptor, MavenMainArtifactDescriptor.class);
+        JavaArtifactFileDescriptor testClassesDirectoryDescriptor = mock(JavaArtifactFileDescriptor.class);
+        doReturn(mainArtifactDescriptor).when(fileResolver)
+            .require("/target/classes", MavenMainArtifactDescriptor.class, scannerContext);
+        doReturn(mainClassesDirectoryDescriptor).when(scanner)
+            .scan(eq(mainClassesDirectory.getAbsoluteFile()), eq(null), eq(CLASSPATH));
 
-        // test classes directory
-        doReturn(testClassesDirectory).when(scanner)
-            .scan(any(File.class), eq("target/test-classes"), eq(CLASSPATH));
-        doReturn(testArtifactDescriptor).when(artifactCache)
-            .get(argThat(fqn -> fqn.contains(":test-jar:")), any());
-        doReturn(testClassesDirectory).when(store)
+        // test source and classes
+        DirectoryDescriptor testSourceDirectoryDescriptor = mock(DirectoryDescriptor.class);
+        doReturn(testSourceDirectoryDescriptor).when(scanner)
+            .scan(eq(testSourceDirectory.getAbsoluteFile()), eq(null), eq(NONE));
+        doReturn(testClassesDirectoryDescriptor).when(scanner)
+            .scan(eq(testClassesDirectory.getAbsoluteFile()), eq(null), eq(CLASSPATH));
+        doReturn(testArtifactDescriptor).when(fileResolver)
+            .require("/target/test-classes", MavenTestArtifactDescriptor.class, scannerContext);
+        doReturn(testClassesDirectoryDescriptor).when(store)
             .addDescriptorType(testArtifactDescriptor, JavaArtifactFileDescriptor.class);
-        doReturn(testArtifactDescriptor).when(store)
-            .addDescriptorType(testArtifactDescriptor, MavenTestArtifactDescriptor.class);
-        doReturn(mainClassesDirectory).when(store)
+        doReturn(mainClassesDirectoryDescriptor).when(store)
             .addDescriptorType(mainArtifactDescriptor, JavaArtifactFileDescriptor.class);
 
         doReturn(dependencyGraphBuilder).when(scannerContext)
@@ -244,9 +265,8 @@ class MavenProjectScannerPluginTest {
         verify(scannerContext).push(eq(ArtifactResolver.class), any(MavenRepositoryArtifactResolver.class));
         verify(scannerContext).pop(ArtifactResolver.class);
 
-        verify(scanner).scan(any(File.class), eq("target/classes"), eq(CLASSPATH));
-        verify(scanner).scan(any(File.class), eq("target/test-classes"), eq(CLASSPATH));
-        verify(fileResolver).match(projectDir, MavenProjectDirectoryDescriptor.class, scannerContext);
+        verify(scanner, times(2)).scan(any(File.class), eq(null), eq(CLASSPATH));
+        verify(fileResolver).match(relativeProjectDirectory, MavenProjectDirectoryDescriptor.class, scannerContext);
         verify(projectDescriptor).setFullQualifiedName("group:artifact:1.0.0");
         verify(projectDescriptor).setName("project");
         verify(projectDescriptor).setGroupId("group");
@@ -259,19 +279,19 @@ class MavenProjectScannerPluginTest {
         verify(parentProjectDescriptor).setFullQualifiedName("group:parent-artifact:1.0.0");
         verify(projectDescriptor).setParent(parentProjectDescriptor);
         // Model
-        verify(scanner).scan(pomXml, pomXml.getAbsolutePath(), MavenScope.PROJECT);
+        verify(scanner).scan(pomXml, null, MavenScope.PROJECT);
         verify(projectDescriptor).setModel(pomXmlDescriptor);
         // Effective model
         verify(store).create(MavenPomDescriptor.class);
         verify(scannerContext).push(MavenPomDescriptor.class, modelDescriptor);
-        verify(scanner, atLeastOnce()).scan(effectiveModelCaptor.capture(), eq(pomXml.getAbsolutePath()), eq(MavenScope.PROJECT));
+        verify(scanner, atLeastOnce()).scan(effectiveModelCaptor.capture(), eq(null), eq(MavenScope.PROJECT));
         assertThat(effectiveModelCaptor.getValue()).isEqualTo(effectiveModel);
         verify(scannerContext).pop(MavenPomDescriptor.class);
         verify(store).addDescriptorType(modelDescriptor, EffectiveDescriptor.class, MavenPomDescriptor.class);
         verify(projectDescriptor).setEffectiveModel(modelDescriptor);
-        verify(artifactCache).get(argThat(fqn -> fqn.contains(":jar:")), any());
+        verify(fileResolver).require("/target/classes", MavenMainArtifactDescriptor.class, scannerContext);
         verify(store).addDescriptorType(mainArtifactDescriptor, JavaArtifactFileDescriptor.class);
-        verify(artifactCache).get(argThat(fqn -> fqn.contains(":test-jar:tests:")), any());
+        verify(fileResolver).require("/target/test-classes", MavenTestArtifactDescriptor.class, scannerContext);
         verify(store).addDescriptorType(testArtifactDescriptor, JavaArtifactFileDescriptor.class);
 
         verify(dependencyGraphBuilder).buildDependencyGraph(any(ProjectBuildingRequest.class), eq(null));
@@ -280,8 +300,16 @@ class MavenProjectScannerPluginTest {
 
         verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
 
-        verify(scannerContext).push(JavaArtifactFileDescriptor.class, mainClassesDirectory);
-        verify(scannerContext).push(JavaArtifactFileDescriptor.class, testClassesDirectory);
+        verify(scannerContext, times(2)).push(eq(JavaSourceFileResolver.class), any(MavenJavaSourceFileResolver.class));
+        verify(scannerContext, times(2)).pop(JavaSourceFileResolver.class);
+
+        verify(scanner).scan(mainSourceDirectory.getAbsoluteFile(), null, NONE);
+        verify(scannerContext).push(JavaArtifactFileDescriptor.class, mainClassesDirectoryDescriptor);
+        verify(scanner).scan(mainClassesDirectory.getAbsoluteFile(), null, CLASSPATH);
+
+        verify(scanner).scan(testSourceDirectory.getAbsoluteFile(), null, NONE);
+        verify(scannerContext).push(JavaArtifactFileDescriptor.class, testClassesDirectoryDescriptor);
+        verify(scanner).scan(testClassesDirectory.getAbsoluteFile(), null, CLASSPATH);
         verify(scannerContext, times(2)).pop(JavaArtifactFileDescriptor.class);
         assertThat(createsArtifacts.size(), equalTo(2));
         assertThat(createsArtifacts, hasItem(mainArtifactDescriptor));

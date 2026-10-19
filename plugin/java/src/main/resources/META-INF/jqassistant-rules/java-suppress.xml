@@ -3,26 +3,26 @@
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.7 http://schema.jqassistant.org/rule/jqassistant-rule-v2.7.xsd">
 
 
-    <constraint id="suppress:suppressElementMustProvideAReason">
+    <constraint id="java-suppress:SuppressElementMustProvideAReason">
         <description>Elements annotated with @jQASuppress must provide a suppression reason.</description>
         <cypher><![CDATA[
             MATCH
-                (element:Java:jQASuppress)
+                (element:Java:jQASuppress)-[:HAS_SUPPRESSION]->(suppression:jQASuppression)
             WHERE
-                element.suppressReason IS NULL OR element.suppressReason = ""
+                suppression.reason IS NULL OR suppression.reason = ""
             RETURN
                 element AS Element
             ]]></cypher>
     </constraint>
 
-
-    <constraint id="suppress:suppressUntilMustNotExceedMonthsLimit">
+    <constraint id="java-suppress:SuppressUntilMustNotExceedMonthsLimit">
         <requiresParameter name="suppressUntilMonthsLimit" type="int" defaultValue="12"/>
         <description>The provided expiration date exceeds the allowed limit (default: 12 months).</description>
         <cypher><![CDATA[
         MATCH
-            (element:Java:jQASuppress)
-        WITH element, date(element.suppressUntil) AS until
+            (element:Java:jQASuppress)-[:HAS_SUPPRESSION]->(suppression:jQASuppression)
+        WITH
+            element, date(suppression.until) AS until
         WHERE
             until > date() + duration({months: $suppressUntilMonthsLimit})
         RETURN
@@ -30,12 +30,13 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="suppress:suppressUntilMustNotBeInThePast">
+    <constraint id="java-suppress:SuppressUntilMustNotBeInThePast">
         <description>The provided expiration date must not be in the past.</description>
         <cypher><![CDATA[
         MATCH
-            (element:Java:jQASuppress)
-        WITH element, date(element.suppressUntil) AS until
+            (element:Java:jQASuppress)-[:HAS_SUPPRESSION]->(suppression:jQASuppression)
+        WITH
+           element, date(suppression.until) AS until
         WHERE
             until < date()
         RETURN
@@ -43,13 +44,14 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="suppress:suppressExpiresInLessThanMonthsLimit" severity="minor">
+    <constraint id="java-suppress:SuppressExpiresInLessThanMonthsLimit">
         <requiresParameter name="suppressWarnBeforeMonths" type="int" defaultValue="1"/>
         <description>The provided expiration date falls within the timeframe for soon expiring (default: 1 month). </description>
         <cypher><![CDATA[
       MATCH
-            (element:Java:jQASuppress)
-        WITH element, date(element.suppressUntil) AS until
+            (element:Java:jQASuppress)-[:HAS_SUPPRESSION]->(suppression:jQASuppression)
+        WITH
+          element, date(suppression.until) AS until
         WHERE
             until < date() + duration({months: 1}) AND until >= date()
         RETURN

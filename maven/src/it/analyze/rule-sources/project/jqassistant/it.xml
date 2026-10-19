@@ -1,0 +1,8 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8">
+
+    <group id="it">
+        <includeConcept refId="it:Concept1"/>
+        <includeConcept refId="it:Concept2"/>
+    </group>
+
+</jqassistant-rules>

@@ -28,12 +28,12 @@ public class MavenWARProjectScannerPlugin extends AbstractScannerPlugin<MavenPro
     public static final String WEBAPP_DIR = "src/main/webapp";
 
     @Override
-    public boolean accepts(MavenProject item, String path, Scope scope) {
+    public boolean accepts(MavenProject item, String location, Scope scope) {
         return "war".equalsIgnoreCase(item.getPackaging());
     }
 
     @Override
-    public MavenProjectDirectoryDescriptor scan(MavenProject item, String path, Scope scope, Scanner scanner) throws IOException {
+    public MavenProjectDirectoryDescriptor scan(MavenProject item, String location, Scope scope, Scanner scanner) throws IOException {
         File basedir = item.getBasedir();
         MavenProjectDirectoryDescriptor projectDirectoryDescriptor = scanner.getContext()
             .getCurrentDescriptor();

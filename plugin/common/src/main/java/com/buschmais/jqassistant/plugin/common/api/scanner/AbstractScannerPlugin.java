@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -127,27 +126,6 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
      */
     protected ScannerContext getScannerContext() {
         return scannerContext;
-    }
-
-    /**
-     * Return the relative path of a file within a directory.
-     *
-     * @param directory
-     *            The directory.
-     * @param entry
-     *            The file.
-     * @return The relative path.
-     */
-    protected String getDirectoryPath(File directory, File entry) {
-        String relativePath;
-        if (entry.equals(directory)) {
-            relativePath = "/";
-        } else {
-            String filePath = entry.getAbsolutePath();
-            String directoryPath = directory.getAbsolutePath();
-            relativePath = filePath.substring(directoryPath.length()).replace(File.separator, "/");
-        }
-        return relativePath;
     }
 
     @Override

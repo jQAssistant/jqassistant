@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.core.store.api.configuration.Embedded;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServer;
 import com.buschmais.jqassistant.neo4j.embedded.EmbeddedNeo4jServerFactory;
-import com.buschmais.jqassistant.neo4j.embedded.impl.Neo4jCommunityServerFactory;
+import com.buschmais.jqassistant.neo4j.embedded.impl.CommunityEmbeddedNeo4jServerFactory;
 import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jDatastoreSession;
@@ -136,7 +136,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     private EmbeddedNeo4jServerFactory getEmbeddedNeo4jServerFactory() {
-        return new Neo4jCommunityServerFactory();
+        return new CommunityEmbeddedNeo4jServerFactory();
     }
 
     @Override

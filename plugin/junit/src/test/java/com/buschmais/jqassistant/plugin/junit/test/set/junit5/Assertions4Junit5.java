@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.junit.test.set.junit5;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,11 +7,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled("This is not an actual test")
 public class Assertions4Junit5 extends AbstractAssertions4Junit5 {
 
     @Test
-    public void assertWithoutMessage() {
+    public void assertWithoutReason() {
         assertTrue(true);
     }
 

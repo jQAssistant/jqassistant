@@ -29,12 +29,12 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResourc
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyFileScannerPlugin.class);
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return path.toLowerCase().endsWith(".properties");
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        return location.toLowerCase().endsWith(".properties");
     }
 
     @Override
-    public PropertyFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public PropertyFileDescriptor scan(FileResource item, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
@@ -43,7 +43,7 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResourc
         try (InputStream stream = item.createStream()) {
             properties.load(stream);
         } catch (IllegalArgumentException e) {
-            LOGGER.warn("Cannot load properties from '" + path + "': " + e.getMessage());
+            LOGGER.warn("Cannot load properties from '" + location + "': " + e.getMessage());
         }
         for (String name : properties.stringPropertyNames()) {
             String value = properties.getProperty(name);

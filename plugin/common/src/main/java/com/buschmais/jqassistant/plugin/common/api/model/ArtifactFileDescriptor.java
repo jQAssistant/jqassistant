@@ -5,7 +5,7 @@ import java.util.List;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**
- * Represents an artifact directory providing/requiring files
+ * Represents an artifact file providing/requiring files
  */
 public interface ArtifactFileDescriptor extends ArtifactDescriptor, DirectoryDescriptor {
 

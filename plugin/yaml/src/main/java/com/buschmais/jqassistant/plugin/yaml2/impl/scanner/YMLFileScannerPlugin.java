@@ -51,12 +51,12 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
     // Enable unit testing
 
     @Override
-    public boolean accepts(FileResource file, String path, Scope scope) {
-        return filePatternMatcher.accepts(path.toLowerCase());
+    public boolean accepts(FileResource file, String location, Scope scope) {
+        return filePatternMatcher.accepts(location.toLowerCase());
     }
 
     @Override
-    public YMLFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public YMLFileDescriptor scan(FileResource item, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         LoadSettings settings = LoadSettings.builder()
             .build();
@@ -78,7 +78,7 @@ public class YMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YM
 
             yamlFileDescriptor.setValid(true);
         } catch (GraphGenerationFailedException | YamlEngineException e) {
-            LOGGER.warn("YAML file '{}' seems to be invalid and will be marked as invalid. Result graph might be incorrect.", path);
+            LOGGER.warn("YAML file '{}' seems to be invalid and will be marked as invalid. Result graph might be incorrect.", location);
         }
 
         return yamlFileDescriptor;

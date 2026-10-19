@@ -11,7 +11,6 @@ import com.buschmais.jqassistant.core.report.api.model.Language;
 import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.report.FileSourceHelper;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 
 import static java.util.Optional.empty;
@@ -39,7 +38,7 @@ public @interface Java {
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(PackageDescriptor descriptor) {
-                        return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
+                        return JavaSourceLocationHelper.getSourceLocation(descriptor, empty(), empty());
                     }
                 };
             }
@@ -55,7 +54,7 @@ public @interface Java {
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(TypeClassFileDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor);
+                        return JavaSourceLocationHelper.getSourceLocation(descriptor);
                     }
                 };
             }
@@ -79,7 +78,7 @@ public @interface Java {
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(VariableDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod()
+                        return JavaSourceLocationHelper.getSourceLocation(descriptor.getMethod()
                             .getDeclaringType());
                     }
 
@@ -92,13 +91,12 @@ public @interface Java {
                 return new SourceProvider<>() {
                     @Override
                     public String getName(ReadsDescriptor descriptor) {
-                        return descriptor.getMethod()
-                            .getSignature();
+                        return getSignatureWithLineNumber(descriptor.getMethod(), descriptor);
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(ReadsDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod()
+                        return JavaSourceLocationHelper.getSourceLocation(descriptor.getMethod()
                             .getDeclaringType(), descriptor.getLineNumber());
                     }
                 };
@@ -110,13 +108,12 @@ public @interface Java {
                 return new SourceProvider<>() {
                     @Override
                     public String getName(WritesDescriptor descriptor) {
-                        return descriptor.getMethod()
-                            .getSignature();
+                        return getSignatureWithLineNumber(descriptor.getMethod(), descriptor);
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(WritesDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getMethod()
+                        return JavaSourceLocationHelper.getSourceLocation(descriptor.getMethod()
                             .getDeclaringType(), descriptor.getLineNumber());
                     }
 
@@ -141,13 +138,12 @@ public @interface Java {
                 return new SourceProvider<>() {
                     @Override
                     public String getName(InvokesDescriptor descriptor) {
-                        return descriptor.getInvokingMethod()
-                            .getSignature();
+                        return getSignatureWithLineNumber(descriptor.getInvokingMethod(), descriptor);
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(InvokesDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getInvokingMethod()
+                        return JavaSourceLocationHelper.getSourceLocation(descriptor.getInvokingMethod()
                             .getDeclaringType(), descriptor.getLineNumber());
                     }
                 };
@@ -165,7 +161,7 @@ public @interface Java {
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(ThrowsDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getThrowingMethod()
+                        return JavaSourceLocationHelper.getSourceLocation(descriptor.getThrowingMethod()
                             .getDeclaringType(), descriptor.getLineNumber());
                     }
                 };
@@ -184,7 +180,7 @@ public @interface Java {
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(ClassFileDependsOnDescriptor descriptor) {
-                        return TypeSourceHelper.getSourceLocation(descriptor.getDependent(), empty(), empty());
+                        return JavaSourceLocationHelper.getSourceLocation(descriptor.getDependent(), empty(), empty());
                     }
                 };
             }
@@ -213,7 +209,7 @@ public @interface Java {
 
             @Override
             public Optional<FileLocation> getSourceLocation(FieldDescriptor descriptor) {
-                return TypeSourceHelper.getSourceLocation(descriptor.getDeclaringType());
+                return JavaSourceLocationHelper.getSourceLocation(descriptor.getDeclaringType());
             }
 
         }
@@ -225,10 +221,14 @@ public @interface Java {
 
             @Override
             public Optional<FileLocation> getSourceLocation(MethodDescriptor descriptor) {
-                return TypeSourceHelper.getSourceLocation(descriptor.getDeclaringType(), ofNullable(descriptor.getFirstLineNumber()),
+                return JavaSourceLocationHelper.getSourceLocation(descriptor.getDeclaringType(), ofNullable(descriptor.getFirstLineNumber()),
                     ofNullable(descriptor.getLastLineNumber()));
             }
 
+        }
+
+        private static String getSignatureWithLineNumber(MethodDescriptor methodDescriptor, LineNumberDescriptor lineNumberDescriptor) {
+            return methodDescriptor.getSignature() + ":" + lineNumberDescriptor.getLineNumber();
         }
     }
 }

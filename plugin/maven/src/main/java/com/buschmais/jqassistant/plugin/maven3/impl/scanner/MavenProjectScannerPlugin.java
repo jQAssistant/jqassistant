@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -18,10 +19,13 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.PathNormalizer;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaSourceFileResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.*;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
@@ -42,7 +46,7 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.buschmais.jqassistant.core.shared.io.FileNameNormalizer.normalize;
+import static com.buschmais.jqassistant.core.scanner.api.DefaultScope.NONE;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
 import static org.eclipse.aether.util.graph.transformer.ConflictResolver.CONFIG_PROP_VERBOSE;
@@ -57,6 +61,8 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     private static final String PROPERTY_NAME_DEPENDENCIES_INCLUDES = "maven3.dependencies.includes";
 
     private static final String PROPERTY_NAME_DEPENDENCIES_EXCLUDES = "maven3.dependencies.excludes";
+
+    private static final String PACKAGING_POM = "pom";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectScannerPlugin.class);
 
@@ -95,12 +101,12 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     }
 
     @Override
-    public boolean accepts(MavenProject item, String path, Scope scope) {
+    public boolean accepts(MavenProject item, String location, Scope scope) {
         return true;
     }
 
     @Override
-    public MavenProjectDirectoryDescriptor scan(MavenProject project, String projectPath, Scope scope, Scanner scanner) {
+    public MavenProjectDirectoryDescriptor scan(MavenProject project, String location, Scope scope, Scanner scanner) {
         ScannerContext context = scanner.getContext();
         MavenSession mavenSession = context.peek(MavenSession.class);
 
@@ -110,10 +116,12 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             .getBasedir();
 
         FileResolver fileResolver = context.peek(FileResolver.class);
-        MavenRepositoryArtifactResolver artifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory, fileResolver);
+        MavenRepositoryArtifactResolver artifactResolver = new MavenRepositoryArtifactResolver(localRepositoryDirectory, fileResolver, context);
+
+        MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
         context.push(ArtifactResolver.class, artifactResolver);
         try {
-            MavenProjectDirectoryDescriptor projectDescriptor = scanClasses(project, scanner, mavenSession, artifactResolver);
+            scanArtifacts(project, projectDescriptor, scanner, mavenSession);
             // project information
             addProjectDetails(project, projectDescriptor, scanner);
             scanTestReports(project, scanner);
@@ -124,49 +132,75 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         }
     }
 
-    private MavenProjectDirectoryDescriptor scanClasses(MavenProject project, Scanner scanner, MavenSession mavenSession,
-        MavenRepositoryArtifactResolver artifactResolver) {
+    private List<DirectoryDescriptor> scanSourceRoot(Scanner scanner, List<String> sourceRoots) {
+        return sourceRoots.stream()
+            .map(File::new)
+            .filter(sourceRoot -> sourceRoot.exists() && sourceRoot.isDirectory())
+            .map(sourceRoot -> (DirectoryDescriptor) scanner.scan(sourceRoot, null, NONE))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Scans the artifacts created by the {@link MavenProject}.
+     *
+     * @param project
+     *     The {@link MavenProject}.
+     * @param projectDescriptor
+     *     The {@link MavenProjectDirectoryDescriptor} representing the {@link MavenProject}.
+     * @param scanner
+     *     The {@link Scanner}.
+     * @param mavenSession
+     *     The {@link MavenSession}.
+     */
+    private void scanArtifacts(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner, MavenSession mavenSession) {
         ScannerContext context = scanner.getContext();
-        MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
         // main artifact
         Artifact artifact = project.getArtifact();
-        MavenMainArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(new MavenArtifactCoordinates(artifact, false),
-            MavenMainArtifactDescriptor.class, artifactResolver, scanner);
+        File mainArtifactFile;
+        File outputDirectory = new File(project.getBuild()
+            .getOutputDirectory());
+        if (project.getPackaging()
+            .equals(PACKAGING_POM)) {
+            mainArtifactFile = project.getModel()
+                .getPomFile();
+        } else {
+            mainArtifactFile = outputDirectory;
+        }
+        MavenMainArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(mainArtifactFile, new MavenArtifactCoordinates(artifact, false),
+            MavenMainArtifactDescriptor.class, context);
         projectDescriptor.getCreatesArtifacts()
             .add(mainArtifactDescriptor);
+
         // test artifact
-        MavenArtifactDescriptor testArtifactDescriptor = null;
-        String testOutputDirectory = project.getBuild()
-            .getTestOutputDirectory();
-        if (testOutputDirectory != null) {
-            testArtifactDescriptor = getMavenArtifactDescriptor(new MavenArtifactCoordinates(artifact, true), MavenTestArtifactDescriptor.class,
-                artifactResolver, scanner);
-            DependsOnDescriptor dependsOnDescriptor = context.getStore()
-                .create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
-            dependsOnDescriptor.setScope(Artifact.SCOPE_COMPILE);
-            projectDescriptor.getCreatesArtifacts()
-                .add(testArtifactDescriptor);
-        }
+        File testOutputDirectory = new File(project.getBuild()
+            .getTestOutputDirectory());
+        MavenArtifactDescriptor testArtifactDescriptor = getMavenArtifactDescriptor(testOutputDirectory, new MavenArtifactCoordinates(artifact, true),
+            MavenTestArtifactDescriptor.class, context);
+        DependsOnDescriptor dependsOnDescriptor = context.getStore()
+            .create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
+        dependsOnDescriptor.setScope(Artifact.SCOPE_COMPILE);
+        projectDescriptor.getCreatesArtifacts()
+            .add(testArtifactDescriptor);
 
         resolveDependencyGraph(project, mainArtifactDescriptor, testArtifactDescriptor, scanner, mavenSession);
 
-        // Scan classes
-        scanClassesDirectory(mainArtifactDescriptor, project.getBuild()
-            .getOutputDirectory(), scanner);
-        if (testOutputDirectory != null) {
-            scanClassesDirectory(testArtifactDescriptor, testOutputDirectory, scanner);
+        if (!project.getPackaging()
+            .equals(PACKAGING_POM)) {
+            // Scan classes
+            scanClasses(outputDirectory, mainArtifactDescriptor, project.getCompileSourceRoots(), projectDescriptor.getSourceDirectories(), scanner);
+            scanClasses(testOutputDirectory, testArtifactDescriptor, project.getTestCompileSourceRoots(), projectDescriptor.getTestSourceDirectories(),
+                scanner);
         }
-        return projectDescriptor;
     }
 
     private void scanTestReports(MavenProject project, Scanner scanner) {
         // add test reports
         String surefireReports = project.getBuild()
             .getDirectory() + "/surefire-reports";
-        scanFile(new File(surefireReports), surefireReports, TESTREPORTS, scanner);
+        scanFile(new File(surefireReports), TESTREPORTS, scanner);
         String failsafeReports = project.getBuild()
             .getDirectory() + "/failsafe-reports";
-        scanFile(new File(failsafeReports), failsafeReports, TESTREPORTS, scanner);
+        scanFile(new File(failsafeReports), TESTREPORTS, scanner);
     }
 
     private void scanIncludes(MavenProject project, Scanner scanner, MavenProjectDirectoryDescriptor projectDescriptor) {
@@ -185,7 +219,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
                 // files
                 scanInclude(include.files(), (fileName, s) -> scanFile(basedir.toPath()
                     .resolve(fileName)
-                    .toFile(), fileName, s, scanner), scanIncludeConsumer, scanner);
+                    .toFile(), s, scanner), scanIncludeConsumer, scanner);
                 // urls
                 scanInclude(include.urls(), (url, s) -> {
                     try {
@@ -217,22 +251,22 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     /**
      * Returns a resolved maven artifact descriptor for the given coordinates.
      *
+     * @param file
+     *     The file that represents a Maven artifact.
      * @param coordinates
      *     The artifact coordinates.
      * @param type
      *     The expected type.
-     * @param artifactResolver
-     *     The {@link ArtifactResolver}.
-     * @param scanner
-     *     The scanner.
+     * @param context
+     *     The {@link ScannerContext}.
      * @return The artifact descriptor.
      */
-    private <T extends MavenArtifactDescriptor> T getMavenArtifactDescriptor(Coordinates coordinates, Class<T> type, ArtifactResolver artifactResolver,
-        Scanner scanner) {
-        MavenArtifactDescriptor mavenArtifactDescriptor = artifactResolver.resolve(coordinates, scanner.getContext());
-        return scanner.getContext()
-            .getStore()
-            .addDescriptorType(mavenArtifactDescriptor, type);
+    private <T extends MavenArtifactFileDescriptor> T getMavenArtifactDescriptor(File file, Coordinates coordinates, Class<T> type, ScannerContext context) {
+        String path = PathNormalizer.normalizeFileName(file, context);
+        T artifactFileDescriptor = context.peek(FileResolver.class)
+            .require(path, type, context);
+        MavenArtifactHelper.setCoordinates(artifactFileDescriptor, coordinates);
+        return artifactFileDescriptor;
     }
 
     /**
@@ -253,7 +287,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             File basedir = project.getBasedir();
             if (basedir != null) {
                 projectDescriptor = scannerContext.peek(FileResolver.class)
-                    .match(normalize(basedir.getAbsoluteFile()), MavenProjectDirectoryDescriptor.class, scannerContext);
+                    .match(PathNormalizer.normalizeFileName(basedir, scannerContext), MavenProjectDirectoryDescriptor.class, scannerContext);
 
             } else {
                 projectDescriptor = store.create(expectedType);
@@ -329,7 +363,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      */
     private void addModel(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner) {
         File pomXmlFile = project.getFile();
-        FileDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        FileDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, null, MavenScope.PROJECT);
         projectDescriptor.setModel(mavenPomXmlDescriptor);
         // Effective model
         MavenPomDescriptor mavenPomDescriptor = scanner.getContext()
@@ -337,7 +371,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             .create(MavenPomDescriptor.class);
         scanner.getContext()
             .push(MavenPomDescriptor.class, mavenPomDescriptor);
-        scanner.scan(project.getModel(), pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        scanner.scan(project.getModel(), null, MavenScope.PROJECT);
         scanner.getContext()
             .pop(MavenPomDescriptor.class);
         MavenPomDescriptor effectiveModelDescriptor = scanner.getContext()
@@ -391,17 +425,28 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     /**
      * Scan the given directory for classes and add them to an artifact.
      *
+     * @param directory
+     *     The directory.
      * @param artifactDescriptor
      *     The artifact.
-     * @param directoryName
-     *     The name of the directory.
+     * @param sourceRoots
+     *     The list of source roots for adding the scanned source root directories.
      * @param scanner
      *     The scanner.
      */
-    private void scanClassesDirectory(MavenArtifactDescriptor artifactDescriptor, final String directoryName, Scanner scanner) {
-        File directory = new File(directoryName);
+    private void scanClasses(final File directory, MavenArtifactDescriptor artifactDescriptor, List<String> sourceRoots,
+        List<DirectoryDescriptor> sourceRootDescriptors, Scanner scanner) {
         if (directory.exists()) {
-            scanArtifact(artifactDescriptor, directory, directoryName, scanner);
+            List<DirectoryDescriptor> directoryDescriptors = scanSourceRoot(scanner, sourceRoots);
+            sourceRootDescriptors.addAll(directoryDescriptors);
+            scanner.getContext()
+                .push(JavaSourceFileResolver.class, new MavenJavaSourceFileResolver(directoryDescriptors));
+            try {
+                scanArtifact(artifactDescriptor, directory, scanner);
+            } finally {
+                scanner.getContext()
+                    .pop(JavaSourceFileResolver.class);
+            }
         }
     }
 
@@ -412,19 +457,17 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      *     The resolved {@link MavenArtifactDescriptor}.
      * @param file
      *     The {@link File}.
-     * @param path
-     *     The path of the file.
      * @param scanner
      *     The {@link Scanner}.
      */
-    private JavaArtifactFileDescriptor scanArtifact(ArtifactDescriptor artifactDescriptor, File file, String path, Scanner scanner) {
+    private void scanArtifact(ArtifactDescriptor artifactDescriptor, File file, Scanner scanner) {
         JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext()
             .getStore()
             .addDescriptorType(artifactDescriptor, JavaArtifactFileDescriptor.class);
         ScannerContext context = scanner.getContext();
         context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
         try {
-            return scanFile(file, path, CLASSPATH, scanner);
+            scanFile(file, CLASSPATH, scanner);
         } finally {
             context.pop(JavaArtifactFileDescriptor.class);
         }
@@ -439,16 +482,14 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      *
      * @param file
      *     The file.
-     * @param path
-     *     The path.
      * @param scope
      *     The scope.
      * @param scanner
      *     The scanner.
      */
-    private <F extends FileDescriptor> F scanFile(File file, String path, Scope scope, Scanner scanner) {
+    private <F extends FileDescriptor> F scanFile(File file, Scope scope, Scanner scanner) {
         if (file.exists()) {
-            return scanner.scan(file, path, scope);
+            return scanner.scan(file, null, scope);
         } else {
             LOGGER.debug("{} does not exist, skipping.", file.getAbsolutePath());
         }

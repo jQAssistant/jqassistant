@@ -31,12 +31,12 @@ public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResourc
     public static final String SECTION_MAIN = "Main";
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return CLASSPATH.equals(scope) && "/META-INF/MANIFEST.MF".equals(path);
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        return CLASSPATH.equals(scope) && "/META-INF/MANIFEST.MF".equals(location);
     }
 
     @Override
-    public ManifestFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public ManifestFileDescriptor scan(FileResource item, String location, Scope scope, Scanner scanner) throws IOException {
         try (InputStream stream = item.createStream()) {
             Manifest manifest = new Manifest(stream);
             ScannerContext context = scanner.getContext();

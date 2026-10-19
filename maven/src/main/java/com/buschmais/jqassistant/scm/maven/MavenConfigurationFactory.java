@@ -34,8 +34,6 @@ final class MavenConfigurationFactory {
 
     public static final String PROPERTY_CONFIGURATION_LOCATIONS = "jqassistant.configuration.locations";
 
-    private static final int CONFIGURATION_ORDINAL_EXECUTION_ROOT = 100;
-
     private final ConfigurationFileLoaderProvider configurationFileLoaderProvider;
 
     /**
@@ -81,7 +79,7 @@ final class MavenConfigurationFactory {
         ConfigurationMappingLoader.Builder<MavenConfiguration> builder = ConfigurationMappingLoader.builder(configurationFileLoader, MavenConfiguration.class,
                 configurationLocations)
             .withUserHome(userHome)
-            .withDirectory(executionRootDirectory, CONFIGURATION_ORDINAL_EXECUTION_ROOT)
+            .withProjectDirectory(executionRootDirectory)
             .withEnvVariables()
             .withClasspath()
             .withProfiles(activatedProfiles)

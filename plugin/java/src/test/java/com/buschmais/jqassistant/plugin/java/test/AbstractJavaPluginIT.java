@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.ContainerFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalFileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -33,11 +34,15 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      */
     protected JavaArtifactFileDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
-        if (artifact == null) {
-            artifact = store.create(JavaArtifactFileDescriptor.class, artifactId);
-            artifact.setFullQualifiedName(artifactId);
+        if (artifact != null) {
+            return (JavaArtifactFileDescriptor) artifact;
         }
-        return JavaArtifactFileDescriptor.class.cast(artifact);
+        JavaArtifactFileDescriptor artifactFileDescriptor = store.create(JavaArtifactFileDescriptor.class, artifactId);
+        String path = getClassesDirectory(this.getClass()).getPath();
+        artifactFileDescriptor.setPath(path);
+        artifactFileDescriptor.setFileName("/" + path);
+        artifactFileDescriptor.setFullQualifiedName(artifactId);
+        return artifactFileDescriptor;
     }
 
     /**
@@ -109,7 +114,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
             List<FileDescriptor> result = new ArrayList<>();
             for (String resource : resources) {
                 File file = new File(directory, resource);
-                FileDescriptor fileDescriptor = scanner.scan(file, resource, scope);
+                FileDescriptor fileDescriptor = scanner.scan(new LocalFileResource(file), resource, scope);
                 result.add(fileDescriptor);
             }
             return result;
@@ -153,13 +158,26 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      *     The operation.
      */
     protected List<? extends FileDescriptor> execute(String artifactId, ScanClassPathOperation operation) {
-        Scanner scanner = getScanner();
+        return execute(artifactId, operation, getScanner());
+    }
+
+    /**
+     * Executes the given scan operation.
+     *
+     * @param artifactId
+     *     The artifact id of the artifact to push on the context.
+     * @param operation
+     *     The operation.
+     * @param scanner
+     *     The scanner.
+     */
+    protected List<? extends FileDescriptor> execute(String artifactId, ScanClassPathOperation operation, Scanner scanner) {
         ScannerContext context = scanner.getContext();
         store.beginTransaction();
         JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
         artifact.setFullQualifiedName(artifactId);
         context.push(JavaArtifactFileDescriptor.class, artifact);
-        ContainerFileResolver containerFileResolver = new ContainerFileResolver(scanner.getContext(), artifact);
+        ContainerFileResolver containerFileResolver = new ContainerFileResolver("", scanner.getContext(), artifact);
         context.push(FileResolver.class, containerFileResolver);
 
         List<? extends FileDescriptor> descriptors = execute(artifact, operation, scanner);

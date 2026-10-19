@@ -14,4 +14,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @ToString
 public abstract class SourceLocation<P extends SourceLocation<?>> extends AbstractLocation<P> {
+
+    /**
+     * The path of the file.
+     */
+    private final String path;
+
 }

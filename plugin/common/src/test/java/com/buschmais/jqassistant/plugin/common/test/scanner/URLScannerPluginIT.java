@@ -13,18 +13,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class URLScannerPluginIT extends AbstractPluginIT {
 
+    public static final String CLASSPATH_RESOURCE = "/java/lang/Object.class";
+
     @Test
     void classPathURL() throws MalformedURLException {
-        URL url = URLScannerPluginIT.class.getClassLoader()
-            .getResource("java/lang/Object.class");
-        verify(url.toString());
+        URL url = URLScannerPluginIT.class.getResource(CLASSPATH_RESOURCE);
+        verify(url);
     }
 
-    private void verify(String url) throws MalformedURLException {
-        FileDescriptor fileDescriptor = getScanner().scan(new URL(url), url, DefaultScope.NONE);
+    private void verify(URL url) throws MalformedURLException {
+        FileDescriptor fileDescriptor = getScanner().scan(url, url.toString(), DefaultScope.NONE);
         store.beginTransaction();
         assertThat(fileDescriptor).isNotNull();
-        assertThat(fileDescriptor.getFileName()).isEqualTo(url);
+        assertThat(fileDescriptor.getFileName()).isEqualTo(url.getFile());
+        assertThat(new URL(fileDescriptor.getPath())).isEqualTo(url);
         store.commitTransaction();
     }
 

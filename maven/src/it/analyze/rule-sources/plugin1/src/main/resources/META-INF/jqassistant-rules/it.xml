@@ -1,0 +1,16 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.2"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.2 http://schema.jqassistant.org/rule/jqassistant-rule-v2.2.xsd">
+
+    <concept id="it:Concept1">
+        <description>Test concept 1.</description>
+        <cypher><![CDATA[
+            MATCH
+              (p:Maven:Project)
+            RETURN
+              p
+        ]]></cypher>
+    </concept>
+
+</jqassistant-rules>
+

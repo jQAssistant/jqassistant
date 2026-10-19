@@ -23,6 +23,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,6 +66,7 @@ class BaselineManagerTest {
             .columns(Map.of("c1", Column.builder()
                 .label("1")
                 .build()))
+            .status(FAILURE)
             .build();
 
         baselineManager.start();
@@ -86,6 +88,7 @@ class BaselineManagerTest {
             .columns(Map.of("c1", Column.builder()
                 .label("1")
                 .build()))
+            .status(FAILURE)
             .build();
 
         baselineManager.start();
@@ -107,6 +110,7 @@ class BaselineManagerTest {
             .columns(Map.of("c1", Column.builder()
                 .label("1")
                 .build()))
+            .status(FAILURE)
             .build();
 
         baselineManager.start();
@@ -126,12 +130,14 @@ class BaselineManagerTest {
             .columns(Map.of("c1", Column.builder()
                 .label("1")
                 .build()))
+            .status(FAILURE)
             .build();
         Row newRow = Row.builder()
             .key("2")
             .columns(Map.of("c1", Column.builder()
                 .label("2")
                 .build()))
+            .status(FAILURE)
             .build();
         doReturn(of(oldBaseline)).when(baselineRepository)
             .read();
@@ -154,6 +160,7 @@ class BaselineManagerTest {
             .columns(Map.of("c1", Column.builder()
                 .label("1")
                 .build()))
+            .status(FAILURE)
             .build();
         doReturn(of(oldBaseline)).when(baselineRepository)
             .read();
@@ -179,6 +186,7 @@ class BaselineManagerTest {
             .columns(Map.of("c1", Column.builder()
                 .label("1")
                 .build()))
+            .status(FAILURE)
             .build();
 
         baselineManager.start();
@@ -206,6 +214,7 @@ class BaselineManagerTest {
             .columns(Map.of("c1", Column.builder()
                 .label("1")
                 .build()))
+            .status(FAILURE)
             .build();
 
         baselineManager.start();

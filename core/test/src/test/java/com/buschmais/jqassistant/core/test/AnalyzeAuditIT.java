@@ -12,8 +12,7 @@ import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.*;
-import static com.buschmais.jqassistant.core.rule.api.model.Severity.MAJOR;
-import static com.buschmais.jqassistant.core.rule.api.model.Severity.MINOR;
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AnalyzeAuditIT extends AbstractPluginIT {
@@ -34,19 +33,19 @@ public class AnalyzeAuditIT extends AbstractPluginIT {
         Map<String, Object> row = rows.get(0);
 
         ConceptDescriptor concept = (ConceptDescriptor) row.get("concept");
-        verify(concept, "core-test-audit:Concept", MINOR, SKIPPED);
+        verify(concept, "core-test-audit:Concept", INFO, SKIPPED);
         assertThat(concept.getRequiresConcepts()).isEmpty();
         assertThat(concept.getProvidesConcepts()).isEmpty();
 
         ConceptDescriptor overridingConcept = (ConceptDescriptor) row.get("overridingConcept");
-        verify(overridingConcept, "core-test-audit:OverridingConcept", MINOR, SUCCESS);
+        verify(overridingConcept, "core-test-audit:OverridingConcept", INFO, SUCCESS);
         assertThat(overridingConcept.getRequiresConcepts()).isEmpty();
         assertThat(overridingConcept.getProvidesConcepts()).isEmpty();
 
         List<ConceptDescriptor> providingConcepts = overridingConcept.getProvidingConcepts();
         assertThat(providingConcepts).hasSize(1);
         ConceptDescriptor providingConcept = providingConcepts.get(0);
-        verify(providingConcept, "core-test-audit:ProvidingConcept", MINOR, SUCCESS);
+        verify(providingConcept, "core-test-audit:ProvidingConcept", INFO, SUCCESS);
 
         ConstraintDescriptor constraint = (ConstraintDescriptor) row.get("constraint");
         verify(constraint, "core-test-audit:Constraint", MAJOR, SKIPPED);

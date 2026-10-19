@@ -28,8 +28,8 @@ public class XmlFileScannerPlugin extends AbstractXmlFileScannerPlugin<XmlFileDe
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return filePatternMatcher.accepts(path);
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        return filePatternMatcher.accepts(location);
     }
 
     @Override

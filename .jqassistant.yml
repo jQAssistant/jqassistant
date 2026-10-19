@@ -3,6 +3,9 @@ jqassistant:
     - group-id: com.buschmais.jqassistant.build
       artifact-id: jqassistant
       version: ${jqassistant.build.version}
+    - group-id: org.jqassistant.plugin
+      artifact-id: jqassistant-sarif-report-plugin
+      version: 1.0.0-M2
   scan:
     include:
       files:
@@ -11,10 +14,18 @@ jqassistant:
         - ${project.basedir}/.editorconfig
         - ${project.basedir}/LICENSE
   analyze:
+    baseline:
+      enabled: true
     rule:
       default-concept-severity: INFO
     groups:
       - jqa-*
     report:
       continue-on-failure: true
+      properties:
+        sarif:
+          report:
+            message:
+              text: title
+              markdown: details
 

@@ -12,6 +12,9 @@ import org.objectweb.asm.signature.SignatureReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.objectweb.asm.TypeReference.METHOD_FORMAL_PARAMETER;
+import static org.objectweb.asm.TypeReference.METHOD_RETURN;
+
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodVisitor.class);
@@ -160,6 +163,26 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
         return classFileVisitorContext.addAnnotation(methodDescriptor, SignatureHelper.getType(desc));
+    }
+
+    @Override
+    public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible) {
+        TypeReference typeReference = new TypeReference(typeRef);
+        switch (typeReference.getSort()) {
+        case METHOD_RETURN:
+            return classFileVisitorContext.addAnnotation(methodDescriptor, SignatureHelper.getType(descriptor));
+        case METHOD_FORMAL_PARAMETER: {
+            int formalParameterIndex = typeReference.getFormalParameterIndex();
+            return methodDescriptor.getParameters()
+                .stream()
+                .filter(parameterDescriptor -> parameterDescriptor.getIndex() == formalParameterIndex)
+                .findFirst()
+                .map(parameterDescriptor -> classFileVisitorContext.addAnnotation(parameterDescriptor, SignatureHelper.getType(descriptor)))
+                .orElse(null);
+        }
+        default:
+            return null;
+        }
     }
 
     @Override

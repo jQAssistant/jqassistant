@@ -5,14 +5,23 @@ import javax.annotation.PreDestroy;
 
 public class ManagedResource {
 
-    @PostConstruct
-    public void postConstruct() {
+    public static class JavaEE {
+        @PostConstruct
+        public void postConstruct() {
+        }
 
+        @PreDestroy
+        public void preDestroy() {
+        }
     }
 
-    @PreDestroy
-    public void preDestroy() {
+    public static class JakartaEE {
+        @jakarta.annotation.PostConstruct
+        public void postConstruct() {
+        }
 
+        @jakarta.annotation.PreDestroy
+        public void preDestroy() {
+        }
     }
-
 }

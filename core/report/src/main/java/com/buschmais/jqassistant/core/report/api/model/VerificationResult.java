@@ -20,8 +20,13 @@ public class VerificationResult {
     private boolean success;
 
     /**
-     * The count of rows returned by the rule, in case of aggregation the value of the specific column.
+     * The count of non-hidden rows returned by the rule, in case of aggregation the sum of the values of the aggregation column.
      */
     private int rowCount;
+
+    /**
+     * The count of hidden rows returned by the rule, in case of aggregation the sum of the values of the aggregation column.
+     */
+    private int hiddenRowCount;
 
 }

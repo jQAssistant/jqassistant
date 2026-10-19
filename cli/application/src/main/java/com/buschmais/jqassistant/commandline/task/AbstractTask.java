@@ -14,6 +14,8 @@ import org.apache.commons.cli.Option;
 
 public abstract class AbstractTask implements Task {
 
+    protected File projectDirectory;
+    protected File workingDirectory;
     protected File outputDirectory;
     protected StoreFactory storeFactory;
 
@@ -21,8 +23,10 @@ public abstract class AbstractTask implements Task {
     protected RuleHelper ruleHelper;
 
     @Override
-    public final void initialize(PluginRepository pluginRepository, StoreFactory storeFactory) {
-        this.outputDirectory = new File(DEFAULT_OUTPUT_DIRECTORY);
+    public final void initialize(File projectDirectory, File workingDirectory, PluginRepository pluginRepository, StoreFactory storeFactory) {
+        this.workingDirectory = workingDirectory;
+        this.projectDirectory = projectDirectory;
+        this.outputDirectory = new File(projectDirectory, DEFAULT_OUTPUT_DIRECTORY);
         this.pluginRepository = pluginRepository;
         this.storeFactory = storeFactory;
         this.ruleHelper = new RuleHelper();
@@ -39,8 +43,8 @@ public abstract class AbstractTask implements Task {
         if (options.hasOption(option)) {
             List<String> names = new ArrayList<>();
             for (String elementName : options.getOptionValues(option)) {
-                if (elementName.trim()
-                    .length() > 0) {
+                if (!elementName.trim()
+                    .isEmpty()) {
                     names.add(elementName);
                 }
             }

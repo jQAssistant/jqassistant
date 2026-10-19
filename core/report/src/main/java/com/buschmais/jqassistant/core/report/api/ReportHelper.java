@@ -104,10 +104,11 @@ public final class ReportHelper {
         return empty();
     }
 
-    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Optional<Hidden> hidden) {
+    public static Row toRow(ExecutableRule<?> rule, Map<String, Column<?>> columns, Result.Status status, Optional<Hidden> hidden) {
         return Row.builder()
             .key(getRowKey(rule, columns))
             .columns(columns)
+            .status(status)
             .hidden(hidden)
             .build();
     }

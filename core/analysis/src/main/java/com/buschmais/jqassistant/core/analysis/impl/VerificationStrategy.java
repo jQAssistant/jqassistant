@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.util.List;
+import java.util.Map;
 
+import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.api.model.VerificationResult;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
@@ -16,5 +18,8 @@ public interface VerificationStrategy<V extends Verification> {
 
     Class<V> getVerificationType();
 
-    <T extends ExecutableRule> VerificationResult verify(T executable, V verification, List<String> columnNames, List<Row> rows) throws RuleException;
+    <T extends ExecutableRule> VerificationResult verifyColumns(T executable, V verification, List<String> columnNames, Map<String, Column<?>> columns)
+        throws RuleException;
+
+    <T extends ExecutableRule> VerificationResult verifyRows(T executable, V verification, List<String> columnNames, List<Row> rows) throws RuleException;
 }

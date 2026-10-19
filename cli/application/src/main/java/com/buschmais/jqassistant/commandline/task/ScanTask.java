@@ -51,10 +51,11 @@ public class ScanTask extends AbstractStoreTask {
     @Override
     public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
         withStore(configuration, store -> {
-            ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, new File(DEFAULT_WORKING_DIRECTORY),
-                new File(DEFAULT_OUTPUT_DIRECTORY));
+            ScannerContext scannerContext = new ScannerContextImpl(pluginRepository.getClassLoader(), store, projectDirectory,
+                workingDirectory, outputDirectory);
             if (configuration.scan()
-                .reset().orElse(false)) {
+                .reset()
+                .orElse(false)) {
                 store.reset();
             }
             configuration.scan()
@@ -69,7 +70,7 @@ public class ScanTask extends AbstractStoreTask {
     private void scanUris(CliConfiguration configuration, Optional<List<String>> urlsOptional, ScannerContext scannerContext) {
         urlsOptional.ifPresent(urls -> {
             ScopeHelper scopeHelper = new ScopeHelper(log);
-            for (ScopeHelper.ScopedResource scopedResource: scopeHelper.getScopedResources(urls)) {
+            for (ScopeHelper.ScopedResource scopedResource : scopeHelper.getScopedResources(urls)) {
                 String uri = scopedResource.getResource();
                 String scopeName = scopedResource.getScopeName();
                 try {
@@ -92,7 +93,7 @@ public class ScanTask extends AbstractStoreTask {
                 if (!file.exists()) {
                     LOGGER.info(absolutePath + "' does not exist, skipping scan.");
                 } else {
-                    scan(configuration, scannerContext, file, file.getAbsolutePath(), scopeName);
+                    scan(configuration, scannerContext, file, null, scopeName);
                 }
             }
         });

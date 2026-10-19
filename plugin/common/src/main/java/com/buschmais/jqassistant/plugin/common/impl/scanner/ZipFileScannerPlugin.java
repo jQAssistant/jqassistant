@@ -9,15 +9,11 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.ZipFileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.*;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
-public class ZipFileScannerPlugin
-        extends AbstractContainerScannerPlugin<ZipFileResource, ZipArchiveEntry, ZipArchiveDescriptor> {
+public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFileResource, ZipArchiveEntry, ZipArchiveDescriptor> {
 
     @Override
     public Class<? extends ZipFileResource> getType() {
@@ -30,24 +26,15 @@ public class ZipFileScannerPlugin
     }
 
     @Override
-    public boolean accepts(ZipFileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(ZipFileResource item, String location, Scope scope) throws IOException {
         return true;
     }
 
     @Override
-    protected ZipArchiveDescriptor getContainerDescriptor(ZipFileResource zipFile, ScannerContext scannerContext) {
-        return scannerContext.peek(ZipArchiveDescriptor.class);
-    }
-
-    @Override
-    protected Iterable<? extends ZipArchiveEntry> getEntries(ZipFileResource container) throws IOException {
-        final Enumeration<? extends ZipArchiveEntry> entries = container.getZipFile().getEntriesInPhysicalOrder();
+    protected Iterable<? extends ZipArchiveEntry> getEntries(ZipFileResource container) {
+        final Enumeration<? extends ZipArchiveEntry> entries = container.getZipFile()
+            .getEntriesInPhysicalOrder();
         return new ZipArchiveEntryIterable(entries);
-    }
-
-    @Override
-    protected String getContainerPath(ZipFileResource container, String path) {
-        return path;
     }
 
     @Override
@@ -55,14 +42,14 @@ public class ZipFileScannerPlugin
         String name = entry.getName();
         if (entry.isDirectory()) {
             // strip trailing slash from directory entries
-            return "/" + name.substring(0, name.length() - 1);
+            return name.substring(0, name.length() - 1);
         } else {
-            return "/" + name;
+            return name;
         }
     }
 
     @Override
-    protected void enterContainer(ZipFileResource zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext context) throws IOException {
+    protected void enterContainer(ZipFileResource zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext context) {
     }
 
     @Override
@@ -89,10 +76,10 @@ public class ZipFileScannerPlugin
             this.entry = entry;
         }
 
-
         @Override
         public InputStream createStream() throws IOException {
-            return container.getZipFile().getInputStream(entry);
+            return container.getZipFile()
+                .getInputStream(entry);
         }
 
         @Override
@@ -118,7 +105,7 @@ public class ZipFileScannerPlugin
 
         @Override
         public Iterator<ZipArchiveEntry> iterator() {
-            return new Iterator<ZipArchiveEntry>() {
+            return new Iterator<>() {
                 @Override
                 public boolean hasNext() {
                     return entries.hasMoreElements();

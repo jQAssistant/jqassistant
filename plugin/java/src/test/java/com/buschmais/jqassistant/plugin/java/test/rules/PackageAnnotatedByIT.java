@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
@@ -27,16 +26,19 @@ class PackageAnnotatedByIT extends AbstractJavaPluginIT {
         scanClassesAndPackages(PackageClass.class);
         Result<Concept> result = applyConcept("java:PackageAnnotatedBy");
         assertThat(result.getStatus()).isEqualTo(SUCCESS);
-        assertThat(result.getRows().size()).isEqualTo(1);
+        assertThat(result.getRows()
+            .size()).isEqualTo(1);
 
         store.beginTransaction();
-        assertThat(query("MATCH (p:Package)-[:ANNOTATED_BY]->(:Annotation) RETURN p").getRows().size()).isEqualTo(1);
+        assertThat(query("MATCH (p:Package)-[:ANNOTATED_BY]->(:Annotation) RETURN p").getRows()
+            .size()).isEqualTo(1);
         store.commitTransaction();
     }
 
     private void scanClassesAndPackages(Class<?> clazz) {
-        Map<String, Object> pluginProps = new HashMap<>();
-        pluginProps.put("file.include", "/" + clazz.getPackage().getName().replace(".", "/") + "/**");
+        Map<String, Object> pluginProps = Map.of("file.include", "/" + clazz.getPackage()
+            .getName()
+            .replace(".", "/") + "*");
         getScanner(pluginProps).scan(getClassesDirectory(clazz), "/", JavaScope.CLASSPATH);
     }
 }

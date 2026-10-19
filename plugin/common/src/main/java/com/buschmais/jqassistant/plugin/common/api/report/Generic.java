@@ -35,7 +35,7 @@ public @interface Generic {
         Named {
             @Override
             public SourceProvider<NamedDescriptor> getSourceProvider() {
-                return new SourceProvider<NamedDescriptor>() {
+                return new SourceProvider<>() {
                     @Override
                     public String getName(NamedDescriptor descriptor) {
                         return descriptor.getName();
@@ -44,7 +44,7 @@ public @interface Generic {
                     @Override
                     public Optional<FileLocation> getSourceLocation(NamedDescriptor descriptor) {
                         if (descriptor instanceof FileDescriptor) {
-                            return FileSourceHelper.getSourceLocation((FileDescriptor) descriptor, empty(), empty());
+                            return FileSourceLocationHelper.getSourceLocation((FileDescriptor) descriptor, empty(), empty());
                         }
                         return empty();
                     }
@@ -62,12 +62,12 @@ public @interface Generic {
 
                     @Override
                     public String getName(FileDescriptor descriptor) {
-                        return descriptor.getFileName();
+                        return descriptor.getPath();
                     }
 
                     @Override
                     public Optional<FileLocation> getSourceLocation(FileDescriptor descriptor) {
-                        return FileSourceHelper.getSourceLocation(descriptor, empty(), empty());
+                        return FileSourceLocationHelper.getSourceLocation(descriptor, empty(), empty());
                     }
                 };
             }
@@ -88,7 +88,7 @@ public @interface Generic {
                     @Override
                     public Optional<FileLocation> getSourceLocation(ArtifactDescriptor descriptor) {
                         return descriptor instanceof FileDescriptor ?
-                            FileSourceHelper.getSourceLocation((FileDescriptor) descriptor, empty(), empty()) :
+                            FileSourceLocationHelper.getSourceLocation((FileDescriptor) descriptor, empty(), empty()) :
                             empty();
                     }
                 };

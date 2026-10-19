@@ -15,12 +15,12 @@ import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSP
 public class ClassResourceScannerPlugin extends AbstractScannerPlugin<Class<?>, ClassFileDescriptor> {
 
     @Override
-    public boolean accepts(Class<?> item, String path, Scope scope) throws IOException {
+    public boolean accepts(Class<?> item, String location, Scope scope) throws IOException {
         return CLASSPATH.equals(scope);
     }
 
     @Override
-    public ClassFileDescriptor scan(final Class<?> item, String path, Scope scope, Scanner scanner) throws IOException {
+    public ClassFileDescriptor scan(final Class<?> item, String location, Scope scope, Scanner scanner) throws IOException {
         final String fileName = "/" + item.getName()
             .replace('.', '/') + ".class";
         FileResource fileResource = new AbstractVirtualFileResource() {
@@ -31,7 +31,7 @@ public class ClassResourceScannerPlugin extends AbstractScannerPlugin<Class<?>, 
 
             @Override
             protected String getRelativePath() {
-                return path;
+                return location;
             }
         };
         return scanner.scan(fileResource, fileName, scope);

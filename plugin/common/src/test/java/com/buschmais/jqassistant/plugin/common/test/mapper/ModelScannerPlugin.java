@@ -12,12 +12,12 @@ import static org.mapstruct.factory.Mappers.getMapper;
 public class ModelScannerPlugin extends AbstractScannerPlugin<Model, ModelDescriptor> {
 
     @Override
-    public boolean accepts(Model item, String path, Scope scope) throws IOException {
+    public boolean accepts(Model item, String location, Scope scope) throws IOException {
         return true;
     }
 
     @Override
-    public ModelDescriptor scan(Model model, String path, Scope scope, Scanner scanner) throws IOException {
+    public ModelDescriptor scan(Model model, String location, Scope scope, Scanner scanner) throws IOException {
         Descriptor currentDescriptor = scanner.getContext()
             .getCurrentDescriptor();
         if (currentDescriptor != null) {

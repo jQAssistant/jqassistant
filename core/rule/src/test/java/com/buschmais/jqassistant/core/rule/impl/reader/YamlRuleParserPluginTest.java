@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.buschmais.jqassistant.core.rule.api.model.Concept.Activation.IF_AVAILABLE;
+import static com.buschmais.jqassistant.core.rule.api.model.Severity.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -80,7 +81,7 @@ class YamlRuleParserPluginTest {
                 .iterator()
                 .next();
 
-            assertThat(concept.getSeverity()).isEqualTo(Severity.BLOCKER);
+            assertThat(concept.getSeverity()).isEqualTo(BLOCKER);
         }
 
         @Test
@@ -171,7 +172,7 @@ class YamlRuleParserPluginTest {
             assertThat(concept.getDescription()).isEqualTo("Labels types deriving from java.lang.Throwable as \"Throwable\".");
             assertThat(concept.getParameters()).isEmpty();
             assertThat(concept.getRequiresConcepts()).isEmpty();
-            assertThat(concept.getSeverity()).isEqualTo(Severity.MINOR);
+            assertThat(concept.getSeverity()).isEqualTo(INFO);
             assertThat(concept.getReport()).isNotNull();
             assertThat(concept.getExecutable()).isNotNull()
                 .isInstanceOf(CypherExecutable.class);
@@ -434,7 +435,7 @@ class YamlRuleParserPluginTest {
             Group group = ruleSet.getGroupsBucket()
                 .getById("a");
 
-            assertThat(group.getSeverity()).isEqualTo(Severity.BLOCKER);
+            assertThat(group.getSeverity()).isEqualTo(BLOCKER);
         }
 
         @Test
@@ -468,7 +469,7 @@ class YamlRuleParserPluginTest {
             Map<String, Severity> constraints = group.getConstraints();
 
             assertThat(constraints).hasSize(1)
-                .containsEntry("referenced_constraint", Severity.INFO);
+                .containsEntry("referenced_constraint", INFO);
             assertThat(constraints.get("referenced_constraint")).isNotEqualByComparingTo(Constraint.DEFAULT_SEVERITY);
         }
 
@@ -589,7 +590,7 @@ class YamlRuleParserPluginTest {
             Map<String, Severity> concepts = group.getConcepts();
 
             assertThat(concepts).hasSize(1)
-                .containsEntry("xxx", Severity.MINOR);
+                .containsEntry("xxx", MINOR);
 
             assertThat(group.getConstraints()).isEmpty();
             assertThat(group.getGroups()).isEmpty();
@@ -611,7 +612,7 @@ class YamlRuleParserPluginTest {
             Map<String, Severity> includedGroups = group.getGroups();
 
             assertThat(includedGroups).hasSize(1)
-                .containsEntry("mmm", Severity.BLOCKER);
+                .containsEntry("mmm", BLOCKER);
         }
 
         @Test

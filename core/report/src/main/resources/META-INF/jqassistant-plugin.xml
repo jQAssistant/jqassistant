@@ -5,6 +5,9 @@
                     name="jQAssistant Core Report Plugin"
                     version="${project.version}">
     <description>Core Report</description>
+    <model>
+        <class>com.buschmais.jqassistant.core.report.api.model.SuppressionDescriptor</class>
+    </model>
     <report>
         <class id="xml">com.buschmais.jqassistant.core.report.impl.XmlReportPlugin</class>
     </report>

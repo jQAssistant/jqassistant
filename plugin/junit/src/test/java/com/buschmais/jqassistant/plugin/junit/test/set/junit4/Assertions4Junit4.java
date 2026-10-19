@@ -1,17 +1,15 @@
 package com.buschmais.jqassistant.plugin.junit.test.set.junit4;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-@Ignore("This is not an actual test")
 public class Assertions4Junit4 {
 
     @Test
-    public void assertWithoutMessage() {
+    public void assertWithoutReason() {
         assertTrue(true);
     }
 
@@ -40,7 +38,7 @@ public class Assertions4Junit4 {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testWithExpectedRuntimeException(){};
+    public void testWithExpectedRuntimeException(){}
 
     private void nestedAssertion() {
         fail("Failing");

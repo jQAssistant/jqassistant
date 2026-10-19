@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Scans pom.xml files.
- * 
+ *
  * @author ronald.kunzmann@buschmais.com
  */
 public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<MavenPomXmlDescriptor> {
@@ -35,15 +35,15 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        boolean hasXMLExtension = path.toLowerCase().endsWith(".xml");
-        boolean isPomXML = path.toLowerCase().endsWith("pom.xml");
-        boolean hasPomExtension = path.toLowerCase().endsWith(".pom");
+    public boolean accepts(FileResource item, String location, Scope scope) throws IOException {
+        boolean hasXMLExtension = location.toLowerCase().endsWith(".xml");
+        boolean isPomXML = location.toLowerCase().endsWith("pom.xml");
+        boolean hasPomExtension = location.toLowerCase().endsWith(".pom");
         boolean identifiedByExtension = isPomXML || hasPomExtension;
 
         boolean isMavenPOM;
         if (!identifiedByExtension && hasXMLExtension) {
-            isMavenPOM = XMLFileFilter.rootElementMatches(item, path, "project", "http://maven.apache.org/POM/4.0.0");
+            isMavenPOM = XMLFileFilter.rootElementMatches(item, location, "project", "http://maven.apache.org/POM/4.0.0");
         } else {
             isMavenPOM = identifiedByExtension;
         }
@@ -78,7 +78,7 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
 
     /**
      * Build the POM model from the given file resource (i.e. a pom.xml).
-     * 
+     *
      * @param item
      *            The file resource.
      * @param scanner

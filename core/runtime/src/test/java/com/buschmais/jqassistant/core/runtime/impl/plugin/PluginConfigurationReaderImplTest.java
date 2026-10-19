@@ -17,7 +17,7 @@ class PluginConfigurationReaderImplTest {
 
     @Test
     void twoPluginsWithTheSameIdCanBeLoaded() throws Exception {
-        List<URL> urls = Arrays.asList(new URL("file://1"), new URL("file://2"));
+        List<URL> urls = Arrays.asList(new URL("file://1/META-INF/jqassistant-plugin.xml"), new URL("file://2/META-INF/jqassistant-plugin.xml"));
         Enumeration<URL> enumerationOfUrls = Iterators.asEnumeration(urls.iterator());
 
         PluginConfigurationReaderImpl reader = mock(PluginConfigurationReaderImpl.class);
@@ -33,13 +33,13 @@ class PluginConfigurationReaderImplTest {
         doReturn(enumerationOfUrls).when(reader).getPluginClassLoaderResources();
         doCallRealMethod().when(reader).getPlugins();
 
-        assertThat(reader.getPlugins()).hasSize(1)
+        assertThat(reader.getPlugins().values()).hasSize(1)
             .containsAnyOf(plugin1, plugin2);
     }
 
     @Test
     void twoPluginsWithDifferentIdCanBeLoaded() throws Exception {
-        List<URL> urls = Arrays.asList(new URL("file://1"), new URL("file://2"));
+        List<URL> urls = Arrays.asList(new URL("file://1/META-INF/jqassistant-plugin.xml"), new URL("file://2/META-INF/jqassistant-plugin.xml"));
         Enumeration<URL> enumerationOfUrls = Iterators.asEnumeration(urls.iterator());
 
         PluginConfigurationReaderImpl reader = mock(PluginConfigurationReaderImpl.class);
@@ -55,7 +55,7 @@ class PluginConfigurationReaderImplTest {
         doReturn(enumerationOfUrls).when(reader).getPluginClassLoaderResources();
         doCallRealMethod().when(reader).getPlugins();
 
-        assertThat(reader.getPlugins()).hasSize(2)
+        assertThat(reader.getPlugins().values()).hasSize(2)
                   .containsAnyOf(plugin1, plugin2);
     }
 }

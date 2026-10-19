@@ -59,13 +59,13 @@ public class JSONFileScannerPlugin extends AbstractScannerPlugin<FileResource, J
     }
 
     @Override
-    public boolean accepts(FileResource file, String path, Scope scope) {
-        return filePatternMatcher.accepts(path);
+    public boolean accepts(FileResource file, String location, Scope scope) {
+        return filePatternMatcher.accepts(location);
 
     }
 
     @Override
-    public JSONFileDescriptor scan(final FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public JSONFileDescriptor scan(final FileResource item, String location, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
         FileDescriptor fileDescriptor = context.getCurrentDescriptor();
