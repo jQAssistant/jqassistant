@@ -3,7 +3,17 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-introduction-and-goals]]
 == 1. Introduction and Goals
 
+jQAssistant is a highly flexible and extensible open-source framework for software analysis and validation.
 
+It allows scanning related information from various sources, e.g. code structures, descriptors, version control systems, etc. into a https://neo4j.com[Neo4j] graph database.
+
+The gathered data can directly be used to execute https://neo4j.com/docs/cypher-manual/current/introduction/[Cypher] queries. Use cases include identification of dependencies in software systems, e.g., to identify impact, risks and efforts for intended technology migrations or refactorings.
+
+Furthermore, queries can be used as rules to continuously validate architecture and design constraints.
+Identified violations can be reported to other tools, e.g. to annotate pull requests (e.g. GitHub, GitLab) or manage technical debt in quality dashboards (e.g. SonarQube, Teamscale).
+Rules may also be used to reports in various formats about software structures or metrics, e.g. CSV files or diagrams.
+
+The flexibility and extensibility of jQAssistant is based on https://github.com/jqassistant-plugin[plugins], which provide scanners, rules and reports.
 
 === 1.1. Requirements Overview
 
