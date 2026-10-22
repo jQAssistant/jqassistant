@@ -649,15 +649,13 @@
     <concept id="java:TestClass">
         <requiresConcept refId="java:TestMethod"/>
         <description>
-            Classes declaring test methods are labeled with `Test`.
+            Abstract concept returning test classes, i. e. that are labeled with ˋTestˋ and that directly or indirectly declare test methods.
         </description>
         <cypher><![CDATA[
             MATCH
-              (artifact:Artifact)-[:PROVIDES]->(testClass:Java:Type)-[:DECLARES]->(:Java:Method:Test)
-            SET
-              testClass:Test
+              (artifact:Artifact)-[:PROVIDES]->(testClass:Java:Type:Test)-[:DECLARES*]->(m:Java:Method:Test)
             RETURN
-              artifact as Artifact, testClass as TestClass
+              artifact as Artifact, testClass as TestClass, COLLECT(m) AS TestMethods
             ORDER BY
               artifact.fqn, testClass.fqn
         ]]></cypher>

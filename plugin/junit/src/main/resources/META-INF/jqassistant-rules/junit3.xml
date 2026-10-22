@@ -3,6 +3,7 @@
                    xsi:schemaLocation="http://schema.jqassistant.org/rule/v1.10 http://schema.jqassistant.org/rule/jqassistant-rule-v1.10.xsd">
 
 <concept id="junit3:TestClass">
+        <!-- This concept does not provide java:TestClass as it does not fulfil its contract regarding the definition of test methods. -->
         <description>Labels all non-abstract classes extending from junit.framework.TestCase "Test" and "Junit3".</description>
         <cypher><![CDATA[
             MATCH
