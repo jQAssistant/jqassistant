@@ -28,6 +28,8 @@ include::include/configuration.adoc[]
 
 include::include/plugins.adoc[]
 
+include::include/metrics.adoc[]
+
 :leveloffset: +1
 
 include::include/known-issues.adoc[]

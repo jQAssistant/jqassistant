@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
 import com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 
@@ -25,14 +26,15 @@ public class PluginRepositoryProvider implements Disposable {
         }
     }
 
-    public PluginRepository getPluginRepository(MavenConfiguration configuration, ArtifactProvider artifactProvider) {
+    public PluginRepository getPluginRepository(MavenConfiguration configuration, ArtifactProvider artifactProvider, MeterRegistry meterRegistry) {
         if (pluginRepository == null) {
             PluginResolver pluginResolver = new PluginResolverImpl(artifactProvider);
-            PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(Thread.currentThread().getContextClassLoader(), configuration);
+            PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(Thread.currentThread()
+                .getContextClassLoader(), configuration);
 
             // do a lazy init of the plugin repo to speed-up if the plugin execution shall be skipped
             PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
-            this.pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+            this.pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistry);
             this.pluginRepository.initialize();
         }
         return pluginRepository;

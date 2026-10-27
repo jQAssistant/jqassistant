@@ -27,6 +27,7 @@ import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -107,8 +108,9 @@ public class AnalyzeMojo extends AbstractMojo {
                     Baseline baselineConfiguration = analyze.baseline();
                     BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, mavenTaskContext.getRuleDirectory());
                     BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
+                    MeterRegistry meterRegistry = meterRegistryProvider.getMeterRegistry(configuration);
                     Analyzer analyzer = new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store,
-                        analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), baselineManager, inMemoryReportPlugin);
+                        analyzerPluginRepository.getRuleInterpreterPlugins(emptyMap()), baselineManager, inMemoryReportPlugin, meterRegistry);
                     analyzer.execute(ruleSet, ruleSelection);
                 } catch (RuleException e) {
                     throw new MojoExecutionException("Analysis failed.", e);

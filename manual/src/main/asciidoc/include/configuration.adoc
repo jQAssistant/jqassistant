@@ -57,6 +57,50 @@ jqassistant:
         - group-id:
           artifact-id:
 
+  # The metrics configuration
+  metrics:
+
+    # The common tags to be used for all published metrics
+    #
+    # -Djqassistant.metrics.common-tags
+    common-tags:
+      # key: value
+
+    # The Prometheus configuration
+    prometheus:
+
+      # The Pushgateway configuration
+      pushgateway:
+
+        # The address of the Pushgateway, e.g. "localhost:9091"
+        #
+        # -Djqassistant.metrics.prometheus.pushgateway.address
+        address:
+
+        # The scheme to use for connecting to the Pushgateway: http|https
+        #
+        # -Djqassistant.metrics.prometheus.pushgateway.scheme
+        scheme: http
+
+        # The username for basic authentication
+        #
+        # -Djqassistant.metrics.prometheus.pushgateway.username
+        username:
+
+        # The password for basic authentication
+        #
+        # -Djqassistant.metrics.prometheus.pushgateway.password
+        password:
+
+        # The bearer token for token based authentication
+        #
+        # -Djqassistant.metrics.prometheus.pushgateway.bearer-token
+        bearer-token:
+
+        # The job name to publish
+        #
+        # -Djqassistant.metrics.prometheus.pushgateway.job-name
+        job-name: jQAssistant
 
   # The store configuration
   store:
