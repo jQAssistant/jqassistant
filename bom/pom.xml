@@ -145,6 +145,11 @@
                 <artifactId>yaml2</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqa-distribution-specification</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- End of jQA dependencies -->
             <!-- Begin of XO dependencies -->
             <dependency>
