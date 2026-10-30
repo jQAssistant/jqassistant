@@ -12,6 +12,10 @@ import com.buschmais.xo.api.XOTransaction;
 import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
+import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
+import com.buschmais.xo.neo4j.api.model.Neo4jRelationshipType;
+import com.buschmais.xo.neo4j.spi.metadata.NodeMetadata;
+import com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +37,7 @@ class AbstractGraphStoreTest {
     private StorePluginRepository storePluginRepository;
 
     @Mock
-    private XOManagerFactory xoManagerFactory;
+    private XOManagerFactory<NodeMetadata<Neo4jLabel>, Neo4jLabel, RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> xoManagerFactory;
 
     @Mock
     private XOManager xoManager;
@@ -98,7 +102,8 @@ class AbstractGraphStoreTest {
         }
 
         @Override
-        protected XOManagerFactory<?, ?, ?, ?> getXOManagerFactory(XOUnit xoUnit) {
+        protected XOManagerFactory<NodeMetadata<Neo4jLabel>, Neo4jLabel, RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> createXOManagerFactory(
+            XOUnit xoUnit) {
             return xoManagerFactory;
         }
 

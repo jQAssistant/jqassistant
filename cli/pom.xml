@@ -66,11 +66,6 @@
                 <classifier>distribution</classifier>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant</groupId>
-                <artifactId>jqa-distribution-specification</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

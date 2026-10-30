@@ -10,6 +10,11 @@ import com.buschmais.xo.api.Example;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import com.buschmais.xo.api.XOManager;
+import com.buschmais.xo.api.XOManagerFactory;
+import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
+import com.buschmais.xo.neo4j.api.model.Neo4jRelationshipType;
+import com.buschmais.xo.neo4j.spi.metadata.NodeMetadata;
+import com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata;
 
 import com.github.benmanes.caffeine.cache.Cache;
 
@@ -20,7 +25,7 @@ public interface Store extends Transactional {
 
     /**
      * Start the store.
-     *
+     * <p>
      * This method must be called before any other method of this interface can be
      * used.
      */
@@ -28,7 +33,7 @@ public interface Store extends Transactional {
 
     /**
      * Stop the store.
-     *
+     * <p>
      * After calling this method no other method defined within this interface can
      * be called.
      */
@@ -42,20 +47,27 @@ public interface Store extends Transactional {
     XOManager getXOManager();
 
     /**
+     * Return the initialized {@link XOManagerFactory}.
+     *
+     * @return The {@link XOManagerFactory}.
+     */
+    XOManagerFactory<NodeMetadata<Neo4jLabel>, Neo4jLabel, RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> getXOManagerFactory();
+
+    /**
      * Clear the content of the store, i.e. delete all nodes and relationships.
      */
     void reset();
 
     /**
      * Begin a transaction.
-     *
+     * <p>
      * This method must be called before any write operation is performed.
      */
     void beginTransaction();
 
     /**
      * Commit a transaction.
-     *
+     * <p>
      * This method must be called to permanently store the changes of executed write
      * operations.
      */
@@ -75,7 +87,7 @@ public interface Store extends Transactional {
 
     /**
      * Flush all pending data.
-     *
+     * <p>
      * This commits the current transaction and creates a new one.
      */
     void flush();
@@ -84,7 +96,7 @@ public interface Store extends Transactional {
      * Creates a {@link Descriptor} of the given type.
      *
      * @param type
-     *            The type.
+     *     The type.
      * @return The {@link Descriptor}.
      */
     <T extends Descriptor> T create(Class<T> type);
@@ -93,9 +105,9 @@ public interface Store extends Transactional {
      * Creates a {@link Descriptor} of the given type.
      *
      * @param type
-     *            The type.
+     *     The type.
      * @param example
-     *            The example.
+     *     The example.
      * @return The {@link Descriptor}.
      */
     <T extends Descriptor> T create(Class<T> type, Example<T> example);
@@ -104,11 +116,11 @@ public interface Store extends Transactional {
      * Creates a relation between to {@link Descriptor}s.
      *
      * @param source
-     *            The source descriptor.
+     *     The source descriptor.
      * @param relationType
-     *            The relationt type to create.
+     *     The relationt type to create.
      * @param target
-     *            The target descriptor.
+     *     The target descriptor.
      * @return The {@link Descriptor}.
      */
     <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target);
@@ -117,13 +129,13 @@ public interface Store extends Transactional {
      * Creates a relation between to {@link Descriptor}s.
      *
      * @param source
-     *            The source descriptor.
+     *     The source descriptor.
      * @param relationType
-     *            The relationt type to create.
+     *     The relationt type to create.
      * @param target
-     *            The target descriptor.
+     *     The target descriptor.
      * @param example
-     *            The example.
+     *     The example.
      * @return The {@link Descriptor}.
      */
     <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target, Example<R> example);
@@ -132,11 +144,11 @@ public interface Store extends Transactional {
      * Creates a {@link Descriptor} of the given type with a full qualified name
      *
      * @param type
-     *            The type.
+     *     The type.
      * @param fullQualifiedName
-     *            The full qualified name of the descriptor.
+     *     The full qualified name of the descriptor.
      * @return The
-     *         {@link com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor}.
+     * {@link com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor}.
      */
     <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName);
 
@@ -144,9 +156,9 @@ public interface Store extends Transactional {
      * Delete a descriptor.
      *
      * @param descriptor
-     *            The descriptor.
+     *     The descriptor.
      * @param <T>
-     *            The descriptor type.
+     *     The descriptor type.
      */
     <T extends Descriptor> void delete(T descriptor);
 
@@ -154,15 +166,15 @@ public interface Store extends Transactional {
      * Add a descriptor type to an existing descriptor.
      *
      * @param descriptor
-     *            The descriptor.
+     *     The descriptor.
      * @param newDescriptorType
-     *            The new descriptor type.
+     *     The new descriptor type.
      * @param as
-     *            The expected return type.
+     *     The expected return type.
      * @param <T>
-     *            The descriptor type.
+     *     The descriptor type.
      * @param <N>
-     *            The expected return type.
+     *     The expected return type.
      * @return The migrated descriptor.
      */
     <T extends Descriptor, N extends Descriptor> N addDescriptorType(T descriptor, Class<?> newDescriptorType, Class<N> as);
@@ -171,13 +183,13 @@ public interface Store extends Transactional {
      * Add a descriptor type to an existing descriptor.
      *
      * @param descriptor
-     *            The descriptor.
+     *     The descriptor.
      * @param newDescriptorType
-     *            The new descriptor type.
+     *     The new descriptor type.
      * @param <T>
-     *            The descriptor type.
+     *     The descriptor type.
      * @param <N>
-     *            The expected return type.
+     *     The expected return type.
      * @return The migrated descriptor.
      */
     <T extends Descriptor, N extends Descriptor> N addDescriptorType(T descriptor, Class<N> newDescriptorType);
@@ -186,15 +198,15 @@ public interface Store extends Transactional {
      * Remove a descriptor type from an existing descriptor.
      *
      * @param descriptor
-     *            The descriptor.
+     *     The descriptor.
      * @param obsoleteDescriptorType
-     *            The new descriptor type.
+     *     The new descriptor type.
      * @param as
-     *            The expected return type.
+     *     The expected return type.
      * @param <T>
-     *            The descriptor type.
+     *     The descriptor type.
      * @param <N>
-     *            The expected return type.
+     *     The expected return type.
      * @return The migrated descriptor.
      */
     <T extends Descriptor, N extends Descriptor> N removeDescriptorType(T descriptor, Class<?> obsoleteDescriptorType, Class<N> as);
@@ -203,9 +215,9 @@ public interface Store extends Transactional {
      * Finds a {@link Descriptor} by an indexed property..
      *
      * @param type
-     *            The type.
+     *     The type.
      * @param value
-     *            The full qualified name.
+     *     The full qualified name.
      * @return The {@link Descriptor}.
      */
     @Deprecated
@@ -214,37 +226,37 @@ public interface Store extends Transactional {
 
     /**
      * Executes a CYPHER query.
-     *
+     * <p>
      * This method executes a CYPHER query.
      *
      * @param query
-     *            The CYPHER query.
+     *     The CYPHER query.
      * @param parameters
-     *            The {@link java.util.Map} of parameters for the given query.
+     *     The {@link java.util.Map} of parameters for the given query.
      * @return The {@link Result}.
      */
     Result<CompositeRowObject> executeQuery(String query, Map<String, Object> parameters);
 
     /**
      * Executes a CYPHER query.
-     *
+     * <p>
      * This method executes a CYPHER query.
      *
      * @param query
-     *            The CYPHER query.
+     *     The CYPHER query.
      * @return The {@link Result}.
      */
     Result<CompositeRowObject> executeQuery(String query);
 
     /**
      * Executes a typed CYPHER query.
-     *
+     * <p>
      * This method executes a CYPHER query.
      *
      * @param query
-     *            The typed CYPHER query.
+     *     The typed CYPHER query.
      * @param parameters
-     *            The {@link java.util.Map} of parameters for the given query.
+     *     The {@link java.util.Map} of parameters for the given query.
      * @return The {@link Result}.
      */
     <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters);
@@ -253,11 +265,11 @@ public interface Store extends Transactional {
      * Get or create a {@link Cache} for the given key.
      *
      * @param cacheKey
-     *            The cache key.
+     *     The cache key.
      * @param <K>
-     *            The key type.
+     *     The key type.
      * @param <V>
-     *            The value type.
+     *     The value type.
      * @return The {@link Cache}.
      */
     <K, V extends Descriptor> Cache<K, V> getCache(String cacheKey);
@@ -266,7 +278,7 @@ public interface Store extends Transactional {
      * Invalidate the {@link Cache} for the given key.
      *
      * @param cacheKey
-     *            The cache key.
+     *     The cache key.
      */
     void invalidateCache(String cacheKey);
 }
