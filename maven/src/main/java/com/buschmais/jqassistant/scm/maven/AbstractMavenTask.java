@@ -31,7 +31,7 @@ public abstract class AbstractMavenTask implements MavenTask {
         }
     }
 
-    public void execute(MavenTaskContext mavenTaskContext) throws MojoExecutionException, MojoFailureException {
+    private void execute(MavenTaskContext mavenTaskContext) throws MojoExecutionException, MojoFailureException {
         Set<MavenProject> executedModules = getExecutedModules(mavenTaskContext);
         if (executedModules.isEmpty()) {
             prepareProject(mavenTaskContext);

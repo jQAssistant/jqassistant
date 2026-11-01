@@ -53,17 +53,19 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
     }
 
     @Override
-    public void destroy() throws IOException {
-        try {
-            if (pushGateway != null) {
-                metrics.prometheus()
-                    .pushgateway()
-                    .address()
-                    .ifPresent(address -> log.info("Pushing collected metrics to Prometheus Pushgateway '{}'.", address));
+    public void destroy() {
+        if (pushGateway != null) {
+            metrics.prometheus()
+                .pushgateway()
+                .address()
+                .ifPresent(address -> log.info("Pushing collected metrics to Prometheus Pushgateway '{}'.", address));
+            try {
                 pushGateway.push();
+            } catch (IOException e) {
+                log.warn("Cannot push metrics.", e);
+            } finally {
+                meterRegistry.close();
             }
-        } finally {
-            meterRegistry.close();
         }
     }
 
@@ -77,11 +79,16 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
             .scheme(Scheme.fromString(pushgateway.scheme()))
             .job(pushgateway.jobName())
             .registry(meterRegistry.getPrometheusRegistry());
+        if (pushgateway.bearerToken()
+            .isPresent() && pushgateway.username()
+            .isPresent()) {
+            throw new IllegalStateException("Either bearer token or username/password must be provided for Prometheus Pushgateway authentication.");
+        }
         pushgateway.bearerToken()
             .ifPresent(builder::bearerToken);
         pushgateway.username()
             .ifPresent(username -> builder.basicAuth(username, pushgateway.password()
-                .orElse(null)));
+                .orElseThrow(() -> new IllegalStateException("Password must be provided for Prometheus Pushgateway authentication."))));
         this.pushGateway = builder.build();
         return meterRegistry;
     }

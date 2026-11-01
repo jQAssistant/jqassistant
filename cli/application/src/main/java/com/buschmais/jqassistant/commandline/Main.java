@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.commandline;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -223,12 +222,8 @@ public class Main {
             try {
                 executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
             } finally {
+                meterRegistryFactory.destroy();
                 currentThread().setContextClassLoader(contextClassLoader);
-                try {
-                    meterRegistryFactory.destroy();
-                } catch (IOException e) {
-                    log.warn("Could not destroy Meter Registry Factory", e);
-                }
             }
         }
     }

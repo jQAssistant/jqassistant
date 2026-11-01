@@ -26,7 +26,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class PluginRepositoryImpl implements PluginRepository {
 
-    public static final String METER_JQASSISTANT_PLUGIN = "jqassistant_plugin";
+    public static final String METER_JQASSISTANT_PLUGIN = "jqassistant.plugin";
     public static final String TAG_ID = "id";
     public static final String TAG_VERSION = "version";
 

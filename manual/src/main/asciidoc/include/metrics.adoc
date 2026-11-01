@@ -33,15 +33,15 @@ NOTE: The values can be provided as environment variables (e.g. `JQASSISTANT_MET
 
 The core metrics provide information about the execution of jQAssistant:
 
-jqassistant_distribution::
+jqassistant.distribution::
   * Represents the used jQAssistant distribution, the value is always `1`
   * Type: Gauge
   * Tags:
   ** `version`: The version of the jQAssistant distribution
 
 
-jqassistant_plugin::
-  * Represents a jQAssistant plugin which has be used during execution
+jqassistant.plugin::
+  * Represents a jQAssistant plugin which has been used during execution
   * Type: Gauge
   * Tags:
   ** `id`: The id of the jQAssistant plugin
@@ -51,23 +51,23 @@ jqassistant_plugin::
 
 These analyze metrics provide information about rules executed during analyze:
 
-analyze_rule_execution_time::
+jqassistant.analyze.rule.execution.time.seconds.{count,sum,max}::
 ** The execution time per rule
 ** Type: Timer
 
-analyze_rule_result_status::
+jqassistant.analyze.rule.result.status::
 ** The status per rule, i.e. FAILURE (0), WARNING (1), SUCCESS (2) or SKIPPED (3)
 ** Type: Gauge
 
-analyze_rule_result_row_count::
+jqassistant.analyze.rule.result.row.count::
 ** The count of returned rows per rule
 ** Type: Gauge
 
-analyze_rule_result_hidden_row_count::
+jqassistant.analyze.rule.result.hidden.row.count::
 ** The count of returned hidden rows (baseline or suppressions) per rule
 ** Type: Gauge
 
 All analyze metrics use the same set of tags:
 
-* `type`: The rule type, either `concept` of `constraint`
-* `rule_id`: The rule id.
+* `type`: The rule type, either `Concept` or `Constraint`
+* `rule.id`: The rule id.

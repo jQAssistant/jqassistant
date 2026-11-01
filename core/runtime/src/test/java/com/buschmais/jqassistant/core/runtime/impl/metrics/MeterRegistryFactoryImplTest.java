@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.runtime.impl.metrics;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.buschmais.jqassistant.core.runtime.api.bootstrap.VersionProvider.getVersionProvider;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -94,6 +94,38 @@ class MeterRegistryFactoryImplTest {
             .value()).isEqualTo(1);
     }
 
+    @Test
+    void failWithTokenAndBasicAuth() {
+        doReturn("http").when(pushgateway)
+            .scheme();
+        doReturn(Optional.of("localhost:9091")).when(pushgateway)
+            .address();
+        doReturn("jQAssistant").when(pushgateway)
+            .jobName();
+        doReturn(Optional.of("foo")).when(pushgateway)
+            .username();
+        doReturn(Optional.of("test-token")).when(pushgateway)
+            .bearerToken();
+        MeterRegistryFactoryImpl meterRegistryFactory = new MeterRegistryFactoryImpl(metrics);
+
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(meterRegistryFactory::initialize);
+    }
+
+    @Test
+    void failBasicAuthWithoutPassword() {
+        doReturn("http").when(pushgateway)
+            .scheme();
+        doReturn(Optional.of("localhost:9091")).when(pushgateway)
+            .address();
+        doReturn("jQAssistant").when(pushgateway)
+            .jobName();
+        doReturn(Optional.of("foo")).when(pushgateway)
+            .username();
+        MeterRegistryFactoryImpl meterRegistryFactory = new MeterRegistryFactoryImpl(metrics);
+
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(meterRegistryFactory::initialize);
+    }
+
     @ExtendWith(MockitoExtension.class)
     abstract class AbstractPushgatewayTest {
 
@@ -114,7 +146,7 @@ class MeterRegistryFactoryImplTest {
         }
 
         @Test
-        final void push() throws IOException {
+        final void push() {
             // given
             configure();
             MeterRegistryFactoryImpl meterRegistryFactory = new MeterRegistryFactoryImpl(metrics);

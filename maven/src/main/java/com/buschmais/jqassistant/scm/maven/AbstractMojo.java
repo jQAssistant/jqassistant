@@ -105,23 +105,22 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             throw new MojoExecutionException("jQAssistant requires Maven 3.6.3 or above.");
         }
 
-        MavenConfigurationFactory configurationFactory = new MavenConfigurationFactory(configurationFileLoaderProvider);
-        MavenConfiguration mavenConfiguration = configurationFactory.getConfiguration(session, currentProject, configurationLocations, yaml, properties,
-            isConnectorRequired());
-
-        // Synchronize on this class as multiple instances of the plugin may exist in parallel builds
-        synchronized (AbstractMojo.class) {
-            AetherArtifactProvider artifactProvider = new AetherArtifactProvider(repositorySystem, repositorySystemSession, repositories);
-            PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(mavenConfiguration, artifactProvider,
-                meterRegistryProvider.getMeterRegistry(mavenConfiguration));
-            MavenTaskContext mavenTaskContext = new MavenTaskContext(session, currentProject, execution, mavenConfiguration, pluginRepository,
-                artifactProvider);
-            if (skip) {
-                // This is a shortcut to avoid loading the configuration if skip is given as part of the POM or system property.
-                getLog().info("Skipping execution (required by plugin configuration");
-                return;
+        if (skip) {
+            // This is a shortcut to avoid loading the configuration if skip is given as part of the POM or system property.
+            getLog().info("Skipping execution (required by plugin configuration");
+        } else {
+            // Synchronize on this class as multiple instances of the plugin may exist in parallel builds
+            synchronized (AbstractMojo.class) {
+                MavenConfigurationFactory configurationFactory = new MavenConfigurationFactory(configurationFileLoaderProvider);
+                MavenConfiguration mavenConfiguration = configurationFactory.getConfiguration(session, currentProject, configurationLocations, yaml, properties,
+                    isConnectorRequired());
+                AetherArtifactProvider artifactProvider = new AetherArtifactProvider(repositorySystem, repositorySystemSession, repositories);
+                PluginRepository pluginRepository = pluginRepositoryProvider.getPluginRepository(mavenConfiguration, artifactProvider,
+                    meterRegistryProvider.getMeterRegistry(mavenConfiguration));
+                MavenTaskContext mavenTaskContext = new MavenTaskContext(session, currentProject, execution, mavenConfiguration, pluginRepository,
+                    artifactProvider);
+                getMavenTask().execute(mavenConfiguration, mavenTaskContext);
             }
-            getMavenTask().execute(mavenConfiguration, mavenTaskContext);
         }
     }
 

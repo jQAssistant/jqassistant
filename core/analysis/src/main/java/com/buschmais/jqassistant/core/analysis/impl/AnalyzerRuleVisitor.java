@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -29,6 +32,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.EXECUTE_APPLIED_CONCEPTS;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
+import static java.util.Arrays.stream;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.joining;
 
@@ -38,12 +42,12 @@ import static java.util.stream.Collectors.joining;
 @Slf4j
 public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
 
-    public static final String METER_ANALYZE_RULE_EXECUTION_TIME = "analyze_rule_execution_time";
-    public static final String METER_ANALYZE_RULE_RESULT_STATUS = "analyze_rule_result_status";
-    public static final String METER_ANALYZE_RULE_RESULT_ROW_COUNT = "analyze_rule_result_row_count";
-    public static final String METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT = "analyze_rule_result_hidden_row_count";
+    public static final String METER_JQASSISTANT_ANALYZE_RULE_EXECUTION_TIME = "jqassistant.analyze.rule.execution.time";
+    public static final String METER_JQASSISTANT_ANALYZE_RULE_RESULT_STATUS = "jqassistant.analyze.rule.result.status";
+    public static final String METER_JQASSISTANT_ANALYZE_RULE_RESULT_ROW_COUNT = "jqassistant.analyze.rule.result.row.count";
+    public static final String METER_JQASSISTANT_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT = "jqassistant.analyze.rule.result.hidden.row.count";
     public static final String TAG_RULE_TYPE = "type";
-    public static final String TAG_RULE_ID = "rule_id";
+    public static final String TAG_RULE_ID = "rule.id";
 
     private final Analyze configuration;
     private final AnalyzerContext analyzerContext;
@@ -141,7 +145,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     public void skipConcept(Concept concept, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults)
         throws RuleException {
         store.requireTransaction(() -> reportPlugin.beginConcept(concept, requiredConceptResults, emptyMap()));
-        store.requireTransaction(() -> reportPlugin.setResult(skipExecutableRule(concept, effectiveSeverity)));
+        store.requireTransaction(() -> reportPlugin.setResult(executeWithMetrics(concept, () -> skipExecutableRule(concept, effectiveSeverity))));
         store.requireTransaction(reportPlugin::endConcept);
     }
 
@@ -165,7 +169,7 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     public void skipConstraint(Constraint constraint, Severity effectiveSeverity, Map<Map.Entry<Concept, Boolean>, Result.Status> requiredConceptResults)
         throws RuleException {
         store.requireTransaction(() -> reportPlugin.beginConstraint(constraint, requiredConceptResults));
-        store.requireTransaction(() -> reportPlugin.setResult(skipExecutableRule(constraint, effectiveSeverity)));
+        store.requireTransaction(() -> reportPlugin.setResult(executeWithMetrics(constraint, () -> skipExecutableRule(constraint, effectiveSeverity))));
         store.requireTransaction(reportPlugin::endConstraint);
     }
 
@@ -251,17 +255,22 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
         MeterRegistry meterRegistry = analyzerContext.getMeterRegistry();
         List<Tag> tags = List.of(Tag.of(TAG_RULE_TYPE, executableRule.getClass()
             .getSimpleName()), Tag.of(TAG_RULE_ID, executableRule.getId()));
-        Timer timer = registerTimer(METER_ANALYZE_RULE_EXECUTION_TIME, tags, () -> "The execution times of executed rules.", meterRegistry);
+        Timer timer = registerTimer(METER_JQASSISTANT_ANALYZE_RULE_EXECUTION_TIME, tags, () -> "The execution times of executed rules.", meterRegistry);
         try {
             Result<T> result = timer.recordCallable(callable);
-            registerGauge(METER_ANALYZE_RULE_RESULT_STATUS, tags, () -> result.getStatus()
-                .getLevel(), () -> "The status of executed rules: " + Arrays.stream(Result.Status.values())
-                .map(status -> status.getLevel() + "=" + status.name())
-                .collect(joining(", ")), meterRegistry);
-            registerGauge(METER_ANALYZE_RULE_RESULT_ROW_COUNT, tags, () -> result.getVerificationResult()
-                .getRowCount(), () -> "The count of rows returned by executed rules.", meterRegistry);
-            registerGauge(METER_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT, tags, () -> result.getVerificationResult()
-                .getHiddenRowCount(), () -> "The count of hidden rows returned by executed rules.", meterRegistry);
+            Integer statusLevel = result.getStatus()
+                .getLevel();
+            int rowCount = result.getVerificationResult()
+                .getRowCount();
+            int hiddenRowCount = result.getVerificationResult()
+                .getHiddenRowCount();
+            registerGauge(METER_JQASSISTANT_ANALYZE_RULE_RESULT_STATUS, tags, () -> statusLevel,
+                () -> "The status of executed rules: " + stream(Result.Status.values()).map(status -> status.getLevel() + "=" + status.name())
+                    .collect(joining(", ")), meterRegistry);
+            registerGauge(METER_JQASSISTANT_ANALYZE_RULE_RESULT_ROW_COUNT, tags, () -> rowCount, () -> "The count of rows returned by executed rules.",
+                meterRegistry);
+            registerGauge(METER_JQASSISTANT_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT, tags, () -> hiddenRowCount,
+                () -> "The count of hidden rows returned by executed rules.", meterRegistry);
             return result;
         } catch (Exception e) {
             if (e instanceof RuleException) {
