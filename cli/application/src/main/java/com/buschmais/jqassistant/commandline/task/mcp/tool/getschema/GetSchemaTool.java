@@ -3,7 +3,10 @@ package com.buschmais.jqassistant.commandline.task.mcp.tool.getschema;
 import java.util.*;
 
 import com.buschmais.jqassistant.commandline.task.mcp.tool.Tool;
-import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.*;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.NodeMetadata;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.PropertyMetadata;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.RelationshipMetadata;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.Schema;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.metadata.MetadataProvider;
 import com.buschmais.xo.api.metadata.method.AbstractEntityRelationMethodMetadata;
@@ -17,13 +20,13 @@ import com.buschmais.xo.api.metadata.type.RelationTypeMetadata;
 import com.buschmais.xo.api.metadata.type.TypeMetadata;
 import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
 import com.buschmais.xo.neo4j.api.model.Neo4jRelationshipType;
-import com.buschmais.xo.neo4j.spi.metadata.NodeMetadata;
-import com.buschmais.xo.neo4j.spi.metadata.PropertyMetadata;
-import com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
+
+import static com.buschmais.xo.api.metadata.type.RelationTypeMetadata.Direction.FROM;
+import static java.util.Optional.empty;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,8 +55,8 @@ public class GetSchemaTool implements Tool {
         return "Get the schema of the Neo4j database created by jQAssistant. It consists of nodes with their properties and relationships that can be used for creating Cypher queries.";
     }
 
-    public Schema execute() {
-        MetadataProvider<NodeMetadata<Neo4jLabel>, Neo4jLabel, RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> metadataProvider = store.getXOManagerFactory()
+    public Schema execute(Map<String, Object> arguments) {
+        MetadataProvider<com.buschmais.xo.neo4j.spi.metadata.NodeMetadata<Neo4jLabel>, Neo4jLabel, com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> metadataProvider = store.getXOManagerFactory()
             .getMetadataProvider();
         Map<Class<?>, TypeMetadata> registeredMetadata = metadataProvider.getRegisteredMetadata();
 
@@ -66,19 +69,22 @@ public class GetSchemaTool implements Tool {
         for (Map.Entry<Class<?>, Set<String>> nodeEntry : labels.entrySet()) {
             TypeMetadata typeMetadata = registeredMetadata.get(nodeEntry.getKey());
             if (typeMetadata instanceof EntityTypeMetadata && !((EntityTypeMetadata<?>) typeMetadata).isAbstract()) {
-                Node.NodeBuilder<?, ?> nodeBuilder = Node.builder()
+                NodeMetadata.NodeMetadataBuilder<?, ?> nodeBuilder = NodeMetadata.builder()
                     .labels(nodeEntry.getValue());
                 for (MethodMetadata<?, ?> property : properties.get(nodeEntry.getKey())) {
-                    if (property instanceof PrimitivePropertyMethodMetadata<?>) {
-                        primitiveProperty((PrimitivePropertyMethodMetadata<?>) property, nodeBuilder);
-                    } else if (property instanceof AbstractEntityRelationMethodMetadata<?>) {
-                        entityRelationProperty((AbstractEntityRelationMethodMetadata<?>) property, labels, nodeBuilder);
-                    } else if (property instanceof AbstractRelationPropertyMethodMetadata<?>) {
-                        relationTypeProperty((AbstractRelationPropertyMethodMetadata<?>) property, labels, nodeBuilder);
+                    if (property instanceof PrimitivePropertyMethodMetadata<?> primitivePropertyMethodMetadata) {
+                        primitiveProperty(primitivePropertyMethodMetadata).ifPresent(nodeBuilder::property);
+                    } else if (property instanceof AbstractEntityRelationMethodMetadata<?> abstractEntityRelationMethodMetadata) {
+                        if (FROM.equals(abstractEntityRelationMethodMetadata.getDirection())) {
+                            nodeBuilder.relationshipMetadata(entityRelationProperty(abstractEntityRelationMethodMetadata, labels));
+                        }
+                    } else if (property instanceof AbstractRelationPropertyMethodMetadata<?> abstractRelationPropertyMethodMetadata) {
+                        if (FROM.equals(abstractRelationPropertyMethodMetadata.getDirection())) {
+                            nodeBuilder.relationshipMetadata(relationTypeProperty(abstractRelationPropertyMethodMetadata, labels));
+                        }
                     }
-
                 }
-                schemaBuilder.node(nodeBuilder.build());
+                schemaBuilder.nodeMetadata(nodeBuilder.build());
             }
         }
         Schema schema = schemaBuilder.build();
@@ -90,7 +96,7 @@ public class GetSchemaTool implements Tool {
     }
 
     private static void aggregateTypeHierarchies(Map<Class<?>, TypeMetadata> registeredMetadata,
-        MetadataProvider<NodeMetadata<Neo4jLabel>, Neo4jLabel, RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> metadataProvider,
+        MetadataProvider<com.buschmais.xo.neo4j.spi.metadata.NodeMetadata<Neo4jLabel>, Neo4jLabel, com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> metadataProvider,
         Map<Class<?>, Set<MethodMetadata<?, ?>>> properties, Map<Class<?>, Set<String>> labels) {
         for (Map.Entry<Class<?>, TypeMetadata> typeMetadataEntry : registeredMetadata.entrySet()) {
             TypeMetadata typeMetadata = typeMetadataEntry.getValue();
@@ -103,8 +109,9 @@ public class GetSchemaTool implements Tool {
                     properties.computeIfAbsent(entityInterface, k -> new HashSet<>())
                         .addAll(currentTypeMetadata.getProperties());
                     if (currentTypeMetadata instanceof EntityTypeMetadata) {
-                        EntityTypeMetadata<NodeMetadata<Neo4jLabel>> entityMetadata = metadataProvider.getEntityMetadata(currentTypeMetadata.getAnnotatedType()
-                            .getAnnotatedElement());
+                        EntityTypeMetadata<com.buschmais.xo.neo4j.spi.metadata.NodeMetadata<Neo4jLabel>> entityMetadata = metadataProvider.getEntityMetadata(
+                            currentTypeMetadata.getAnnotatedType()
+                                .getAnnotatedElement());
                         Neo4jLabel discriminator = entityMetadata.getDatastoreMetadata()
                             .getDiscriminator();
                         if (discriminator != null) {
@@ -118,50 +125,44 @@ public class GetSchemaTool implements Tool {
         }
     }
 
-    private static void entityRelationProperty(AbstractEntityRelationMethodMetadata<?> abstractEntityRelationMethodMetadata, Map<Class<?>, Set<String>> labels,
-        Node.NodeBuilder<?, ?> nodeBuilder) {
-        if (RelationTypeMetadata.Direction.FROM.equals(abstractEntityRelationMethodMetadata.getDirection())) {
-            RelationTypeMetadata<?> relationTypeMetadata = abstractEntityRelationMethodMetadata.getRelationshipMetadata();
-            RelationshipMetadata<?> relationshipMetadata = (RelationshipMetadata<?>) relationTypeMetadata.getDatastoreMetadata();
-            Neo4jRelationshipType neo4jRelationshipType = relationshipMetadata.getDiscriminator();
-            nodeBuilder.relationship(Relationship.builder()
-                .type(neo4jRelationshipType.getName())
-                .targetLabels(labels.get(abstractEntityRelationMethodMetadata.getElementType()))
-                .build());
-        }
+    private static RelationshipMetadata entityRelationProperty(AbstractEntityRelationMethodMetadata<?> abstractEntityRelationMethodMetadata,
+        Map<Class<?>, Set<String>> labels) {
+        RelationTypeMetadata<?> relationTypeMetadata = abstractEntityRelationMethodMetadata.getRelationshipMetadata();
+        com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata<?> relationshipMetadata = (com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata<?>) relationTypeMetadata.getDatastoreMetadata();
+        Neo4jRelationshipType neo4jRelationshipType = relationshipMetadata.getDiscriminator();
+        return RelationshipMetadata.builder()
+            .type(neo4jRelationshipType.getName())
+            .targetLabels(labels.get(abstractEntityRelationMethodMetadata.getElementType()))
+            .build();
     }
 
-    private static void relationTypeProperty(AbstractRelationPropertyMethodMetadata<?> abstractRelationPropertyMethodMetadata,
-        Map<Class<?>, Set<String>> labels, Node.NodeBuilder<?, ?> nodeBuilder) {
-        if (RelationTypeMetadata.Direction.FROM.equals(abstractRelationPropertyMethodMetadata.getDirection())) {
-            RelationTypeMetadata<?> relationTypeMetadata = abstractRelationPropertyMethodMetadata.getRelationshipMetadata();
-            RelationshipMetadata<?> relationshipMetadata = (RelationshipMetadata<?>) relationTypeMetadata.getDatastoreMetadata();
-            Neo4jRelationshipType neo4jRelationshipType = relationshipMetadata.getDiscriminator();
-            Relationship.RelationshipBuilder<?, ?> relationshipBuilder = Relationship.builder()
-                .type(neo4jRelationshipType.getName())
-                .targetLabels(labels.get(relationTypeMetadata.getToType()));
-            for (MethodMetadata<?, ?> methodMetadata : relationTypeMetadata.getProperties()) {
-                if (methodMetadata instanceof PrimitivePropertyMethodMetadata<?>) {
-                    primitiveProperty((PrimitivePropertyMethodMetadata<?>) methodMetadata, relationshipBuilder);
-                }
+    private static RelationshipMetadata relationTypeProperty(AbstractRelationPropertyMethodMetadata<?> abstractRelationPropertyMethodMetadata,
+        Map<Class<?>, Set<String>> labels) {
+        RelationTypeMetadata<?> relationTypeMetadata = abstractRelationPropertyMethodMetadata.getRelationshipMetadata();
+        com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata<?> relationshipMetadata = (com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata<?>) relationTypeMetadata.getDatastoreMetadata();
+        Neo4jRelationshipType neo4jRelationshipType = relationshipMetadata.getDiscriminator();
+        RelationshipMetadata.RelationshipMetadataBuilder<?, ?> relationshipBuilder = RelationshipMetadata.builder()
+            .type(neo4jRelationshipType.getName())
+            .targetLabels(labels.get(relationTypeMetadata.getToType()));
+        for (MethodMetadata<?, ?> methodMetadata : relationTypeMetadata.getProperties()) {
+            if (methodMetadata instanceof PrimitivePropertyMethodMetadata<?>) {
+                primitiveProperty((PrimitivePropertyMethodMetadata<?>) methodMetadata).ifPresent(relationshipBuilder::property);
             }
-            nodeBuilder.relationship(relationshipBuilder.build());
         }
+        return relationshipBuilder.build();
     }
 
-    private static void primitiveProperty(PrimitivePropertyMethodMetadata<?> primitivePropertyMethodMetadata,
-        AbstractPropertyContainer.AbstractPropertyContainerBuilder<?, ?> builder) {
+    private static Optional<PropertyMetadata> primitiveProperty(PrimitivePropertyMethodMetadata<?> primitivePropertyMethodMetadata) {
         AnnotatedMethod annotatedMethod = primitivePropertyMethodMetadata.getAnnotatedMethod();
         if (annotatedMethod instanceof GetPropertyMethod) {
             Class<?> returnType = annotatedMethod.getAnnotatedElement()
                 .getReturnType();
-            Property.Type.of(returnType)
-                .ifPresent(type -> {
-                    builder.property(Property.builder()
-                        .name(((PropertyMetadata) primitivePropertyMethodMetadata.getDatastoreMetadata()).getName())
-                        .type(type)
-                        .build());
-                });
+            return PropertyMetadata.Type.of(returnType)
+                .map(type -> PropertyMetadata.builder()
+                    .name(((com.buschmais.xo.neo4j.spi.metadata.PropertyMetadata) primitivePropertyMethodMetadata.getDatastoreMetadata()).getName())
+                    .type(type)
+                    .build());
         }
+        return empty();
     }
 }

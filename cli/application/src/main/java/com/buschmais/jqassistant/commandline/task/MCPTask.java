@@ -1,11 +1,15 @@
 package com.buschmais.jqassistant.commandline.task;
 
+import java.io.File;
+
 import com.buschmais.jqassistant.commandline.CliExecutionException;
 import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.task.mcp.tool.Tool;
 import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.GetSchemaTool;
 import com.buschmais.jqassistant.commandline.task.mcp.tool.rules.GetConceptsTool;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.store.ExecuteCypherTool;
 import com.buschmais.jqassistant.core.runtime.api.bootstrap.VersionProvider;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
@@ -20,48 +24,45 @@ public class MCPTask extends AbstractRuleTask {
 
     @Override
     public void run(CliConfiguration configuration, Options options) throws CliExecutionException {
-        withStore(configuration, store -> {
+        Store store = storeFactory.getStore(configuration.store(), () -> new File(projectDirectory, DEFAULT_STORE_DIRECTORY));
+        store.start();
 
-            GetConceptsTool getConceptsTool = new GetConceptsTool(getAvailableRules(configuration.analyze()
-                .rule()));
+        JacksonMcpJsonMapper mcpJsonMapper = new JacksonMcpJsonMapper(JsonMapper.shared());
 
-            JacksonMcpJsonMapper mcpJsonMapper = new JacksonMcpJsonMapper(JsonMapper.shared());
+        McpServerFeatures.SyncToolSpecification getSchemaToolSpec = getToolSpec(new GetSchemaTool(store), mcpJsonMapper);
+        McpServerFeatures.SyncToolSpecification executeCypherToolSpec = getToolSpec(new ExecuteCypherTool(store), mcpJsonMapper);
+        McpServerFeatures.SyncToolSpecification getConceptsToolSpec = getToolSpec(new GetConceptsTool(getAvailableRules(configuration.analyze()
+            .rule())), mcpJsonMapper);
 
-            McpServerFeatures.SyncToolSpecification getSchemaToolSpec = getToolSpec(new GetSchemaTool(store), mcpJsonMapper);
-            McpServerFeatures.SyncToolSpecification getConceptsToolSpec = getToolSpec(getConceptsTool, mcpJsonMapper);
+        StdioServerTransportProvider stdioServerTransportProvider = new StdioServerTransportProvider(mcpJsonMapper);
+        McpSyncServer mcpSyncServer = McpServer.sync(stdioServerTransportProvider)
+            .serverInfo("jQAssistant MCP Server", VersionProvider.getVersionProvider()
+                .getVersion())
+            .capabilities(McpSchema.ServerCapabilities.builder()
+                .resources(false, false)
+                .tools(false)
+                .prompts(false)
+                .logging()
+                .build())
+            .tools(getSchemaToolSpec, executeCypherToolSpec, getConceptsToolSpec)
+            .build();
 
-            StdioServerTransportProvider stdioServerTransportProvider = new StdioServerTransportProvider(mcpJsonMapper);
-            McpSyncServer mcpSyncServer = McpServer.sync(stdioServerTransportProvider)
-                .serverInfo("jQAssistant MCP Server", VersionProvider.getVersionProvider()
-                    .getVersion())
-                .capabilities(McpSchema.ServerCapabilities.builder()
-                    .resources(false, false)
-                    .tools(false)
-                    .prompts(false)
-                    .logging()
-                    .build())
-                .tools(getSchemaToolSpec, getConceptsToolSpec)
-                .build();
-
-            Runtime.getRuntime()
-                .addShutdownHook(new Thread(() -> mcpSyncServer.closeGracefully()));
-        });
+        Runtime.getRuntime()
+            .addShutdownHook(new Thread(() -> {
+                store.stop();
+                mcpSyncServer.closeGracefully();
+            }));
     }
 
     private static McpServerFeatures.SyncToolSpecification getToolSpec(Tool tool, JacksonMcpJsonMapper mcpJsonMapper) {
-        McpServerFeatures.SyncToolSpecification schemaToolSpec = McpServerFeatures.SyncToolSpecification.builder()
-            .tool(McpSchema.Tool.builder()
-                .name(tool.getName())
+        return McpServerFeatures.SyncToolSpecification.builder()
+            .tool(McpSchema.Tool.builder(tool.getName(), mcpJsonMapper, tool.getInputSchema())
                 .description(tool.getDescription())
-                .inputSchema(mcpJsonMapper, tool.getInputSchema())
                 .build())
-            .callHandler((exchange, request) -> {
-                return McpSchema.CallToolResult.builder()
-                    .structuredContent(tool.execute())
-                    .build();
-            })
+            .callHandler((exchange, request) -> McpSchema.CallToolResult.builder()
+                .structuredContent(tool.execute(request.arguments()))
+                .build())
             .build();
-        return schemaToolSpec;
     }
 }
 

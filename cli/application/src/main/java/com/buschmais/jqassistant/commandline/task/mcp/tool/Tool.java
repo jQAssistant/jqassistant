@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.commandline.task.mcp.tool;
 
+import java.util.Map;
+
 public interface Tool {
 
     String getInputSchema();
@@ -8,6 +10,6 @@ public interface Tool {
 
     String getDescription();
 
-    Object execute();
+    Object execute(Map<String, Object> arguments);
 
 }

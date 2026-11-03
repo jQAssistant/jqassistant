@@ -1,6 +1,6 @@
-package com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model;
+package com.buschmais.jqassistant.commandline.task.mcp.tool.store.model;
 
-import java.util.List;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.Singular;
@@ -13,6 +13,8 @@ import lombok.experimental.SuperBuilder;
 public abstract class AbstractPropertyContainer {
 
     @Singular
-    private List<Property> properties;
+    private Map<String, Object> properties;
+
+    private SourceLocation sourceLocation;
 
 }

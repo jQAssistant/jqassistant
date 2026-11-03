@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @ToString
-public class Relationship extends AbstractPropertyContainer {
+public class RelationshipMetadata extends AbstractPropertyContainerMetadata {
 
     private String type;
 

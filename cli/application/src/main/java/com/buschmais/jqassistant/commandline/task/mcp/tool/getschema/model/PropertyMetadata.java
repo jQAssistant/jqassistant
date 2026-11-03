@@ -9,7 +9,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @ToString
-public class Property {
+public class PropertyMetadata {
 
     private String name;
 
@@ -28,16 +28,12 @@ public class Property {
             } else if (Integer.class.equals(type) || int.class.equals(type) || Long.class.equals(type) || long.class.equals(type)) {
                 return Optional.of(Type.INTEGER);
             } else if (Number.class.equals(type) || Float.class.equals(type) || float.class.equals(type) || Double.class.equals(type) || double.class.equals(
-                    type)) {
+                type)) {
                 return Optional.of(Type.FLOAT);
-                //            } else if (DateTime.class.equals(type)) {
-                //                return Optional.of(Type.DATETIME);
             } else if (Boolean.class.equals(type) || boolean.class.equals(type)) {
                 return Optional.of(Type.BOOLEAN);
-            } else {
-                System.out.println(type);
-                return Optional.empty();
             }
+            return Optional.empty();
         }
     }
 

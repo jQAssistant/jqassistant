@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.commandline.task.mcp.tool.rules;
 
+import java.util.Map;
+
 import com.buschmais.jqassistant.commandline.task.mcp.tool.Tool;
 import com.buschmais.jqassistant.core.rule.api.model.RuleSet;
 
@@ -32,7 +34,7 @@ public class GetConceptsTool implements Tool {
     }
 
     @Override
-    public Object execute() {
+    public Object execute(Map<String, Object> arguments) {
         return ruleSet.getConceptBucket()
             .getAll();
     }

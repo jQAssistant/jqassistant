@@ -13,6 +13,6 @@ import lombok.ToString;
 public class Schema {
 
     @Singular
-    private List<Node> nodes;
+    private List<NodeMetadata> nodeMetadatas;
 
 }
