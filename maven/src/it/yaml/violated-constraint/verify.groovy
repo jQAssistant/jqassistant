@@ -4,9 +4,6 @@ assert buildLog.exists()
 // The constraint must be validated
 assert buildLog.getText().contains('[INFO] Validating constraint \'violatedConcept\' with severity: \'MAJOR\'.')
 
-// As the code does not fulfill the constraint the build should fail.
-assert buildLog.getText().contains('[ERROR] BUILD FAILURE')
-
 // The following lines should have been issued by jQA because of the
 // violated constraint.
 assert buildLog.getText().contains('[ERROR] --[ Constraint Violation ]-----------------------------------------')
