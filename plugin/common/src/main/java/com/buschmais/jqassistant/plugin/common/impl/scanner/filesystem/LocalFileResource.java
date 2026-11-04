@@ -1,14 +1,16 @@
-package com.buschmais.jqassistant.plugin.common.api.scanner.filesystem;
+package com.buschmais.jqassistant.plugin.common.impl.scanner.filesystem;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+
 /**
  * Represents a local file resource.
  */
-public class LocalFileResource implements FileResource, LocalResource{
+public class LocalFileResource implements FileResource {
 
     private final File file;
 
