@@ -13,10 +13,10 @@ import java.util.List;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.filesystem.LocalDirectoryResource;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.filesystem.LocalFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.PathNormalizer;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.filesystem.LocalDirectoryResource;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.filesystem.LocalFileResource;
 
 import lombok.extern.slf4j.Slf4j;
 
