@@ -39,7 +39,28 @@ public class GetSchemaTool implements Tool {
         return """
             {
               "type": "object",
-              "properties": {},
+              "properties": {
+                "labelFilter": {
+                  "type" : "array",
+                  "description" : "The list of label filters. Only node schemas providing all given labels are returned.",
+                  "items" : {
+                    "type" : "array",
+                    "description" : "A label filter describing a set of labels applied to a node.",
+                    "items" : {
+                      "type": "string",
+                      "description": "A label"
+                    }
+                  }
+                },
+                "includeProperties": {
+                  "type": "boolean",
+                  "description": "If set to true include all the properties for the node."
+                },
+                "includeRelationships": {
+                  "type": "boolean",
+                  "description": "If set to true include all outgoing relationships for the nodes."
+                }
+              },
               "required": []
             }
             """;
@@ -56,6 +77,9 @@ public class GetSchemaTool implements Tool {
     }
 
     public Schema execute(Map<String, Object> arguments) {
+        List<List<String>> labelFilters = (List<List<String>>) arguments.get("labelFilter");
+        Boolean includeProperties = (Boolean) arguments.getOrDefault("includeProperties", Boolean.FALSE);
+        Boolean includeRelationships = (Boolean) arguments.getOrDefault("includeRelationships", Boolean.FALSE);
         MetadataProvider<com.buschmais.xo.neo4j.spi.metadata.NodeMetadata<Neo4jLabel>, Neo4jLabel, com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> metadataProvider = store.getXOManagerFactory()
             .getMetadataProvider();
         Map<Class<?>, TypeMetadata> registeredMetadata = metadataProvider.getRegisteredMetadata();
@@ -69,22 +93,36 @@ public class GetSchemaTool implements Tool {
         for (Map.Entry<Class<?>, Set<String>> nodeEntry : labels.entrySet()) {
             TypeMetadata typeMetadata = registeredMetadata.get(nodeEntry.getKey());
             if (typeMetadata instanceof EntityTypeMetadata && !((EntityTypeMetadata<?>) typeMetadata).isAbstract()) {
-                NodeMetadata.NodeMetadataBuilder<?, ?> nodeBuilder = NodeMetadata.builder()
-                    .labels(nodeEntry.getValue());
-                for (MethodMetadata<?, ?> property : properties.get(nodeEntry.getKey())) {
-                    if (property instanceof PrimitivePropertyMethodMetadata<?> primitivePropertyMethodMetadata) {
-                        primitiveProperty(primitivePropertyMethodMetadata).ifPresent(nodeBuilder::property);
-                    } else if (property instanceof AbstractEntityRelationMethodMetadata<?> abstractEntityRelationMethodMetadata) {
-                        if (FROM.equals(abstractEntityRelationMethodMetadata.getDirection())) {
-                            nodeBuilder.relationshipMetadata(entityRelationProperty(abstractEntityRelationMethodMetadata, labels));
-                        }
-                    } else if (property instanceof AbstractRelationPropertyMethodMetadata<?> abstractRelationPropertyMethodMetadata) {
-                        if (FROM.equals(abstractRelationPropertyMethodMetadata.getDirection())) {
-                            nodeBuilder.relationshipMetadata(relationTypeProperty(abstractRelationPropertyMethodMetadata, labels));
+                Set<String> nodeLabels = nodeEntry.getValue();
+                List<PropertyMetadata> propertyMetadata = new ArrayList<>();
+                List<RelationshipMetadata> relationshipMetadata = new ArrayList<>();
+                if (labelFilters == null || labelFilters.stream()
+                    .anyMatch(labelFilter -> nodeLabels.containsAll(labelFilter))) {
+                    NodeMetadata.NodeMetadataBuilder<?, ?> nodeBuilder = NodeMetadata.builder()
+                        .labels(nodeLabels);
+                    for (MethodMetadata<?, ?> property : properties.get(nodeEntry.getKey())) {
+                        if (includeProperties && property instanceof PrimitivePropertyMethodMetadata<?> primitivePropertyMethodMetadata) {
+                            primitiveProperty(primitivePropertyMethodMetadata).ifPresent(propertyMetadata::add);
+                        } else if (includeRelationships) {
+                            if (property instanceof AbstractEntityRelationMethodMetadata<?> abstractEntityRelationMethodMetadata) {
+                                if (FROM.equals(abstractEntityRelationMethodMetadata.getDirection())) {
+                                    relationshipMetadata.add(entityRelationProperty(abstractEntityRelationMethodMetadata, labels));
+                                }
+                            } else if (property instanceof AbstractRelationPropertyMethodMetadata<?> abstractRelationPropertyMethodMetadata) {
+                                if (FROM.equals(abstractRelationPropertyMethodMetadata.getDirection())) {
+                                    relationshipMetadata.add(relationTypeProperty(abstractRelationPropertyMethodMetadata, labels));
+                                }
+                            }
                         }
                     }
+                    if (includeProperties) {
+                        nodeBuilder.properties(propertyMetadata);
+                    }
+                    if (includeRelationships) {
+                        nodeBuilder.relationships(relationshipMetadata);
+                    }
+                    schemaBuilder.nodeMetadata(nodeBuilder.build());
                 }
-                schemaBuilder.nodeMetadata(nodeBuilder.build());
             }
         }
         Schema schema = schemaBuilder.build();
@@ -144,11 +182,13 @@ public class GetSchemaTool implements Tool {
         RelationshipMetadata.RelationshipMetadataBuilder<?, ?> relationshipBuilder = RelationshipMetadata.builder()
             .type(neo4jRelationshipType.getName())
             .targetLabels(labels.get(relationTypeMetadata.getToType()));
+        List<PropertyMetadata> properties = new ArrayList<>();
         for (MethodMetadata<?, ?> methodMetadata : relationTypeMetadata.getProperties()) {
             if (methodMetadata instanceof PrimitivePropertyMethodMetadata<?>) {
-                primitiveProperty((PrimitivePropertyMethodMetadata<?>) methodMetadata).ifPresent(relationshipBuilder::property);
+                primitiveProperty((PrimitivePropertyMethodMetadata<?>) methodMetadata).ifPresent(properties::add);
             }
         }
+        relationshipBuilder.properties(properties);
         return relationshipBuilder.build();
     }
 

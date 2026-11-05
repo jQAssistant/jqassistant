@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model;
 import java.util.List;
 
 import lombok.Getter;
-import lombok.Singular;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -12,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @ToString
 public abstract class AbstractPropertyContainerMetadata {
 
-    @Singular
     private List<PropertyMetadata> properties;
 
 }

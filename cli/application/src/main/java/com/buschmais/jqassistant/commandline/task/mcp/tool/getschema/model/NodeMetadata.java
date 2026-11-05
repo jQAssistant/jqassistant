@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import lombok.Getter;
-import lombok.Singular;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -15,7 +14,6 @@ public class NodeMetadata extends AbstractPropertyContainerMetadata {
 
     private Set<String> labels;
 
-    @Singular
-    private List<RelationshipMetadata> relationshipMetadatas;
+    private List<RelationshipMetadata> relationships;
 
 }
