@@ -33,10 +33,8 @@ import com.buschmais.jqassistant.core.rule.api.source.FileRuleSource;
 import com.buschmais.jqassistant.core.rule.api.source.RuleSource;
 import com.buschmais.jqassistant.core.rule.impl.reader.RuleParser;
 import com.buschmais.jqassistant.core.runtime.api.configuration.Configuration;
-import com.buschmais.jqassistant.core.runtime.api.metrics.MeterRegistryFactory;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.runtime.impl.metrics.MeterRegistryFactoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -53,6 +51,8 @@ import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.smallrye.config.EnvConfigSource;
 import io.smallrye.config.SysPropConfigSource;
 import lombok.AllArgsConstructor;
@@ -97,9 +97,9 @@ public abstract class AbstractPluginIT {
 
     private static ConfigSource mavenSettingsConfigSource;
 
-    private MeterRegistryFactory meterRegistryFactory;
+    private static MeterRegistry meterRegistry;
 
-    private PluginRepositoryImpl pluginRepository;
+    private static PluginRepositoryImpl pluginRepository;
 
     protected Store store;
 
@@ -113,6 +113,11 @@ public abstract class AbstractPluginIT {
         List<String> profiles = ofNullable(System.getProperty(PROPERTY_PROFILES)).map(p -> List.of(p.split(",")))
             .orElse(emptyList());
         mavenSettingsConfigSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(USER_HOME, mavenSettingsFile, profiles);
+        meterRegistry = new SimpleMeterRegistry();
+        PluginClassLoader pluginClassLoader = new PluginClassLoader(AbstractPluginIT.class.getClassLoader());
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
+        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistry);
+        pluginRepository.initialize();
         OUTPUT_DIRECTORY.mkdirs();
     }
 
@@ -121,12 +126,6 @@ public abstract class AbstractPluginIT {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder();
         configure(configurationBuilder);
         ITConfiguration configuration = createConfiguration(configurationBuilder);
-        meterRegistryFactory = new MeterRegistryFactoryImpl(configuration.metrics());
-        meterRegistryFactory.initialize();
-        PluginClassLoader pluginClassLoader = new PluginClassLoader(AbstractPluginIT.class.getClassLoader());
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
-        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistryFactory.getMeterRegistry());
-        pluginRepository.initialize();
         startStore(configuration);
         initializeRuleSet(configuration);
         initializeReportPlugin(configuration);
@@ -136,15 +135,15 @@ public abstract class AbstractPluginIT {
      * Stops the store.
      */
     @AfterEach
-    public final void afterEach() throws IOException {
+    public final void afterEach() {
         if (store != null) {
             store.stop();
         }
         if (pluginRepository != null) {
             pluginRepository.destroy();
         }
-        if (meterRegistryFactory != null) {
-            meterRegistryFactory.destroy();
+        if (meterRegistry != null) {
+            meterRegistry.close();
         }
     }
 
@@ -283,7 +282,7 @@ public abstract class AbstractPluginIT {
         BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRuleDirectory());
         BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
         return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin,
-            meterRegistryFactory.getMeterRegistry());
+            meterRegistry);
     }
 
     /**
