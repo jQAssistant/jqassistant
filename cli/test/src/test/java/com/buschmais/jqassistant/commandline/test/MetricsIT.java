@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.commandline.test;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
@@ -33,11 +34,13 @@ class MetricsIT extends AbstractCLIIT {
         // Expecting exit code 2 for a constraint violation
         assertThat(execute(args).getExitCode()).isEqualTo(2);
 
-        WebTarget webTarget = ClientBuilder.newClient()
+        Client client = ClientBuilder.newClient();
+        WebTarget webTarget = client
             .target("http://" + pushgatewayAddress)
             .path("/metrics");
         String response = webTarget.request()
             .get(String.class);
+        client.close();
         assertThat(response).contains(MeterRegistryFactory.METER_JQASSISTANT_DISTRIBUTION);
     }
 

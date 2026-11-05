@@ -12,6 +12,7 @@ jqassistant:
   metrics:
     common-tags:
       repository: "my-repository"
+      build: "123"
     prometheus:
       pushgateway:
         address: "localhost:9091"
@@ -21,53 +22,55 @@ jqassistant:
 #       password:
 #       bearer-token:
 
-        job-name: jQAssistant
+#       job-name: jQAssistant
 ----
 
-* `common-tags` allows to specify tags that shall be used by all published metrics.
-* `job-name` is a required tag and used to separate different job executions. It is recommended to use the identifier of the current CI job and defaults to `jQAssistant` if not specified.
+* `common-tags` allows to specify tags that shall be used by all published metrics. It is strongly recommended to use them to provide context about the current build, otherwise collected metrics will be overridden by concurrent or subsequent builds.
+* `job-name` is the name of the job, it defaults to `jQAssistant` (usually shouldn't be changed).
 
-NOTE: The values can be provided as environment variables (e.g. `JQASSISTANT_METRICS_PROMETHEUS_PUSHGATEWAY_JOB_NAME`) or system properties (`-Djqassistant.metrics.prometheus.pushgateway.job-name=...`).
+NOTE: All configuration values can also be provided as environment variables or system properties. This is especially useful for the common tags to provide context about the current build, e.g. `JQASSISTANT_METRICS_PROMETHEUS_PUSHGATEWAY_COMMON_TAGS_REPOSITORY=...` and `JQASSISTANT_METRICS_PROMETHEUS_PUSHGATEWAY_COMMON_TAGS_BUILD=...` or `-Djqassistant.metrics.prometheus.pushgateway.common-tags.repository=...` and `-Djqassistant.metrics.prometheus.pushgateway.common-tags.build=...`.
 
 === Core metrics
 
 The core metrics provide information about the execution of jQAssistant:
 
-jqassistant.distribution::
-  * Represents the used jQAssistant distribution, the value is always `1`
-  * Type: Gauge
-  * Tags:
-  ** `version`: The version of the jQAssistant distribution
+*jqassistant_distribution*
+
+* Represents the used jQAssistant distribution, the value is always `1`
+* Type: Gauge
+* Tags:
+** `version`: The version of the jQAssistant distribution
 
 
-jqassistant.plugin::
-  * Represents a jQAssistant plugin which has been used during execution
-  * Type: Gauge
-  * Tags:
-  ** `id`: The id of the jQAssistant plugin
-  ** `version`: The version of the jQAssistant plugin
+*jqassistant_plugin*
+
+* Represents a jQAssistant plugin which has been used during execution
+* Type: Gauge
+* Tags:
+** `id`: The id of the jQAssistant plugin
+** `version`: The version of the jQAssistant plugin
 
 === Analyze metrics
 
-These analyze metrics provide information about rules executed during analyze:
-
-jqassistant.analyze.rule.execution.time.seconds.{count,sum,max}::
-** The execution time per rule
-** Type: Timer
-
-jqassistant.analyze.rule.result.status::
-** The status per rule, i.e. FAILURE (0), WARNING (1), SUCCESS (2) or SKIPPED (3)
-** Type: Gauge
-
-jqassistant.analyze.rule.result.row.count::
-** The count of returned rows per rule
-** Type: Gauge
-
-jqassistant.analyze.rule.result.hidden.row.count::
-** The count of returned hidden rows (baseline or suppressions) per rule
-** Type: Gauge
-
+These analyze metrics provide information about rules executed during analyze.
 All analyze metrics use the same set of tags:
 
-* `type`: The rule type, either `Concept` or `Constraint`
-* `rule.id`: The rule id.
+* `rule_type`: The rule type, either `Concept` or `Constraint`
+* `rule_id`: The rule id.
+
+*jqassistant_analyze_rule_execution_time_seconds_{count,sum,max}*
+
+* The execution time per rule
+* Type: Timer
+
+*jqassistant_analyze_rule_result_row_count*
+
+* The count of returned rows per rule
+* Type: Gauge
+* Tags:
+** `status`: The status of the executed rule,i.e. `SUCCESS`, `WARNING`, `FAILURE` or `SKIPPED`
+
+*jqassistant_analyze_rule_result_hidden_row_count*
+
+* The count of returned hidden rows (baseline or suppressions) per rule
+* Type: Gauge

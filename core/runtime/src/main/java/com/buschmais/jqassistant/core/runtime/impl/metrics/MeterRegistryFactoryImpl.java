@@ -38,7 +38,7 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
             .pushgateway()
             .address()
             .map(this::createPrometheusMeterRegistry)
-            .orElse(new SimpleMeterRegistry());
+            .orElseGet(SimpleMeterRegistry::new);
         registerCommonTags(meterRegistry);
         Gauge.builder(MeterRegistryFactory.METER_JQASSISTANT_DISTRIBUTION, () -> 1)
             .tag(MeterRegistryFactory.TAG_JQASSISTANT_VERSION, getVersionProvider().getVersion())

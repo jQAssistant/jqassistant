@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -32,9 +29,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import static com.buschmais.jqassistant.core.analysis.api.configuration.Analyze.EXECUTE_APPLIED_CONCEPTS;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.SUCCESS;
-import static java.util.Arrays.stream;
 import static java.util.Collections.*;
-import static java.util.stream.Collectors.joining;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -43,11 +38,11 @@ import static java.util.stream.Collectors.joining;
 public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
 
     public static final String METER_JQASSISTANT_ANALYZE_RULE_EXECUTION_TIME = "jqassistant.analyze.rule.execution.time";
-    public static final String METER_JQASSISTANT_ANALYZE_RULE_RESULT_STATUS = "jqassistant.analyze.rule.result.status";
     public static final String METER_JQASSISTANT_ANALYZE_RULE_RESULT_ROW_COUNT = "jqassistant.analyze.rule.result.row.count";
     public static final String METER_JQASSISTANT_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT = "jqassistant.analyze.rule.result.hidden.row.count";
-    public static final String TAG_RULE_TYPE = "type";
-    public static final String TAG_RULE_ID = "rule.id";
+    public static final String TAG_RESULT_RULE_TYPE = "rule.type";
+    public static final String TAG_RESULT_RULE_ID = "rule.id";
+    public static final String TAG_RESULT_STATUS = "status";
 
     private final Analyze configuration;
     private final AnalyzerContext analyzerContext;
@@ -253,21 +248,19 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
      */
     private <T extends ExecutableRule<?>> Result<T> executeWithMetrics(T executableRule, Callable<Result<T>> callable) throws RuleException {
         MeterRegistry meterRegistry = analyzerContext.getMeterRegistry();
-        List<Tag> tags = List.of(Tag.of(TAG_RULE_TYPE, executableRule.getClass()
-            .getSimpleName()), Tag.of(TAG_RULE_ID, executableRule.getId()));
-        Timer timer = registerTimer(METER_JQASSISTANT_ANALYZE_RULE_EXECUTION_TIME, tags, () -> "The execution times of executed rules.", meterRegistry);
         try {
+            List<Tag> tags = List.of(Tag.of(TAG_RESULT_RULE_TYPE, executableRule.getClass()
+                .getSimpleName()), Tag.of(TAG_RESULT_RULE_ID, executableRule.getId()));
+            Timer timer = registerTimer(METER_JQASSISTANT_ANALYZE_RULE_EXECUTION_TIME, tags, () -> "The execution times of executed rules.", meterRegistry);
             Result<T> result = timer.recordCallable(callable);
-            Integer statusLevel = result.getStatus()
-                .getLevel();
             int rowCount = result.getVerificationResult()
                 .getRowCount();
             int hiddenRowCount = result.getVerificationResult()
                 .getHiddenRowCount();
-            registerGauge(METER_JQASSISTANT_ANALYZE_RULE_RESULT_STATUS, tags, () -> statusLevel,
-                () -> "The status of executed rules: " + stream(Result.Status.values()).map(status -> status.getLevel() + "=" + status.name())
-                    .collect(joining(", ")), meterRegistry);
-            registerGauge(METER_JQASSISTANT_ANALYZE_RULE_RESULT_ROW_COUNT, tags, () -> rowCount, () -> "The count of rows returned by executed rules.",
+            List<Tag> rowCountTags = new ArrayList<>(tags);
+            rowCountTags.add(Tag.of(TAG_RESULT_STATUS, result.getStatus()
+                .name()));
+            registerGauge(METER_JQASSISTANT_ANALYZE_RULE_RESULT_ROW_COUNT, rowCountTags, () -> rowCount, () -> "The count of rows returned by executed rules.",
                 meterRegistry);
             registerGauge(METER_JQASSISTANT_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT, tags, () -> hiddenRowCount,
                 () -> "The count of hidden rows returned by executed rules.", meterRegistry);
@@ -283,30 +276,19 @@ public class AnalyzerRuleVisitor extends AbstractRuleVisitor<Result.Status> {
     }
 
     private Timer registerTimer(String name, List<Tag> tags, Supplier<String> descriptionSupplier, MeterRegistry meterRegistry) {
-        Timer timer = meterRegistry.find(name)
+        return Timer.builder(name)
+            .description(descriptionSupplier.get())
             .tags(tags)
-            .timer();
-        if (timer == null) {
-            timer = Timer.builder(name)
-                .description(descriptionSupplier.get())
-                .tags(tags)
-                .register(meterRegistry);
-        }
-        return timer;
+            .register(meterRegistry);
     }
 
     private <T extends Number> void registerGauge(String name, List<Tag> tags, Supplier<T> supplier, Supplier<String> descriptionSupplier,
         MeterRegistry meterRegistry) {
-        Gauge gauge = meterRegistry.find(name)
+        Gauge.builder(name, supplier)
             .tags(tags)
-            .gauge();
-        if (gauge == null) {
-            Gauge.builder(name, supplier)
-                .tags(tags)
-                .strongReference(true)
-                .description(descriptionSupplier.get())
-                .register(meterRegistry);
-        }
+            .strongReference(true)
+            .description(descriptionSupplier.get())
+            .register(meterRegistry);
     }
 
     private <T extends ExecutableRule<?>> Result<T> execute(T executableRule, Severity severity, Map<String, Object> ruleParameters,

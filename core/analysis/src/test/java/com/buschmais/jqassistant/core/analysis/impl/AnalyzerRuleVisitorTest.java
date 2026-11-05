@@ -440,31 +440,24 @@ class AnalyzerRuleVisitorTest {
     }
 
     private void verifyMetrics(Rule rule, Result.Status expectedStatus, int expectedRowCount, int expectedHiddenRowCount) {
-        assertThat(meterRegistry.get(AnalyzerRuleVisitor.METER_JQASSISTANT_ANALYZE_RULE_RESULT_STATUS)
-            .tag(AnalyzerRuleVisitor.TAG_RULE_ID, rule.getId())
-            .tag(AnalyzerRuleVisitor.TAG_RULE_TYPE, rule.getClass()
-                .getSimpleName())
-            .gauge()
-            .value()).isEqualTo(expectedStatus.getLevel()
-            .doubleValue());
-
         assertThat(meterRegistry.get(AnalyzerRuleVisitor.METER_JQASSISTANT_ANALYZE_RULE_RESULT_ROW_COUNT)
-            .tag(AnalyzerRuleVisitor.TAG_RULE_ID, rule.getId())
-            .tag(AnalyzerRuleVisitor.TAG_RULE_TYPE, rule.getClass()
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_ID, rule.getId())
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_TYPE, rule.getClass()
                 .getSimpleName())
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_STATUS, expectedStatus.name())
             .gauge()
             .value()).isEqualTo(expectedRowCount);
 
         assertThat(meterRegistry.get(AnalyzerRuleVisitor.METER_JQASSISTANT_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT)
-            .tag(AnalyzerRuleVisitor.TAG_RULE_ID, rule.getId())
-            .tag(AnalyzerRuleVisitor.TAG_RULE_TYPE, rule.getClass()
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_ID, rule.getId())
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_TYPE, rule.getClass()
                 .getSimpleName())
             .gauge()
             .value()).isEqualTo(expectedHiddenRowCount);
 
         assertThat(meterRegistry.get(AnalyzerRuleVisitor.METER_JQASSISTANT_ANALYZE_RULE_EXECUTION_TIME)
-            .tag(AnalyzerRuleVisitor.TAG_RULE_ID, rule.getId())
-            .tag(AnalyzerRuleVisitor.TAG_RULE_TYPE, rule.getClass()
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_ID, rule.getId())
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_TYPE, rule.getClass()
                 .getSimpleName())
             .timer()
             .count()).isEqualTo(1);

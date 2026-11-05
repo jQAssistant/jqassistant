@@ -62,7 +62,7 @@ jqassistant:
 
     # The common tags to be used for all published metrics
     #
-    # -Djqassistant.metrics.common-tags
+    # -Djqassistant.metrics.common-tags.<key>=<value>
     common-tags:
       # key: value
 

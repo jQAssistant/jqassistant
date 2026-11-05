@@ -29,8 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.jspecify.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.buschmais.jqassistant.core.resolver.api.MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource;
 import static java.lang.Thread.currentThread;
@@ -50,7 +48,6 @@ import static java.util.stream.Collectors.toMap;
  */
 @Slf4j
 public class Main {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     private static final String CMDLINE_OPTION_PROJECT_DIRECTORY = "--projectDirectory";
 
@@ -73,7 +70,7 @@ public class Main {
             new Main().run(args);
         } catch (CliExecutionException e) {
             String message = getErrorMessage(e);
-            LOGGER.error(message);
+            log.error(message);
             System.exit(e.getExitCode());
         }
     }
@@ -153,30 +150,30 @@ public class Main {
             .longOpt("projectDirectory")
             .desc("The project directory.")
             .hasArg()
-            .build());
+            .get());
         options.addOption(Option.builder("C")
             .longOpt("configurationLocations")
             .desc("The list of configuration locations, i.e. YAML files and directories")
             .hasArgs()
             .valueSeparator(',')
-            .build());
+            .get());
         options.addOption(Option.builder("M")
             .longOpt("mavenSettings")
             .desc("The location of a Maven settings.xml file to use for repository, proxy and mirror configurations.")
             .hasArg()
             .valueSeparator(',')
-            .build());
+            .get());
         options.addOption(Option.builder("P")
             .longOpt("profiles")
             .desc("The configuration profiles to activate.")
             .hasArgs()
             .valueSeparator(',')
-            .build());
+            .get());
         options.addOption(Option.builder("D")
             .desc("Additional configuration property.")
             .hasArgs()
             .valueSeparator('=')
-            .build());
+            .get());
     }
 
     /**
@@ -210,20 +207,23 @@ public class Main {
         List<Task> tasks = getTasks(commandLine);
         CliConfiguration configuration = getCliConfiguration(commandLine, projectDirectory, workingDirectory, userHome, tasks);
         if (configuration.skip()) {
-            LOGGER.info("Skipping execution.");
+            log.info("Skipping execution.");
         } else {
             MeterRegistryFactory meterRegistryFactory = createMeterRegistryFactory(configuration);
-            MeterRegistry meterRegistry = meterRegistryFactory.getMeterRegistry();
-            ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
-            PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider, meterRegistry);
-            StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
-            ClassLoader contextClassLoader = currentThread().getContextClassLoader();
-            currentThread().setContextClassLoader(pluginRepository.getClassLoader());
             try {
-                executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
+                MeterRegistry meterRegistry = meterRegistryFactory.getMeterRegistry();
+                ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
+                PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider, meterRegistry);
+                StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
+                ClassLoader contextClassLoader = currentThread().getContextClassLoader();
+                currentThread().setContextClassLoader(pluginRepository.getClassLoader());
+                try {
+                    executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
+                } finally {
+                    currentThread().setContextClassLoader(contextClassLoader);
+                }
             } finally {
                 meterRegistryFactory.destroy();
-                currentThread().setContextClassLoader(contextClassLoader);
             }
         }
     }
@@ -251,7 +251,7 @@ public class Main {
         List<String> configLocations = getConfigLocations(commandLine);
         List<String> profiles = getUserProfiles(commandLine);
         if (!profiles.isEmpty()) {
-            LOGGER.info("Activating configuration profile(s) {}.", String.join(", ", profiles));
+            log.info("Activating configuration profile(s) {}.", String.join(", ", profiles));
         }
         ConfigSource buildConfigSource = BuildConfigBuilder.getConfigSource(workingDirectory.getAbsoluteFile()
             .toPath()
