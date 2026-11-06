@@ -24,6 +24,8 @@ import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
 import com.buschmais.xo.api.XOManager;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,6 +84,8 @@ class AnalyzerRuleVisitorTest {
     @Mock
     private AnalyzerContext analyzerContext;
 
+    private MeterRegistry meterRegistry;
+
     private final Map<String, Collection<RuleInterpreterPlugin>> ruleInterpreterPlugins = new HashMap<>();
 
     private AnalyzerRuleVisitor analyzerRuleVisitor;
@@ -98,22 +102,15 @@ class AnalyzerRuleVisitorTest {
         concept = createConcept("test:Concept");
         constraint = createConstraint(STATEMENT);
         columnNames = asList("c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9");
-        Map<String, String> ruleParameters = new HashMap<>();
-        ruleParameters.put(PARAMETER_WITHOUT_DEFAULT, "value");
-        doReturn(ruleParameters).when(configuration)
+        doReturn(Map.of(PARAMETER_WITHOUT_DEFAULT, "value")).when(configuration)
             .ruleParameters();
-
         doReturn(createResult(columnNames)).when(store)
             .executeQuery(eq(STATEMENT), anyMap());
-        doAnswer(i -> VerificationResult.builder()
-            .success(true)
-            .rowCount(i.getArgument(2, List.class)
-                .size())
-            .build()).when(analyzerContext)
-            .verify(any(ExecutableRule.class), any(), any());
-
         doReturn(store).when(analyzerContext)
             .getStore();
+        meterRegistry = new SimpleMeterRegistry();
+        doReturn(meterRegistry).when(analyzerContext)
+            .getMeterRegistry();
         doAnswer(invocation -> {
             ((Transactional.TransactionalAction<?>) invocation.getArgument(0)).execute();
             return null;
@@ -166,6 +163,11 @@ class AnalyzerRuleVisitorTest {
             return toRow(rule, columns, status, Optional.empty());
         }).when(analyzerContext)
             .toRow(any(ExecutableRule.class), anyMap(), any(), any());
+        doReturn(VerificationResult.builder()
+            .rowCount(1)
+            .hiddenRowCount(0)
+            .build()).when(analyzerContext)
+            .verify(any(), any(), any());
 
         analyzerRuleVisitor.visitConcept(concept, MINOR, emptyMap(), emptyMap());
 
@@ -185,8 +187,10 @@ class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    void executeConcept() throws RuleException {
+    void executeConcept() throws Exception {
         VerificationResult verificationResult = VerificationResult.builder()
+            .rowCount(2)
+            .hiddenRowCount(1)
             .success(true)
             .build();
         doReturn(verificationResult).when(analyzerContext)
@@ -209,6 +213,7 @@ class AnalyzerRuleVisitorTest {
         verify(analyzerContext, times(2)).getStatus(verificationResult, MAJOR);
         verify(reportWriter).beginConcept(eq(concept), anyMap(), anyMap());
         verifyConceptResult(SUCCESS, MAJOR);
+        verifyMetrics(concept, SUCCESS, 2, 1);
     }
 
     @Test
@@ -232,6 +237,14 @@ class AnalyzerRuleVisitorTest {
         Concept providedConcept = createConcept("test:ProvidedConcept");
         doReturn(createEmptyResult()).when(store)
             .executeQuery(eq(STATEMENT), anyMap());
+        doReturn(VerificationResult.builder()
+            .rowCount(0)
+            .hiddenRowCount(0)
+            .build()).when(analyzerContext)
+            .verify(any(), any(), any());
+        // execution of the provided concept always returns FAILURE, actual status shall consider providing concepts
+        doReturn(FAILURE).when(analyzerContext)
+            .getStatus(any(), any());
 
         assertThat(analyzerRuleVisitor.visitConcept(providedConcept, MAJOR, emptyMap(),
             ofEntries(entry(providingConcept1, FAILURE), entry(providingConcept2, FAILURE)))).isEqualTo(FAILURE);
@@ -261,8 +274,10 @@ class AnalyzerRuleVisitorTest {
     }
 
     @Test
-    void executeConstraint() throws RuleException {
+    void executeConstraint() throws Exception {
         VerificationResult verificationResult = VerificationResult.builder()
+            .rowCount(1)
+            .hiddenRowCount(2)
             .success(false)
             .build();
         doReturn(verificationResult).when(analyzerContext)
@@ -283,6 +298,7 @@ class AnalyzerRuleVisitorTest {
         verify(analyzerContext, times(2)).getStatus(verificationResult, BLOCKER);
         verify(reportWriter).beginConstraint(constraint, emptyMap());
         verifyConstraintResult(Result.Status.FAILURE, BLOCKER);
+        verifyMetrics(constraint, FAILURE, 1, 2);
     }
 
     @Test
@@ -307,7 +323,7 @@ class AnalyzerRuleVisitorTest {
     }
 
     private Result<?> verifyConstraintResult(Result.Status expectedStatus, Severity expectedSeverity) throws ReportException {
-        ArgumentCaptor<Result> resultCaptor = ArgumentCaptor.forClass(Result.class);
+        ArgumentCaptor<Result<Constraint>> resultCaptor = ArgumentCaptor.forClass(Result.class);
         verify(reportWriter).setResult(resultCaptor.capture());
         Result<?> result = resultCaptor.getValue();
         assertThat(result.getStatus()).isEqualTo(expectedStatus);
@@ -423,6 +439,30 @@ class AnalyzerRuleVisitorTest {
         }
     }
 
+    private void verifyMetrics(Rule rule, Result.Status expectedStatus, int expectedRowCount, int expectedHiddenRowCount) {
+        assertThat(meterRegistry.get(AnalyzerRuleVisitor.METER_JQASSISTANT_ANALYZE_RULE_RESULT_ROW_COUNT)
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_ID, rule.getId())
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_TYPE, rule.getClass()
+                .getSimpleName())
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_STATUS, expectedStatus.name())
+            .gauge()
+            .value()).isEqualTo(expectedRowCount);
+
+        assertThat(meterRegistry.get(AnalyzerRuleVisitor.METER_JQASSISTANT_ANALYZE_RULE_RESULT_HIDDEN_ROW_COUNT)
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_ID, rule.getId())
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_TYPE, rule.getClass()
+                .getSimpleName())
+            .gauge()
+            .value()).isEqualTo(expectedHiddenRowCount);
+
+        assertThat(meterRegistry.get(AnalyzerRuleVisitor.METER_JQASSISTANT_ANALYZE_RULE_EXECUTION_TIME)
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_ID, rule.getId())
+            .tag(AnalyzerRuleVisitor.TAG_RESULT_RULE_TYPE, rule.getClass()
+                .getSimpleName())
+            .timer()
+            .count()).isEqualTo(1);
+    }
+
     private Concept createConcept(String id) {
         return createConcept(id, STATEMENT);
     }
@@ -491,4 +531,5 @@ class AnalyzerRuleVisitorTest {
         when(result.iterator()).thenReturn(iterator);
         return result;
     }
+
 }

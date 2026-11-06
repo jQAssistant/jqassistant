@@ -8,10 +8,12 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.commandline.task.RegisteredTask;
 import com.buschmais.jqassistant.core.report.api.BuildConfigBuilder;
 import com.buschmais.jqassistant.core.resolver.api.ArtifactProviderFactory;
+import com.buschmais.jqassistant.core.runtime.api.metrics.MeterRegistryFactory;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginClassLoader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginResolver;
+import com.buschmais.jqassistant.core.runtime.impl.metrics.MeterRegistryFactoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.runtime.impl.plugin.PluginResolverImpl;
@@ -20,12 +22,13 @@ import com.buschmais.jqassistant.core.shared.configuration.ConfigurationBuilder;
 import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingLoader;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SysPropConfigSource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 import org.eclipse.microprofile.config.spi.ConfigSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.NonNull;
 
 import static com.buschmais.jqassistant.core.resolver.api.MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource;
 import static java.lang.Thread.currentThread;
@@ -43,8 +46,8 @@ import static java.util.stream.Collectors.toMap;
  * @author jn4, Kontext E GmbH, 23.01.14
  * @author Dirk Mahler
  */
+@Slf4j
 public class Main {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     private static final String CMDLINE_OPTION_PROJECT_DIRECTORY = "--projectDirectory";
 
@@ -67,7 +70,7 @@ public class Main {
             new Main().run(args);
         } catch (CliExecutionException e) {
             String message = getErrorMessage(e);
-            LOGGER.error(message);
+            log.error(message);
             System.exit(e.getExitCode());
         }
     }
@@ -111,13 +114,15 @@ public class Main {
      *     The {@link CliConfiguration}
      * @param artifactProvider
      *     The {@link ArtifactProvider}
+     * @param meterRegistry
+     *     The {@link MeterRegistry}.
      * @return The repository.
      */
-    private PluginRepository getPluginRepository(CliConfiguration configuration, ArtifactProvider artifactProvider) {
+    private PluginRepository getPluginRepository(CliConfiguration configuration, ArtifactProvider artifactProvider, MeterRegistry meterRegistry) {
         PluginResolver pluginResolver = new PluginResolverImpl(artifactProvider);
         PluginClassLoader pluginClassLoader = pluginResolver.createClassLoader(Task.class.getClassLoader(), configuration);
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
-        PluginRepositoryImpl pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        PluginRepositoryImpl pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistry);
         pluginRepository.initialize();
         return pluginRepository;
     }
@@ -145,30 +150,30 @@ public class Main {
             .longOpt("projectDirectory")
             .desc("The project directory.")
             .hasArg()
-            .build());
+            .get());
         options.addOption(Option.builder("C")
             .longOpt("configurationLocations")
             .desc("The list of configuration locations, i.e. YAML files and directories")
             .hasArgs()
             .valueSeparator(',')
-            .build());
+            .get());
         options.addOption(Option.builder("M")
             .longOpt("mavenSettings")
             .desc("The location of a Maven settings.xml file to use for repository, proxy and mirror configurations.")
             .hasArg()
             .valueSeparator(',')
-            .build());
+            .get());
         options.addOption(Option.builder("P")
             .longOpt("profiles")
             .desc("The configuration profiles to activate.")
             .hasArgs()
             .valueSeparator(',')
-            .build());
+            .get());
         options.addOption(Option.builder("D")
             .desc("Additional configuration property.")
             .hasArgs()
             .valueSeparator('=')
-            .build());
+            .get());
     }
 
     /**
@@ -202,19 +207,31 @@ public class Main {
         List<Task> tasks = getTasks(commandLine);
         CliConfiguration configuration = getCliConfiguration(commandLine, projectDirectory, workingDirectory, userHome, tasks);
         if (configuration.skip()) {
-            LOGGER.info("Skipping execution.");
+            log.info("Skipping execution.");
         } else {
-            ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
-            PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider);
-            StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
-            ClassLoader contextClassLoader = currentThread().getContextClassLoader();
-            currentThread().setContextClassLoader(pluginRepository.getClassLoader());
+            MeterRegistryFactory meterRegistryFactory = createMeterRegistryFactory(configuration);
             try {
-                executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory);
+                MeterRegistry meterRegistry = meterRegistryFactory.getMeterRegistry();
+                ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, userHome);
+                PluginRepository pluginRepository = getPluginRepository(configuration, artifactProvider, meterRegistry);
+                StoreFactory storeFactory = new StoreFactory(pluginRepository.getStorePluginRepository(), artifactProvider);
+                ClassLoader contextClassLoader = currentThread().getContextClassLoader();
+                currentThread().setContextClassLoader(pluginRepository.getClassLoader());
+                try {
+                    executeTasks(tasks, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
+                } finally {
+                    currentThread().setContextClassLoader(contextClassLoader);
+                }
             } finally {
-                currentThread().setContextClassLoader(contextClassLoader);
+                meterRegistryFactory.destroy();
             }
         }
+    }
+
+    private static @NonNull MeterRegistryFactory createMeterRegistryFactory(CliConfiguration configuration) {
+        MeterRegistryFactory meterRegistryFactory = new MeterRegistryFactoryImpl(configuration.metrics());
+        meterRegistryFactory.initialize();
+        return meterRegistryFactory;
     }
 
     private List<Task> getTasks(CommandLine commandLine) throws CliExecutionException {
@@ -234,7 +251,7 @@ public class Main {
         List<String> configLocations = getConfigLocations(commandLine);
         List<String> profiles = getUserProfiles(commandLine);
         if (!profiles.isEmpty()) {
-            LOGGER.info("Activating configuration profile(s) {}.", String.join(", ", profiles));
+            log.info("Activating configuration profile(s) {}.", String.join(", ", profiles));
         }
         ConfigSource buildConfigSource = BuildConfigBuilder.getConfigSource(workingDirectory.getAbsoluteFile()
             .toPath()
@@ -297,10 +314,10 @@ public class Main {
     }
 
     protected void executeTasks(List<Task> tasks, CliConfiguration configuration, Options options, File projectDirectory, File workingDirectory,
-        PluginRepository pluginRepository, StoreFactory storeFactory) throws CliExecutionException {
+        PluginRepository pluginRepository, StoreFactory storeFactory, MeterRegistry meterRegistry) throws CliExecutionException {
         try {
             for (Task task : tasks) {
-                executeTask(task, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory);
+                executeTask(task, configuration, options, projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
             }
         } finally {
             pluginRepository.destroy();
@@ -340,8 +357,8 @@ public class Main {
      *     If the execution fails.
      */
     private void executeTask(Task task, CliConfiguration configuration, Options options, File projectDirectory, File workingDirectory,
-        PluginRepository pluginRepository, StoreFactory storeFactory) throws CliExecutionException {
-        task.initialize(projectDirectory, workingDirectory, pluginRepository, storeFactory);
+        PluginRepository pluginRepository, StoreFactory storeFactory, MeterRegistry meterRegistry) throws CliExecutionException {
+        task.initialize(projectDirectory, workingDirectory, pluginRepository, storeFactory, meterRegistry);
         task.run(configuration, options);
     }
 }

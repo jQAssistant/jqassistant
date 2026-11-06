@@ -8,21 +8,20 @@ public interface LifecycleAware {
 
     /**
      * Initialize the instance.
-     *
      * Life cycle callback to perform initialization (e.g. expensive instantiaion of
      * {@link javax.xml.bind.JAXBContext}s), will be called exactly once.
-     * 
+     *
      * @throws Exception
-     *             If initialization fails.
+     *     If initialization fails.
      */
     default void initialize() throws Exception {
     }
 
     /**
      * Destroy the instance, will be called exactly once.
-     * 
+     *
      * @throws Exception
-     *             If destruction fails.
+     *     If destruction fails.
      */
     default void destroy() throws Exception {
     }

@@ -22,6 +22,7 @@ import com.buschmais.jqassistant.core.shared.configuration.ConfigurationMappingL
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -170,7 +171,8 @@ public abstract class AbstractCLIIT {
         this.jqaHome = getjQAHomeDirectory(neo4jVersion);
         File workingDirectory = getWorkingDirectory();
         FileUtils.cleanDirectory(workingDirectory);
-        pluginRepository = new PluginRepositoryImpl(new PluginConfigurationReaderImpl(new PluginClassLoader(AbstractCLIIT.class.getClassLoader())));
+        pluginRepository = new PluginRepositoryImpl(new PluginConfigurationReaderImpl(new PluginClassLoader(AbstractCLIIT.class.getClassLoader())),
+            new SimpleMeterRegistry());
         pluginRepository.initialize();
         // The user home contains a Maven settings.xml to configure the local repository
         ArtifactProvider artifactProvider = ArtifactProviderFactory.getArtifactProvider(configuration, new File(userHome));
