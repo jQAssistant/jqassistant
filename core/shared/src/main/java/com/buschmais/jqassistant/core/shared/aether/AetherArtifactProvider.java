@@ -15,7 +15,6 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.graph.Dependency;
-import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.Exclusion;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -23,7 +22,6 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.util.artifact.JavaScopes;
-import org.eclipse.aether.util.filter.DependencyFilterUtils;
 
 import static java.util.stream.Collectors.toList;
 
@@ -51,8 +49,7 @@ public class AetherArtifactProvider implements ArtifactProvider {
     }
 
     private DependencyResult resolvePlugins(List<Dependency> dependencies) {
-        DependencyFilter classpathFilter = DependencyFilterUtils.classpathFilter(JavaScopes.RUNTIME);
-        DependencyResult dependencyResult = resolveDependencies(classpathFilter, dependencies);
+        DependencyResult dependencyResult = resolveDependencies(dependencies);
         if (log.isDebugEnabled()) {
             logDependencyTree(dependencyResult.getRoot(), 0);
         }
@@ -71,11 +68,11 @@ public class AetherArtifactProvider implements ArtifactProvider {
             .orElse(null), plugin.type(), plugin.version()), JavaScopes.RUNTIME, false, exclusions);
     }
 
-    private DependencyResult resolveDependencies(DependencyFilter classpathFilter, List<Dependency> dependencies) {
+    private DependencyResult resolveDependencies(List<Dependency> dependencies) {
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setDependencies(dependencies);
         collectRequest.setRepositories(repositories);
-        DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, classpathFilter);
+        DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, null);
         try {
             return repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest);
         } catch (DependencyResolutionException e) {
