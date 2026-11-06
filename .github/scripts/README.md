@@ -22,13 +22,17 @@ creation; finding vulnerabilities does not fail the scan.
 Each issue has a hidden body marker:
 
 ```text
-<!-- trivy:v1:SHA256_OF_JSON_ARRAY_TYPE_PACKAGE_ADVISORY -->
+<!-- trivy:v2:SHA256_OF_JSON_ARRAY_TYPE_PACKAGE_ADVISORY -->
 ```
 
 The hash is SHA-256 of `JSON.stringify([result.Type, PkgName, VulnerabilityID])`.
 Versions, severity, module paths and branches are excluded. The same finding in
 multiple modules becomes one issue with affected locations, installed/fixed
 versions, severity, commit, ref and a link to its scan run.
+
+Only `trivy:v2` markers are recognized. Older `trivy:v1` issues are ignored so the
+next scan can create fresh tickets for findings included by the workflow's current
+severity filter. Once a `v2` issue exists, subsequent scans skip that finding.
 
 Every run paginates all open and closed issues and checks their markers. Renaming
 an issue, changing its labels or closing it does not create a replacement.

@@ -58,7 +58,7 @@ function issueBody(key, finding, context) {
   let body;
   do {
     body = [
-      `<!-- trivy:v1:${key} -->`,
+      `<!-- trivy:v2:${key} -->`,
       `Trivy detected **${finding.id}** in **${finding.name}**.`,
       '',
       `Scan: ${run}`,
@@ -99,7 +99,7 @@ module.exports = async function syncIssues({ github, context, core, report, dryR
   const known = new Set();
   for (const issue of existing) {
     if (issue.pull_request) continue;
-    for (const match of (issue.body || '').matchAll(/<!-- trivy:v1:([a-f0-9]{64}) -->/g)) {
+    for (const match of (issue.body || '').matchAll(/<!-- trivy:v2:([a-f0-9]{64}) -->/g)) {
       known.add(match[1]);
     }
   }
