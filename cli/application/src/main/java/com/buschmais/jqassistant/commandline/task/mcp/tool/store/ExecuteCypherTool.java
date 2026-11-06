@@ -61,7 +61,9 @@ public class ExecuteCypherTool implements Tool {
 
     @Override
     public String getDescription() {
-        return "Executes a Cypher statement.";
+        return """
+            Executes a Cypher statement with optional parameters. Returns the result enriched with source locations for nodes and relationships if available.
+            """;
     }
 
     @Override

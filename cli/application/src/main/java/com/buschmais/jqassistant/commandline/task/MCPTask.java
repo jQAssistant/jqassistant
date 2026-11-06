@@ -29,7 +29,7 @@ public class MCPTask extends AbstractRuleTask {
 
         JacksonMcpJsonMapper mcpJsonMapper = new JacksonMcpJsonMapper(JsonMapper.shared());
 
-        McpServerFeatures.SyncToolSpecification getSchemaToolSpec = getToolSpec(new GetSchemaTool(store), mcpJsonMapper);
+        McpServerFeatures.SyncToolSpecification getSchemaToolSpec = getToolSpec(new GetSchemaTool(store, mcpJsonMapper), mcpJsonMapper);
         McpServerFeatures.SyncToolSpecification executeCypherToolSpec = getToolSpec(new ExecuteCypherTool(store), mcpJsonMapper);
         McpServerFeatures.SyncToolSpecification getConceptsToolSpec = getToolSpec(new GetConceptsTool(getAvailableRules(configuration.analyze()
             .rule())), mcpJsonMapper);
