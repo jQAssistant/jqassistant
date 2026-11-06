@@ -1,0 +1,107 @@
+---
+name: Trivy vulnerability issues
+
+on:
+  push: {}
+  schedule:
+    # Twice daily in UTC, away from the start of the hour.
+    - cron: "17 6,18 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Preview new issues without creating them"
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out the scanned commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js for issue script tests
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Test issue deduplication
+        run: node --test .github/scripts/trivy-issues.test.cjs
+
+      - name: Scan dependencies with Trivy
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+          ignore-unfixed: false
+          format: json
+          output: ${{ runner.temp }}/trivy-report.json
+          cache-dir: ${{ runner.temp }}/trivy-cache
+          timeout: 20m
+          # Findings must reach the issue job; scanner errors still fail the scan.
+          exit-code: "0"
+
+      - name: Save the scan report
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: trivy-report
+          path: ${{ runner.temp }}/trivy-report.json
+          if-no-files-found: error
+          retention-days: 14
+
+  sync-issues:
+    needs: scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      issues: write
+    # A repository-wide lock makes the lookup/create sequence safe across branches.
+    concurrency:
+      group: trivy-issue-sync
+      cancel-in-progress: false
+      queue: max
+    steps:
+      - name: Check out the issue script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download this run's scan report
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: trivy-report
+          path: ${{ runner.temp }}/trivy-report
+
+      - name: Create issues for new vulnerabilities
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          TRIVY_REPORT: ${{ runner.temp }}/trivy-report/trivy-report.json
+          TRIVY_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            const syncIssues = require('./.github/scripts/trivy-issues.cjs');
+            const report = JSON.parse(fs.readFileSync(process.env.TRIVY_REPORT, 'utf8'));
+            const dryRun = process.env.TRIVY_DRY_RUN === 'true';
+            const result = await syncIssues({ github, context, core, report, dryRun });
+            await core.summary
+              .addHeading(dryRun ? 'Trivy issue preview' : 'Trivy vulnerability issues')
+              .addTable([
+                [{ data: 'Result', header: true }, { data: 'Count', header: true }],
+                ['Unique findings', String(result.findings)],
+                ['Already reported', String(result.existing)],
+                ['Created', String(result.created)],
+                ['Would create (dry run)', String(result.wouldCreate)],
+              ])
+              .write();
