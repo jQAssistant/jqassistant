@@ -31,7 +31,10 @@ function collectFindings(report) {
     }
     for (const vulnerability of result.Vulnerabilities || []) {
       if (!isObject(vulnerability)) throw new Error('Malformed Trivy report: invalid vulnerability');
-      const type = requireText(result.Type, 'Type');
+      const resultType = requireText(result.Type, 'Type');
+      // Trivy reports Maven source findings as "pom" and SBOM/archive findings
+      // as "jar". Preserve existing Maven issue keys across both scan modes.
+      const type = resultType === 'jar' ? 'pom' : resultType;
       const target = requireText(result.Target, 'Target');
       const id = requireText(vulnerability.VulnerabilityID, 'VulnerabilityID');
       const name = requireText(vulnerability.PkgName, 'PkgName');
@@ -58,7 +61,7 @@ function issueBody(key, finding, context) {
   let body;
   do {
     body = [
-      `<!-- trivy:v3:${key} -->`,
+      `<!-- trivy:v4:${key} -->`,
       `Trivy detected **${finding.id}** in **${finding.name}**.`,
       '',
       `Scan: ${run}`,
@@ -99,7 +102,7 @@ module.exports = async function syncIssues({ github, context, core, report, dryR
   const known = new Set();
   for (const issue of existing) {
     if (issue.pull_request) continue;
-    for (const match of (issue.body || '').matchAll(/<!-- trivy:v3:([a-f0-9]{64}) -->/g)) {
+    for (const match of (issue.body || '').matchAll(/<!-- trivy:v4:([a-f0-9]{64}) -->/g)) {
       known.add(match[1]);
     }
   }

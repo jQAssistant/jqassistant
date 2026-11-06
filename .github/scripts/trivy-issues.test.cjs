@@ -66,17 +66,17 @@ test('repeated reports, renamed titles and closed issues never create duplicates
   assert.deepEqual(calls.list[0], { owner: 'example', repo: 'project', state: 'all', per_page: 100 });
 });
 
-test('v1 and v2 markers allow a fresh v3 issue, then subsequent scans skip the v3 issue', async () => {
-  for (const legacyVersion of ['v1', 'v2']) {
+test('v1, v2 and v3 markers allow a fresh v4 issue, then subsequent scans skip the v4 issue', async () => {
+  for (const legacyVersion of ['v1', 'v2', 'v3']) {
     const { input, issues, calls } = fixture();
     await syncIssues(input);
-    assert.match(issues[0].body, /^<!-- trivy:v3:[a-f0-9]{64} -->/);
-    issues[0].body = issues[0].body.replace('trivy:v3:', `trivy:${legacyVersion}:`);
+    assert.match(issues[0].body, /^<!-- trivy:v4:[a-f0-9]{64} -->/);
+    issues[0].body = issues[0].body.replace('trivy:v4:', `trivy:${legacyVersion}:`);
     const legacyBody = issues[0].body;
 
     assert.deepEqual(await syncIssues(input), { findings: 1, existing: 0, created: 1, wouldCreate: 0 });
     assert.equal(issues[0].body, legacyBody);
-    assert.match(issues[1].body, /^<!-- trivy:v3:[a-f0-9]{64} -->/);
+    assert.match(issues[1].body, /^<!-- trivy:v4:[a-f0-9]{64} -->/);
 
     assert.deepEqual(await syncIssues(input), { findings: 1, existing: 1, created: 0, wouldCreate: 0 });
     assert.equal(calls.create.length, 2);
@@ -104,6 +104,21 @@ test('different advisory IDs and packages create separate issues', async () => {
   input.report.Results[0].Vulnerabilities[0].PkgName = 'example:other';
   await syncIssues(input);
   assert.equal(calls.create.length, 3);
+});
+
+test('Maven source, SBOM and archive findings share the existing issue identity', async () => {
+  const { input, issues, calls } = fixture();
+  await syncIssues(input);
+  input.report.Results.push({
+    ...input.report.Results[0], Type: 'jar', Target: 'dependency-sbom.json',
+  });
+  assert.deepEqual(await syncIssues(input), { findings: 1, existing: 1, created: 0, wouldCreate: 0 });
+  assert.equal(calls.create.length, 1);
+
+  issues.length = 0;
+  await syncIssues(input);
+  assert.match(issues[0].body, /a\/pom.xml/);
+  assert.match(issues[0].body, /dependency-sbom.json/);
 });
 
 test('matches returned beyond the first page are recognized', async () => {
