@@ -3,11 +3,11 @@
   <context>
     <build>
       <name>jQAssistant Parent</name>
-      <timestamp>2026-11-05T17:26:09.695Z</timestamp>
+      <timestamp>2026-11-06T10:34:48.8Z</timestamp>
       <properties></properties>
     </build>
   </context>
-  <group id="jqa-legal" date="2026-11-05T17:35:00">
+  <group id="jqa-legal" date="2026-11-06T10:41:24">
     <constraint id="jqa-legal:license:is-correctly-defined">
       <description>The license definition seems to be wrong. Please ensure
 to declare the license in this project as follows:
@@ -58,7 +58,7 @@ to declare the license in this project as follows:
       </verificationResult>
       <status level="0">failure</status>
       <severity level="2">major</severity>
-      <duration>156</duration>
+      <duration>250</duration>
     </constraint>
     <constraint id="jqa-legal:license:only-one-in-pom">
       <description>A jQAssistant project must have exactly one license specified in
@@ -116,7 +116,7 @@ specified.</description>
       </verificationResult>
       <status level="1">warning</status>
       <severity level="3">minor</severity>
-      <duration>72</duration>
+      <duration>143</duration>
     </constraint>
     <concept id="jqa-maven-constraints:mark-root-project" abstract="false">
       <description>This concept labels the parent Maven POM of a Maven Project with
@@ -144,7 +144,7 @@ on the root Maven POM of a Maven project.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="0">blocker</severity>
-      <duration>116</duration>
+      <duration>155</duration>
     </concept>
     <constraint id="jqa-legal:license:exists">
       <description>It must exist in the root directory of the project a
@@ -175,14 +175,14 @@ the project uses.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>40</duration>
+      <duration>42</duration>
       <required-concept id="jqa-maven-constraints:mark-root-project">
         <status level="2">success</status>
       </required-concept>
     </constraint>
-    <duration>561</duration>
+    <duration>855</duration>
   </group>
-  <group id="jqa-logging" date="2026-11-05T17:35:01">
+  <group id="jqa-logging" date="2026-11-06T10:41:24">
     <constraint id="jqa-logging:IllegalUsageOfSystemOutAndErr">
       <description>System.out or System.err should not be used for logging</description>
       <verificationResult>
@@ -192,7 +192,7 @@ the project uses.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>128</duration>
+      <duration>235</duration>
     </constraint>
     <concept id="jqa-logging:OSSLogger" abstract="false">
       <description>The classes org.slf4j.Logger, org.apache.commons.logging.Log and java.util.logging.Logger are logging frameworks and labeled as Logger.</description>
@@ -216,7 +216,7 @@ the project uses.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>55</duration>
+      <duration>66</duration>
     </concept>
     <concept id="jqa-logging:Logger" abstract="false">
       <description>Abstract anchor for all logging framework providers.</description>
@@ -254,7 +254,7 @@ the project uses.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>35</duration>
+      <duration>39</duration>
       <required-concept id="jqa-logging:Logger">
         <status level="2">success</status>
       </required-concept>
@@ -268,14 +268,14 @@ the project uses.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>85</duration>
+      <duration>113</duration>
       <required-concept id="jqa-logging:Slf4j">
         <status level="2">success</status>
       </required-concept>
     </constraint>
-    <duration>371</duration>
+    <duration>566</duration>
   </group>
-  <group id="jqa-maven-constraints" date="2026-11-05T17:35:01">
+  <group id="jqa-maven-constraints" date="2026-11-06T10:41:25">
     <constraint id="jqa-maven-constraints:project-name">
       <description>The name of the project must be given in the Maven project. Furthermore
 the name must start with JQAssistant.
@@ -291,7 +291,7 @@ present in the parent POM:
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>42</duration>
+      <duration>55</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:java-compiler-target-version">
       <description>The Maven Compiler plugin must NOT define a Java bytecode target version other than
@@ -304,7 +304,7 @@ only Java 11 is available.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="1">critical</severity>
-      <duration>159</duration>
+      <duration>265</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:organisation-present">
       <description>The information on the organisation of the jQAssistant project
@@ -345,7 +345,7 @@ in the toplevel POM of the Maven project.
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>165</duration>
+      <duration>292</duration>
       <required-concept id="jqa-maven-constraints:mark-root-project">
         <status level="2">success</status>
       </required-concept>
@@ -378,7 +378,7 @@ Example: &lt;version&gt;1.9&lt;/version&gt;</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>133</duration>
+      <duration>164</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:homepage">
       <description>The homepage of jQAssistant must be defined as the homepage of
@@ -393,7 +393,7 @@ present in the parent POM:
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>131</duration>
+      <duration>148</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:scm-connection-declaration">
       <description>The SCM section of this jQAssistant project seems to be not correct. Please
@@ -427,7 +427,7 @@ The SCM section of this project should be similar to this one:
       </verificationResult>
       <status level="2">success</status>
       <severity level="0">blocker</severity>
-      <duration>108</duration>
+      <duration>91</duration>
     </constraint>
     <concept id="jqa-maven-constraints:jQAssistantArtifact" abstract="false">
       <description>This concept labels all artifacts with a groupId starting with "com.buschmais.jqassistant" with "jQAssistant".</description>
@@ -2092,7 +2092,7 @@ The SCM section of this project should be similar to this one:
       </verificationResult>
       <status level="2">success</status>
       <severity level="0">blocker</severity>
-      <duration>94</duration>
+      <duration>109</duration>
     </concept>
     <constraint id="jqa-maven-constraints:AvoidDependenciesTojQAssistantTestArtifacts">
       <description>The main artifact created by a jQAssistant Maven project must not depend on
@@ -2106,7 +2106,7 @@ Usually the reason is a missing "test" scope in the dependency declaration.</des
       </verificationResult>
       <status level="2">success</status>
       <severity level="1">critical</severity>
-      <duration>39</duration>
+      <duration>68</duration>
       <required-concept id="jqa-maven-constraints:jQAssistantArtifact">
         <status level="2">success</status>
       </required-concept>
@@ -2144,11 +2144,11 @@ Example:
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>73</duration>
+      <duration>146</duration>
     </constraint>
-    <duration>996</duration>
+    <duration>1417</duration>
   </group>
-  <group id="jqa-plugin:Default" date="2026-11-05T17:35:02">
+  <group id="jqa-plugin:Default" date="2026-11-06T10:41:26">
     <concept id="jqa-plugin:Label" abstract="false">
       <description>Adds the labels "XO" and "Label" to all interfaces representing XO labels.</description>
       <result>
@@ -2633,6 +2633,36 @@ Example:
           <row key="c2421f1756e1596be5cb9e6fee32cf537745d512606502a151bbc0e037ddab85">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="d5742126a3442c95dfba88d3bb9707dca327cd2e89709ebee6f7f50d16801704">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="c2421f1756e1596be5cb9e6fee32cf537745d512606502a151bbc0e037ddab85">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="f8bb6fc37a7bd300b90f08da6f9bdcb4c2489164ff7c222d76bc4d4b41121e47">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="e29ace2a8222379732b548493a2b400dd1dc6966a9bf67687b94078b443a21e1">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="2ee6254cd1585facf26cbe2408d118e4da972bc134f131a0feb0ee1215b8bae7">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -3464,36 +3494,6 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="d5742126a3442c95dfba88d3bb9707dca327cd2e89709ebee6f7f50d16801704">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="c2421f1756e1596be5cb9e6fee32cf537745d512606502a151bbc0e037ddab85">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="f8bb6fc37a7bd300b90f08da6f9bdcb4c2489164ff7c222d76bc4d4b41121e47">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="e29ace2a8222379732b548493a2b400dd1dc6966a9bf67687b94078b443a21e1">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="2ee6254cd1585facf26cbe2408d118e4da972bc134f131a0feb0ee1215b8bae7">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.java.api.model.LambdaMethodDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
           <row key="a004002f1a1c6b939d9d5859c430b4c7c69ca12df19185f3085a1369014dc438">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</value>
@@ -4217,7 +4217,7 @@ Example:
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>159</duration>
+      <duration>225</duration>
     </concept>
     <concept id="jqa-plugin:PluginDescriptor" abstract="false">
       <description>Adds a label "PluginDescriptor" to classpath resources "/META-INF/jqassistant-plugin.xml".</description>
@@ -4325,7 +4325,7 @@ Example:
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>52</duration>
+      <duration>71</duration>
     </concept>
     <concept id="jqa-plugin:PluginDescriptorRegistersModel" abstract="false">
       <description>Creates a relationship REGISTERS_MODEL from /model/class-XML nodes to the corresponding model types.</description>
@@ -5057,7 +5057,7 @@ Example:
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>470</duration>
+      <duration>577</duration>
       <required-concept id="jqa-plugin:PluginDescriptor">
         <status level="2">success</status>
       </required-concept>
@@ -5133,7 +5133,7 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>69</duration>
+      <duration>85</duration>
       <required-concept id="jqa-plugin:PluginDescriptorRegistersModel">
         <status level="2">success</status>
       </required-concept>
@@ -5150,7 +5150,7 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>104</duration>
+      <duration>150</duration>
       <required-concept id="jqa-plugin:PluginDescriptorRegistersModel">
         <status level="2">success</status>
       </required-concept>
@@ -5177,14 +5177,14 @@ descriptor must look like this
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>98</duration>
+      <duration>125</duration>
       <required-concept id="jqa-plugin:PluginDescriptor">
         <status level="2">success</status>
       </required-concept>
     </constraint>
-    <duration>981</duration>
+    <duration>1267</duration>
   </group>
-  <group id="jqa-project-layout" date="2026-11-05T17:35:03">
+  <group id="jqa-project-layout" date="2026-11-06T10:41:28">
     <constraint id="jqa-project-layout:documentation:releasenotes-exists">
       <description>There should be an Asciidoctor document for the release notes of this version.</description>
       <result>
@@ -5207,7 +5207,7 @@ descriptor must look like this
       </verificationResult>
       <status level="1">warning</status>
       <severity level="3">minor</severity>
-      <duration>113</duration>
+      <duration>146</duration>
     </constraint>
     <constraint id="jqa-project-layout:readme:exists">
       <description>It must exist in the root directory of the project a
@@ -5243,7 +5243,7 @@ the repositories.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>61</duration>
+      <duration>79</duration>
     </constraint>
     <constraint id="jqa-project-layout:editorconfig:exists">
       <description>Each repository should contain an editor config configuration file
@@ -5277,11 +5277,11 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>62</duration>
+      <duration>77</duration>
     </constraint>
-    <duration>254</duration>
+    <duration>316</duration>
   </group>
-  <group id="jqa-technical-debt" date="2026-11-05T17:35:03">
+  <group id="jqa-technical-debt" date="2026-11-06T10:41:28">
     <constraint id="jqa-technical-debt:CodeElementToBeRemoved">
       <description>Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in given version.</description>
       <result>
@@ -5347,7 +5347,7 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status level="0">failure</status>
       <severity level="2">major</severity>
-      <duration>830</duration>
+      <duration>1197</duration>
     </constraint>
     <constraint id="jqa-technical-debt:CodeElementToBeRemovedInVersion">
       <description>Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" will be removed in the given version.</description>
@@ -5532,7 +5532,7 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status level="1">warning</status>
       <severity level="3">minor</severity>
-      <duration>665</duration>
+      <duration>1097</duration>
     </constraint>
     <constraint id="java:TechnicalDebt">
       <description>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".</description>
@@ -5640,8 +5640,8 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status level="0">failure</status>
       <severity level="2">major</severity>
-      <duration>304</duration>
+      <duration>395</duration>
     </constraint>
-    <duration>1814</duration>
+    <duration>2707</duration>
   </group>
 </jqassistant-report>

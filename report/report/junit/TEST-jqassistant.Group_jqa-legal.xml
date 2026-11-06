@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <testsuite name="jqassistant.Group_jqa-legal" tests="4" failures="1" errors="0" time="0.0">
+    <testcase name="Constraint_jqa-legal_license_only-one-in-pom" time="0.0" classname="jqassistant.Group_jqa-legal"/>
+    <testcase name="Concept_jqa-maven-constraints_mark-root-project" time="0.0" classname="jqassistant.Group_jqa-legal"/>
     <testcase name="Constraint_jqa-legal_license_is-correctly-defined" time="0.0" classname="jqassistant.Group_jqa-legal">
         <failure message="The license definition seems to be wrong. Please ensure&#10;to declare the license in this project as follows:&#10;&#10;    &lt;licenses&gt;&#10;        &lt;license&gt;&#10;            &lt;name&gt;GNU General Public License, v3&lt;/name&gt;&#10;            &lt;url&gt;https://www.gnu.org/licenses/gpl-3.0.html&lt;/url&gt;&#10;        &lt;/license&gt;&#10;    &lt;/licenses&gt;">Project = jQAssistant Parent
 groupId = com.buschmais.jqassistant
@@ -10,7 +12,5 @@ groupId = com.buschmais.jqassistant
 artifactId = parent
 </failure>
     </testcase>
-    <testcase name="Constraint_jqa-legal_license_only-one-in-pom" time="0.0" classname="jqassistant.Group_jqa-legal"/>
-    <testcase name="Concept_jqa-maven-constraints_mark-root-project" time="0.0" classname="jqassistant.Group_jqa-legal"/>
     <testcase name="Constraint_jqa-legal_license_exists" time="0.0" classname="jqassistant.Group_jqa-legal"/>
 </testsuite>
