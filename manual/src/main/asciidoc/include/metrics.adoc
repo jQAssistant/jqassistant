@@ -1,6 +1,6 @@
 == Metrics
 
-jQAssistant supports the collection of metrics which can be pushed to a https://github.com/prometheus/pushgateway[Prometheus Pushgateway].
+jQAssistant supports the collection of metrics which can be pushed at the end of the execution to a https://github.com/prometheus/pushgateway[Prometheus Pushgateway].
 
 === Activation
 
