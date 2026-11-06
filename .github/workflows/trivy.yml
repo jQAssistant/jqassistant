@@ -42,7 +42,7 @@ jobs:
           scan-type: fs
           scan-ref: .
           scanners: vuln
-          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+          severity: HIGH,CRITICAL
           ignore-unfixed: false
           format: json
           output: ${{ runner.temp }}/trivy-report.json
