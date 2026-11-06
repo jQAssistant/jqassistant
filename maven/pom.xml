@@ -262,7 +262,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqa-distribution-specification</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!--
          ! All non-jQAssistant go below!

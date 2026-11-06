@@ -90,7 +90,7 @@ public final class ReportHelper {
             .build();
     }
 
-    private static <T> Optional<SourceLocation<?>> getSourceLocation(T value) {
+    public static <T> Optional<SourceLocation<?>> getSourceLocation(T value) {
         if (value instanceof CompositeObject) {
             CompositeObject descriptor = (CompositeObject) value;
             Optional<LanguageElement> languageElement = LanguageHelper.getLanguageElement(descriptor);
