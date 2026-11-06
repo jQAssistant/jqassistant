@@ -79,10 +79,9 @@ public class MeterRegistryFactoryImpl implements MeterRegistryFactory {
             .scheme(Scheme.fromString(pushgateway.scheme()))
             .job(pushgateway.jobName())
             .registry(meterRegistry.getPrometheusRegistry());
-        if (pushgateway.bearerToken()
-            .isPresent() && pushgateway.username()
-            .isPresent()) {
-            throw new IllegalStateException("Either bearer token or username/password must be provided for Prometheus Pushgateway authentication.");
+        if (pushgateway.bearerToken().isPresent()
+            && pushgateway.username().isPresent()) {
+                throw new IllegalStateException("Either bearer token or username/password must be provided for Prometheus Pushgateway authentication, but not both.");
         }
         pushgateway.bearerToken()
             .ifPresent(builder::bearerToken);
