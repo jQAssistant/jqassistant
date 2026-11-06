@@ -66,19 +66,21 @@ test('repeated reports, renamed titles and closed issues never create duplicates
   assert.deepEqual(calls.list[0], { owner: 'example', repo: 'project', state: 'all', per_page: 100 });
 });
 
-test('v1 markers allow a fresh v2 issue, then subsequent scans skip the v2 issue', async () => {
-  const { input, issues, calls } = fixture();
-  await syncIssues(input);
-  assert.match(issues[0].body, /^<!-- trivy:v2:[a-f0-9]{64} -->/);
-  issues[0].body = issues[0].body.replace('trivy:v2:', 'trivy:v1:');
-  const legacyBody = issues[0].body;
+test('v1 and v2 markers allow a fresh v3 issue, then subsequent scans skip the v3 issue', async () => {
+  for (const legacyVersion of ['v1', 'v2']) {
+    const { input, issues, calls } = fixture();
+    await syncIssues(input);
+    assert.match(issues[0].body, /^<!-- trivy:v3:[a-f0-9]{64} -->/);
+    issues[0].body = issues[0].body.replace('trivy:v3:', `trivy:${legacyVersion}:`);
+    const legacyBody = issues[0].body;
 
-  assert.deepEqual(await syncIssues(input), { findings: 1, existing: 0, created: 1, wouldCreate: 0 });
-  assert.equal(issues[0].body, legacyBody);
-  assert.match(issues[1].body, /^<!-- trivy:v2:[a-f0-9]{64} -->/);
+    assert.deepEqual(await syncIssues(input), { findings: 1, existing: 0, created: 1, wouldCreate: 0 });
+    assert.equal(issues[0].body, legacyBody);
+    assert.match(issues[1].body, /^<!-- trivy:v3:[a-f0-9]{64} -->/);
 
-  assert.deepEqual(await syncIssues(input), { findings: 1, existing: 1, created: 0, wouldCreate: 0 });
-  assert.equal(calls.create.length, 2);
+    assert.deepEqual(await syncIssues(input), { findings: 1, existing: 1, created: 0, wouldCreate: 0 });
+    assert.equal(calls.create.length, 2);
+  }
 });
 
 test('version, severity, module and branch changes preserve identity', async () => {

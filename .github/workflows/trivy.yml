@@ -20,7 +20,7 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - name: Check out the scanned commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,11 +36,29 @@ jobs:
       - name: Test issue deduplication
         run: node --test .github/scripts/trivy-issues.test.cjs
 
+      - name: Set up Java and cache Maven dependencies
+        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: "**/pom.xml"
+
+      - name: Build modules and resolve dependencies
+        # Install sibling modules and cache transitive POMs before scanning.
+        # Any build or dependency-resolution failure must stop this job.
+        run: mvn --batch-mode --no-transfer-progress -DskipTests install
+
       - name: Scan dependencies with Trivy
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          # Resolve Maven dependencies from the cache populated by the build.
+          # This does not disable vulnerability database updates.
+          TRIVY_OFFLINE_SCAN: "true"
         with:
           scan-type: fs
           scan-ref: .
+          skip-dirs: "**/target"
           scanners: vuln
           severity: HIGH,CRITICAL
           ignore-unfixed: false

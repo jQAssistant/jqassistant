@@ -6,10 +6,25 @@ at **06:17 and 18:17 UTC**. Scheduled runs start once the workflow is on the def
 branch; GitHub may delay scheduled runs during periods of high load.
 
 The official `aquasecurity/trivy-action` scans the repository filesystem for
-dependency vulnerabilities at every severity, including vulnerabilities without a
-published fix. It scans Maven POMs without building the Java project, including
-POMs in test fixtures. Secret scanning is disabled. The `trivy-report` JSON
-artifact is retained for 14 days.
+HIGH and CRITICAL dependency vulnerabilities, including vulnerabilities without a
+published fix. Before scanning, the job sets up Temurin Java 17, restores the Maven
+cache and runs `mvn --batch-mode --no-transfer-progress -DskipTests install` to
+build the reactor, install sibling modules and resolve transitive dependencies.
+The scan job has a 60-minute timeout to accommodate the build.
+
+Trivy then uses offline dependency lookup against the populated Maven cache.
+Vulnerability database updates remain enabled. It scans source Maven POMs,
+including POMs in test fixtures, and excludes all generated `target` directories.
+Fixtures and profiles outside the Maven build may need their own dependency
+resolution if their transitive dependencies are not already cached. Secret
+scanning is disabled. The `trivy-report` JSON artifact is retained for 14 days.
+
+Maven caches are keyed by the repository's POM files. The build runs even on a
+cache hit; build or dependency-resolution errors prevent both scanning and issue
+creation. A cold cache still requires Maven repository access. If that access
+returns HTTP 429, respect the server's retry delay or configure an accessible
+repository mirror before rerunning; offline scanning alone cannot fill a missing
+dependency cache.
 
 The scan job has read access. The separate issue job uses the built-in
 `GITHUB_TOKEN` with `issues: write`; no personal access token or additional secret
@@ -22,7 +37,7 @@ creation; finding vulnerabilities does not fail the scan.
 Each issue has a hidden body marker:
 
 ```text
-<!-- trivy:v2:SHA256_OF_JSON_ARRAY_TYPE_PACKAGE_ADVISORY -->
+<!-- trivy:v3:SHA256_OF_JSON_ARRAY_TYPE_PACKAGE_ADVISORY -->
 ```
 
 The hash is SHA-256 of `JSON.stringify([result.Type, PkgName, VulnerabilityID])`.
@@ -30,9 +45,10 @@ Versions, severity, module paths and branches are excluded. The same finding in
 multiple modules becomes one issue with affected locations, installed/fixed
 versions, severity, commit, ref and a link to its scan run.
 
-Only `trivy:v2` markers are recognized. Older `trivy:v1` issues are ignored so the
-next scan can create fresh tickets for findings included by the workflow's current
-severity filter. Once a `v2` issue exists, subsequent scans skip that finding.
+Only `trivy:v3` markers are recognized. Older `trivy:v1` and `trivy:v2` issues are
+ignored so the next scan can create fresh tickets for findings included by the
+workflow's current severity filter. Once a `v3` issue exists, subsequent scans skip
+that finding.
 
 Every run paginates all open and closed issues and checks their markers. Renaming
 an issue, changing its labels or closing it does not create a replacement.
@@ -68,8 +84,11 @@ scan.
    Issues there. Push-triggered runs create real issues in that repository.
 2. Open **Actions → Trivy vulnerability issues → Run workflow**. Leave
    **dry_run** enabled to scan and preview new issue titles in the logs and counts
-   in the run summary. Download `trivy-report` and confirm that expected Maven
-   dependencies and findings appear. This preview does not create issues.
+   in the run summary. Confirm the Maven build succeeds before Trivy starts.
+   Download `trivy-report` and check that the expected transitive packages and
+   HIGH/CRITICAL findings appear, including dom4j and Velocity if the resolved
+   versions remain vulnerable. Generated `target` paths should be absent. This
+   preview does not create issues.
 3. Run manually with **dry_run** disabled. Check that each new finding creates
    one issue with the expected package, advisory, remediation details and marker.
 4. Rerun that workflow run. For unchanged findings, the issue count must remain
