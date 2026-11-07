@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.scm.maven.integration.plugin;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
 
@@ -29,13 +28,14 @@ public class CustomReportPlugin implements ReportPlugin {
     public void setResult(Result<? extends ExecutableRule> result) throws ReportException {
         Properties properties = result.getRule().getReport().getProperties();
         String suffix = properties.getProperty("suffix");
-        try {
-            PrintWriter writer = new PrintWriter(new FileWriter(suffix != null ? fileName + "." + suffix : fileName, true));
+        try(
+            final FileOutputStream fos = new FileOutputStream(suffix != null ? fileName + "." + suffix : fileName, true);
+            final PrintWriter writer = new PrintWriter(fos, false, StandardCharsets.UTF_8)
+        ) {
             writer.print(result.getRule().getId());
             writer.print(":");
             writer.print(result.getStatus().name());
             writer.println();
-            writer.close();
         } catch (IOException e) {
             throw new ReportException("Cannot write custom report.", e);
         }
