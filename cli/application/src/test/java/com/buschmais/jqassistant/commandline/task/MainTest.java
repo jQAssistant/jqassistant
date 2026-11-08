@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.commandline.configuration.CliConfiguration;
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.store.api.StoreFactory;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.cli.Options;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class MainTest {
         this.main = new com.buschmais.jqassistant.commandline.Main() {
             @Override
             protected void executeTasks(List<Task> tasks, CliConfiguration configuration, Options options, File projectDirectory, File workingDirectory,
-                PluginRepository pluginRepository, StoreFactory storeFactory) {
+                PluginRepository pluginRepository, StoreFactory storeFactory, MeterRegistry meterRegistry) {
                 fail("(No task must be executed");
             }
         };

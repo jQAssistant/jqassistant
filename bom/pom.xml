@@ -319,6 +319,23 @@
             </dependency>
             <!-- End of Slf4j dependencies -->
 
+            <!-- Micrometer and Prometheus -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>prometheus-metrics-exporter-pushgateway</artifactId>
+                <version>${prometheus.pushgateway.version}</version>
+            </dependency>
+
             <!-- Start misc dependencies -->
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -496,6 +513,19 @@
                 <artifactId>model-assert</artifactId>
                 <version>${model-assert.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wiremock</groupId>
+                <artifactId>wiremock</artifactId>
+                <version>${wiremock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <type>pom</type>
+                <version>${testcontainers.version}</version>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

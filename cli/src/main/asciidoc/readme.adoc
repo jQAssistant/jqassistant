@@ -229,3 +229,14 @@ Transforms an XML report into HTML.
 
 Starts the integrated Neo4j web server.
 
+=== Exit Codes
+
+The following exit codes are used by the command line utility:
+
+[options=header]
+|===
+| Exit Code | Description
+| 0         | The task(s) were executed successfully
+| 1         | A configuration problem has been detected
+| 2         | Rule violations have been detected exceeding the `fail-on-severity` threshold and `continue-on-failure` is not enabled (only used by the analyze task)
+|===
