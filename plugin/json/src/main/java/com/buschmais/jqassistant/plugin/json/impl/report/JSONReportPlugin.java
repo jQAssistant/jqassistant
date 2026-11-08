@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.json.impl.report;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,8 @@ import com.buschmais.jqassistant.core.report.api.model.Column;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -63,7 +63,7 @@ public class JSONReportPlugin implements ReportPlugin {
         try {
             objectMapper.writerWithDefaultPrettyPrinter()
                 .writeValue(file, stream.iterator());
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ReportException("Cannot write JSON report.", e);
         }
         try {
