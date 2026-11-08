@@ -1954,6 +1954,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <li><a href="#cli:server">server</a></li>
 </ul>
 </li>
+<li><a href="#_exit_codes">4.4. Exit Codes</a></li>
 </ul>
 </li>
 <li><a href="#_maven_plugin">5. Maven Plugin</a>
@@ -2037,14 +2038,21 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 </li>
 </ul>
 </li>
-<li><a href="#_known_issues">8. Known Issues</a>
+<li><a href="#_metrics">8. Metrics</a>
 <ul class="sectlevel2">
-<li><a href="#_maven_2">8.1. Maven</a>
+<li><a href="#_activation">8.1. Activation</a></li>
+<li><a href="#_core_metrics">8.2. Core metrics</a></li>
+<li><a href="#_analyze_metrics">8.3. Analyze metrics</a></li>
+</ul>
+</li>
+<li><a href="#_known_issues">9. Known Issues</a>
+<ul class="sectlevel2">
+<li><a href="#_maven_2">9.1. Maven</a>
 <ul class="sectlevel3">
 <li><a href="#_cannot_re_use_store_instance_from_reactor">Cannot re-use store instance from reactor</a></li>
 </ul>
 </li>
-<li><a href="#_general">8.2. General</a>
+<li><a href="#_general">9.2. General</a>
 <ul class="sectlevel3">
 <li><a href="#_unsatisfiedlinkerror_on_linux_systems">UnsatisfiedLinkError on Linux systems</a></li>
 </ul>
@@ -3670,6 +3678,38 @@ jqassistant scan -u maven:repository::http://my.maven.repository</code></pre>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_exit_codes"><a class="link" href="#_exit_codes">4.4. Exit Codes</a></h3>
+<div class="paragraph">
+<p>The following exit codes are used by the command line utility:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Exit Code</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The task(s) were executed successfully</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A configuration problem has been detected</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule violations have been detected exceeding the <code>fail-on-severity</code> threshold and <code>continue-on-failure</code> is not enabled (only used by the analyze task)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -4270,6 +4310,50 @@ The locations can be overridden by command line parameters of the Command Line U
         - <span class="string"><span class="content">group-id:</span></span>
           <span class="key">artifact-id</span>:
 
+  <span class="comment"># The metrics configuration</span>
+  <span class="key">metrics</span>:
+
+    <span class="comment"># The common tags to be used for all published metrics</span>
+    <span class="comment">#</span>
+    <span class="comment"># -Djqassistant.metrics.common-tags.&lt;key&gt;=&lt;value&gt;</span>
+    <span class="key">common-tags</span>:
+      <span class="comment"># key: value</span>
+
+    <span class="comment"># The Prometheus configuration</span>
+    <span class="key">prometheus</span>:
+
+      <span class="comment"># The Pushgateway configuration</span>
+      <span class="key">pushgateway</span>:
+
+        <span class="comment"># The address of the Pushgateway, e.g. &quot;localhost:9091&quot;</span>
+        <span class="comment">#</span>
+        <span class="comment"># -Djqassistant.metrics.prometheus.pushgateway.address</span>
+        <span class="key">address</span>:
+
+        <span class="comment"># The scheme to use for connecting to the Pushgateway: http|https</span>
+        <span class="comment">#</span>
+        <span class="comment"># -Djqassistant.metrics.prometheus.pushgateway.scheme</span>
+        <span class="key">scheme</span>: <span class="string"><span class="content">http</span></span>
+
+        <span class="comment"># The username for basic authentication</span>
+        <span class="comment">#</span>
+        <span class="comment"># -Djqassistant.metrics.prometheus.pushgateway.username</span>
+        <span class="key">username</span>:
+
+        <span class="comment"># The password for basic authentication</span>
+        <span class="comment">#</span>
+        <span class="comment"># -Djqassistant.metrics.prometheus.pushgateway.password</span>
+        <span class="key">password</span>:
+
+        <span class="comment"># The bearer token for token based authentication</span>
+        <span class="comment">#</span>
+        <span class="comment"># -Djqassistant.metrics.prometheus.pushgateway.bearer-token</span>
+        <span class="key">bearer-token</span>:
+
+        <span class="comment"># The job name to publish</span>
+        <span class="comment">#</span>
+        <span class="comment"># -Djqassistant.metrics.prometheus.pushgateway.job-name</span>
+        <span class="key">job-name</span>: <span class="string"><span class="content">jQAssistant</span></span>
 
   <span class="comment"># The store configuration</span>
   <span class="key">store</span>:
@@ -7920,17 +8004,15 @@ ORDER BY
 <h5 id="java:TestClass"><a class="link" href="#java:TestClass">Concept <code>java:TestClass</code></a></h5>
 <div class="literalblock">
 <div class="content">
-<pre>Classes declaring test methods are labeled with `Test`.</pre>
+<pre>Abstract concept returning test classes, i. e. that are labeled with ˋTestˋ and that directly or indirectly declare test methods.</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (artifact:Artifact)-[:PROVIDES]-&gt;(testClass:Java:Type)-[:DECLARES]-&gt;(:Java:Method:Test)
-SET
-  testClass:Test
+  (artifact:Artifact)-[:PROVIDES]-&gt;(testClass:Java:Type:Test)-[:DECLARES*]-&gt;(m:Java:Method:Test)
 RETURN
-  artifact as Artifact, testClass as TestClass
+  artifact as Artifact, testClass as TestClass, COLLECT(m) AS TestMethods
 ORDER BY
   artifact.fqn, testClass.fqn</code></pre>
 </div>
@@ -9749,6 +9831,9 @@ Surefire and Maven Failsave matching the file name <code><strong>TEST-</strong>.
 <p><a href="#junit4:TestClass">Concept <code>junit4:TestClass</code></a></p>
 </li>
 <li>
+<p><a href="#junit4:EnclosedClass">Concept <code>junit4:EnclosedClass</code></a></p>
+</li>
+<li>
 <p><a href="#junit4:TestClassOrMethod">Concept <code>junit4:TestClassOrMethod</code></a></p>
 </li>
 <li>
@@ -10014,7 +10099,12 @@ RETURN
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (c:Type:Class)-[:DECLARES]-&gt;(m:Method:Junit4:Test)
+  p = (c:Type:Class)-[:DECLARES*]-&gt;(m:Method:Junit4:Test)
+WHERE
+  (c)-[:DECLARES]-&gt;(m)
+  // @RunWith(Enclosed.class) is placed on outer classes
+  // Excluding the second last node (the innermost class) and the last node (the test method itself)
+  OR all(n IN nodes(p)[..-2] WHERE n:Enclosed)
 SET
   c:Test:Junit4
 RETURN
@@ -10029,11 +10119,41 @@ RETURN
 <li>
 <p><a href="#junit4:TestMethod">junit4:TestMethod</a></p>
 </li>
+<li>
+<p><a href="#junit4:EnclosedClass">junit4:EnclosedClass</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:TestClass">java:TestClass</a></p>
+</li>
 </ul>
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:TestClassOrMethod"><a class="link" href="#junit4:TestClassOrMethod">7.4.2.8. Concept <code>junit4:TestClassOrMethod</code></a></h5>
+<h5 id="junit4:EnclosedClass"><a class="link" href="#junit4:EnclosedClass">7.4.2.8. Concept <code>junit4:EnclosedClass</code></a></h5>
+<div class="paragraph">
+<p>Labels all classes annotated by "@RunWith(Enclosed.class)" with "Junit4" and "Enclosed"</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="cypher">MATCH
+  (c:Type:Class)-[:ANNOTATED_BY]-&gt;(annotation:Annotation)-[:OF_TYPE]-&gt;(:Type {fqn: 'org.junit.runner.RunWith'}),
+  (annotation)-[:HAS]-&gt;(:Value)-[:IS]-&gt;(:Type {fqn: 'org.junit.experimental.runners.Enclosed'})
+SET
+  c:Junit4:Enclosed
+RETURN
+  c AS EnclosedClass</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="junit4:TestClassOrMethod"><a class="link" href="#junit4:TestClassOrMethod">7.4.2.9. Concept <code>junit4:TestClassOrMethod</code></a></h5>
 <div class="paragraph">
 <p><em>The rule is deprecated: This concept has been replaced by "junit4:TestMethod" and "junit4:TestClass".</em></p>
 </div>
@@ -10064,7 +10184,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:IgnoreTestClassOrMethod"><a class="link" href="#junit4:IgnoreTestClassOrMethod">7.4.2.9. Concept <code>junit4:IgnoreTestClassOrMethod</code></a></h5>
+<h5 id="junit4:IgnoreTestClassOrMethod"><a class="link" href="#junit4:IgnoreTestClassOrMethod">7.4.2.10. Concept <code>junit4:IgnoreTestClassOrMethod</code></a></h5>
 <div class="paragraph">
 <p>Labels all classes or methods annotated with "@org.junit.Ignore" with "Junit4" and "Ignore".</p>
 </div>
@@ -10082,7 +10202,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:BeforeMethod"><a class="link" href="#junit4:BeforeMethod">7.4.2.10. Concept <code>junit4:BeforeMethod</code></a></h5>
+<h5 id="junit4:BeforeMethod"><a class="link" href="#junit4:BeforeMethod">7.4.2.11. Concept <code>junit4:BeforeMethod</code></a></h5>
 <div class="paragraph">
 <p>Labels all methods annotated by "@org.junit.Before" with "Junit4" and "Before".</p>
 </div>
@@ -10101,7 +10221,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:AfterMethod"><a class="link" href="#junit4:AfterMethod">7.4.2.11. Concept <code>junit4:AfterMethod</code></a></h5>
+<h5 id="junit4:AfterMethod"><a class="link" href="#junit4:AfterMethod">7.4.2.12. Concept <code>junit4:AfterMethod</code></a></h5>
 <div class="paragraph">
 <p>Labels all methods annotated by "@org.junit.After" with "Junit4" and "After".</p>
 </div>
@@ -10120,7 +10240,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:BeforeClassMethod"><a class="link" href="#junit4:BeforeClassMethod">7.4.2.12. Concept <code>junit4:BeforeClassMethod</code></a></h5>
+<h5 id="junit4:BeforeClassMethod"><a class="link" href="#junit4:BeforeClassMethod">7.4.2.13. Concept <code>junit4:BeforeClassMethod</code></a></h5>
 <div class="paragraph">
 <p>Labels all methods annotated by "@org.junit.BeforeClass" with "Junit4" and "BeforeClass".</p>
 </div>
@@ -10139,7 +10259,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:AfterClassMethod"><a class="link" href="#junit4:AfterClassMethod">7.4.2.13. Concept <code>junit4:AfterClassMethod</code></a></h5>
+<h5 id="junit4:AfterClassMethod"><a class="link" href="#junit4:AfterClassMethod">7.4.2.14. Concept <code>junit4:AfterClassMethod</code></a></h5>
 <div class="paragraph">
 <p>Labels all methods annotated by "@org.junit.AfterClass" with "Junit4" and "AfterClass".</p>
 </div>
@@ -10158,7 +10278,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:AssertMethod"><a class="link" href="#junit4:AssertMethod">7.4.2.14. Concept <code>junit4:AssertMethod</code></a></h5>
+<h5 id="junit4:AssertMethod"><a class="link" href="#junit4:AssertMethod">7.4.2.15. Concept <code>junit4:AssertMethod</code></a></h5>
 <div class="paragraph">
 <p>Labels all assertion methods declared by org.junit.Assert with "Junit4" and "Assert".</p>
 </div>
@@ -10190,7 +10310,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:AssertAnnotation"><a class="link" href="#junit4:AssertAnnotation">7.4.2.15. Concept <code>junit4:AssertAnnotation</code></a></h5>
+<h5 id="junit4:AssertAnnotation"><a class="link" href="#junit4:AssertAnnotation">7.4.2.16. Concept <code>junit4:AssertAnnotation</code></a></h5>
 <div class="paragraph">
 <p>Labels @Test-Annotations with the parameter "expected" as assert annotations.</p>
 </div>
@@ -10229,7 +10349,7 @@ ORDER BY
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:SuiteClass"><a class="link" href="#junit4:SuiteClass">7.4.2.16. Concept <code>junit4:SuiteClass</code></a></h5>
+<h5 id="junit4:SuiteClass"><a class="link" href="#junit4:SuiteClass">7.4.2.17. Concept <code>junit4:SuiteClass</code></a></h5>
 <div class="paragraph">
 <p>Labels all classes annotated by "@org.junit.runners.Suite.SuiteClasses" with "Junit4" and "Suite" and creates a relation "CONTAINS_TESTCLASS" to all referenced classes.</p>
 </div>
@@ -10253,7 +10373,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:InnerTestClass"><a class="link" href="#junit4:InnerTestClass">7.4.2.17. Concept <code>junit4:InnerTestClass</code></a></h5>
+<h5 id="junit4:InnerTestClass"><a class="link" href="#junit4:InnerTestClass">7.4.2.18. Concept <code>junit4:InnerTestClass</code></a></h5>
 <div class="paragraph">
 <p>Labels inner types of types labeled with "Test" with "Test" and "Inner".</p>
 </div>
@@ -10279,7 +10399,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:AssertionMustProvideMessage"><a class="link" href="#junit4:AssertionMustProvideMessage">7.4.2.18. Constraint <code>junit4:AssertionMustProvideMessage</code></a></h5>
+<h5 id="junit4:AssertionMustProvideMessage"><a class="link" href="#junit4:AssertionMustProvideMessage">7.4.2.19. Constraint <code>junit4:AssertionMustProvideMessage</code></a></h5>
 <div class="paragraph">
 <p>All assertions must provide a message.</p>
 </div>
@@ -10313,7 +10433,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:NonJUnit4TestMethod"><a class="link" href="#junit4:NonJUnit4TestMethod">7.4.2.19. Constraint <code>junit4:NonJUnit4TestMethod</code></a></h5>
+<h5 id="junit4:NonJUnit4TestMethod"><a class="link" href="#junit4:NonJUnit4TestMethod">7.4.2.20. Constraint <code>junit4:NonJUnit4TestMethod</code></a></h5>
 <div class="paragraph">
 <p>Only the jUnit 4-test annotation must be used to identify test methods in a jUnit 4-based project.</p>
 </div>
@@ -10340,7 +10460,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit4:UsageOfJUnit5TestApi"><a class="link" href="#junit4:UsageOfJUnit5TestApi">7.4.2.20. Constraint <code>junit4:UsageOfJUnit5TestApi</code></a></h5>
+<h5 id="junit4:UsageOfJUnit5TestApi"><a class="link" href="#junit4:UsageOfJUnit5TestApi">7.4.2.21. Constraint <code>junit4:UsageOfJUnit5TestApi</code></a></h5>
 <div class="paragraph">
 <p>Only the jUnit 4-test api must be used in a jUnit 4-based project.</p>
 </div>
@@ -10369,7 +10489,7 @@ RETURN DISTINCT
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:Default"><a class="link" href="#junit5:Default">7.4.2.21. Group <code>junit5:Default</code></a></h5>
+<h5 id="junit5:Default"><a class="link" href="#junit5:Default">7.4.2.22. Group <code>junit5:Default</code></a></h5>
 <div class="paragraph">
 <p>Includes constraints:</p>
 </div>
@@ -10388,7 +10508,7 @@ RETURN DISTINCT
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TestMethod"><a class="link" href="#junit5:TestMethod">7.4.2.22. Concept <code>junit5:TestMethod</code></a></h5>
+<h5 id="junit5:TestMethod"><a class="link" href="#junit5:TestMethod">7.4.2.23. Concept <code>junit5:TestMethod</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.Test") and
@@ -10419,7 +10539,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:RepeatedTestMethod"><a class="link" href="#junit5:RepeatedTestMethod">7.4.2.23. Concept <code>junit5:RepeatedTestMethod</code></a></h5>
+<h5 id="junit5:RepeatedTestMethod"><a class="link" href="#junit5:RepeatedTestMethod">7.4.2.24. Concept <code>junit5:RepeatedTestMethod</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.RepeatedTest") and
@@ -10450,7 +10570,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:ParameterizedTestMethod"><a class="link" href="#junit5:ParameterizedTestMethod">7.4.2.24. Concept <code>junit5:ParameterizedTestMethod</code></a></h5>
+<h5 id="junit5:ParameterizedTestMethod"><a class="link" href="#junit5:ParameterizedTestMethod">7.4.2.25. Concept <code>junit5:ParameterizedTestMethod</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.ParameterizedTest") and
@@ -10481,7 +10601,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:DisabledTestClassOrMethod"><a class="link" href="#junit5:DisabledTestClassOrMethod">7.4.2.25. Concept <code>junit5:DisabledTestClassOrMethod</code></a></h5>
+<h5 id="junit5:DisabledTestClassOrMethod"><a class="link" href="#junit5:DisabledTestClassOrMethod">7.4.2.26. Concept <code>junit5:DisabledTestClassOrMethod</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all classes or methods annotated with "@org.junit.jupiter.api.Disabled"
@@ -10502,7 +10622,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:BeforeEach"><a class="link" href="#junit5:BeforeEach">7.4.2.26. Concept <code>junit5:BeforeEach</code></a></h5>
+<h5 id="junit5:BeforeEach"><a class="link" href="#junit5:BeforeEach">7.4.2.27. Concept <code>junit5:BeforeEach</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.BeforeEach"
@@ -10524,7 +10644,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:BeforeAll"><a class="link" href="#junit5:BeforeAll">7.4.2.27. Concept <code>junit5:BeforeAll</code></a></h5>
+<h5 id="junit5:BeforeAll"><a class="link" href="#junit5:BeforeAll">7.4.2.28. Concept <code>junit5:BeforeAll</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.BeforeAll"
@@ -10546,7 +10666,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:AfterEach"><a class="link" href="#junit5:AfterEach">7.4.2.28. Concept <code>junit5:AfterEach</code></a></h5>
+<h5 id="junit5:AfterEach"><a class="link" href="#junit5:AfterEach">7.4.2.29. Concept <code>junit5:AfterEach</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.AfterEach"
@@ -10568,7 +10688,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:AfterAll"><a class="link" href="#junit5:AfterAll">7.4.2.29. Concept <code>junit5:AfterAll</code></a></h5>
+<h5 id="junit5:AfterAll"><a class="link" href="#junit5:AfterAll">7.4.2.30. Concept <code>junit5:AfterAll</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.AfterAll"
@@ -10590,7 +10710,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TestTemplateMethod"><a class="link" href="#junit5:TestTemplateMethod">7.4.2.30. Concept <code>junit5:TestTemplateMethod</code></a></h5>
+<h5 id="junit5:TestTemplateMethod"><a class="link" href="#junit5:TestTemplateMethod">7.4.2.31. Concept <code>junit5:TestTemplateMethod</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.TestTemplate"
@@ -10622,7 +10742,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedMethodWithMetaAnnotation"><a class="link" href="#junit5:TaggedMethodWithMetaAnnotation">7.4.2.31. Concept <code>junit5:TaggedMethodWithMetaAnnotation</code></a></h5>
+<h5 id="junit5:TaggedMethodWithMetaAnnotation"><a class="link" href="#junit5:TaggedMethodWithMetaAnnotation">7.4.2.32. Concept <code>junit5:TaggedMethodWithMetaAnnotation</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by an Junit meta annotation
@@ -10680,7 +10800,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedClassWithMetaAnnotation"><a class="link" href="#junit5:TaggedClassWithMetaAnnotation">7.4.2.32. Concept <code>junit5:TaggedClassWithMetaAnnotation</code></a></h5>
+<h5 id="junit5:TaggedClassWithMetaAnnotation"><a class="link" href="#junit5:TaggedClassWithMetaAnnotation">7.4.2.33. Concept <code>junit5:TaggedClassWithMetaAnnotation</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all classes annotated by an Junit meta annotation
@@ -10738,7 +10858,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedMethod"><a class="link" href="#junit5:TaggedMethod">7.4.2.33. Concept <code>junit5:TaggedMethod</code></a></h5>
+<h5 id="junit5:TaggedMethod"><a class="link" href="#junit5:TaggedMethod">7.4.2.34. Concept <code>junit5:TaggedMethod</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.Tag"
@@ -10791,7 +10911,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedMethodTags"><a class="link" href="#junit5:TaggedMethodTags">7.4.2.34. Concept <code>junit5:TaggedMethodTags</code></a></h5>
+<h5 id="junit5:TaggedMethodTags"><a class="link" href="#junit5:TaggedMethodTags">7.4.2.35. Concept <code>junit5:TaggedMethodTags</code></a></h5>
 <div class="paragraph">
 <p>Collects all tags of methods annotated with
             "@org.junit.jupiter.api.Tag" and "@org.junit.jupiter.api.Test"
@@ -10840,7 +10960,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedClass"><a class="link" href="#junit5:TaggedClass">7.4.2.35. Concept <code>junit5:TaggedClass</code></a></h5>
+<h5 id="junit5:TaggedClass"><a class="link" href="#junit5:TaggedClass">7.4.2.36. Concept <code>junit5:TaggedClass</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all methods annotated by "@org.junit.jupiter.api.Tag"
@@ -10888,7 +11008,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TaggedClassTags"><a class="link" href="#junit5:TaggedClassTags">7.4.2.36. Concept <code>junit5:TaggedClassTags</code></a></h5>
+<h5 id="junit5:TaggedClassTags"><a class="link" href="#junit5:TaggedClassTags">7.4.2.37. Concept <code>junit5:TaggedClassTags</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Collects all tags of classes annotated with
@@ -10930,14 +11050,19 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:TestClass"><a class="link" href="#junit5:TestClass">7.4.2.37. Concept <code>junit5:TestClass</code></a></h5>
+<h5 id="junit5:TestClass"><a class="link" href="#junit5:TestClass">7.4.2.38. Concept <code>junit5:TestClass</code></a></h5>
 <div class="paragraph">
 <p>Labels all classes containing test methods with "Test" and "Junit5".</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="cypher">MATCH
-  (c:Type:Class)-[:DECLARES]-&gt;(m:Method:Junit5:Test)
+  p = (c:Type:Class)-[:DECLARES*]-&gt;(m:Method:Junit5:Test)
+WHERE
+  (c)-[:DECLARES]-&gt;(m) OR
+  // @Nested is placed on inner classes
+  // Excluding the first node (the outermost class) and the last node (the test method itself)
+  all(n IN nodes(p)[1..-1] WHERE n:Nested)
 SET
   c:Test:Junit5
 RETURN
@@ -10961,11 +11086,24 @@ RETURN
 <li>
 <p><a href="#junit5:ParameterizedTestMethod">junit5:ParameterizedTestMethod</a></p>
 </li>
+<li>
+<p><a href="#junit5:NestedTestClass">junit5:NestedTestClass</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Provided concepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#java:TestClass">java:TestClass</a></p>
+</li>
 </ul>
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:NestedTestClass"><a class="link" href="#junit5:NestedTestClass">7.4.2.38. Concept <code>junit5:NestedTestClass</code></a></h5>
+<h5 id="junit5:NestedTestClass"><a class="link" href="#junit5:NestedTestClass">7.4.2.39. Concept <code>junit5:NestedTestClass</code></a></h5>
 <div class="paragraph">
 <p>Labels all nested test classes annotated with "@org.junit.jupiter.api.Nested",
             independently from the number of tests contained in the method, with
@@ -10985,7 +11123,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:AssertMethod"><a class="link" href="#junit5:AssertMethod">7.4.2.39. Concept <code>junit5:AssertMethod</code></a></h5>
+<h5 id="junit5:AssertMethod"><a class="link" href="#junit5:AssertMethod">7.4.2.40. Concept <code>junit5:AssertMethod</code></a></h5>
 <div class="literalblock">
 <div class="content">
 <pre>Labels all assertion methods declared by "org.junit.jupiter.api.Assertions" with "Junit5"
@@ -11020,7 +11158,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:AssertionMustProvideMessage"><a class="link" href="#junit5:AssertionMustProvideMessage">7.4.2.40. Constraint <code>junit5:AssertionMustProvideMessage</code></a></h5>
+<h5 id="junit5:AssertionMustProvideMessage"><a class="link" href="#junit5:AssertionMustProvideMessage">7.4.2.41. Constraint <code>junit5:AssertionMustProvideMessage</code></a></h5>
 <div class="paragraph">
 <p>All assertions must provide a message.</p>
 </div>
@@ -11055,7 +11193,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:NonJUnit5TestMethod"><a class="link" href="#junit5:NonJUnit5TestMethod">7.4.2.41. Constraint <code>junit5:NonJUnit5TestMethod</code></a></h5>
+<h5 id="junit5:NonJUnit5TestMethod"><a class="link" href="#junit5:NonJUnit5TestMethod">7.4.2.42. Constraint <code>junit5:NonJUnit5TestMethod</code></a></h5>
 <div class="paragraph">
 <p>Only the jUnit 5-test annotation must be used to identify test methods in a jUnit 5-based project.</p>
 </div>
@@ -11085,7 +11223,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit5:UsageOfJUnit4TestApi"><a class="link" href="#junit5:UsageOfJUnit4TestApi">7.4.2.42. Constraint <code>junit5:UsageOfJUnit4TestApi</code></a></h5>
+<h5 id="junit5:UsageOfJUnit4TestApi"><a class="link" href="#junit5:UsageOfJUnit4TestApi">7.4.2.43. Constraint <code>junit5:UsageOfJUnit4TestApi</code></a></h5>
 <div class="paragraph">
 <p>Only the jUnit 5-test api must be used in a jUnit 5-based project.</p>
 </div>
@@ -11114,7 +11252,7 @@ RETURN DISTINCT
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:Default"><a class="link" href="#junit:Default">7.4.2.43. Group <code>junit:Default</code></a></h5>
+<h5 id="junit:Default"><a class="link" href="#junit:Default">7.4.2.44. Group <code>junit:Default</code></a></h5>
 <div class="paragraph">
 <p>Includes constraints:</p>
 </div>
@@ -11127,7 +11265,7 @@ RETURN DISTINCT
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:TestCaseDefinedByClass"><a class="link" href="#junit:TestCaseDefinedByClass">7.4.2.44. Concept <code>junit:TestCaseDefinedByClass</code></a></h5>
+<h5 id="junit:TestCaseDefinedByClass"><a class="link" href="#junit:TestCaseDefinedByClass">7.4.2.45. Concept <code>junit:TestCaseDefinedByClass</code></a></h5>
 <div class="paragraph">
 <p>Creates a relation DEFINED_BY between all test cases from test reports and the class which defined it.</p>
 </div>
@@ -11149,7 +11287,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:TestCaseImplementedByMethod"><a class="link" href="#junit:TestCaseImplementedByMethod">7.4.2.45. Concept <code>junit:TestCaseImplementedByMethod</code></a></h5>
+<h5 id="junit:TestCaseImplementedByMethod"><a class="link" href="#junit:TestCaseImplementedByMethod">7.4.2.46. Concept <code>junit:TestCaseImplementedByMethod</code></a></h5>
 <div class="paragraph">
 <p>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing
             methods.</p>
@@ -11179,7 +11317,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:Disabled"><a class="link" href="#junit:Disabled">7.4.2.46. Concept <code>junit:Disabled</code></a></h5>
+<h5 id="junit:Disabled"><a class="link" href="#junit:Disabled">7.4.2.47. Concept <code>junit:Disabled</code></a></h5>
 <div class="paragraph">
 <p>Concept labeling all @Disabled-annotated elements with :JUnit:Inactive:Test and setting the according reason.</p>
 </div>
@@ -11209,7 +11347,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:Ignore"><a class="link" href="#junit:Ignore">7.4.2.47. Concept <code>junit:Ignore</code></a></h5>
+<h5 id="junit:Ignore"><a class="link" href="#junit:Ignore">7.4.2.48. Concept <code>junit:Ignore</code></a></h5>
 <div class="paragraph">
 <p>Concept labeling all @Ignore-annotated elements with :JUnit:Inactive:Test and setting the according reason.</p>
 </div>
@@ -11239,7 +11377,7 @@ RETURN
 </div>
 </div>
 <div class="sect4">
-<h5 id="junit:InactiveTestWithoutReason"><a class="link" href="#junit:InactiveTestWithoutReason">7.4.2.48. Constraint <code>junit:InactiveTestWithoutReason</code></a></h5>
+<h5 id="junit:InactiveTestWithoutReason"><a class="link" href="#junit:InactiveTestWithoutReason">7.4.2.49. Constraint <code>junit:InactiveTestWithoutReason</code></a></h5>
 <div class="paragraph">
 <p>Inactive tests must be provided with an according reason.</p>
 </div>
@@ -12936,15 +13074,191 @@ XML documents.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_known_issues"><a class="link" href="#_known_issues">8. Known Issues</a></h2>
+<h2 id="_metrics"><a class="link" href="#_metrics">8. Metrics</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>jQAssistant supports the collection of metrics which can be pushed at the end of the execution to a <a href="https://github.com/prometheus/pushgateway">Prometheus Pushgateway</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_activation"><a class="link" href="#_activation">8.1. Activation</a></h3>
+<div class="paragraph">
+<p>This is activated by specifying the address of a Pushgateway, including optional credentials (username/password or bearer token):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">jqassistant</span>:
+  <span class="key">metrics</span>:
+    <span class="key">common-tags</span>:
+      <span class="key">repository</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">my-repository</span><span class="delimiter">&quot;</span></span>
+      <span class="key">build</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>
+    <span class="key">prometheus</span>:
+      <span class="key">pushgateway</span>:
+        <span class="key">address</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">localhost:9091</span><span class="delimiter">&quot;</span></span>
+        <span class="key">scheme</span>: <span class="string"><span class="content">http</span></span>
+
+<span class="comment">#       username:</span>
+<span class="comment">#       password:</span>
+<span class="comment">#       bearer-token:</span>
+
+<span class="comment">#       job-name: jQAssistant</span></code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>common-tags</code> allows to specify tags that shall be used by all published metrics. It is strongly recommended to use them to provide context about the current build, otherwise collected metrics will be overridden by concurrent or subsequent builds.</p>
+</li>
+<li>
+<p><code>job-name</code> is the name of the job, it defaults to <code>jQAssistant</code> (usually shouldn&#8217;t be changed).</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+All configuration values can also be provided as environment variables or system properties. This is especially useful for the common tags to provide context about the current build, e.g. <code>JQASSISTANT_METRICS_PROMETHEUS_PUSHGATEWAY_COMMON_TAGS_REPOSITORY=&#8230;&#8203;</code> and <code>JQASSISTANT_METRICS_PROMETHEUS_PUSHGATEWAY_COMMON_TAGS_BUILD=&#8230;&#8203;</code> or <code>-Djqassistant.metrics.prometheus.pushgateway.common-tags.repository=&#8230;&#8203;</code> and <code>-Djqassistant.metrics.prometheus.pushgateway.common-tags.build=&#8230;&#8203;</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_core_metrics"><a class="link" href="#_core_metrics">8.2. Core metrics</a></h3>
+<div class="paragraph">
+<p>The core metrics provide information about the execution of jQAssistant:</p>
+</div>
+<div class="paragraph">
+<p><strong>jqassistant_distribution</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Represents the used jQAssistant distribution, the value is always <code>1</code></p>
+</li>
+<li>
+<p>Type: Gauge</p>
+</li>
+<li>
+<p>Tags:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>version</code>: The version of the jQAssistant distribution</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>jqassistant_plugin</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Represents a jQAssistant plugin which has been used during execution</p>
+</li>
+<li>
+<p>Type: Gauge</p>
+</li>
+<li>
+<p>Tags:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>id</code>: The id of the jQAssistant plugin</p>
+</li>
+<li>
+<p><code>version</code>: The version of the jQAssistant plugin</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_analyze_metrics"><a class="link" href="#_analyze_metrics">8.3. Analyze metrics</a></h3>
+<div class="paragraph">
+<p>These analyze metrics provide information about rules executed during analyze.
+All analyze metrics use the same set of tags:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>rule_type</code>: The rule type, either <code>Concept</code> or <code>Constraint</code></p>
+</li>
+<li>
+<p><code>rule_id</code>: The rule id.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>jqassistant_analyze_rule_execution_time_seconds_{count,sum,max}</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The execution time per rule</p>
+</li>
+<li>
+<p>Type: Timer</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>jqassistant_analyze_rule_result_row_count</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The count of returned rows per rule</p>
+</li>
+<li>
+<p>Type: Gauge</p>
+</li>
+<li>
+<p>Tags:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>status</code>: The status of the executed rule,i.e. <code>SUCCESS</code>, <code>WARNING</code>, <code>FAILURE</code> or <code>SKIPPED</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>jqassistant_analyze_rule_result_hidden_row_count</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The count of returned hidden rows (baseline or suppressions) per rule</p>
+</li>
+<li>
+<p>Type: Gauge</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_issues"><a class="link" href="#_known_issues">9. Known Issues</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This section describes known issues and their solutions.</p>
 </div>
 <div class="sect2">
-<h3 id="_maven_2"><a class="link" href="#_maven_2">8.1. Maven</a></h3>
+<h3 id="_maven_2"><a class="link" href="#_maven_2">9.1. Maven</a></h3>
 <div class="sect3">
-<h4 id="_cannot_re_use_store_instance_from_reactor"><a class="link" href="#_cannot_re_use_store_instance_from_reactor">8.1.1. Cannot re-use store instance from reactor</a></h4>
+<h4 id="_cannot_re_use_store_instance_from_reactor"><a class="link" href="#_cannot_re_use_store_instance_from_reactor">9.1.1. Cannot re-use store instance from reactor</a></h4>
 <div class="paragraph">
 <p>This error may occur in cases where a Maven project contains build extensions, e.g.</p>
 </div>
@@ -12984,9 +13298,9 @@ XML documents.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_general"><a class="link" href="#_general">8.2. General</a></h3>
+<h3 id="_general"><a class="link" href="#_general">9.2. General</a></h3>
 <div class="sect3">
-<h4 id="_unsatisfiedlinkerror_on_linux_systems"><a class="link" href="#_unsatisfiedlinkerror_on_linux_systems">8.2.1. UnsatisfiedLinkError on Linux systems</a></h4>
+<h4 id="_unsatisfiedlinkerror_on_linux_systems"><a class="link" href="#_unsatisfiedlinkerror_on_linux_systems">9.2.1. UnsatisfiedLinkError on Linux systems</a></h4>
 <div class="paragraph">
 <p>On Linux systems using the <code>noexec</code> option on the <code>/home</code> mount the following error occurs on startup:</p>
 </div>
@@ -13019,7 +13333,7 @@ jqassistant.sh scan analyze</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.10.0-SNAPSHOT<br/>
-Last updated 2026-11-06 10:34:31 UTC
+Last updated 2026-11-08 12:32:56 UTC
 </div>
 </div>
 </body>

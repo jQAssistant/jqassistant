@@ -264,6 +264,47 @@
           "additionalProperties" : false,
           "description" : "The Maven configuration."
         },
+        "metrics" : {
+          "type" : "object",
+          "properties" : {
+            "common-tags" : {
+              "$ref" : "#/$defs/java.util.-map_java.lang.-string.java.lang.-string_"
+            },
+            "prometheus" : {
+              "type" : "object",
+              "properties" : {
+                "pushgateway" : {
+                  "type" : "object",
+                  "properties" : {
+                    "address" : {
+                      "type" : "string"
+                    },
+                    "bearer-token" : {
+                      "type" : "string"
+                    },
+                    "job-name" : {
+                      "type" : "string",
+                      "default" : "jQAssistant"
+                    },
+                    "password" : {
+                      "type" : "string"
+                    },
+                    "scheme" : {
+                      "type" : "string",
+                      "default" : "http"
+                    },
+                    "username" : {
+                      "type" : "string"
+                    }
+                  },
+                  "additionalProperties" : false
+                }
+              },
+              "additionalProperties" : false
+            }
+          },
+          "additionalProperties" : false
+        },
         "plugins" : {
           "type" : "array",
           "items" : {
