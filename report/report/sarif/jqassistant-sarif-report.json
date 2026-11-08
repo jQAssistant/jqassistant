@@ -228,6 +228,28 @@
         "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
       }
     }, {
+      "ruleId" : "79e74ef70a27a96b546e5c5afd6ddce18cc9979b11f3a6adba395b8e379dcd69",
+      "level" : "warning",
+      "message" : {
+        "text" : "Code elements annotated by \"@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion\" will be removed in the given version.",
+        "markdown" : "|Type: com.buschmais.jqassistant.core.runtime.api.bootstrap.PluginRepositoryFactory\n|Member: com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository getPluginRepository(com.buschmais.jqassistant.core.runtime.api.configuration.Configuration,java.lang.ClassLoader,com.buschmais.jqassistant.core.shared.artifact.ArtifactProvider)\n|MajorVersion: 3\n|MinorVersion: 0\n"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "core/runtime/src/main/java/com/buschmais/jqassistant/core/runtime/api/bootstrap/PluginRepositoryFactory.java"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]jqa-technical-debt:CodeElementToBeRemovedInVersion"
+      }
+    }, {
       "ruleId" : "fc6308e975f936fc7abd2cf4d0bab3c51248376452e353509dcfe20fae4d9931",
       "level" : "warning",
       "message" : {
