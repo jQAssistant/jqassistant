@@ -3,13 +3,13 @@ package com.buschmais.jqassistant.commandline.task.mcp.tool.getschema;
 import java.util.*;
 
 import com.buschmais.jqassistant.commandline.task.mcp.tool.Tool;
-import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.input.Filter;
-import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.input.GetSchema;
-import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.input.Include;
-import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.output.NodeMetadata;
-import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.output.PropertyMetadata;
-import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.output.RelationshipMetadata;
-import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.output.Schema;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.input.Filter;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.input.GetSchemaArguments;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.input.Include;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.output.NodeMetadata;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.output.PropertyMetadata;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.output.RelationshipMetadata;
+import com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.output.GetSchemaResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.metadata.MetadataProvider;
 import com.buschmais.xo.api.metadata.method.AbstractEntityRelationMethodMetadata;
@@ -25,6 +25,7 @@ import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
 import com.buschmais.xo.neo4j.api.model.Neo4jRelationshipType;
 
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
+import io.modelcontextprotocol.spec.McpSchema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
@@ -47,41 +48,134 @@ public class GetSchemaTool implements Tool {
               "type": "object",
               "properties": {
                 "filter": {
-                  "type" : "object",
-                  "description" : "Defines the optional filter to apply for nodes.",
-                  "properties" : {
-                    "labels" : {
-                      "type" : "array",
-                      "description" : "The list of label filters.",
+                  "type": "object",
+                  "description": "Defines an optional filter for the node types to return. If omitted, all node types are returned.",
+                  "properties": {
+                    "labels": {
+                      "type": "array",
+                      "description": "A list of label filters. A node type matches if it carries all labels of at least one label filter, i.e. label filters are combined by OR, the labels within a label filter by AND.",
                       "items": {
-                        "type" : "array",
-                        "description" : "A label filter consisting of a list of labels.",
+                        "type": "array",
+                        "description": "A label filter consisting of labels which must all be present on a node type.",
+                        "minItems": 1,
                         "items": {
                           "type": "string",
-                          "description" : "A label."
+                          "description": "A label, e.g. 'Java' or 'Type'."
                         }
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "include": {
-                  "type" : "object",
-                  "description" : "Defines the optional schema items to be included.",
+                  "type": "object",
+                  "description": "Defines the optional schema items to be included. If omitted, properties are included and relationships are excluded.",
                   "properties": {
                     "properties": {
-                      "type" : "boolean",
-                      "description": "If set to true include all the properties for a node."
+                      "type": "boolean",
+                      "default": true,
+                      "description": "If set to true include the properties of each node type."
                     },
                     "relationships": {
-                      "type" : "boolean",
-                      "description": "If set to true include all outgoing relationships for a nodes."
+                      "type": "boolean",
+                      "default": false,
+                      "description": "If set to true include the outgoing relationships of each node type."
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               },
-              "required": []
+              "required": [],
+              "additionalProperties": false
             }
             """;
+    }
+
+    @Override
+    public Optional<String> getOutputSchema() {
+        return Optional.of("""
+            {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "title": "jQAssistant Get Schema Output",
+              "description": "Schema for the output of the jQAssistant get-schema tool, representing the graph model created by the scanner plugins.",
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "description": "The node types (i.e. label combinations) known to the scanner plugins and matching the filter.",
+                  "items": { "$ref": "#/definitions/Node" }
+                }
+              },
+              "required": ["nodes"],
+              "definitions": {
+                "Node": {
+                  "type": "object",
+                  "description": "A node type of the graph model.",
+                  "properties": {
+                    "labels": {
+                      "type": "array",
+                      "description": "The labels of the node type.",
+                      "items": { "type": "string" },
+                      "uniqueItems": true
+                    },
+                    "properties": {
+                      "type": ["array", "null"],
+                      "description": "The properties of the node type, only provided if requested by 'include.properties'.",
+                      "items": { "$ref": "#/definitions/Property" }
+                    },
+                    "relationships": {
+                      "type": ["array", "null"],
+                      "description": "The outgoing relationships of the node type, only provided if requested by 'include.relationships'.",
+                      "items": { "$ref": "#/definitions/Relationship" }
+                    }
+                  },
+                  "required": ["labels"]
+                },
+                "Relationship": {
+                  "type": "object",
+                  "description": "An outgoing relationship of a node type.",
+                  "properties": {
+                    "type": { "type": "string", "description": "The type of the relationship, e.g. 'CONTAINS' or 'DECLARES'." },
+                    "targetLabels": {
+                      "type": "array",
+                      "description": "The labels of the target node type of the relationship.",
+                      "items": { "type": "string" },
+                      "uniqueItems": true
+                    },
+                    "properties": {
+                      "type": ["array", "null"],
+                      "description": "The properties of the relationship, if any are defined.",
+                      "items": { "$ref": "#/definitions/Property" }
+                    }
+                  },
+                  "required": ["type", "targetLabels"]
+                },
+                "Property": {
+                  "type": "object",
+                  "description": "A property of a node or relationship type.",
+                  "properties": {
+                    "name": { "type": "string", "description": "The name of the property." },
+                    "type": {
+                      "type": "string",
+                      "enum": ["STRING", "INTEGER", "FLOAT", "DATETIME", "BOOLEAN"],
+                      "description": "The data type of the property."
+                    }
+                  },
+                  "required": ["name", "type"]
+                }
+              }
+            }
+            """);
+    }
+
+    @Override
+    public McpSchema.ToolAnnotations getAnnotations() {
+        return McpSchema.ToolAnnotations.builder()
+            .readOnlyHint(true)
+            .destructiveHint(false)
+            .idempotentHint(true)
+            .openWorldHint(false)
+            .build();
     }
 
     @Override
@@ -92,19 +186,17 @@ public class GetSchemaTool implements Tool {
     @Override
     public String getDescription() {
         return """
-        Get the schema of the jQAssistant Neo4j database describing nodes and their labels as created by scanners.
-        Properties and relationships can optionally be included in the result per node.
-        A filter may be used to filter for specific labels.
-        """;
+            Get the schema of the jQAssistant Neo4j database describing node types by their labels and optionally their properties (included by default) and outgoing relationships (excluded by default).
+            The schema covers the graph model as created by the scanner plugins, labels and relationships added by concepts are not contained (use the tool get-concepts for them).""";
     }
 
-    public Schema execute(Map<String, Object> arguments) {
-        GetSchema getSchema = mcpJsonMapper.convertValue(arguments, GetSchema.class);
-        Filter filter = getSchema.getFilter();
+    public GetSchemaResult execute(Map<String, Object> arguments) {
+        GetSchemaArguments getSchemaArguments = mcpJsonMapper.convertValue(arguments, GetSchemaArguments.class);
+        Filter filter = getSchemaArguments.getFilter();
         List<List<String>> labelFilters = filter != null ? filter.getLabels() : null;
-        Include include = getSchema.getInclude();
-        boolean includeProperties = include != null && include.isProperties();
-        boolean includeRelationships = include != null && include.isRelationships();
+        Include include = getSchemaArguments.getInclude() != null ? getSchemaArguments.getInclude() : new Include();
+        boolean includeProperties = include.isProperties();
+        boolean includeRelationships = include.isRelationships();
         MetadataProvider<com.buschmais.xo.neo4j.spi.metadata.NodeMetadata<Neo4jLabel>, Neo4jLabel, com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> metadataProvider = store.getXOManagerFactory()
             .getMetadataProvider();
         Map<Class<?>, TypeMetadata> registeredMetadata = metadataProvider.getRegisteredMetadata();
@@ -114,7 +206,7 @@ public class GetSchemaTool implements Tool {
         Map<Class<?>, Set<MethodMetadata<?, ?>>> properties = new HashMap<>();
         aggregateTypeHierarchies(registeredMetadata, metadataProvider, properties, labels);
         // properties and relationships per entity interface
-        Schema.SchemaBuilder schemaBuilder = Schema.builder();
+        GetSchemaResult.GetSchemaResultBuilder schemaBuilder = GetSchemaResult.builder();
         for (Map.Entry<Class<?>, Set<String>> nodeEntry : labels.entrySet()) {
             TypeMetadata typeMetadata = registeredMetadata.get(nodeEntry.getKey());
             if (typeMetadata instanceof EntityTypeMetadata && !((EntityTypeMetadata<?>) typeMetadata).isAbstract()) {
@@ -122,10 +214,11 @@ public class GetSchemaTool implements Tool {
                 List<PropertyMetadata> propertyMetadata = new ArrayList<>();
                 List<RelationshipMetadata> relationshipMetadata = new ArrayList<>();
                 if (labelFilters == null || labelFilters.stream()
-                    .anyMatch(labelFilter -> nodeLabels.containsAll(labelFilter))) {
+                    .anyMatch(nodeLabels::containsAll)) {
                     NodeMetadata.NodeMetadataBuilder<?, ?> nodeBuilder = NodeMetadata.builder()
                         .labels(nodeLabels);
                     for (MethodMetadata<?, ?> property : properties.get(nodeEntry.getKey())) {
+                        // TODO duplicates from inheritance hierarchies?
                         if (includeProperties && property instanceof PrimitivePropertyMethodMetadata<?> primitivePropertyMethodMetadata) {
                             primitiveProperty(primitivePropertyMethodMetadata).ifPresent(propertyMetadata::add);
                         } else if (includeRelationships) {
@@ -150,7 +243,7 @@ public class GetSchemaTool implements Tool {
                 }
             }
         }
-        Schema schema = schemaBuilder.build();
+        GetSchemaResult schema = schemaBuilder.build();
         if (log.isInfoEnabled()) {
             log.info("Schema: {}", new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(schemaBuilder.build()));

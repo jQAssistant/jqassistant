@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.commandline.task.mcp.tool.store.model;
+package com.buschmais.jqassistant.commandline.task.mcp.tool.store.output;
 
 import java.util.Set;
 
@@ -12,5 +12,10 @@ import lombok.experimental.SuperBuilder;
 public class Node extends AbstractPropertyContainer {
 
     private Set<String> labels;
+
+    @Override
+    public String getKind() {
+        return "node";
+    }
 
 }

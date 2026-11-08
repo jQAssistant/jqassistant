@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.model.input;
+package com.buschmais.jqassistant.commandline.task.mcp.tool.getschema.input;
 
 import java.util.List;
 
