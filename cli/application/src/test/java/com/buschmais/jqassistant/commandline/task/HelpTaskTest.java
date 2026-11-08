@@ -25,7 +25,7 @@ class HelpTaskTest extends AbstractTaskTest {
     @BeforeEach
     final void setUp() {
         helpTask = new HelpTask();
-        helpTask.initialize(PROJECT_DIRECTORY, PROJECT_DIRECTORY, pluginRepository, storeFactory);
+        helpTask.initialize(PROJECT_DIRECTORY, PROJECT_DIRECTORY, pluginRepository, storeFactory, meterRegistry);
     }
 
     @Test
