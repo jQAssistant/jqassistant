@@ -5,13 +5,13 @@
     </group>
 
     <constraint id="it:VerifyModules">
-        <description>Verifies that modules 2 and 3 are available in the database after scanning</description>
+        <description>Verifies that modules 1 and 2 are available in the database after scanning.</description>
         <cypher>
             <![CDATA[
             MATCH
               (module:Maven:Project)-[:CREATES]->(:Artifact{type:"jar"})
             WHERE
-              module.artifactId in ["module2", "module3"]
+              module.artifactId in ["module1", "module2"]
             RETURN
               count(module) as modules
         ]]></cypher>
