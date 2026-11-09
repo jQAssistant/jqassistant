@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.commandline.task.mcp.tool.store.output;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
