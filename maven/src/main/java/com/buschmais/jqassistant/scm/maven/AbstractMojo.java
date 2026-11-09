@@ -76,7 +76,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * The {@link MeterRegistryProvider}.
      */
-    @Component
+    @Inject
     protected MeterRegistryProvider meterRegistryProvider;
 
     /**
