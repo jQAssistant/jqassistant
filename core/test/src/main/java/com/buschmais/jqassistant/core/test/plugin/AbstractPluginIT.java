@@ -51,13 +51,14 @@ import com.buschmais.jqassistant.core.store.api.StoreFactory;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.smallrye.config.EnvConfigSource;
 import io.smallrye.config.SysPropConfigSource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import org.eclipse.microprofile.config.spi.ConfigSource;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -96,6 +97,8 @@ public abstract class AbstractPluginIT {
 
     private static ConfigSource mavenSettingsConfigSource;
 
+    private static MeterRegistry meterRegistry;
+
     private static PluginRepositoryImpl pluginRepository;
 
     protected Store store;
@@ -110,28 +113,38 @@ public abstract class AbstractPluginIT {
         List<String> profiles = ofNullable(System.getProperty(PROPERTY_PROFILES)).map(p -> List.of(p.split(",")))
             .orElse(emptyList());
         mavenSettingsConfigSource = MavenSettingsConfigSourceBuilder.createMavenSettingsConfigSource(USER_HOME, mavenSettingsFile, profiles);
+        meterRegistry = new SimpleMeterRegistry();
         PluginClassLoader pluginClassLoader = new PluginClassLoader(AbstractPluginIT.class.getClassLoader());
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
-        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader, meterRegistry);
         pluginRepository.initialize();
         OUTPUT_DIRECTORY.mkdirs();
     }
 
-    @AfterAll
-    public static void destroyPluginRepository() {
-        if (pluginRepository != null) {
-            pluginRepository.destroy();
-        }
-    }
-
     @BeforeEach
-    public void beforeEach() throws IOException, RuleException {
+    public final void beforeEach() throws IOException, RuleException {
         ConfigurationBuilder configurationBuilder = createConfigurationBuilder();
         configure(configurationBuilder);
         ITConfiguration configuration = createConfiguration(configurationBuilder);
         startStore(configuration);
         initializeRuleSet(configuration);
         initializeReportPlugin(configuration);
+    }
+
+    /**
+     * Stops the store.
+     */
+    @AfterEach
+    public final void afterEach() {
+        if (store != null) {
+            store.stop();
+        }
+        if (pluginRepository != null) {
+            pluginRepository.destroy();
+        }
+        if (meterRegistry != null) {
+            meterRegistry.close();
+        }
     }
 
     protected void configure(ConfigurationBuilder configurationBuilder) {
@@ -147,16 +160,6 @@ public abstract class AbstractPluginIT {
             .with(Build.class, Build.TIMESTAMP, ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()));
         configurationBuilder.with(Report.class, Report.PROPERTIES, getReportProperties());
         return configurationBuilder;
-    }
-
-    /**
-     * Stops the store.
-     */
-    @AfterEach
-    public void stopStore() {
-        if (store != null) {
-            store.stop();
-        }
     }
 
     /**
@@ -278,7 +281,8 @@ public abstract class AbstractPluginIT {
             .baseline();
         BaselineRepository baselineRepository = new BaselineRepository(baselineConfiguration, getRuleDirectory());
         BaselineManager baselineManager = new BaselineManager(baselineConfiguration, baselineRepository);
-        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin);
+        return new AnalyzerImpl(configuration.analyze(), pluginRepository.getClassLoader(), store, getRuleInterpreterPlugins(), baselineManager, reportPlugin,
+            meterRegistry);
     }
 
     /**
