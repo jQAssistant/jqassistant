@@ -87,12 +87,11 @@ public final class MavenTaskContext {
     }
 
     private MavenProject getRootModule(List<MavenProject> reactor) throws MojoExecutionException {
-        for (MavenProject mavenProject : reactor) {
-            if (mavenProject.isExecutionRoot()) {
-                return mavenProject;
-            }
-        }
-        throw new MojoExecutionException("Cannot determine execution root.");
+        return mavenSession.getAllProjects()
+            .stream()
+            .filter(MavenProject::isExecutionRoot)
+            .findFirst()
+            .orElseThrow(() -> new MojoExecutionException("Cannot determine execution root."));
     }
 
     private MavenProject getRootModule(MavenProject module) {

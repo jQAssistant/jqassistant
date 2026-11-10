@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.LocalDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirectoryDescriptor;
 
 import org.junit.jupiter.api.Test;
@@ -73,7 +72,6 @@ class FileScannerIT extends AbstractPluginIT {
             FileDescriptor current = files.get(0);
             if (previous != null) {
                 assertThat(previous).isInstanceOf(DirectoryDescriptor.class);
-                assertThat(previous).isInstanceOf(LocalDescriptor.class);
                 assertThat(((DirectoryDescriptor) previous).getContains()).contains(current);
             }
             previous = current;

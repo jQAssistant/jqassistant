@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScann
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.LocalFileSystemFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalFileResource;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.filesystem.LocalFileResource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
