@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.commandline.task;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.xml.transform.Result;
@@ -46,20 +45,20 @@ public class ReportTask extends AbstractTask {
             LOGGER.info("Transforming " + xmlReportFile.getAbsolutePath() + ".");
             File htmlReportFile = new File(reportDirectory, REPORT_FILE_HTML);
             Source xmlSource = new StreamSource(xmlReportFile);
-            FileWriter writer;
-            try {
-                writer = new FileWriter(htmlReportFile);
+            try (
+                final FileOutputStream fos = new FileOutputStream(htmlReportFile);
+                final Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)
+            ){
+                Result htmlTarget = new StreamResult(writer);
+                ReportTransformer transformer = new HtmlReportTransformer();
+                try {
+                    transformer.toStandalone(xmlSource, htmlTarget);
+                } catch (ReportTransformerException e) {
+                    throw new CliExecutionException("Cannot transform report.", e);
+                }
             } catch (IOException e) {
                 throw new CliExecutionException("Cannot create HTML report file.", e);
             }
-            Result htmlTarget = new StreamResult(writer);
-            ReportTransformer transformer = new HtmlReportTransformer();
-            try {
-                transformer.toStandalone(xmlSource, htmlTarget);
-            } catch (ReportTransformerException e) {
-                throw new CliExecutionException("Cannot transform report.", e);
-            }
         }
     }
-
 }

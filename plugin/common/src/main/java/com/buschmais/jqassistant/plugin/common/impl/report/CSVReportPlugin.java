@@ -1,10 +1,8 @@
 package com.buschmais.jqassistant.plugin.common.impl.report;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +67,11 @@ public class CSVReportPlugin implements ReportPlugin {
         String fileName = ReportHelper.escapeRuleId(result.getRule()) + ".csv";
         File reportDirectory = reportContext.getReportDirectory(REPORT_TYPE);
         File csvFile = new File(reportDirectory, fileName);
-        try (CSVWriter csvWriter = new CSVWriter(new BufferedWriter(new FileWriter(csvFile)), separator, quotechar, escapechar, lineEnd)) {
+        try (
+            final FileOutputStream fos = new FileOutputStream(csvFile);
+            final Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+            final CSVWriter csvWriter = new CSVWriter(writer, separator, quotechar, escapechar, lineEnd)
+        ) {
             List<String> columnNames = result.getColumnNames();
             if (columnNames != null) {
                 csvWriter.writeNext(columnNames.toArray(new String[columnNames.size()]));

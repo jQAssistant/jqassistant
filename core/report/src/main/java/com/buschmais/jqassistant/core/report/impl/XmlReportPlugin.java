@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.report.impl;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
@@ -108,7 +109,9 @@ public class XmlReportPlugin implements ReportPlugin {
         xml(() -> {
             xmlReportFile.getParentFile()
                 .mkdirs();
-            XMLStreamWriter streamWriter = xmlOutputFactory.createXMLStreamWriter(new BufferedWriter(new FileWriter(xmlReportFile)));
+            final FileOutputStream fos = new FileOutputStream(xmlReportFile);
+            final Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+            final XMLStreamWriter streamWriter = xmlOutputFactory.createXMLStreamWriter(writer);
             xmlStreamWriter = new IndentingXMLStreamWriter(streamWriter);
             xmlStreamWriter.writeStartDocument(UTF_8.name(), "1.0");
             xmlStreamWriter.setDefaultNamespace(NAMESPACE_URL);
@@ -154,7 +157,10 @@ public class XmlReportPlugin implements ReportPlugin {
     private void transformToHTML() throws ReportException {
         htmlReportFile.getParentFile()
             .mkdirs();
-        try (Writer writer = new BufferedWriter(new FileWriter(htmlReportFile))) {
+        try (
+            final FileOutputStream fos = new FileOutputStream(htmlReportFile);
+            final Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)
+        ) {
             log.info("Writing HTML report to '{}'.", htmlReportFile.getAbsolutePath());
             javax.xml.transform.Result htmlTarget = new StreamResult(writer);
             Source xmlSource = new StreamSource(xmlReportFile);
