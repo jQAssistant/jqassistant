@@ -73,7 +73,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>artifact-resolver</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- 3rd party dependencies -->
         <dependency>
@@ -84,11 +83,6 @@
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
             <version>1.11.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.modelcontextprotocol.sdk</groupId>
-            <artifactId>mcp</artifactId>
-            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.neo4j</groupId>

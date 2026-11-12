@@ -60,6 +60,10 @@
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>runtime</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>mcp</artifactId>
+        </dependency>
         <!-- The default plugins. Actually they're declared in .jqassistant.yml but here as well to ensure build order in an aggregated reactor -->
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
