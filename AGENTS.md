@@ -123,6 +123,13 @@ mvn verify -PIT -pl plugin/java -Dit.test=LambdaMethodIT -Dtest=NoSuchTest -Dsur
   parent `jqassistant-build` version or project version unless asked.
 - Do not commit build output (`target/`) or IDE files.
     
+## Scope
+
+- Work only inside this repository. Do not read, create or modify files outside the repository root.
+- Exception: reading dependency sources/POMs in the local Maven repository (`~/.m2/repository`) is fine.
+- Do not touch global configuration (`~/.m2/settings.xml`, `~/.gitconfig`, shell profiles, IDE settings).
+- If a task seems to require changes outside the repository, stop and ask.
+
 ## What not to do
 
 - Do not run `mvn deploy`, `mvn release:*` or anything publishing artifacts.
