@@ -23,6 +23,7 @@ import static com.buschmais.jqassistant.core.report.XmlReportTestHelper.ROW_COUN
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.io.FileUtils.deleteDirectory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -33,9 +34,8 @@ class XmlReportTest {
     private final XmlReportTestHelper xmlReportTestHelper = new XmlReportTestHelper();
 
     @BeforeEach
-    void setUp() {
-        FileUtils.deleteQuietly(REPORT_DIRECTORY);
-        assertThat(REPORT_DIRECTORY.mkdirs()).isTrue();
+    void setUp() throws IOException {
+        deleteDirectory(REPORT_DIRECTORY);
     }
 
     @Test
