@@ -73,7 +73,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>artifact-resolver</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- 3rd party dependencies -->
         <dependency>

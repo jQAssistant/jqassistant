@@ -55,6 +55,11 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>mcp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>artifact-resolver</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -143,6 +148,11 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>yaml2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqa-distribution-specification</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- End of jQA dependencies -->
@@ -339,6 +349,13 @@
                 <groupId>io.prometheus</groupId>
                 <artifactId>prometheus-metrics-exporter-pushgateway</artifactId>
                 <version>${prometheus.pushgateway.version}</version>
+            </dependency>
+
+            <!-- MCP -->
+            <dependency>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp</artifactId>
+                <version>2.1.0</version>
             </dependency>
 
             <!-- Start misc dependencies -->
