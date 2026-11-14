@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -22,13 +23,13 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.xo.api.Query;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Scanner plugin which handles URLs as input, using standard Java mechanisms to handle protocols.
  */
-public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor> {
+public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, URLDescriptor> {
 
     @Override
     public boolean accepts(URL item, String location, Scope scope) throws IOException {
@@ -36,8 +37,29 @@ public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
     }
 
     @Override
-    public FileDescriptor scan(final URL url, String location, Scope scope, Scanner scanner) throws IOException {
-        try (FileResource fileResource = new BufferedFileResource(new AbstractVirtualFileResource() {
+    public URLDescriptor scan(final URL url, String location, Scope scope, Scanner scanner) throws IOException {
+        String protocol = url.getProtocol();
+        ScannerContext scannerContext = scanner.getContext();
+        FileDescriptor fileDescriptor;
+        if ("file".equalsIgnoreCase(protocol)) {
+            fileDescriptor = scanner.scan(new File(url.getFile()), null, scope);
+        } else {
+            try (FileResource fileResource = getFileResource(url, location)) {
+                URLFileResolver fileResolver = new URLFileResolver(getPath(url));
+                scannerContext.push(FileResolver.class, fileResolver);
+                try {
+                    fileDescriptor = scanner.scan(fileResource, url.getFile(), scope);
+                } finally {
+                    scannerContext.pop(FileResolver.class);
+                }
+            }
+        }
+        return scannerContext.getStore()
+            .addDescriptorType(fileDescriptor, URLDescriptor.class);
+    }
+
+    private static @NonNull FileResource getFileResource(URL url, String location) {
+        return new BufferedFileResource(new AbstractVirtualFileResource() {
             @Override
             public InputStream createStream() throws IOException {
                 URLConnection urlConnection = url.openConnection();
@@ -60,18 +82,7 @@ public class URLScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
                 String uriPath = uri.getPath();
                 return uriPath != null ? uriPath : uri.getSchemeSpecificPart();
             }
-        })) {
-            URLFileResolver fileResolver = new URLFileResolver(getPath(url));
-            ScannerContext scannerContext = scanner.getContext();
-            scannerContext.push(FileResolver.class, fileResolver);
-            try {
-                FileDescriptor fileDescriptor = scanner.scan(fileResource, url.getFile(), scope);
-                return (FileDescriptor) scannerContext.getStore()
-                    .addDescriptorType(fileDescriptor, URLDescriptor.class);
-            } finally {
-                scannerContext.pop(FileResolver.class);
-            }
-        }
+        });
     }
 
     private String getPath(URL url) {

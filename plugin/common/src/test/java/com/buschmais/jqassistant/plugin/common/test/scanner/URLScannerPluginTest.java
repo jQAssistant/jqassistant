@@ -19,8 +19,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.URLDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.URLScannerPlugin;
-
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,7 +72,7 @@ class URLScannerPluginTest {
     @ParameterizedTest
     @MethodSource("urlArguments")
     void urls(String url, String expectedFileName) throws IOException {
-        scan(new URL(url), expectedFileName);
+        scanTestURL(new URL(url), expectedFileName);
     }
 
     static Stream<Arguments> urlArguments() {
@@ -86,30 +85,33 @@ class URLScannerPluginTest {
 
     @Test
     void authentication() throws IOException {
-        try (FileResource fileResource = scan(new URL("test://user:secret@myhost:8080/path?value1=test1&value2=test2"), "/path?value1=test1&value2=test2")) {
-            String content = IOUtils.toString(fileResource.createStream(), StandardCharsets.UTF_8);
-            assertThat(content).startsWith("Basic ");
-        }
+        File file = scanTestURL(new URL("test://user:secret@myhost:8080/path?value1=test1&value2=test2"), "/path?value1=test1&value2=test2");
+        String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertThat(content).startsWith("Basic ");
     }
 
     @Test
     void getFileFromResource() throws IOException {
-        URL testResource = URLScannerPluginTest.class.getResource("/test-resource.txt");
-        try (FileResource fileResource = scan(testResource, testResource.getFile())) {
-            File file = fileResource.getFile();
-            assertThat(file.getPath()).endsWith("/test-resource.txt");
-        }
+        URL url = URLScannerPluginTest.class.getResource("/test-resource.txt");
+
+        URLDescriptor urlDescriptor = plugin.scan(url, url.toString(), DefaultScope.NONE, scanner);
+
+        assertThat(urlDescriptor).isNotNull()
+            .isInstanceOf(URLDescriptor.class).isInstanceOf(FileDescriptor.class);
+        ArgumentCaptor<File> fileArgumentCaptor = ArgumentCaptor.forClass(File.class);
+        verify(scanner).scan(fileArgumentCaptor.capture(), eq(null), eq(DefaultScope.NONE));
+        assertThat(fileArgumentCaptor.getValue().getPath()).endsWith("test-resource.txt");
     }
 
-    private FileResource scan(URL url, String expectedFileName) throws IOException {
-        FileDescriptor urlFileDescriptor = plugin.scan(url, url.toString(), DefaultScope.NONE, scanner);
+    private File scanTestURL(URL url, String expectedFileName) throws IOException {
+        URLDescriptor urlDescriptor = plugin.scan(url, url.toString(), DefaultScope.NONE, scanner);
 
-        assertThat(urlFileDescriptor).isNotNull()
-            .isInstanceOf(URLDescriptor.class);
-        ArgumentCaptor<FileResource> resource = ArgumentCaptor.forClass(FileResource.class);
-        verify(scanner).scan(resource.capture(), eq(expectedFileName), eq(DefaultScope.NONE));
+        assertThat(urlDescriptor).isNotNull()
+            .isInstanceOf(URLDescriptor.class).isInstanceOf(FileDescriptor.class);
+        ArgumentCaptor<FileResource> fileResourceCaptor = ArgumentCaptor.forClass(FileResource.class);
+        verify(scanner).scan(fileResourceCaptor.capture(), eq(expectedFileName), eq(DefaultScope.NONE));
         verify(store).addDescriptorType(fileDescriptor, URLDescriptor.class);
-        return resource.getValue();
+        return fileResourceCaptor.getValue().getFile();
     }
 
     public static class TestURLConnection extends URLConnection {
@@ -125,7 +127,7 @@ class URLScannerPluginTest {
         @Override
         public InputStream getInputStream() {
             String authorization = getRequestProperty("Authorization");
-            return new ByteArrayInputStream(authorization.getBytes());
+            return new ByteArrayInputStream(authorization != null ? authorization.getBytes() : new byte[0]);
         }
     }
 

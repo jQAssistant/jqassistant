@@ -56,6 +56,6 @@ public final class PathNormalizer {
             .toAbsolutePath()
             .normalize();
         return projectPath.relativize(filePath)
-            .toString();
+            .toString().replace('\\', '/');
     }
 }
