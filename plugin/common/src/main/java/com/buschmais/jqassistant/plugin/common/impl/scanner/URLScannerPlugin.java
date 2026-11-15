@@ -23,6 +23,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.xo.api.Query;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 
