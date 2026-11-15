@@ -22,26 +22,23 @@ class DefaultUriScannerPluginIT extends AbstractPluginIT {
 
     @Test
     void absoluteFileUri() throws URISyntaxException {
-        store.beginTransaction();
-        URL resource = DefaultUriScannerPluginIT.class.getResource("/");
-        URI uri = resource.toURI();
-        Descriptor descriptor = getScanner().scan(uri, uri.toString(), DefaultScope.NONE);
-        assertThat(descriptor).isInstanceOf(FileDescriptor.class);
-        FileDescriptor fileDescriptor = (FileDescriptor) descriptor;
-        assertThat(fileDescriptor.getPath()).isEqualTo(uri.toString());
-        assertThat(fileDescriptor.getFileName()).isEqualTo(resource.getFile());
-        store.commitTransaction();
+        verify(DefaultUriScannerPluginIT.class.getResource("/")
+            .toURI());
     }
 
     @Test
     void relativeFileUri() throws URISyntaxException {
+        verify(new URI("file:target/test-classes"));
+    }
+
+    private void verify(URI uri) {
         store.beginTransaction();
-        URI uri = new URI("file:target/test-classes");
         URIDescriptor descriptor = getScanner().scan(uri, uri.toString(), DefaultScope.NONE);
+        assertThat(descriptor.getUri()).isEqualTo(uri.toString());
         assertThat(descriptor).isInstanceOf(FileDescriptor.class);
         FileDescriptor fileDescriptor = (FileDescriptor) descriptor;
-        assertThat(fileDescriptor.getPath()).isEqualTo(uri.toString());
-        assertThat(fileDescriptor.getFileName()).isEqualTo("target/test-classes");
+        assertThat(fileDescriptor.getPath()).isEqualTo("target/test-classes");
+        assertThat(fileDescriptor.getFileName()).isEqualTo("/target/test-classes");
         store.commitTransaction();
     }
 
