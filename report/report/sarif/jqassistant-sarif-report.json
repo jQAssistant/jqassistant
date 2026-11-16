@@ -149,7 +149,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "core/rule/src/main/java/com/buschmais/jqassistant/core/rule/api/source/RuleSource.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -171,7 +171,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "core/store/src/main/java/com/buschmais/jqassistant/core/store/api/Store.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -193,7 +193,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "core/analysis/src/main/java/com/buschmais/jqassistant/core/analysis/api/AnalyzerContext.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -215,7 +215,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "core/report/src/main/java/com/buschmais/jqassistant/core/report/api/model/source/AbstractLocation.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -237,7 +237,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "core/runtime/src/main/java/com/buschmais/jqassistant/core/runtime/api/bootstrap/PluginRepositoryFactory.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -259,7 +259,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "core/shared/src/main/java/com/buschmais/jqassistant/core/shared/io/ClasspathResource.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -281,7 +281,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "core/shared/src/main/java/com/buschmais/jqassistant/core/shared/io/FileNameNormalizer.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -303,7 +303,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "core/shared/src/main/java/com/buschmais/jqassistant/core/shared/io/FilePattern.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -325,7 +325,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "core/shared/src/main/java/com/buschmais/jqassistant/core/shared/map/MapBuilder.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -347,7 +347,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "plugin/common/src/main/java/com/buschmais/jqassistant/plugin/common/api/scanner/AbstractContainerScannerPlugin.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
@@ -369,7 +369,7 @@
       "locations" : [ {
         "physicalLocation" : {
           "artifactLocation" : {
-            "uri" : "plugin/common/src/main/java/com/buschmais/jqassistant/plugin/common/api/scanner/AbstractContainerScannerPlugin.java"
+            "uri" : ".jqassistant.yml"
           },
           "region" : {
             "startLine" : 1,
