@@ -36,7 +36,7 @@ Modules typically follow an `api` / `spi` / `impl` package split
 
 ## Build and test
 
-Prerequisites: JDK 11, 17 (recommended) or 21, Maven 3.8+. Snapshot dependencies are resolved from the Sonatype OSS
+Prerequisites: JDK 11, 17 (recommended) or 25, Maven 3.8+. Snapshot dependencies are resolved from the Sonatype OSS
 snapshot repository (see `readme.adoc`).
 
 ```shell
