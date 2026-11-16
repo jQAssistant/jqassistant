@@ -75,19 +75,19 @@
         <commons-digester.version>2.1</commons-digester.version>
         <commons-io.version>2.22.0</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-lang3.version>3.21.0</commons-lang3.version>
+        <commons-lang3.version>3.22.0</commons-lang3.version>
         <commons-text.version>1.12.0</commons-text.version>
         <guava.version>33.8.0-jre</guava.version>
         <guice.version>7.0.0</guice.version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
         <httpcore.version>4.4.16</httpcore.version>
-        <jackson2.version>2.22.4</jackson2.version>
+        <jackson2.version>2.23.0</jackson2.version>
         <jackson3.version>3.2.3</jackson3.version>
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <json-schema-validator.version>3.0.8</json-schema-validator.version>
+        <json-schema-validator.version>3.0.9</json-schema-validator.version>
         <jsonschema-generator.version>5.0.0</jsonschema-generator.version>
         <junit.version>6.1.3</junit.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
@@ -98,15 +98,15 @@
         <micrometer.version>1.17.2</micrometer.version>
         <mockito.version>5.24.0</mockito.version>
         <model-assert.version>1.1.0</model-assert.version>
-        <neo4j_5x.version>5.26.32</neo4j_5x.version>
+        <neo4j_5x.version>5.26.33</neo4j_5x.version>
         <!-- The actual Neo4j version is set using the "neo4jv5" profile -->
         <neo4j.version/>
         <neo4j.neo4j-java-driver.version>6.3.0</neo4j.neo4j-java-driver.version>
         <neo4j-browser.version>5.24.0</neo4j-browser.version>
         <slf4j.version>2.0.20</slf4j.version>
-        <smallrye-config.version>4.2.0</smallrye-config.version>
+        <smallrye-config.version>4.2.2</smallrye-config.version>
         <maven-resolver.version>2.0.16</maven-resolver.version>
-        <prometheus.pushgateway.version>1.7.0</prometheus.pushgateway.version>
+        <prometheus.pushgateway.version>1.10.0</prometheus.pushgateway.version>
         <snakeyaml.version>2.7</snakeyaml.version>
         <snakeyaml-engine.version>3.2</snakeyaml-engine.version>
         <system-lambda.version>1.2.1</system-lambda.version>
@@ -116,12 +116,12 @@
         <wiremock.version>3.13.2</wiremock.version>
         <xo.version>2.6.6</xo.version>
         <!-- Maven plugin versions -->
-        <exec-maven-plugin.version>3.6.4</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.7.0</exec-maven-plugin.version>
         <doxia-markdown.version>2.1.0</doxia-markdown.version>
-        <maven.buildhelper.version>3.6.2</maven.buildhelper.version>
+        <maven.buildhelper.version>3.8.0</maven.buildhelper.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven.jaxb2-plugin.version>0.15.3</maven.jaxb2-plugin.version>
-        <maven.xml.version>1.2.2</maven.xml.version>
+        <maven.xml.version>1.4.0</maven.xml.version>
         <!-- Maven config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

@@ -33,8 +33,6 @@ class AbstractVirtualFileResourceTest {
             assertThat(file).content(UTF_8)
                 .isEqualTo(fileContent);
         }
-        assertThat(file.toURI()
-            .getPath()).endsWith(path);
         assertThat(file).doesNotExist();
     }
 

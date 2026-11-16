@@ -35,12 +35,13 @@ public final class PathNormalizer {
      * @return The slashified path.
      */
     public static String normalizePath(File file, ScannerContext context) {
-        String path = relativize(context.getProjectDirectory(), file);
-        return path.replace('\\', '/');
+        return relativize(context.getProjectDirectory(), file);
     }
 
     /**
-     * Determine the relative file name of a child against a parent
+     * Determine the relative file name of a child against a parent.
+     * If the paths do not have the same root (e.g. different drive letters on Windows systems) then the absolute child path is returned.
+     * The file separators are normalized to Unix-style '/'.
      *
      * @param parent
      *     The parent.
@@ -55,7 +56,8 @@ public final class PathNormalizer {
         Path filePath = child.toPath()
             .toAbsolutePath()
             .normalize();
-        return projectPath.relativize(filePath)
-            .toString();
+        return (projectPath.getRoot()
+            .equals(filePath.getRoot()) ? projectPath.relativize(filePath) : filePath).toString()
+            .replace('\\', '/');
     }
 }

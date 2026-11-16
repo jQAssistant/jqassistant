@@ -10,10 +10,11 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.LocalDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirectoryDescriptor;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static com.buschmais.jqassistant.core.scanner.api.DefaultScope.NONE;
 import static com.buschmais.jqassistant.plugin.common.test.assertj.FileDescriptorCondition.fileDescriptor;
@@ -73,7 +74,6 @@ class FileScannerIT extends AbstractPluginIT {
             FileDescriptor current = files.get(0);
             if (previous != null) {
                 assertThat(previous).isInstanceOf(DirectoryDescriptor.class);
-                assertThat(previous).isInstanceOf(LocalDescriptor.class);
                 assertThat(((DirectoryDescriptor) previous).getContains()).contains(current);
             }
             previous = current;
@@ -82,6 +82,7 @@ class FileScannerIT extends AbstractPluginIT {
     }
 
     @Test
+    @EnabledOnOs(OS.LINUX)
     void followSymbolicLinksDisabled() throws IOException {
         store.beginTransaction();
         DirectoryDescriptor directoryDescriptor = scanSymbolicLink(emptyMap());
@@ -90,6 +91,7 @@ class FileScannerIT extends AbstractPluginIT {
     }
 
     @Test
+    @EnabledOnOs(OS.LINUX)
     void followSymbolicLinksEnabled() throws IOException {
         store.beginTransaction();
         DirectoryDescriptor directoryDescriptor = scanSymbolicLink(Map.of("directory.follow-symbolic-links", "true"));

@@ -5,11 +5,9 @@ import java.io.IOException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.LocalDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FilePatternMatcher;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
 public abstract class AbstractFileResourceScannerPlugin<R extends Resource, D extends FileDescriptor> extends AbstractScannerPlugin<R, D> {
@@ -34,14 +32,8 @@ public abstract class AbstractFileResourceScannerPlugin<R extends Resource, D ex
 
     @Override
     public final D scan(R resource, String location, Scope scope, Scanner scanner) throws IOException {
-        D fileDescriptor = scanner.getContext()
+        return scanner.getContext()
             .peek(FileResolver.class)
             .match(location, getDescriptorType(), scanner.getContext());
-        if (resource instanceof LocalResource) {
-            scanner.getContext()
-                .getStore()
-                .addDescriptorType(fileDescriptor, LocalDescriptor.class);
-        }
-        return fileDescriptor;
     }
 }

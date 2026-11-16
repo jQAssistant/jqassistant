@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.ContainerFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalFileResource;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.filesystem.LocalFileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
