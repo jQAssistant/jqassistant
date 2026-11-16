@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.core.report.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -30,8 +28,11 @@ class ReportContextImplTest {
         ReportContext reportContext = new ReportContextImpl(mock(Build.class), ReportContextImplTest.class.getClassLoader(), mock(Store.class), reportDirectory,
             reportDirectory);
         File file = new File(reportContext.getReportDirectory("test-plugin"), "test-report.txt");
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            IOUtils.write("Test", fileWriter);
+        try (
+            final FileOutputStream fos = new FileOutputStream(file);
+            final Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)
+        ) {
+            IOUtils.write("Test", writer);
         }
         reportContext.addReport("test", Concept.builder()
             .id("test:Concept")

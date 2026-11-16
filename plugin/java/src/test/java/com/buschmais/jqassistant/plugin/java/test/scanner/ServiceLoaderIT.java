@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.ServiceLoader;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.LocalFileResource;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.filesystem.LocalFileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;

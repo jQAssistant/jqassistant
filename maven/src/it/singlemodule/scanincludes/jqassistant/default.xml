@@ -25,8 +25,9 @@
             match
               (:Maven:Project)-[:CONTAINS]->(f:File:Properties)
             where
-              f.path = "file:config/test.properties"
-              and f.fileName = "config/test.properties"
+              f.uri = "file:config/test.properties"
+              and f.path = "config/test.properties"
+              and f.fileName = "/config/test.properties"
             return
               f
         ]]></cypher>

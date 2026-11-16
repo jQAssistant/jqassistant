@@ -10,6 +10,9 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.*;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.ZipFileResource;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
