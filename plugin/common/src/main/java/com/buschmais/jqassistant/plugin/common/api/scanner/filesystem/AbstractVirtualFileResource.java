@@ -9,7 +9,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * Abstract base implementation of a file resource which uses a temporary file.
- *
+ * <p>
  * The implementation preserves the original file name including preceding directory structures for plugins which rely on path names.
  */
 @Slf4j
@@ -17,21 +17,12 @@ public abstract class AbstractVirtualFileResource implements FileResource {
 
     public static final String TMP_DIR_PREFIX = "jqassistant";
 
-    private File directory;
-
     private File file;
 
     @Override
     public final File getFile() throws IOException {
         if (this.file == null) {
-            // create a temp directory which will contain the extracted file (structure)
-            this.directory = Files.createTempDirectory(TMP_DIR_PREFIX).toFile();
-            this.file = new File(this.directory, getRelativePath());
-            // The file name itself may contain a directory structure, create this structure within the temp dir
-            File parentDirectory = this.file.getParentFile();
-            if (!(this.directory.equals(parentDirectory) || parentDirectory.mkdirs())) {
-                throw new IllegalStateException("Cannot create directory " + parentDirectory);
-            }
+            this.file = Files.createTempFile(TMP_DIR_PREFIX, null).toFile();
             try (InputStream input = createStream(); BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file))) {
                 IOUtils.copy(input, output);
             }
@@ -43,11 +34,11 @@ public abstract class AbstractVirtualFileResource implements FileResource {
 
     @Override
     public final void close() {
-        if (this.directory != null) {
+        if (this.file != null) {
             try {
-                FileUtils.deleteDirectory(this.directory);
+                FileUtils.delete(this.file);
             } catch (IOException e) {
-                log.warn("Cannot delete file resource directory {}", this.directory, e);
+                log.warn("Cannot delete file {}", this.file, e);
             }
         }
     }

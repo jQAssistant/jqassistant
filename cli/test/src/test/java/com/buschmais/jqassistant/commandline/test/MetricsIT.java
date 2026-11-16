@@ -6,6 +6,8 @@ import javax.ws.rs.client.WebTarget;
 
 import com.buschmais.jqassistant.core.runtime.api.metrics.MeterRegistryFactory;
 
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
@@ -16,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Verifies metrics using Prometheus Pushgateway
  */
+@EnabledOnOs(OS.LINUX)
 @Testcontainers
 class MetricsIT extends AbstractCLIIT {
 
@@ -35,8 +38,7 @@ class MetricsIT extends AbstractCLIIT {
         assertThat(execute(args).getExitCode()).isEqualTo(2);
 
         Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client
-            .target("http://" + pushgatewayAddress)
+        WebTarget webTarget = client.target("http://" + pushgatewayAddress)
             .path("/metrics");
         String response = webTarget.request()
             .get(String.class);

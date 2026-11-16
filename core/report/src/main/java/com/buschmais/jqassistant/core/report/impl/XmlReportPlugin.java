@@ -60,6 +60,8 @@ public class XmlReportPlugin implements ReportPlugin {
 
     private XMLOutputFactory xmlOutputFactory;
 
+    private FileOutputStream fileOutputStream;
+
     private XMLStreamWriter xmlStreamWriter;
 
     private ReportContext reportContext;
@@ -109,8 +111,8 @@ public class XmlReportPlugin implements ReportPlugin {
         xml(() -> {
             xmlReportFile.getParentFile()
                 .mkdirs();
-            final FileOutputStream fos = new FileOutputStream(xmlReportFile);
-            final Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+            fileOutputStream = new FileOutputStream(xmlReportFile);
+            final Writer writer = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
             final XMLStreamWriter streamWriter = xmlOutputFactory.createXMLStreamWriter(writer);
             xmlStreamWriter = new IndentingXMLStreamWriter(streamWriter);
             xmlStreamWriter.writeStartDocument(UTF_8.name(), "1.0");
@@ -148,6 +150,7 @@ public class XmlReportPlugin implements ReportPlugin {
             xmlStreamWriter.writeEndElement();
             xmlStreamWriter.writeEndDocument();
             xmlStreamWriter.close();
+            fileOutputStream.close();
         });
         if (transformToHTML) {
             transformToHTML();
@@ -157,10 +160,7 @@ public class XmlReportPlugin implements ReportPlugin {
     private void transformToHTML() throws ReportException {
         htmlReportFile.getParentFile()
             .mkdirs();
-        try (
-            final FileOutputStream fos = new FileOutputStream(htmlReportFile);
-            final Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)
-        ) {
+        try (final FileOutputStream fos = new FileOutputStream(htmlReportFile); final Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
             log.info("Writing HTML report to '{}'.", htmlReportFile.getAbsolutePath());
             javax.xml.transform.Result htmlTarget = new StreamResult(writer);
             Source xmlSource = new StreamSource(xmlReportFile);

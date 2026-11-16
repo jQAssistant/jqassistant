@@ -64,11 +64,9 @@ public final class XmlReportTestHelper {
     /**
      * Creates a test report.
      *
-     * @param properties
-     *     The report properties.
+     * @param properties The report properties.
      * @return The test report.
-     * @throws ReportException
-     *     If the test fails.
+     * @throws ReportException If the test fails.
      */
     public File createXmlReport(Map<String, Object> properties) throws ReportException, MalformedURLException {
         ReportContext reportContext = getReportContext();
@@ -117,131 +115,78 @@ public final class XmlReportTestHelper {
     }
 
     public File createXmlWithExtraCharacters(String value) throws ReportException {
-        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
-        xmlReportPlugin.begin();
-        Concept concept = Concept.builder()
-            .id("my:Concept")
-            .description(value)
-            .severity(Severity.MAJOR)
-            .executable(new CypherExecutable("match..."))
-            .verification(ROW_COUNT_VERIFICATION)
-            .report(Report.builder()
-                .primaryColumn(C1)
-                .build())
-            .build();
-        Map<String, Severity> concepts = new HashMap<>();
-        concepts.put("my:Concept", Severity.INFO);
-        Group group = Group.builder()
-            .id("default")
-            .description("My Group")
-            .concepts(concepts)
-            .build();
-        xmlReportPlugin.beginGroup(group);
-        xmlReportPlugin.beginConcept(concept);
-        List<Row> rows = new ArrayList<>();
-        rows.add(Row.builder()
-            .key("0")
-            .columns(Map.of(C1, Column.builder()
-                .value(value)
-                .label(value)
-                .build()))
-            .status(SUCCESS)
-            .build());
-        Result<Concept> result = Result.<Concept>builder()
-            .rule(concept)
-            .verificationResult(VerificationResult.builder()
-                .success(true)
-                .rowCount(rows.size())
-                .build())
-            .status(Result.Status.SUCCESS)
-            .severity(Severity.CRITICAL)
-            .columnNames(Arrays.asList(C1, C2))
-            .primaryColumn(of(C1))
-            .rows(rows)
-            .build();
-        xmlReportPlugin.setResult(result);
-        xmlReportPlugin.endConcept();
-        xmlReportPlugin.endGroup();
-        xmlReportPlugin.end();
-        return xmlReportPlugin.getXmlReportFile();
+        return withXmlReportPlugin(xmlReportPlugin -> {
+            Concept concept = Concept.builder()
+                .id("my:Concept")
+                .description(value)
+                .severity(Severity.MAJOR)
+                .executable(new CypherExecutable("match..."))
+                .verification(ROW_COUNT_VERIFICATION)
+                .report(Report.builder()
+                    .primaryColumn(C1)
+                    .build())
+                .build();
+            Map<String, Severity> concepts = new HashMap<>();
+            concepts.put("my:Concept", Severity.INFO);
+            Group group = Group.builder()
+                .id("default")
+                .description("My Group")
+                .concepts(concepts)
+                .build();
+            xmlReportPlugin.beginGroup(group);
+            xmlReportPlugin.beginConcept(concept);
+            List<Row> rows = new ArrayList<>();
+            rows.add(Row.builder()
+                .key("0")
+                .columns(Map.of(C1, Column.builder()
+                    .value(value)
+                    .label(value)
+                    .build()))
+                .status(SUCCESS)
+                .build());
+            Result<Concept> result = Result.<Concept>builder()
+                .rule(concept)
+                .verificationResult(VerificationResult.builder()
+                    .success(true)
+                    .rowCount(rows.size())
+                    .build())
+                .status(Result.Status.SUCCESS)
+                .severity(Severity.CRITICAL)
+                .columnNames(Arrays.asList(C1, C2))
+                .primaryColumn(of(C1))
+                .rows(rows)
+                .build();
+            xmlReportPlugin.setResult(result);
+            xmlReportPlugin.endConcept();
+            xmlReportPlugin.endGroup();
+        });
     }
 
     /**
      * Creates a test report with {@link Constraint}.
      *
      * @return The test report.
-     * @throws ReportException
-     *     If the test fails.
+     * @throws ReportException If the test fails.
      */
     public File createXmlReportWithConstraints() throws ReportException {
-        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
-        xmlReportPlugin.begin();
-        Constraint constraint = Constraint.builder()
-            .id("my:Constraint")
-            .description("My constraint description")
-            .severity(Severity.BLOCKER)
-            .executable(new CypherExecutable("match..."))
-            .verification(ROW_COUNT_VERIFICATION)
-            .report(Report.builder()
-                .build())
-            .build();
-        Map<String, Severity> constraints = new HashMap<>();
-        constraints.put("my:Constraint", Severity.INFO);
-        Group group = Group.builder()
-            .id("default")
-            .description("My group")
-            .constraints(constraints)
-            .build();
-        xmlReportPlugin.beginGroup(group);
-        xmlReportPlugin.beginConstraint(constraint);
-        List<Row> rows = new ArrayList<>();
-        rows.add(createRow(constraint, FAILURE));
-        Result<Constraint> result = Result.<Constraint>builder()
-            .rule(constraint)
-            .verificationResult(VerificationResult.builder()
-                .success(false)
-                .rowCount(rows.size())
-                .build())
-            .status(FAILURE)
-            .severity(Severity.CRITICAL)
-            .columnNames(Arrays.asList(C1, C2))
-            .primaryColumn(of(C1))
-            .rows(rows)
-            .build();
-        xmlReportPlugin.setResult(result);
-        xmlReportPlugin.endConstraint();
-        xmlReportPlugin.endGroup();
-        xmlReportPlugin.end();
-        return xmlReportPlugin.getXmlReportFile();
-    }
-
-    public File createXmlReportWithKeyColumns() throws ReportException {
-        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
-        xmlReportPlugin.begin();
-
-        Constraint keyColumConstraint = Constraint.builder()
-            .id("my:Constraint")
-            .report(Report.builder()
-                .keyColumns(List.of(C1))
-                .build())
-            .build();
-        Constraint normalConstraint1 = Constraint.builder()
-            .id("my:Constraint")
-            .report(Report.builder()
-                .build())
-            .build();
-        Constraint normalConstraint2 = Constraint.builder()
-            .id("my:Constraint")
-            .report(Report.builder()
-                .build())
-            .build();
-
-        List<Constraint> allConstraints = new ArrayList<>();
-        allConstraints.add(keyColumConstraint);
-        allConstraints.add(normalConstraint1);
-        allConstraints.add(normalConstraint2);
-
-        for (Constraint constraint : allConstraints) {
+        return withXmlReportPlugin(xmlReportPlugin -> {
+            Constraint constraint = Constraint.builder()
+                .id("my:Constraint")
+                .description("My constraint description")
+                .severity(Severity.BLOCKER)
+                .executable(new CypherExecutable("match..."))
+                .verification(ROW_COUNT_VERIFICATION)
+                .report(Report.builder()
+                    .build())
+                .build();
+            Map<String, Severity> constraints = new HashMap<>();
+            constraints.put("my:Constraint", Severity.INFO);
+            Group group = Group.builder()
+                .id("default")
+                .description("My group")
+                .constraints(constraints)
+                .build();
+            xmlReportPlugin.beginGroup(group);
             xmlReportPlugin.beginConstraint(constraint);
             List<Row> rows = new ArrayList<>();
             rows.add(createRow(constraint, FAILURE));
@@ -259,31 +204,74 @@ public final class XmlReportTestHelper {
                 .build();
             xmlReportPlugin.setResult(result);
             xmlReportPlugin.endConstraint();
-        }
-        xmlReportPlugin.end();
-        return xmlReportPlugin.getXmlReportFile();
+            xmlReportPlugin.endGroup();
+        });
+    }
+
+    public File createXmlReportWithKeyColumns() throws ReportException {
+        return withXmlReportPlugin(xmlReportPlugin -> {
+
+            Constraint keyColumConstraint = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder()
+                    .keyColumns(List.of(C1))
+                    .build())
+                .build();
+            Constraint normalConstraint1 = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder()
+                    .build())
+                .build();
+            Constraint normalConstraint2 = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder()
+                    .build())
+                .build();
+
+            List<Constraint> allConstraints = new ArrayList<>();
+            allConstraints.add(keyColumConstraint);
+            allConstraints.add(normalConstraint1);
+            allConstraints.add(normalConstraint2);
+
+            for (Constraint constraint : allConstraints) {
+                xmlReportPlugin.beginConstraint(constraint);
+                List<Row> rows = new ArrayList<>();
+                rows.add(createRow(constraint, FAILURE));
+                Result<Constraint> result = Result.<Constraint>builder()
+                    .rule(constraint)
+                    .verificationResult(VerificationResult.builder()
+                        .success(false)
+                        .rowCount(rows.size())
+                        .build())
+                    .status(FAILURE)
+                    .severity(Severity.CRITICAL)
+                    .columnNames(Arrays.asList(C1, C2))
+                    .primaryColumn(of(C1))
+                    .rows(rows)
+                    .build();
+                xmlReportPlugin.setResult(result);
+                xmlReportPlugin.endConstraint();
+            }
+        });
     }
 
     public void createConstraintsWithNonExistingKeyColumn() throws ReportException {
-        XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
-        xmlReportPlugin.begin();
-        Constraint constraint = Constraint.builder()
-            .id("my:Constraint")
-            .report(Report.builder()
-                .keyColumns(List.of("c5"))
-                .build())
-            .build();
+        withXmlReportPlugin(xmlReportPlugin -> {
+            Constraint constraint = Constraint.builder()
+                .id("my:Constraint")
+                .report(Report.builder()
+                    .keyColumns(List.of("c5"))
+                    .build())
+                .build();
 
-        xmlReportPlugin.beginConstraint(constraint);
-        createRow(constraint, FAILURE);
-        xmlReportPlugin.endConstraint();
-        xmlReportPlugin.end();
-
+            xmlReportPlugin.beginConstraint(constraint);
+            createRow(constraint, FAILURE);
+            xmlReportPlugin.endConstraint();
+        });
     }
 
     public static XmlReportPlugin getXmlReportPlugin() {
-        ReportContext reportContext = getReportContext();
-        return getXmlReportPlugin(reportContext, emptyMap());
+        return getXmlReportPlugin(getReportContext(), emptyMap());
     }
 
     public static XmlReportPlugin getXmlReportPlugin(ReportContext reportContext, Map<String, Object> properties) {
@@ -298,96 +286,109 @@ public final class XmlReportTestHelper {
     }
 
     public static File createXmlWithHiddenRows() throws ReportException {
+        return withXmlReportPlugin(xmlReportPlugin -> {
+            Constraint constraint = Constraint.builder()
+                .id("my:Constraint")
+                .description("This constraint contains hidden rows.")
+                .severity(Severity.MAJOR)
+                .executable(new CypherExecutable("match..."))
+                .verification(ROW_COUNT_VERIFICATION)
+                .report(Report.builder()
+                    .primaryColumn(C1)
+                    .build())
+                .build();
+
+            xmlReportPlugin.beginConstraint(constraint);
+            List<Row> rows = new ArrayList<>();
+            Hidden.Suppression suppression = Hidden.Suppression.builder()
+                .reason("Reason for suppressing")
+                .until(LocalDate.of(2067, 3, 15))
+                .build();
+            Hidden hiddenBySuppression = Hidden.builder()
+                .suppression(suppression)
+                .build();
+
+            Hidden.Baseline baseline = Hidden.Baseline.builder()
+                .build();
+            Hidden hiddenByBaseline = Hidden.builder()
+                .baseline(of(baseline))
+                .build();
+
+            Hidden bothSuppressionTypes = Hidden.builder()
+                .baseline(of(baseline))
+                .suppression(suppression)
+                .build();
+
+            rows.add(Row.builder()
+                .key("0")
+                .columns(Map.of(C1, Column.builder()
+                    .value("suppression")
+                    .label("suppression")
+                    .build()))
+                .status(SUCCESS)
+                .hidden(of(hiddenBySuppression))
+                .build());
+            rows.add(Row.builder()
+                .key("1")
+                .columns(Map.of(C1, Column.builder()
+                    .value("baseline")
+                    .label("baseline")
+                    .build()))
+                .status(FAILURE)
+                .hidden(of(hiddenByBaseline))
+                .build());
+            rows.add(Row.builder()
+                .key("2")
+                .columns(Map.of(C1, Column.builder()
+                    .value("bothSuppressionTypes")
+                    .label("bothSuppressionTypes")
+                    .build()))
+                .status(FAILURE)
+                .hidden(of(bothSuppressionTypes))
+                .build());
+            rows.add(Row.builder()
+                .key("3")
+                .columns(Map.of(C1, Column.builder()
+                    .value("nothing")
+                    .label("nothing")
+                    .build()))
+                .status(FAILURE)
+                .hidden(Optional.empty())
+                .build());
+
+            Result<Constraint> result = Result.<Constraint>builder()
+                .rule(constraint)
+                .verificationResult(VerificationResult.builder()
+                    .success(true)
+                    .rowCount(1)
+                    .hiddenRowCount(3)
+                    .build())
+                .status(Result.Status.SUCCESS)
+                .severity(Severity.CRITICAL)
+                .columnNames(Arrays.asList(C1, C2))
+                .primaryColumn(of(C1))
+                .rows(rows)
+                .build();
+
+            xmlReportPlugin.setResult(result);
+            xmlReportPlugin.endConstraint();
+        });
+    }
+
+    private static File withXmlReportPlugin(XmlReportPluginConsumer xmlReportPluginConsumer) throws ReportException {
         XmlReportPlugin xmlReportPlugin = getXmlReportPlugin();
         xmlReportPlugin.begin();
-
-        Constraint constraint = Constraint.builder()
-            .id("my:Constraint")
-            .description("This constraint contains hidden rows.")
-            .severity(Severity.MAJOR)
-            .executable(new CypherExecutable("match..."))
-            .verification(ROW_COUNT_VERIFICATION)
-            .report(Report.builder()
-                .primaryColumn(C1)
-                .build())
-            .build();
-
-        xmlReportPlugin.beginConstraint(constraint);
-        List<Row> rows = new ArrayList<>();
-        Hidden.Suppression suppression = Hidden.Suppression.builder()
-            .reason("Reason for suppressing")
-            .until(LocalDate.of(2067, 3, 15))
-            .build();
-        Hidden hiddenBySuppression = Hidden.builder()
-            .suppression(suppression)
-            .build();
-
-        Hidden.Baseline baseline = Hidden.Baseline.builder()
-            .build();
-        Hidden hiddenByBaseline = Hidden.builder()
-            .baseline(of(baseline))
-            .build();
-
-        Hidden bothSuppressionTypes = Hidden.builder()
-            .baseline(of(baseline))
-            .suppression(suppression)
-            .build();
-
-        rows.add(Row.builder()
-            .key("0")
-            .columns(Map.of(C1, Column.builder()
-                .value("suppression")
-                .label("suppression")
-                .build()))
-            .status(SUCCESS)
-            .hidden(of(hiddenBySuppression))
-            .build());
-        rows.add(Row.builder()
-            .key("1")
-            .columns(Map.of(C1, Column.builder()
-                .value("baseline")
-                .label("baseline")
-                .build()))
-            .status(FAILURE)
-            .hidden(of(hiddenByBaseline))
-            .build());
-        rows.add(Row.builder()
-            .key("2")
-            .columns(Map.of(C1, Column.builder()
-                .value("bothSuppressionTypes")
-                .label("bothSuppressionTypes")
-                .build()))
-            .status(FAILURE)
-            .hidden(of(bothSuppressionTypes))
-            .build());
-        rows.add(Row.builder()
-            .key("3")
-            .columns(Map.of(C1, Column.builder()
-                .value("nothing")
-                .label("nothing")
-                .build()))
-            .status(FAILURE)
-            .hidden(Optional.empty())
-            .build());
-
-        Result<Constraint> result = Result.<Constraint>builder()
-            .rule(constraint)
-            .verificationResult(VerificationResult.builder()
-                .success(true)
-                .rowCount(1)
-                .hiddenRowCount(3)
-                .build())
-            .status(Result.Status.SUCCESS)
-            .severity(Severity.CRITICAL)
-            .columnNames(Arrays.asList(C1, C2))
-            .primaryColumn(of(C1))
-            .rows(rows)
-            .build();
-
-        xmlReportPlugin.setResult(result);
-        xmlReportPlugin.endConstraint();
-        xmlReportPlugin.end();
+        try {
+            xmlReportPluginConsumer.accept(xmlReportPlugin);
+        } finally {
+            xmlReportPlugin.end();
+        }
         return xmlReportPlugin.getXmlReportFile();
+    }
+
+    @FunctionalInterface
+    private interface XmlReportPluginConsumer {
+        void accept(XmlReportPlugin xmlReportPlugin) throws ReportException;
     }
 
     private static Row createRow(ExecutableRule<?> rule, Result.Status status) {

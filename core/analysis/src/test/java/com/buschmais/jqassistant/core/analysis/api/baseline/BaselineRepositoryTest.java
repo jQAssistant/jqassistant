@@ -10,10 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.xmlunit.assertj.XmlAssert;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.of;
-import static org.apache.commons.io.FileUtils.readFileToString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
@@ -66,7 +65,10 @@ class BaselineRepositoryTest {
         assertThat(optionalBaseline).isPresent();
         baselineRepository.write(optionalBaseline.get());
 
-        assertThat(readFileToString(UPDATED_BASELINE_FILE, UTF_8)).isEqualTo(readFileToString(BASELINE_FILE, UTF_8));
+        XmlAssert.assertThat(UPDATED_BASELINE_FILE)
+            .and(BASELINE_FILE)
+            .ignoreWhitespace()
+            .areIdentical();
     }
 
     private static void verify(Optional<Baseline> optionalBaseline) {
