@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import com.buschmais.jqassistant.core.runtime.api.plugin.PluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -14,7 +16,6 @@ import com.buschmais.jqassistant.scm.maven.configuration.MavenConfiguration;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
@@ -29,7 +30,7 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 @Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST, requiresDependencyResolution = TEST, threadSafe = true)
 public class ScanMojo extends AbstractMojo {
 
-    @Component(hint = "default")
+    @Inject
     private DependencyGraphBuilder dependencyGraphBuilder;
 
     @Override

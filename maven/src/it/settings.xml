@@ -15,10 +15,12 @@
 					<url>file://@localRepository@</url>
 					<releases>
 						<enabled>true</enabled>
+						<checksumPolicy>ignore</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
                         <updatePolicy>always</updatePolicy>
+						<checksumPolicy>ignore</checksumPolicy>
 					</snapshots>
 				</repository>
 			</repositories>
@@ -28,10 +30,12 @@
 					<url>file://@localRepository@</url>
 					<releases>
 						<enabled>true</enabled>
+						<checksumPolicy>ignore</checksumPolicy>
 					</releases>
 					<snapshots>
 						<enabled>true</enabled>
                         <updatePolicy>always</updatePolicy>
+						<checksumPolicy>ignore</checksumPolicy>
 					</snapshots>
 				</pluginRepository>
 			</pluginRepositories>

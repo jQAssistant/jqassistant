@@ -37,7 +37,7 @@ class HelpIT extends AbstractCLIIT {
         assertThat(console).anyMatch(item -> matches(item, "jQAssistant Core Report Plugin", "jqa.core.report.plugin"));
         assertThat(console).anyMatch(item -> matches(item, "jQAssistant Java Plugin", "jqa.plugin.java"));
         assertThat(console).anyMatch(item -> matches(item, "jQAssistant JSON Plugin", "jqa.plugin.json"));
-        assertThat(console).anyMatch(item -> matches(item, "jQAssistant Maven 3 Plugin", "jqa.plugin.maven3"));
+        assertThat(console).anyMatch(item -> matches(item, "jQAssistant Maven Plugin", "jqa.plugin.maven"));
         assertThat(console).anyMatch(item -> matches(item, "jQAssistant XML Plugin", "jqa.plugin.xml"));
         assertThat(console).anyMatch(item -> matches(item, "jQAssistant YAML 2 Plugin", "jqa.plugin.yaml2"));
     }
