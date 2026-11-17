@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://schema.jqassistant.org/report/v2.3"
+           targetNamespace="http://schema.jqassistant.org/report/v2.3"
+           elementFormDefault="qualified">
+
+    <xs:group name="RuleGroup">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="group" type="tns:GroupType" minOccurs="0"/>
+                <xs:element name="concept" type="tns:ConceptType" minOccurs="0"/>
+                <xs:element name="constraint" type="tns:ConstraintType" minOccurs="0"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:element name="jqassistant-report">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="tns:RuleGroup"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ReferencableRuleType" abstract="true">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="GroupType">
+        <xs:complexContent>
+            <xs:extension base="tns:ReferencableRuleType">
+                <xs:sequence>
+                    <xs:group ref="tns:RuleGroup"/>
+                    <xs:element name="duration" type="xs:int"/>
+                </xs:sequence>
+                <xs:attribute name="date" type="xs:dateTime" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ExecutableRuleType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="tns:ReferencableRuleType">
+                <xs:sequence>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="result" type="tns:ResultType" minOccurs="0"/>
+                    <xs:element name="reports" type="tns:ReportsType" minOccurs="0"/>
+                    <xs:element name="status" type="tns:StatusEnumType"/>
+                    <xs:element name="severity" type="tns:SeverityType"/>
+                    <xs:element name="duration" type="xs:int"/>
+                    <xs:element name="required-concept" type="tns:ConceptReferenceType" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="StatusEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="success"/>
+            <xs:enumeration value="warning"/>
+            <xs:enumeration value="failure"/>
+            <xs:enumeration value="skipped"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="SeverityType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="level" type="xs:int" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="ConceptType">
+        <xs:complexContent>
+            <xs:extension base="tns:ExecutableRuleType">
+                <xs:sequence>
+                    <xs:element name="providing-concept" type="tns:ConceptReferenceType" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ConstraintType">
+        <xs:complexContent>
+            <xs:extension base="tns:ExecutableRuleType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ConceptReferenceType">
+        <xs:sequence>
+            <xs:element name="status" type="tns:StatusEnumType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ResultType">
+        <xs:sequence>
+            <xs:element name="columns" type="tns:ColumnsHeaderType"/>
+            <xs:element name="rows" type="tns:RowsType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ColumnsHeaderType">
+        <xs:sequence>
+            <xs:element name="column" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="count" type="xs:int" use="required"/>
+        <xs:attribute name="primary" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="RowsType">
+        <xs:sequence>
+            <xs:element name="row" type="tns:RowType" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="count" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="RowType">
+        <xs:sequence>
+            <xs:element name="column" type="tns:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="key" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ColumnType">
+        <xs:sequence>
+            <xs:element name="element" type="tns:ElementType" minOccurs="0"/>
+            <xs:element name="source" type="tns:SourceLocationType" minOccurs="0"/>
+            <xs:element name="value" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="ElementType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="language" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="LocationType" abstract="true">
+        <xs:sequence>
+            <xs:element name="parent" type="tns:ArtifactLocationType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="fileName" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="SourceLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:attribute name="startLine" type="xs:int"/>
+                <xs:attribute name="endLine" type="xs:int"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ArtifactLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:attribute name="group" type="xs:string"/>
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="type" type="xs:string"/>
+                <xs:attribute name="classifier" type="xs:string"/>
+                <xs:attribute name="version" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ReportsType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="image" type="tns:ImageType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="link" type="tns:LinkType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="AbstractReportType" abstract="true">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="label" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="ImageType">
+        <xs:simpleContent>
+            <xs:extension base="tns:AbstractReportType"/>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="LinkType">
+        <xs:simpleContent>
+            <xs:extension base="tns:AbstractReportType"/>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>
