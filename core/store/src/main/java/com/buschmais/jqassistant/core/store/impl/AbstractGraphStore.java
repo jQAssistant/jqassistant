@@ -11,15 +11,14 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.spi.StorePluginRepository;
-import com.buschmais.xo.api.Example;
+import com.buschmais.xo.api.*;
 import com.buschmais.xo.api.Query.Result;
-import com.buschmais.xo.api.ResultIterable;
-import com.buschmais.xo.api.ValidationMode;
-import com.buschmais.xo.api.XOException;
-import com.buschmais.xo.api.XOManager;
-import com.buschmais.xo.api.XOManagerFactory;
 import com.buschmais.xo.api.bootstrap.XO;
 import com.buschmais.xo.api.bootstrap.XOUnit;
+import com.buschmais.xo.neo4j.api.model.Neo4jLabel;
+import com.buschmais.xo.neo4j.api.model.Neo4jRelationshipType;
+import com.buschmais.xo.neo4j.spi.metadata.NodeMetadata;
+import com.buschmais.xo.neo4j.spi.metadata.RelationshipMetadata;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -48,14 +47,16 @@ public abstract class AbstractGraphStore implements Store {
 
     protected final StorePluginRepository storePluginRepository;
 
-    private XOManagerFactory<?, ?, ?, ?> xoManagerFactory;
+    private XOManagerFactory<NodeMetadata<Neo4jLabel>, Neo4jLabel, RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> xoManagerFactory;
     private XOManager xoManager;
     private int created = 0;
 
-    protected AbstractGraphStore(URI uri, com.buschmais.jqassistant.core.store.api.configuration.Store configuration, StorePluginRepository storePluginRepository) {
+    protected AbstractGraphStore(URI uri, com.buschmais.jqassistant.core.store.api.configuration.Store configuration,
+        StorePluginRepository storePluginRepository) {
         this.uri = uri;
         this.configuration = configuration;
-        this.autoCommitThreshold = configuration.autoCommitThreshold().orElse(getDefaultAutocommitThreshold());
+        this.autoCommitThreshold = configuration.autoCommitThreshold()
+            .orElse(getDefaultAutocommitThreshold());
         this.storePluginRepository = storePluginRepository;
     }
 
@@ -71,7 +72,8 @@ public abstract class AbstractGraphStore implements Store {
                 .strictValidation(true)
                 .build());
         configure(builder);
-        this.xoManagerFactory = getXOManagerFactory(builder.build());
+        XOUnit xoUnit = builder.build();
+        this.xoManagerFactory = createXOManagerFactory(xoUnit);
         initialize(xoManagerFactory);
         xoManager = xoManagerFactory.createXOManager();
     }
@@ -96,6 +98,11 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public XOManager getXOManager() {
         return xoManager;
+    }
+
+    @Override
+    public XOManagerFactory<NodeMetadata<Neo4jLabel>, Neo4jLabel, RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> getXOManagerFactory() {
+        return xoManagerFactory;
     }
 
     @Override
@@ -301,11 +308,14 @@ public abstract class AbstractGraphStore implements Store {
     /**
      * May be overwritten for testing.
      *
-     * @param xoUnit The {@link XOUnit}.
+     * @param xoUnit
+     *     The {@link XOUnit}.
      * @return The {@link XOManagerFactory}.
      */
-    protected XOManagerFactory<?, ?, ?, ?> getXOManagerFactory(XOUnit xoUnit) {
-        return XO.createXOManagerFactory(xoUnit);
+    protected XOManagerFactory<NodeMetadata<Neo4jLabel>, Neo4jLabel, RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType> createXOManagerFactory(
+        XOUnit xoUnit) {
+        return (XOManagerFactory<NodeMetadata<Neo4jLabel>, Neo4jLabel, RelationshipMetadata<Neo4jRelationshipType>, Neo4jRelationshipType>) XO.createXOManagerFactory(
+            xoUnit);
     }
 
     /**

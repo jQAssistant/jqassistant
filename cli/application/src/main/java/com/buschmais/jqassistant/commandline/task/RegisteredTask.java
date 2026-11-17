@@ -107,6 +107,16 @@ public enum RegisteredTask {
     },
 
     /**
+     * MCP server.
+     */
+    MCP {
+        @Override
+        public Task getTask() {
+            return new MCPTask();
+        }
+    },
+
+    /**
      * Help
      */
     HELP {
