@@ -3,7 +3,7 @@
     <testcase name="Concept_jqa-plugin_Label" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
     <testcase name="Concept_jqa-plugin_PluginDescriptor" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
     <testcase name="Constraint_jqa-plugin_ImplictlyRegisteredLabelsShouldNotBeRegisteredExplicitly" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
-    <testcase name="Constraint_jqa-plugin_UnregisteredLabel" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
-    <testcase name="Constraint_jqa-plugin_pluginid-must-be-given" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
     <testcase name="Concept_jqa-plugin_PluginDescriptorRegistersModel" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
+    <testcase name="Constraint_jqa-plugin_pluginid-must-be-given" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
+    <testcase name="Constraint_jqa-plugin_UnregisteredLabel" time="0.0" classname="jqassistant.Group_jqa-plugin_Default"/>
 </testsuite>

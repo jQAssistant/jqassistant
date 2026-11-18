@@ -3,11 +3,11 @@
   <context>
     <build>
       <name>jQAssistant Parent</name>
-      <timestamp>2026-11-18T13:36:42.711Z</timestamp>
+      <timestamp>2026-11-18T16:12:12.55Z</timestamp>
       <properties></properties>
     </build>
   </context>
-  <group id="jqa-legal" date="2026-11-18T13:46:08">
+  <group id="jqa-legal" date="2026-11-18T16:17:44">
     <constraint id="jqa-legal:license:is-correctly-defined">
       <description>The license definition seems to be wrong. Please ensure
 to declare the license in this project as follows:
@@ -58,7 +58,7 @@ to declare the license in this project as follows:
       </verificationResult>
       <status level="0">failure</status>
       <severity level="2">major</severity>
-      <duration>234</duration>
+      <duration>232</duration>
     </constraint>
     <constraint id="jqa-legal:license:only-one-in-pom">
       <description>A jQAssistant project must have exactly one license specified in
@@ -116,7 +116,7 @@ specified.</description>
       </verificationResult>
       <status level="1">warning</status>
       <severity level="3">minor</severity>
-      <duration>99</duration>
+      <duration>94</duration>
     </constraint>
     <concept id="jqa-maven-constraints:mark-root-project" abstract="false">
       <description>This concept labels the parent Maven POM of a Maven Project with
@@ -144,7 +144,7 @@ on the root Maven POM of a Maven project.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="0">blocker</severity>
-      <duration>132</duration>
+      <duration>104</duration>
     </concept>
     <constraint id="jqa-legal:license:exists">
       <description>It must exist in the root directory of the project a
@@ -175,14 +175,14 @@ the project uses.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>63</duration>
+      <duration>33</duration>
       <required-concept id="jqa-maven-constraints:mark-root-project">
         <status level="2">success</status>
       </required-concept>
     </constraint>
-    <duration>758</duration>
+    <duration>804</duration>
   </group>
-  <group id="jqa-logging" date="2026-11-18T13:46:09">
+  <group id="jqa-logging" date="2026-11-18T16:17:45">
     <constraint id="jqa-logging:IllegalUsageOfSystemOutAndErr">
       <description>System.out or System.err should not be used for logging</description>
       <verificationResult>
@@ -192,7 +192,7 @@ the project uses.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>175</duration>
+      <duration>115</duration>
     </constraint>
     <concept id="jqa-logging:OSSLogger" abstract="false">
       <description>The classes org.slf4j.Logger, org.apache.commons.logging.Log and java.util.logging.Logger are logging frameworks and labeled as Logger.</description>
@@ -216,7 +216,7 @@ the project uses.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>65</duration>
+      <duration>92</duration>
     </concept>
     <concept id="jqa-logging:Logger" abstract="false">
       <description>Abstract anchor for all logging framework providers.</description>
@@ -268,14 +268,14 @@ the project uses.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>100</duration>
+      <duration>81</duration>
       <required-concept id="jqa-logging:Slf4j">
         <status level="2">success</status>
       </required-concept>
     </constraint>
-    <duration>440</duration>
+    <duration>539</duration>
   </group>
-  <group id="jqa-maven-constraints" date="2026-11-18T13:46:09">
+  <group id="jqa-maven-constraints" date="2026-11-18T16:17:45">
     <constraint id="jqa-maven-constraints:project-name">
       <description>The name of the project must be given in the Maven project. Furthermore
 the name must start with JQAssistant.
@@ -304,7 +304,7 @@ only Java 11 is available.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="1">critical</severity>
-      <duration>220</duration>
+      <duration>174</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:organisation-present">
       <description>The information on the organisation of the jQAssistant project
@@ -345,7 +345,7 @@ in the toplevel POM of the Maven project.
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>192</duration>
+      <duration>152</duration>
       <required-concept id="jqa-maven-constraints:mark-root-project">
         <status level="2">success</status>
       </required-concept>
@@ -378,7 +378,7 @@ Example: &lt;version&gt;1.9&lt;/version&gt;</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>201</duration>
+      <duration>141</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:homepage">
       <description>The homepage of jQAssistant must be defined as the homepage of
@@ -393,7 +393,7 @@ present in the parent POM:
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>150</duration>
+      <duration>124</duration>
     </constraint>
     <constraint id="jqa-maven-constraints:scm-connection-declaration">
       <description>The SCM section of this jQAssistant project seems to be not correct. Please
@@ -427,7 +427,7 @@ The SCM section of this project should be similar to this one:
       </verificationResult>
       <status level="2">success</status>
       <severity level="0">blocker</severity>
-      <duration>75</duration>
+      <duration>61</duration>
     </constraint>
     <concept id="jqa-maven-constraints:jQAssistantArtifact" abstract="false">
       <description>This concept labels all artifacts with a groupId starting with "com.buschmais.jqassistant" with "jQAssistant".</description>
@@ -451,10 +451,10 @@ The SCM section of this project should be similar to this one:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="30c105976874e86af1037efad8f711351e85b5a69f66371c0f330bd80e13c5fd">
+          <row key="b78332847f51131ecbd8994200d5cdff4cf39f0bbae16507dbaf25ee2b542560">
             <column name="artifact">
               <element language="Generic">Artifact</element>
-              <value>com.buschmais.jqassistant.build:parent:pom:2.10.0-M4.3</value>
+              <value>com.buschmais.jqassistant.build:parent:pom:2.10.0-RC1</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -479,10 +479,10 @@ The SCM section of this project should be similar to this one:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="96d6197a6eca7cab9843bc7e8f43687f829f91de2876c04c7ba46bbe790c074e">
+          <row key="b36d754ea0484d7aac80b0a3292ad05dd35531fa984b0375ba28e9095960bd33">
             <column name="artifact">
               <element language="Generic">Artifact</element>
-              <value>com.buschmais.jqassistant:jqassistant-maven-plugin:jar:2.10.0-M4</value>
+              <value>com.buschmais.jqassistant:jqassistant-maven-plugin:jar:2.10.0-RC1</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -2092,7 +2092,7 @@ The SCM section of this project should be similar to this one:
       </verificationResult>
       <status level="2">success</status>
       <severity level="0">blocker</severity>
-      <duration>108</duration>
+      <duration>90</duration>
     </concept>
     <constraint id="jqa-maven-constraints:AvoidDependenciesTojQAssistantTestArtifacts">
       <description>The main artifact created by a jQAssistant Maven project must not depend on
@@ -2106,7 +2106,7 @@ Usually the reason is a missing "test" scope in the dependency declaration.</des
       </verificationResult>
       <status level="2">success</status>
       <severity level="1">critical</severity>
-      <duration>68</duration>
+      <duration>80</duration>
       <required-concept id="jqa-maven-constraints:jQAssistantArtifact">
         <status level="2">success</status>
       </required-concept>
@@ -2144,11 +2144,11 @@ Example:
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>113</duration>
+      <duration>82</duration>
     </constraint>
-    <duration>1240</duration>
+    <duration>1161</duration>
   </group>
-  <group id="jqa-plugin:Default" date="2026-11-18T13:46:10">
+  <group id="jqa-plugin:Default" date="2026-11-18T16:17:46">
     <concept id="jqa-plugin:Label" abstract="false">
       <description>Adds the labels "XO" and "Label" to all interfaces representing XO labels.</description>
       <result>
@@ -3644,9 +3644,9 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="df1e745a8494738eb0af054416605f244d2c8657cc40600aaa519198995f8480">
+          <row key="1f50511c2d85aec2cc098d0eab2862fedf60091a1de09ed96b47d43513a7a043">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -3656,57 +3656,15 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="626790e43ec026da3dba238303e3e34bb6abfab820b2c51967868a3e44548566">
+          <row key="9d6edbe63916fc560d0b29b76192f50c59fc8e31991adff2d5e8d521ff877778">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="7a23081db38b83ce9aa3c04ddfbadc9cd14ec53094ddd6903997ebd882f55e7c">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="cf7c1abb617e7e9ac2e111990b4acaef7fe8084ee99ee9992c38e10e0e2608a5">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="d9b9a0a240a78643d317c94ccad95774a41d562544e678236a59682318e78441">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="fea4c24f405425b4a16b93724055a1f2a8d0390efce99a687ee16cb7b97be69b">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
           <row key="e47f2e1fa957921d5d48553ef8214e37fcd8a3ca84f83cc525d2aefba8178600">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="ee45386768a36355475b51e7321a7ab768c81cb8018c1032ae1f81dcf4962547">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="71982ac22ea97302ee909c7f8792e4b3fa8f11ee13aa5a13b0752065060e25d5">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="87e8c04e5d0c3e4e1fbe8d485caa99447a7a4203dda0cdc3e5624f40f124d236">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -3722,9 +3680,21 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="810391c63a9c91b0543bd68f676e5757545be81bd450a4aa9bf17035269b5a65">
+          <row key="ee45386768a36355475b51e7321a7ab768c81cb8018c1032ae1f81dcf4962547">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="df1e745a8494738eb0af054416605f244d2c8657cc40600aaa519198995f8480">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="cf7c1abb617e7e9ac2e111990b4acaef7fe8084ee99ee9992c38e10e0e2608a5">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -3734,21 +3704,21 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
+          <row key="0301ea01e856890ec003713b1d66c4ab3142d946418ae8dccb4e1a60d2eb5b8a">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="34f9165d4bfbbd9529aa1aa47bd41bdf728034b520c60729f1b0e44bb2ba4912">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
           <row key="835c2a102632f17a6a542801a69889dd5e9b6b420195d406f1723de9a784aa21">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="d3147f8bc057b345a9c5dd0e75a4a3f948d0a90b849d7aef5d040720b024b65e">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="a733f35d7152a1e5de91d1bd4ff5f4f14ffd172d4f339bbd1cac58eaaf4dd4a9">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -3770,99 +3740,9 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="6b14b2e5b3e17488f045a53630c0427e5030d3ae9f6a33a9d4bb05c7a86e7882">
+          <row key="7a23081db38b83ce9aa3c04ddfbadc9cd14ec53094ddd6903997ebd882f55e7c">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="9d6edbe63916fc560d0b29b76192f50c59fc8e31991adff2d5e8d521ff877778">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="befc8a1b9a2b13ce7a883c9410dc9b36f20344e843ad20b797b40e4966363122">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="d9b9a0a240a78643d317c94ccad95774a41d562544e678236a59682318e78441">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="6b14b2e5b3e17488f045a53630c0427e5030d3ae9f6a33a9d4bb05c7a86e7882">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="810391c63a9c91b0543bd68f676e5757545be81bd450a4aa9bf17035269b5a65">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="a070383b61eea91e207bf8c8d2fd9e9b079ec54bf59cca7d5e3b33d6e98dd527">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="cf7c1abb617e7e9ac2e111990b4acaef7fe8084ee99ee9992c38e10e0e2608a5">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="6904e19c6342584988d306ed6e4f414aba428f8968c347fb8216658f41aff88d">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="270546bc5ea6a69ca2ae65e14cd0ff8065719e5baecb65738710e8174df189dc">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="87e8c04e5d0c3e4e1fbe8d485caa99447a7a4203dda0cdc3e5624f40f124d236">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="d3147f8bc057b345a9c5dd0e75a4a3f948d0a90b849d7aef5d040720b024b65e">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="626790e43ec026da3dba238303e3e34bb6abfab820b2c51967868a3e44548566">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="df1e745a8494738eb0af054416605f244d2c8657cc40600aaa519198995f8480">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="cfa01706431d7c812d2efe6076b26870d1e136c17c74d3e3c10ed98306c7428f">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="da1b9d87c791feb01a9bd709d107598d230c0213a8754e1adced937a8a15ea53">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -3878,15 +3758,165 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
+          <row key="1f50511c2d85aec2cc098d0eab2862fedf60091a1de09ed96b47d43513a7a043">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
           <row key="f43333a006ad2660df38f797787e228ab3779fa069347fba90229b009ba383d3">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="1f50511c2d85aec2cc098d0eab2862fedf60091a1de09ed96b47d43513a7a043">
+          <row key="a070383b61eea91e207bf8c8d2fd9e9b079ec54bf59cca7d5e3b33d6e98dd527">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="da1b9d87c791feb01a9bd709d107598d230c0213a8754e1adced937a8a15ea53">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="87e8c04e5d0c3e4e1fbe8d485caa99447a7a4203dda0cdc3e5624f40f124d236">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="71982ac22ea97302ee909c7f8792e4b3fa8f11ee13aa5a13b0752065060e25d5">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="d3147f8bc057b345a9c5dd0e75a4a3f948d0a90b849d7aef5d040720b024b65e">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="fea4c24f405425b4a16b93724055a1f2a8d0390efce99a687ee16cb7b97be69b">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="810391c63a9c91b0543bd68f676e5757545be81bd450a4aa9bf17035269b5a65">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="cfa01706431d7c812d2efe6076b26870d1e136c17c74d3e3c10ed98306c7428f">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="6b14b2e5b3e17488f045a53630c0427e5030d3ae9f6a33a9d4bb05c7a86e7882">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="626790e43ec026da3dba238303e3e34bb6abfab820b2c51967868a3e44548566">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="d9b9a0a240a78643d317c94ccad95774a41d562544e678236a59682318e78441">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="befc8a1b9a2b13ce7a883c9410dc9b36f20344e843ad20b797b40e4966363122">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="8153458f8db2208790ccf100b595f9e2186ce10fbdfc5fc59c9883db0dc8e406">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="7a23081db38b83ce9aa3c04ddfbadc9cd14ec53094ddd6903997ebd882f55e7c">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="ee45386768a36355475b51e7321a7ab768c81cb8018c1032ae1f81dcf4962547">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="3b46dcf3c018393eecbc715ab18b7a81b795410fbd10568972d2f3e47735293a">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="a733f35d7152a1e5de91d1bd4ff5f4f14ffd172d4f339bbd1cac58eaaf4dd4a9">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="810391c63a9c91b0543bd68f676e5757545be81bd450a4aa9bf17035269b5a65">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="e47f2e1fa957921d5d48553ef8214e37fcd8a3ca84f83cc525d2aefba8178600">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="fea4c24f405425b4a16b93724055a1f2a8d0390efce99a687ee16cb7b97be69b">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="d3147f8bc057b345a9c5dd0e75a4a3f948d0a90b849d7aef5d040720b024b65e">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="71982ac22ea97302ee909c7f8792e4b3fa8f11ee13aa5a13b0752065060e25d5">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="befc8a1b9a2b13ce7a883c9410dc9b36f20344e843ad20b797b40e4966363122">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="0301ea01e856890ec003713b1d66c4ab3142d946418ae8dccb4e1a60d2eb5b8a">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="34f9165d4bfbbd9529aa1aa47bd41bdf728034b520c60729f1b0e44bb2ba4912">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -3908,57 +3938,21 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="ee45386768a36355475b51e7321a7ab768c81cb8018c1032ae1f81dcf4962547">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="0301ea01e856890ec003713b1d66c4ab3142d946418ae8dccb4e1a60d2eb5b8a">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="34f9165d4bfbbd9529aa1aa47bd41bdf728034b520c60729f1b0e44bb2ba4912">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="7a23081db38b83ce9aa3c04ddfbadc9cd14ec53094ddd6903997ebd882f55e7c">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenRepositoryDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="e47f2e1fa957921d5d48553ef8214e37fcd8a3ca84f83cc525d2aefba8178600">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="fea4c24f405425b4a16b93724055a1f2a8d0390efce99a687ee16cb7b97be69b">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="71982ac22ea97302ee909c7f8792e4b3fa8f11ee13aa5a13b0752065060e25d5">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="8153458f8db2208790ccf100b595f9e2186ce10fbdfc5fc59c9883db0dc8e406">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
           <row key="835c2a102632f17a6a542801a69889dd5e9b6b420195d406f1723de9a784aa21">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactIdDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="626790e43ec026da3dba238303e3e34bb6abfab820b2c51967868a3e44548566">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="cf7c1abb617e7e9ac2e111990b4acaef7fe8084ee99ee9992c38e10e0e2608a5">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -3968,15 +3962,39 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="0301ea01e856890ec003713b1d66c4ab3142d946418ae8dccb4e1a60d2eb5b8a">
+          <row key="87e8c04e5d0c3e4e1fbe8d485caa99447a7a4203dda0cdc3e5624f40f124d236">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="34f9165d4bfbbd9529aa1aa47bd41bdf728034b520c60729f1b0e44bb2ba4912">
+          <row key="6904e19c6342584988d306ed6e4f414aba428f8968c347fb8216658f41aff88d">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="270546bc5ea6a69ca2ae65e14cd0ff8065719e5baecb65738710e8174df189dc">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="d9b9a0a240a78643d317c94ccad95774a41d562544e678236a59682318e78441">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="6b14b2e5b3e17488f045a53630c0427e5030d3ae9f6a33a9d4bb05c7a86e7882">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="df1e745a8494738eb0af054416605f244d2c8657cc40600aaa519198995f8480">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -3992,39 +4010,9 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="1f50511c2d85aec2cc098d0eab2862fedf60091a1de09ed96b47d43513a7a043">
+          <row key="cc524977eacead6d4b333e64ee5bc26e5d483e9f20f02dc5f6587bf113fc5adc">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="3b46dcf3c018393eecbc715ab18b7a81b795410fbd10568972d2f3e47735293a">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.EffectiveDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="befc8a1b9a2b13ce7a883c9410dc9b36f20344e843ad20b797b40e4966363122">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="1c88fe38f08057d6352a10251c45604bd6f4870f7fc8fead13f1098c7e8209d5">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4034,9 +4022,21 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="cadec0682fd0ffe6795ffd3cd75ecd141f8c0e734de9a93c989be77c96d997e4">
+          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="d0e6ed8ce3bf7e96bf667eef24214c16aebdcc9f8174e822bfd2b50f43a1b68b">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="bdcb18b337decc4f3dbd0ab6fc4d9ab78786b2bd40d0a817450fbfcb23674511">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4046,51 +4046,15 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="64f1d92fd814d46cab2004cae1ee1d61d1f3bb3a678af4cb41db88375575fd65">
+          <row key="cc524977eacead6d4b333e64ee5bc26e5d483e9f20f02dc5f6587bf113fc5adc">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="bdcb18b337decc4f3dbd0ab6fc4d9ab78786b2bd40d0a817450fbfcb23674511">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
           <row key="ae92490dc0164a87fe86f7136c2b72aee03bf0f7ed0ee9e5f25fd813ae00ad44">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="838412130ac51ce1acd7aefc7fd381c23a0e6bc3e62ec7727849208b438847c0">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="f87ecdc883cbbe34aafc78d6977d946fb5bf62520cc6b98ce79e66f4d3bf24a7">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="bb6d59e585f1a9f13e06ec2a862c12ce8245e350f73bf8844695fe9a17ee1bab">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="8a56e0507402136b8ed87aba087e6d77c95eed538ad04183b8bf886cc7f1457c">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="d0e6ed8ce3bf7e96bf667eef24214c16aebdcc9f8174e822bfd2b50f43a1b68b">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4100,15 +4064,15 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
           <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4118,27 +4082,9 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="fe708ed22261730db0f12e98c8d938bae0d2d9711fd12a8cedba0a82511ae7b9">
+          <row key="838412130ac51ce1acd7aefc7fd381c23a0e6bc3e62ec7727849208b438847c0">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="cc524977eacead6d4b333e64ee5bc26e5d483e9f20f02dc5f6587bf113fc5adc">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="043cff3393254bb69e4a39e038058c955437c337e397374a74d1d00cfbb2c822">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="bdcb18b337decc4f3dbd0ab6fc4d9ab78786b2bd40d0a817450fbfcb23674511">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4148,45 +4094,15 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="838412130ac51ce1acd7aefc7fd381c23a0e6bc3e62ec7727849208b438847c0">
+          <row key="bb6d59e585f1a9f13e06ec2a862c12ce8245e350f73bf8844695fe9a17ee1bab">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="ae92490dc0164a87fe86f7136c2b72aee03bf0f7ed0ee9e5f25fd813ae00ad44">
+          <row key="bdcb18b337decc4f3dbd0ab6fc4d9ab78786b2bd40d0a817450fbfcb23674511">
             <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="cc524977eacead6d4b333e64ee5bc26e5d483e9f20f02dc5f6587bf113fc5adc">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="f87ecdc883cbbe34aafc78d6977d946fb5bf62520cc6b98ce79e66f4d3bf24a7">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="d0e6ed8ce3bf7e96bf667eef24214c16aebdcc9f8174e822bfd2b50f43a1b68b">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
-            <column name="label.fqn">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyValue</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4196,9 +4112,93 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
+          <row key="043cff3393254bb69e4a39e038058c955437c337e397374a74d1d00cfbb2c822">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="d0e6ed8ce3bf7e96bf667eef24214c16aebdcc9f8174e822bfd2b50f43a1b68b">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="f87ecdc883cbbe34aafc78d6977d946fb5bf62520cc6b98ce79e66f4d3bf24a7">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="64f1d92fd814d46cab2004cae1ee1d61d1f3bb3a678af4cb41db88375575fd65">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="1c88fe38f08057d6352a10251c45604bd6f4870f7fc8fead13f1098c7e8209d5">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLKeyDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="bd840f0ba99b7191b3b119d4fdfc815f38e1d1901128393104fae53cbc89e89d">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="cadec0682fd0ffe6795ffd3cd75ecd141f8c0e734de9a93c989be77c96d997e4">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="881a207c6307ad567c07f3bc073447ce269a5ca571112270ff9b069b62500920">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
           <row key="bb6d59e585f1a9f13e06ec2a862c12ce8245e350f73bf8844695fe9a17ee1bab">
             <column name="label.fqn">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="fe708ed22261730db0f12e98c8d938bae0d2d9711fd12a8cedba0a82511ae7b9">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="ae92490dc0164a87fe86f7136c2b72aee03bf0f7ed0ee9e5f25fd813ae00ad44">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="838412130ac51ce1acd7aefc7fd381c23a0e6bc3e62ec7727849208b438847c0">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSequenceDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="f87ecdc883cbbe34aafc78d6977d946fb5bf62520cc6b98ce79e66f4d3bf24a7">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="8a56e0507402136b8ed87aba087e6d77c95eed538ad04183b8bf886cc7f1457c">
+            <column name="label.fqn">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLItemDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4211,7 +4211,7 @@ Example:
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>195</duration>
+      <duration>143</duration>
     </concept>
     <concept id="jqa-plugin:PluginDescriptor" abstract="false">
       <description>Adds a label "PluginDescriptor" to classpath resources "/META-INF/jqassistant-plugin.xml".</description>
@@ -4319,7 +4319,7 @@ Example:
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>90</duration>
+      <duration>85</duration>
     </concept>
     <concept id="jqa-plugin:PluginDescriptorRegistersModel" abstract="false">
       <description>Creates a relationship REGISTERS_MODEL from /model/class-XML nodes to the corresponding model types.</description>
@@ -4802,63 +4802,9 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="8925b9437aed0da68f9cab78bea841dcedbb9100db9c1f8f4773ceb28bf16ff9">
+          <row key="4b286493f2a4b06d892c081b8ff9e0525bcbf4fb23bcd6e0b8309c1b4cdc0295">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="84e46d9b8a831b8e67d880ef8ed1c4e225165bacb32fcb1163f8d63ef6157bf8">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="de9a92be77d9657e85feba08a5c64a910344e21ecb990208abd130f61d4bc238">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="61ad89c1917449a3d54a87fe35451b84c598b37a82f5a46a0ca8c79c6b243205">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="9bc1c08e383453d743760aca09819bbf8812f996959537f92e229d33f69904eb">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="e78992eb080ccff2455ea115efbadc3932c40aaca2c2c4e33e305eca260b4d9e">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="3fa9acc39a10683e935eb653319418420dad36420111d6fb1b4b36225865a947">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="b1000528547f66e77707e1ffc4e190c83f73f3073ea34fc98817e19fcb2c2f71">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="4c780638a985a96b6c744bcef54d9d64ada9235aae4a5c007c12790122e2f555">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="0ee3ea8fb53a5195122428912fceb42a590f55559be7879529e90a15aaab5ee6">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4868,27 +4814,15 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="af25db8d746794e4dc9431402cfa7095bc7d741fa77e99fbac3dad47e5c9507b">
+          <row key="e78992eb080ccff2455ea115efbadc3932c40aaca2c2c4e33e305eca260b4d9e">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenMainArtifactDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="7bc5556d334498251f2898462b7c3050db119cf98f176960acf880a4ada760ee">
+          <row key="8925b9437aed0da68f9cab78bea841dcedbb9100db9c1f8f4773ceb28bf16ff9">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="4b286493f2a4b06d892c081b8ff9e0525bcbf4fb23bcd6e0b8309c1b4cdc0295">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="1539c5532e0c29349b561a6182e26a86b78645e963e2df41f8de011172e7e961">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4898,9 +4832,39 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="c482068653c970d663baf6a39beea1caf56396dbd09119c195b809309650bae3">
+          <row key="3fa9acc39a10683e935eb653319418420dad36420111d6fb1b4b36225865a947">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="32aba9bf6d0d2f6d0f239c4cbafc637e53790ffc8aeedb0c0f0ed205a41cf4d7">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="4c780638a985a96b6c744bcef54d9d64ada9235aae4a5c007c12790122e2f555">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenVersionDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="1539c5532e0c29349b561a6182e26a86b78645e963e2df41f8de011172e7e961">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExcludesDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="7ce80005677a9b6b06c85576936ec259fdca09582cf6aeda9ef2f5242c76319d">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="0ee3ea8fb53a5195122428912fceb42a590f55559be7879529e90a15aaab5ee6">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenScmDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4916,33 +4880,15 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="26abd9df417bfcc99eefdae9ea163b952cfccf79d012f113fe0740d97ffd63fd">
+          <row key="af25db8d746794e4dc9431402cfa7095bc7d741fa77e99fbac3dad47e5c9507b">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenOrganizationDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="e643200387a23914cf73765605d6f37e94ebf0c4c486b71481ce22cabbaab118">
+          <row key="61ad89c1917449a3d54a87fe35451b84c598b37a82f5a46a0ca8c79c6b243205">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="c64d4234870c0f7adf9cc05e4507ae5ea0b1f3238d36cc1f49c1eb29f2cd4709">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="32aba9bf6d0d2f6d0f239c4cbafc637e53790ffc8aeedb0c0f0ed205a41cf4d7">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</value>
-            </column>
-            <status level="2">success</status>
-          </row>
-          <row key="7ce80005677a9b6b06c85576936ec259fdca09582cf6aeda9ef2f5242c76319d">
-            <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -4952,57 +4898,57 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="76082039432347b41a6bd216944205abf328813373e8af6b78c1e658f68a7f27">
+          <row key="c482068653c970d663baf6a39beea1caf56396dbd09119c195b809309650bae3">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDependencyDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="574ed01362fde2b4ab73177c56f9cba21797001841fd4138fb3893719c299880">
+          <row key="de9a92be77d9657e85feba08a5c64a910344e21ecb990208abd130f61d4bc238">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenGroupIdDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="9847d29cf9e4c67fe94e295b90a076ecdf494450995087223aa1dace9ebd9725">
+          <row key="e643200387a23914cf73765605d6f37e94ebf0c4c486b71481ce22cabbaab118">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="9c79f06c3407dcf090a2dc1c5e9970f31591d87ce711e1c1cf1a8ce736096f2e">
+          <row key="7bc5556d334498251f2898462b7c3050db119cf98f176960acf880a4ada760ee">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="d7b9147ff8be9dcd3de121507562d9ae12a22761dae53bb94f82bd831536e7f9">
+          <row key="84e46d9b8a831b8e67d880ef8ed1c4e225165bacb32fcb1163f8d63ef6157bf8">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="9285ff8123ab611362192d97cf77a4d1716421c44e8b25d5592aa335179d3629">
+          <row key="c64d4234870c0f7adf9cc05e4507ae5ea0b1f3238d36cc1f49c1eb29f2cd4709">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="bd43f859844e8b3cc523632fc441c8b935b94e19b3628e26d1f1fce86cc92adf">
+          <row key="9bc1c08e383453d743760aca09819bbf8812f996959537f92e229d33f69904eb">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="ff79169355bbda6cfc2f9ee03c6cfd55638a37fc56fb9eb6d9ddfdc9012d5a10">
+          <row key="26abd9df417bfcc99eefdae9ea163b952cfccf79d012f113fe0740d97ffd63fd">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
-          <row key="70a238b1f504eedde84bf7cea4eadd53d07fbca2416b35c5b567c8788f62b85c">
+          <row key="b1000528547f66e77707e1ffc4e190c83f73f3073ea34fc98817e19fcb2c2f71">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.maven3.api.model.MavenTestArtifactDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -5012,9 +4958,15 @@ Example:
             </column>
             <status level="2">success</status>
           </row>
-          <row key="c28b24cb6c4a810169df4be2dfb4173bda3f7cc784ce51eb1da3d1a1330f5937">
+          <row key="9847d29cf9e4c67fe94e295b90a076ecdf494450995087223aa1dace9ebd9725">
             <column name="Type">
-              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLScalarDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="9285ff8123ab611362192d97cf77a4d1716421c44e8b25d5592aa335179d3629">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLValueDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -5027,6 +4979,54 @@ Example:
           <row key="ed88b19debe655a2ee6348ca584f5dc711641c9f24ab5cf5f5f42b20e0d53c95">
             <column name="Type">
               <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAnchorDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="9c79f06c3407dcf090a2dc1c5e9970f31591d87ce711e1c1cf1a8ce736096f2e">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLComplexKeyDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="70a238b1f504eedde84bf7cea4eadd53d07fbca2416b35c5b567c8788f62b85c">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLLastDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="ff79169355bbda6cfc2f9ee03c6cfd55638a37fc56fb9eb6d9ddfdc9012d5a10">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLMapDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="574ed01362fde2b4ab73177c56f9cba21797001841fd4138fb3893719c299880">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFirstDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="d7b9147ff8be9dcd3de121507562d9ae12a22761dae53bb94f82bd831536e7f9">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLFileDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="c28b24cb6c4a810169df4be2dfb4173bda3f7cc784ce51eb1da3d1a1330f5937">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLAliasDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="bd43f859844e8b3cc523632fc441c8b935b94e19b3628e26d1f1fce86cc92adf">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLSimpleKeyDescriptor</value>
+            </column>
+            <status level="2">success</status>
+          </row>
+          <row key="76082039432347b41a6bd216944205abf328813373e8af6b78c1e658f68a7f27">
+            <column name="Type">
+              <value>com.buschmais.jqassistant.plugin.yaml2.api.model.YMLDocumentDescriptor</value>
             </column>
             <status level="2">success</status>
           </row>
@@ -5045,7 +5045,7 @@ Example:
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>681</duration>
+      <duration>465</duration>
       <required-concept id="jqa-plugin:PluginDescriptor">
         <status level="2">success</status>
       </required-concept>
@@ -5121,7 +5121,7 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
       </verificationResult>
       <status level="2">success</status>
       <severity level="4">info</severity>
-      <duration>89</duration>
+      <duration>78</duration>
       <required-concept id="jqa-plugin:PluginDescriptorRegistersModel">
         <status level="2">success</status>
       </required-concept>
@@ -5138,7 +5138,7 @@ Rationale: Reduce class loading/initialization time at startup in larger classpa
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>142</duration>
+      <duration>139</duration>
       <required-concept id="jqa-plugin:PluginDescriptorRegistersModel">
         <status level="2">success</status>
       </required-concept>
@@ -5165,14 +5165,14 @@ descriptor must look like this
       </verificationResult>
       <status level="2">success</status>
       <severity level="2">major</severity>
-      <duration>126</duration>
+      <duration>114</duration>
       <required-concept id="jqa-plugin:PluginDescriptor">
         <status level="2">success</status>
       </required-concept>
     </constraint>
-    <duration>1358</duration>
+    <duration>1064</duration>
   </group>
-  <group id="jqa-project-layout" date="2026-11-18T13:46:12">
+  <group id="jqa-project-layout" date="2026-11-18T16:17:47">
     <constraint id="jqa-project-layout:documentation:releasenotes-exists">
       <description>There should be an Asciidoctor document for the release notes of this version.</description>
       <result>
@@ -5195,7 +5195,7 @@ descriptor must look like this
       </verificationResult>
       <status level="1">warning</status>
       <severity level="3">minor</severity>
-      <duration>144</duration>
+      <duration>127</duration>
     </constraint>
     <constraint id="jqa-project-layout:readme:exists">
       <description>It must exist in the root directory of the project a
@@ -5231,7 +5231,7 @@ the repositories.</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>87</duration>
+      <duration>63</duration>
     </constraint>
     <constraint id="jqa-project-layout:editorconfig:exists">
       <description>Each repository should contain an editor config configuration file
@@ -5265,11 +5265,11 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status level="2">success</status>
       <severity level="3">minor</severity>
-      <duration>74</duration>
+      <duration>62</duration>
     </constraint>
-    <duration>319</duration>
+    <duration>272</duration>
   </group>
-  <group id="jqa-technical-debt" date="2026-11-18T13:46:12">
+  <group id="jqa-technical-debt" date="2026-11-18T16:17:48">
     <constraint id="jqa-technical-debt:CodeElementToBeRemoved">
       <description>Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" should have been removed in given version.</description>
       <result>
@@ -5335,7 +5335,7 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status level="0">failure</status>
       <severity level="2">major</severity>
-      <duration>1194</duration>
+      <duration>807</duration>
     </constraint>
     <constraint id="jqa-technical-debt:CodeElementToBeRemovedInVersion">
       <description>Code elements annotated by "@com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion" will be removed in the given version.</description>
@@ -5543,7 +5543,7 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status level="1">warning</status>
       <severity level="3">minor</severity>
-      <duration>853</duration>
+      <duration>635</duration>
     </constraint>
     <constraint id="java:TechnicalDebt">
       <description>Technical debt should be removed from code elements annotated by "@com.buschmais.jqassistant.plugin.java.annotation.TechnicalDebt".</description>
@@ -5651,8 +5651,8 @@ details on '.editorconfig' see https://editorconfig.org/</description>
       </verificationResult>
       <status level="0">failure</status>
       <severity level="2">major</severity>
-      <duration>402</duration>
+      <duration>325</duration>
     </constraint>
-    <duration>2465</duration>
+    <duration>1926</duration>
   </group>
 </jqassistant-report>
