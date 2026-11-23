@@ -108,7 +108,7 @@ public class FileContainerScannerPluginTest {
 
         List<FileDescriptor> provides = artifactFileDescriptor.getProvides();
         assertThat(provides.size()).isEqualTo(3);
-        assertThat(provides).isEqualTo(artifactFileDescriptor.getContains());
+
         FileDescriptor a = provides.get(0);
         verify(a).setFileName("/A");
         FileDescriptor b = provides.get(1);
@@ -116,7 +116,7 @@ public class FileContainerScannerPluginTest {
         FileDescriptor c = provides.get(2);
         verify(c).setFileName("/B/C");
 
-        assertThat(artifactFileDescriptor.getContains()).isEqualTo(provides);
+        assertThat(artifactFileDescriptor.getContains()).isEmpty();
 
         List<FileDescriptor> requires = artifactFileDescriptor.getRequires();
         assertThat(requires.size()).isEqualTo(1);
@@ -135,11 +135,13 @@ public class FileContainerScannerPluginTest {
 
         List<FileDescriptor> provides = artifactFileDescriptor.getProvides();
         assertThat(provides.size()).isEqualTo(2);
-        assertThat(provides).isEqualTo(artifactFileDescriptor.getContains());
+
         FileDescriptor a = provides.get(0);
         verify(a).setFileName("/A");
         FileDescriptor b = provides.get(1);
         verify(b).setFileName("/R");
+
+        assertThat(artifactFileDescriptor.getContains()).isEmpty();
 
         List<FileDescriptor> requires = artifactFileDescriptor.getRequires();
         assertThat(requires.size()).isEqualTo(0);
